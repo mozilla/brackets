@@ -9,6 +9,7 @@ define(function (require, exports, module) {
         Dialogs         = require("widgets/Dialogs"),
         DefaultDialogs  = require("widgets/DefaultDialogs"),
         // TODO: we have to figure out how we're going to build/deploy makedrive.js, this is hacky.
+        // since it requires a manual `grunt build` step in src/thirdparty/makedrive
         MakeDrive       = require("thirdparty/makedrive/client/dist/makedrive"),
         OpenDialog      = require("filesystem/impls/makedrive/open-dialog");
 
@@ -43,12 +44,6 @@ define(function (require, exports, module) {
         console.log('server has updates');
     });
 
-    // TODO: Figure out when is the best time to start the sync.
-    var DocumentManager = brackets.getModule('document/DocumentManager');
-    $(DocumentManager).on("documentSaved", function(err, e) {
-        sync.request('/' + e.file._path);
-    });
-
     function showOpenDialog(allowMultipleSelection, chooseDirectories, title, initialPath, fileTypes, callback) {
         OpenDialog.showOpenDialog.apply(null, arguments);
     }
@@ -64,12 +59,6 @@ define(function (require, exports, module) {
         else{
             callback();
         }
-    }
-
-    function stripTrailingSlash(path) {
-        // Strip trailing slash(es), but make sure "/" still survives
-        path = path.replace(/\/+$/, '');
-        return path || '/';
     }
 
     /**
@@ -153,7 +142,7 @@ define(function (require, exports, module) {
     }
 
     function readdir(path, callback) {
-        path = stripTrailingSlash(path);
+        path = Path.normalize(path);
 
         fs.readdir(path, function (err, contents) {
             if (err) {
@@ -312,7 +301,7 @@ define(function (require, exports, module) {
     }
 
     function watchPath(path, callback) {
-        path = stripTrailingSlash(path);
+        path = Path.normalize(path);
 
         if(watchers[path]) {
             return;
@@ -329,7 +318,7 @@ define(function (require, exports, module) {
     }
 
     function unwatchPath(path, callback) {
-        path = stripTrailingSlash(path);
+        path = Path.normalize(path);
 
         if(watchers[path]) {
             watchers[path].close();
