@@ -28,3 +28,6 @@
 [submodule "src/thirdparty/makedrive"]
 	path = src/thirdparty/makedrive
 	url = https://github.com/mozilla/makedrive.git
+[submodule "src/extensions/default/makedrive-sync-icon"]
+	path = src/extensions/default/makedrive-sync-icon
+	url = git@github.com:cdot-brackets-extensions/makedrive-sync-icon.git
