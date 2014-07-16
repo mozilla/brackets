@@ -1,0 +1,247 @@
+.cm-s-dark-soda .CodeMirror-scroll{
+    border-color: #202020;
+}
+
+.CodeMirror .CodeMirror-vscrollbar{ width: 10px; bottom: 10px !important;} /*Scrollbar vertical. These values MUST be the same as height/width of scrollbars*/
+.CodeMirror .CodeMirror-hscrollbar{ height:10px; right:10px !important;} /*Scrollbar horizontal. These values MUST be the same as height/width of scrollbars*/
+.CodeMirror ::-webkit-scrollbar { width: 10px; height:10px;} /* The width of vertical scrollbars and height of horizontal scrollbars*/
+.CodeMirror-scrollbar-filler {height:10px !important; width:10px !important;} /* Corner where scrollbars meet. Width and height MUST be the same as that of scrollbars. Background should be the same as that of the scrollbar track*/
+.CodeMirror-gutter-filler{ height:10px !important;} /* Linenumber area left of horizontal scrollbar. Height MUST be the same as width/height of scrollbars */
+
+
+.cm-s-dark-soda ::-webkit-scrollbar-track, .cm-s-dark-soda .CodeMirror-gutter-filler, .cm-s-dark-soda .CodeMirror-scrollbar-filler {
+    background: transparent;
+}
+
+.cm-s-dark-soda ::-webkit-scrollbar-thumb {
+    background: #191919;
+    border-radius: 5px;
+}
+.cm-s-dark-soda ::-webkit-scrollbar-thumb:hover {
+    background: #121212;
+}
+.cm-s-dark-soda ::-webkit-scrollbar-thumb:active {
+    background: #0f0f0f;
+}
+
+
+
+#status-bar{ /* Bottom status bar */
+    border-top:1px solid #484b4d;
+    background:#3C3F41;
+    color:#FFF;
+}
+#main-toolbar{ background:#3C3F41;}
+
+.inline-widget{ /* Quick-edit styles */
+    background:rgb(51, 51, 51);
+}
+
+.inlineEditorHolder > div > .CodeMirror-wrap{
+    background:rgb(51, 51, 51);
+}
+
+.inlineEditorHolder .CodeMirror-linenumber{
+
+    background-color:rgb(51, 51, 51) !important;
+}
+
+.inline-widget .CodeMirror-gutter {
+    background-color: rgb(51, 51, 51) !important;
+}
+
+.divider-holder .divider {
+    margin-left: 12px;
+    width: 0;
+    height: 100%;
+    border-left: 1px solid rgb(0, 0, 0);
+    border-right: 1px solid rgb(73, 73, 73);
+}
+
+/* changes to the related container */
+
+.related-container {
+    float: right;
+    position: relative;
+    min-height: 100%;
+    font-family: 'SourceSansPro', Helvetica, Arial, "Meiryo UI", "ＭＳ Ｐゴシック", "MS PGothic", sans-serif;
+    width: 250px;
+    max-width: 50%;
+    overflow: hidden;
+    background: rgb(47, 47, 47);
+}
+
+.related-container .selection {
+    width: 100%;
+    background: rgb(111, 111, 111);
+    position: absolute;
+    -webkit-transition: height 0.1s ease-out;
+    -webkit-transition: top 0.1s ease-out;
+    border-top: 1px solid rgb(95, 95, 95);
+    border-bottom: 1px solid rgb(114, 114, 114);
+    top: 12px;
+}
+
+.related-container .related .selected {
+    color: rgb(236, 236, 236);
+    -webkit-transition: color 0.1s ease-out 0.15s;
+}
+.related-container .selection:before {
+    content: " ";
+    position: absolute;
+    width: 0;
+    height: 0;
+    border-top: 9px solid rgba(255, 255, 255, 0);
+    border-bottom: 9px solid rgba(255, 255, 255, 0);
+    border-left: 9px solid rgb(51, 51, 51);
+    margin-top: -9px;
+    top: 50%;
+    -ms-transform: scaleX(0.9);
+    -moz-transform: scaleX(0.9);
+    -webkit-transform: scaleX(0.9);
+    -o-transform: scaleX(0.9);
+    transform: scaleX(0.9);
+    -ms-transform-origin: left top;
+    -moz-transform-origin: left top;
+    -webkit-transform-origin: left top;
+    -o-transform-origin: left top;
+    transform-origin: left top;
+}
+
+
+/* End of related container changes */
+
+#not-editor:before {
+    content: " ";
+    height: 100%;
+    width: 100%;
+    display: -webkit-box;
+    position: absolute;
+    -webkit-box-orient: vertical;
+    -webkit-box-pack: center;
+    -webkit-box-align: center;
+    background: rgba(51, 51, 51, 0) url('file://localhost/Applications/Brackets%20Sprint%2027.app/Contents/www/styles/images/no_content_bg.svg') no-repeat center 45%;
+    opacity: .07;
+}
+
+#editor-holder #not-editor {
+    height: 100%;
+    display: -webkit-box;
+    display: -moz-box;
+    display: box;
+    -webkit-box-orient: vertical;
+    -moz-box-orient: vertical;
+    box-orient: vertical;
+    -webkit-box-pack: center;
+    -moz-box-pack: center;
+    box-pack: center;
+    -webkit-box-align: center;
+    -moz-box-align: center;
+    box-align: center;
+    background: #242424;
+
+}
+
+/* code refs */
+.css-prop-defn code {
+    font-family: SourceCodePro;
+    font-size: 12px;
+    color: rgb(197, 197, 197);
+    background: none;
+    padding: 0;
+}
+code {
+    padding: 2px 4px;
+    color: #d14;
+    background-color: rgb(158, 158, 158);
+    border: 1px solid rgb(122, 122, 122);
+    white-space: nowrap;
+}
+
+
+
+.css-prop-defn h1 {
+    color: rgb(219, 219, 219);
+    font-size: 16px;
+    font-weight: 500;
+    line-height: normal;
+    margin: 15px 0 9px 0;
+}
+
+.css-prop-defn {
+    color: rgb(197, 197, 197);
+    cursor: auto;
+    font-family: SourceSansPro;
+    font-size: 14px;
+}
+
+.css-prop-values dl dt {
+    color: rgb(219, 219, 219);
+    font-size: 13px;
+    font-weight: 500;
+    margin-bottom: 3px;
+}
+
+
+/** CodeMirror styles **/
+
+.cm-s-dark-soda.CodeMirror { background: #242424; color: #fff; }
+
+.cm-s-dark-soda div.CodeMirror-cursor {
+  border-left: 1px solid #f8f8f0;
+  z-index: 3;
+}
+
+.CodeMirror-selected {
+    background: #3d3d3d;
+    opacity: .23;
+}
+
+.cm-s-dark-soda span.cm-keyword {color: #ff007f;}
+.cm-s-dark-soda span.cm-atom {color: #c48cff;}
+.cm-s-dark-soda span.cm-number {color: #c48cff;}
+.cm-s-dark-soda span.cm-def {color: #fd963f;}
+.cm-s-dark-soda span.cm-variable {color: #fff;}
+.cm-s-dark-soda span.cm-variable-2 {color: #c48cff;}
+.cm-s-dark-soda span.cm-property {color: #52e3f6;}
+.cm-s-dark-soda span.cm-operator {color: #ff007f;}
+.cm-s-dark-soda span.cm-comment {color: #8c8c8c;}
+.cm-s-dark-soda span.cm-string {color: #ece47e;}
+.cm-s-dark-soda span.cm-string-2 {color: #ece47e;}
+.cm-s-dark-soda span.cm-meta {color: #a7ec21;}
+.cm-s-dark-soda span.cm-qualifier, .CodeMirror span.cm-builtin {color: #a7ec21;}
+.cm-s-dark-soda span.cm-bracket {color: #f9faf4;}
+.cm-s-dark-soda span.cm-tag {color: #ff007f !important;}
+.cm-s-dark-soda span.cm-attribute {color: #a7ec21;}
+.cm-s-dark-soda span.cm-matchhighlight {background-color: rgba(61,61,61,23);}
+
+.cm-s-dark-soda span.CodeMirror-matchingbracket {
+    color: #a7ec21;
+}
+
+.cm-s-dark-soda span.CodeMirror-matchingtag {
+    background: rgba(255,255,255,0.15);
+}
+
+
+.cm-s-dark-soda span.CodeMirror-searching {
+  box-shadow: 0 0 0 1px #fff;
+}
+
+.cm-s-dark-soda .CodeMirror-linenumber,.cm-s-dark-soda .CodeMirror-gutters{
+    color: #727272;
+    background-color: #242424;
+}
+
+.cm-s-dark-soda.CodeMirror .CodeMirror-linenumber {
+    padding-left: 18px;
+}
+
+.cm-s-dark-soda span.cm-matchhighlight.CodeMirror-searching.CodeMirror-selectedtext {
+    background-color: #ffe69d;
+    color: #242424;
+}
+.cm-s-dark-soda.CodeMirror-focused .CodeMirror-activeline-background, .cm-s-dark-soda.CodeMirror-focused .CodeMirror-activeline .CodeMirror-gutter-elt {
+    background-color: #3C3F41;
+    color: #d9d9d9;
+}

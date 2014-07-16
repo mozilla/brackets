@@ -1,0 +1,14 @@
+.inline-widget a.filename {
+    color: white !important;
+}
+.inline-widget a.close {
+    color: #E4E4E4;
+    text-shadow: none;
+}
+.inline-widget .swatch,
+.inline-widget .large-swatches {
+    box-shadow: none !important;
+}
+.cm-matchhighlight {
+    color: black !important; /* Brackets match highlighter support */
+}

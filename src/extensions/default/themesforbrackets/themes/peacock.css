@@ -1,0 +1,76 @@
+/*
+Theme: Peacock
+tmTheme: Dayle Rees
+CodeMirror CSS: Paweł Chętkowski
+*/
+    /*Main area*/
+.CodeMirror{
+    background:#2b2a27;
+    color:#ede0ce;
+    font-size: 14px;
+}/*Main coding area, without line count.*/
+
+.CodeMirror div.CodeMirror-cursor {border-left: 1px solid #ede0ce; z-index: 3;}
+
+    /*Brackets is based on webkit, so you can use scrollbar styling. Example below contains 8px width, grey scrollbar for the main area. You can use it with other section, just remember about z-indexes or things like 'selected' with overlap your scrollbar.*/
+    .CodeMirror .CodeMirror-vscrollbar{ width: 8px; bottom:8px !important;} /*Scrollbar vertical. These values MUST be the same as height/width of scrollbars*/
+    .CodeMirror .CodeMirror-hscrollbar{ height:8px; right:8px !important;} /*Scrollbar horizontal. These values MUST be the same as height/width of scrollbars*/
+    .CodeMirror ::-webkit-scrollbar { width: 8px; height:8px;} /* The width of vertical scrollbars and height of horizontal scrollbars*/
+    .CodeMirror-scrollbar-filler {height:8px !important; width:8px !important; background:none;} /* Corner where scrollbars meet. Width and height MUST be the same as that of scrollbars. Background should be the same as that of the scrollbar track*/
+    .CodeMirror-gutter-filler{ height:8px !important;background:none;} /* Linenumber area left of horizontal scrollbar. Height MUST be the same as width/height of scrollbars */
+    .CodeMirror ::-webkit-scrollbar-track {background: none;} /* The track that scrollbars run in */
+    .CodeMirror ::-webkit-scrollbar-thumb {background: #403c37;} /* The scrollbar thumb */
+
+.CodeMirror .CodeMirror-scroll .CodeMirror-gutters{background:#2b2a27; border-right:1px solid #403c37;}/*Left vertical bar with line count*/
+
+    /*Syntax elements & action*/
+.CodeMirror .cm-atom{color:#BCD42A;} /*Atribbute value ex. #f00 in color:#f00;*/
+.CodeMirror .cm-number{color:#BCD42A;} /*Numbers*/
+.CodeMirror .cm-property{color:#FF5D38;} /*Property ex. color in color:#f00;*/
+.CodeMirror .cm-comment{color:#7A7267;} /*Comment*/
+.CodeMirror .cm-string{color:#BCD42A;} /*String elements ex. "description" in name="description" - including quotation*/
+.CodeMirror .cm-qualifier{color:#FF5D38; opacity: 0.75;} /*Final qualifier like css class ex.: .cm-qualifier*/
+.CodeMirror .cm-tag{color:#26A6A6;} /*Tags ex. ul or <ul>*/
+.CodeMirror .cm-attribute{color:#FF5D38;} /*Attribute ex. rel, href, name*/
+.CodeMirror .cm-keyword {color:#26A6A6;} /*Element call ex. array, class, public function, if, elseif, !important*/
+.CodeMirror-selected{background:rgba(255,255,255,0.1) !important;} /*Selected lines - may need !important*/
+.CodeMirror-gutter-elt{background:#2b2a27 !important;}
+.CodeMirror-activeline-background{background:rgba(255,255,255,0.1) !important;} /*Active line - may need !important*/
+.CodeMirror .CodeMirror-matchingtag{background:none; text-decoration: none; border-bottom: 1px solid #FF5D38;} /*Matching tags, open/close. Try !important for bg, color etc. if it doesn't work*/
+div.CodeMirror span.CodeMirror-matchingbracket{background:none; text-decoration: none; border-bottom: 1px solid #FF5D38;} /*Matching brackets, open/close*/
+
+
+    /*Status bar - bottom*/
+#status-bar{background:#2b2a27; color:#ede0ce; border-top:1px solid #403c37;}/*Bottom status bar*/
+
+    /*Modal windows like context-menu, quick-view or hint container*/
+/*#context-menu-bar .dropdown-menu{background:#565656} /*Dropdown menu, available under right-click - may need !important*/
+/*#context-menu-bar .dropdown-menu a{color:rgb(247, 239, 229);} /*Single option, treat it like <li> ex. background*/
+/*#context-menu-bar .dropdown-menu a:hover{background:#403c37;}
+
+/*#codehint-menu-bar .dropdown-menu{background:#565656;} /*Code hint menu, dropdown visible when writing code.*/
+/*#codehint-menu-bar .dropdown-menu li a{color:#ede0ce;} /*Code hint menu option, dropdown visible when writing code. Treat like <li>*/
+/*#codehint-menu-bar .dropdown-menu li a:hover {background:#403c37;} /*Code hint menu option, dropdown visible when writing code. Treat like <li>*/
+
+    /*Inline editor(Ex. Quick Edit - Ctrl + E)*/
+
+.cm-s-peacock.CodeMirror .inline-widget{
+    background: #403c37;
+    color: #ccc;
+}
+.cm-s-peacock.CodeMirror .inline-widget h1,
+.cm-s-peacock.CodeMirror .inline-widget h2,
+.cm-s-peacock.CodeMirror .inline-widget h3{
+    color: #ccc;
+}
+.cm-s-peacock.CodeMirror .inline-widget p,
+.cm-s-peacock.CodeMirror .inline-widget dt,
+.cm-s-peacock.CodeMirror .inline-widget li,
+.cm-s-peacock.CodeMirror .inline-widget code{
+    color: #fff;
+}
+
+.cm-s-peacock.CodeMirror .CodeMirror-gutter-elt {
+    padding: 0 8px 0 10px;
+}
+.CodeMirror pre {padding: 0 15px 0 5px;}
