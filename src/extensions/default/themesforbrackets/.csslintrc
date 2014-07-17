@@ -1,0 +1,9 @@
+{
+    "ids": false,
+    "important": false,
+    "fallback-colors": false,
+    "adjoining-classes": false,
+    "overqualified-elements": false,
+    "qualified-headings": false,
+    "compatible-vendor-prefixes": false
+}

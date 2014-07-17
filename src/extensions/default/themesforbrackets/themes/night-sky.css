@@ -1,0 +1,116 @@
+/** Bars 'n stuff **/
+#sidebar{
+    text-shadow:none;
+    /*border-right:1px solid #1e1f20;*/
+}
+#main-toolbar{
+    background-color:#3c3f41;
+}
+#titlebar{
+    background:#3c3f41;
+    color:rgba(255,255,255,0.9);
+}
+#titlebar .nav .dropdown .dropdown-toggle{
+    color:rgba(255,255,255,0.9);
+}
+#titlebar .nav .dropdown .dropdown-toggle:hover {
+    background: #fff;
+    border-color: #fff;
+    color: #000;
+}
+#titlebar .nav .dropdown.open .dropdown-toggle{
+    color: #000;
+}
+#status-bar{
+    background:#3c3f41;
+    color:rgba(255,255,255,0.9);
+    border-top:1px solid rgba(255,255,255,0.1);
+}
+.inline-widget{ /* Quick-edit styles */
+    background-color:rgb(45, 47, 44);
+}
+.css-prop-defn code, .css-prop-defn h1, .css-prop-values dl dt{
+    color:#999;
+}
+.css-prop-defn{
+    color:#CCC;
+}
+.divider-holder .divider{
+    border-right:1px solid rgb(50, 51, 49);
+    border-left:1px solid rgb(34, 36, 32);
+}
+
+a.more-info{
+    background-color: #454545;
+    border: 1px solid #555;
+    border-bottom: none;
+    box-shadow: inset 0 1px 0 #777;
+    text-shadow: none;
+    color: #CCC;
+}
+
+/** Scrollbars **/
+
+.CodeMirror-gutter-filler, .CodeMirror-scrollbar-filler {
+    background: transparent;
+}
+
+.CodeMirror .CodeMirror-vscrollbar{width: 8px; bottom:8px !important;} /*Scrollbar vertical*/
+
+.CodeMirror ::-webkit-scrollbar {width: 8px; height:8px;}
+.CodeMirror ::-webkit-scrollbar-track {background: none;}
+.CodeMirror-gutter-filler, .CodeMirror-scrollbar-filler { background:none;}
+.CodeMirror ::-webkit-scrollbar-thumb {background: #56595a; border-radius: 4px}
+.CodeMirror ::-webkit-scrollbar-thumb:hover {background: #666666; border-radius: 4px}
+
+.CodeMirror-scrollbar-filler {
+    height:8px !important;
+    width:8px !important;
+    background:none;
+}
+.CodeMirror .CodeMirror-hscrollbar{ height:8px; right:8px !important;} /*Scrollbar horizontal*/
+
+
+
+/** CodeMirror styles **/
+
+.cm-s-night-sky.CodeMirror pre {padding:0 15px 0 5px}
+
+.cm-s-night-sky .CodeMirror-matchingtag{
+    background:none;
+    text-decoration:underline;
+    color: #8DA6CE !important;
+}
+
+.cm-s-night-sky.CodeMirror .CodeMirror-linenumber {
+    padding-left: 18px;
+}
+
+.cm-s-night-sky.CodeMirror, #editor-holder #not-editor { background-color: rgb(30, 34, 29); color: #F8F8F8;}
+.cm-s-night-sky .CodeMirror-selected { background: #253B76 !important; }
+.cm-s-night-sky .CodeMirror-gutters { background: #2d2e30; border-right: 1px solid rgba(0,0,0,0.4); }
+.cm-s-night-sky .CodeMirror-linenumber { color: #888; }
+.cm-s-night-sky .CodeMirror-cursor { border-left: 1px solid #A7A7A7 !important; }
+
+.cm-s-night-sky .cm-keyword { color: #FBDE2D; }
+.cm-s-night-sky .cm-atom { color: #D8FA3C; }
+.cm-s-night-sky .cm-number { color: #D8FA3C; }
+.cm-s-night-sky .cm-def { color: #8DA6CE; }
+.cm-s-night-sky .cm-variable { color: #FF6400; }
+.cm-s-night-sky .cm-operator { color: #FBDE2D;}
+.cm-s-night-sky .cm-comment { color: #AEAEAE; }
+.cm-s-night-sky .cm-string { color: #61CE3C; }
+.cm-s-night-sky .cm-string-2 { color: #61CE3C; }
+.cm-s-night-sky .cm-meta { color: #D8FA3C; }
+.cm-s-night-sky .cm-error { background: #9D1E15; color: #F8F8F8; }
+.cm-s-night-sky .cm-builtin { color: #8DA6CE; }
+.cm-s-night-sky .cm-tag { color: #8DA6CE; }
+.cm-s-night-sky .cm-attribute { color: #8DA6CE; }
+.cm-s-night-sky .cm-header { color: #FF6400; }
+.cm-s-night-sky .cm-hr { color: #AEAEAE; }
+.cm-s-night-sky .cm-link { color: #8DA6CE; }
+
+.cm-s-night-sky.CodeMirror-focused .CodeMirror-activeline-background, .cm-s-night-sky.CodeMirror-focused .CodeMirror-activeline .CodeMirror-gutter-elt {
+    background-color: #3C3F41;
+    color: #d9d9d9;
+}

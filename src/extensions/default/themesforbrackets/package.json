@@ -1,0 +1,18 @@
+{
+    "title": "Themes for Brackets",
+    "name": "themesforbrackets",
+    "author": "Jacob Lauritzen <jacsebl@hotmail.com>",
+    "description": "Adds themes to Brackets incl. Dark Soda, Light Table and many more",
+    "version": "1.7.3",
+    "keywords": ["themes", "brackets", "custom", "highlight", "skins"],
+    "homepage": "https://github.com/Jacse/themes-for-brackets",
+    "bugs": "https://github.com/Jacse/themes-for-brackets/issues",
+    "repository": {
+        "type": "git",
+        "url": "git://github.com/Jacse/themes-for-brackets.git"
+    },
+    "engines": {
+        "brackets": ">=0.39.0"
+    },
+    "categories": "visual"
+}
