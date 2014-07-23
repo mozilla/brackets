@@ -23,12 +23,10 @@ define(function (require, exports, module) {
     // needs to call sync.connect(serverURL) when the user is logged in, for example.
     appshell.MakeDrive = MakeDrive;
 
-    // TODO: Maybe use an XHR or something else other than this?
-    $.get( "http://localhost:9090/api/sync", function( data ) {
-      fs.sync.connect('ws://localhost:9090', data);
-    });
-
     var sync = fs.sync;
+
+    // Try to upgrade to a syncing filesystem
+    sync.connect('ws://localhost:9090');
 
     //TODO: Do we want to do anything other than console.log for all these events?
     sync.on('syncing', function() {
