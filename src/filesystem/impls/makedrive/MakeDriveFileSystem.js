@@ -34,6 +34,8 @@ define(function (require, exports, module) {
     });
     sync.on('error', function(e) {
         console.log('sync error: ', e);
+
+        Dialogs.showModalDialog("SyncError", "Sync Interrupted", e);
     });
     sync.on('completed', function() {
         console.log('sync completed');
