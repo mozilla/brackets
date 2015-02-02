@@ -730,9 +730,9 @@ define(function (require, exports, module) {
      * first launch.
      */
     function getInitialProjectPath() {
-        // XXXhumphd: just use root dir for now in browser
-        return '/';
-        //return updateWelcomeProjectPath(PreferencesManager.getViewState("projectPath"));
+        // This is where we specify the file used
+        // for the thimble project
+        return '/index.html';
     }
 
     /**
