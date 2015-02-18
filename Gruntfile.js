@@ -38,7 +38,7 @@ module.exports = function (grunt) {
                     src: [
                         'dist',
                         'src/.index.html',
-                        'src/styles/brackets.css'
+                        'src/styles/brackets.css',
                     ]
                 }]
             }
@@ -287,10 +287,20 @@ module.exports = function (grunt) {
             all: [
                 '<%= meta.grunt %>',
                 '<%= meta.src %>',
-                '<%= meta.test %>'
+                '<%= meta.test %>',
+                '!src/extensions/default/HTMLHinter/slowparse/**', // Not our code, so just ignore it
+                '!src/extensions/default/HTMLHinter/tooltipsy.source.js', // Klever has no idea how this works, so its ignored
+                '!src/extensions/default/brackets-browser-livedev/nohost/**', // Humphs Code, don't entirely understand it, so I shouldn't touch it
+                '!src/extensions/default/makedrive-sync-icon/**' //Its going to be removed, but for now ignore it
             ],
             grunt:  '<%= meta.grunt %>',
-            src:    '<%= meta.src %>',
+            src:    [
+                '<%= meta.src %>',
+                '!src/extensions/default/HTMLHinter/slowparse/**', // Not our code, so just ignore it
+                '!src/extensions/default/HTMLHinter/tooltipsy.source.js', // Klever has no idea how this works, so its ignored
+                '!src/extensions/default/brackets-browser-livedev/nohost/**', // Humphs Code, don't entirely understand it, so I shouldn't touch it
+                '!src/extensions/default/makedrive-sync-icon/**' //Its going to be removed, but for now ignore it
+            ],
             test:   '<%= meta.test %>',
             /* use strict options to mimic JSLINT until we migrate to JSHINT in Brackets */
             options: {
