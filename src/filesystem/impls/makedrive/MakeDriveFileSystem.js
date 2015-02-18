@@ -1,13 +1,11 @@
 /*jslint vars: true, plusplus: true, devel: true, nomen: true, regexp: true, indent: 4, maxerr: 50 */
-/*global define, appshell, $, window */
+/*global define, appshell */
 
 define(function (require, exports, module) {
     "use strict";
 
     var FileSystemError = require("filesystem/FileSystemError"),
         FileSystemStats = require("filesystem/FileSystemStats"),
-        Dialogs         = require("widgets/Dialogs"),
-        DefaultDialogs  = require("widgets/DefaultDialogs"),
         // TODO: we have to figure out how we're going to build/deploy makedrive.js, this is hacky.
         // since it requires a manual `grunt build` step in src/thirdparty/makedrive
         MakeDrive       = require("thirdparty/makedrive/client/dist/makedrive"),
@@ -278,10 +276,10 @@ define(function (require, exports, module) {
         }
         watchers[path] = fs.watch(path, {recursive: true}, function(event, filename) {
             stat(filename, function(err, stats) {
-              if(err) {
-                  return;
-              }
-              _changeCallback(filename, stats);
+                if(err) {
+                    return;
+                }
+                _changeCallback(filename, stats);
             });
         });
         callback();
