@@ -43,6 +43,42 @@ module.exports = function (grunt) {
                 }]
             }
         },
+        uglify: {
+            options: {
+                mangle: false,
+                compress: false
+            },
+            dist: {
+                files: [{
+                    expand: true,
+                    cwd: 'src/',
+                    src: [
+                        /* static files */
+                        'nls/{,*/}*.js',
+                        'xorigin.js',
+                        'dependencies.js',
+                        'thirdparty/requirejs/require.js',
+                        'LiveDevelopment/MultiBrowserImpl/transports/**/*.js',
+                        'LiveDevelopment/MultiBrowserImpl/launchers/**/*.js',
+
+                        /* extensions and CodeMirror modes */
+                        '!extensions/default/*/unittests.js',
+                        'extensions/default/*/**/*.js',
+                        '!**/unittest-files/**',
+                        '!extensions/default/JavaScriptCodeHints/thirdparty/*/test/**/*',
+                        '!extensions/default/**/node_modules/**/*',
+                        'thirdparty/CodeMirror2/addon/{,*/}*.js',
+                        'thirdparty/CodeMirror2/keymap/{,*/}*.js',
+                        'thirdparty/CodeMirror2/lib/{,*/}*.js',
+                        'thirdparty/CodeMirror2/mode/{,*/}*.js',
+                        'thirdparty/CodeMirror2/theme/{,*/}*.js',
+                        'thirdparty/i18n/*.js',
+                        'thirdparty/text/*.js'
+                    ],
+                    dest: 'dist/'
+                }]
+            }
+        },
         copy: {
             dist: {
                 files: [
@@ -64,7 +100,18 @@ module.exports = function (grunt) {
                             'LiveDevelopment/MultiBrowserImpl/launchers/**'
                         ]
                     },
-
+                    /* node domains are not minified and must be copied to dist */
+                    {
+                        expand: true,
+                        dest: 'dist/',
+                        cwd: 'src/',
+                        src: [
+                            'extensibility/node/**',
+                            '!extensibility/node/spec/**',
+                            'filesystem/impls/appshell/node/**',
+                            '!filesystem/impls/appshell/node/spec/**'
+                        ]
+                    },
                     /* extensions and CodeMirror modes */
                     {
                         expand: true,
@@ -327,6 +374,9 @@ module.exports = function (grunt) {
         'usemin',
         'build-config'
     ]);
+
+    // task: build dist/ for browser
+    grunt.registerTask('build-browser', ['build', 'uglify']);
 
     // Default task.
     grunt.registerTask('default', ['test']);
