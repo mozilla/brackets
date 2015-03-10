@@ -1,0 +1,1 @@
+define({GETTING_STARTED:"id/Memulai",WEB_PLATFORM_DOCS_LICENSE:"http://creativecommons.org/licenses/by/3.0/deed.id"});

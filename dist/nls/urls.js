@@ -1,0 +1,1 @@
+define(function(require,exports,module){"use strict";module.exports={root:true,cs:true,da:true,de:true,es:true,"fa-ir":true,fi:true,fr:true,hr:true,id:true,it:true,ja:true,ko:true,nb:true,pl:true,"pt-br":true,"pt-pt":true,ru:true,sv:true,"zh-cn":true,tr:true}});
