@@ -13,7 +13,7 @@ define(function (require, exports, module) {
         Path            = Filer.Path,
         watchers        = {};
 
-    var _changeCallback;            // Callback to notify FileSystem of watcher changes
+    var _changeCallback;            //Callback to notify FileSystem of watcher changes
 
     Filer.fs = function() {
         if(fs) {
@@ -22,6 +22,8 @@ define(function (require, exports, module) {
 
         return new Filer.FileSystem({provider: new Filer.FileSystem.providers.Memory()});
     };
+
+    Filer.blobs = {};
 
     fs = Filer.fs();
 
@@ -33,6 +35,66 @@ define(function (require, exports, module) {
 
     function showSaveDialog(title, initialPath, defaultName, callback) {
         Dialog.showSaveAsDialog.apply(null, arguments);
+    }
+
+    function mimeFromExt(ext) {
+        switch(ext) {
+            case ".html":
+            case ".htmls":
+            case ".htm":
+            case ".htx":
+                return "text/html";
+            case ".ico":
+                return "image/x-icon";
+            case ".bmp":
+                return "image/bmp";
+            case ".css":
+                return "text/css";
+            case ".js":
+                return "text/javascript";
+            case ".svg":
+                return "image/svg+xml";
+            case ".png":
+                return "image/png";
+            case ".ico":
+                return "image/x-icon";
+            case ".jpg":
+            case ".jpe":
+            case ".jpeg":
+                return "image/jpeg";
+            case ".gif":
+                return "image/gif";
+            // Some of these media types can be video or audio, prefer video.
+            case ".mp4":
+                return "video/mp4";
+            case ".mpeg":
+                return "video/mpeg";
+            case ".ogg":
+            case ".ogv":
+                return "video/ogg";
+            case ".mov":
+            case ".qt":
+                return "video/quicktime";
+            case ".webm":
+                return "video/webm";
+            case ".avi":
+            case ".divx":
+                return "video/avi";
+            case ".mpa":
+            case ".mp3":
+                return "audio/mpeg";
+            case ".wav":
+                return "audio/vnd.wave";
+        }
+
+        return "application/octet-stream";
+    }
+
+    function generateBlobURL(filename, data) {
+        var type = mimeFromExt(Path.extname(filename));
+        var blob = new Blob([data], {type: type});
+        
+        Filer.blobs[filename] = URL.createObjectURL(blob);
     }
 
     /**
@@ -48,20 +110,20 @@ define(function (require, exports, module) {
         }
 
         switch (err.code) {
-        case 'EINVAL':
+        case "EINVAL":
             return FileSystemError.INVALID_PARAMS;
-        case 'ENOENT':
+        case "ENOENT":
             return FileSystemError.NOT_FOUND;
-        case 'EROFS':
+        case "EROFS":
             return FileSystemError.NOT_WRITABLE;
-        case 'ENOSPC':
+        case "ENOSPC":
             return FileSystemError.OUT_OF_SPACE;
-        case 'ENOTEMPTY':
-        case 'EEXIST':
+        case "ENOTEMPTY":
+        case "EEXIST":
             return FileSystemError.ALREADY_EXISTS;
-        case 'ENOTDIR':
+        case "ENOTDIR":
             return FileSystemError.INVALID_PARAMS;
-        case 'EBADF':
+        case "EBADF":
             return FileSystemError.NOT_READABLE;
         }
 
@@ -144,7 +206,7 @@ define(function (require, exports, module) {
     }
 
     function mkdir(path, mode, callback) {
-        if(typeof mode === 'function') {
+        if(typeof mode === "function") {
             callback = mode;
         }
 
@@ -158,11 +220,18 @@ define(function (require, exports, module) {
     }
 
     function rename(oldPath, newPath, callback) {
-        fs.rename(oldPath, newPath, _wrap(callback));
+        function updateBlobURL(err) {
+            if(err) {
+                return callback(err);
+            }
+            Filer.blobs[Path.normalize(newPath)] = Filer.blobs[Path.normalize(oldPath)];
+            delete Filer.blobs[Path.normalize(oldPath)];
+        }
+        fs.rename(oldPath, newPath, _wrap(updateBlobURL));
     }
 
     function readFile(path, options, callback) {
-        if(typeof options === 'function') {
+        if(typeof options === "function") {
             callback = options;
         }
         options = options || {};
@@ -205,7 +274,7 @@ define(function (require, exports, module) {
     }
 
     function writeFile(path, data, options, callback) {
-        if(typeof options === 'function') {
+        if(typeof options === "function") {
             callback = options;
         }
         options = options || {};
@@ -218,6 +287,11 @@ define(function (require, exports, module) {
                     callback(_mapError(err));
                     return;
                 }
+
+                //We need to generate a blob to that it'll be available
+                //synchronously later when the live preview server needs it
+                generateBlobURL(Path.normalize(path), data);
+
                 stat(path, function (err, stat) {
                     callback(err, stat, created);
                 });
@@ -261,6 +335,10 @@ define(function (require, exports, module) {
 
     function unlink(path, callback) {
         fs.unlink(path, function(err){
+            //Clear the blob cache for this path
+            //TODO: figure out symlink case and
+            //whether we want to clear the cache
+            delete Filer.blobs[Path.normalize(path)];
             callback(_mapError(err));
         });
     }
