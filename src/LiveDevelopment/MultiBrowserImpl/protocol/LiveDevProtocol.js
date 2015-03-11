@@ -148,28 +148,28 @@ define(function (require, exports, module) {
      * @param {number} clientId
      * @param {string} url
      */
-    function _connect(clientId, url) {
-        // add new connections
-        // TODO: check URL
-        _connections[clientId] = true;
+    // function _connect(clientId, url) {
+    //     // add new connections
+    //     // TODO: check URL
+    //     _connections[clientId] = true;
 
-        exports.trigger("ConnectionConnect", {
-            clientId: clientId,
-            url: url
-        });
-    }
+    //     exports.trigger("ConnectionConnect", {
+    //         clientId: clientId,
+    //         url: url
+    //     });
+    // }
     
     /**
      * @private
      * Handles when a connection is closed.
      * @param {number} clientId
      */
-    function _close(clientId) {
-        delete _connections[clientId];
-        exports.trigger("ConnectionClose", {
-            clientId: clientId
-        });
-    }
+    // function _close(clientId) {
+    //     delete _connections[clientId];
+    //     exports.trigger("ConnectionClose", {
+    //         clientId: clientId
+    //     });
+    // }
     
     
     /**
@@ -184,16 +184,16 @@ define(function (require, exports, module) {
         _transport = transport;
        
         _transport
-            .on("connect.livedev", function (event, msg) {
-                _connect(msg[0], msg[1]);
-            })
+            // .on("connect.livedev", function (event, msg) {
+            //     _connect(msg[0], msg[1]);
+            // })
             .on("message.livedev", function (event, msg) {
                 _receive(msg[0], msg[1]);
-            })
-            .on("close.livedev", function (event, msg) {
-                _close(msg[0]);
             });
-        _transport.start();
+            // .on("close.livedev", function (event, msg) {
+            //     _close(msg[0]);
+            // });
+        // _transport.start();
     }
     
     
