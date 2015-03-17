@@ -1,0 +1,1 @@
+define({GETTING_STARTED:"da/Kom godt i gang"});

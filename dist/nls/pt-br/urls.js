@@ -1,0 +1,1 @@
+define({GETTING_STARTED:"pt-br/Primeiros Passos"});

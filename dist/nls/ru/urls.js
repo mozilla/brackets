@@ -1,0 +1,1 @@
+define({GETTING_STARTED:"ru/Getting Started",ADOBE_THIRD_PARTY:"http://www.adobe.com/go/thirdparty_ru/",WEB_PLATFORM_DOCS_LICENSE:"http://creativecommons.org/licenses/by/3.0/deed.ru"});

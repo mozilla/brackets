@@ -1,0 +1,1 @@
+define({GETTING_STARTED:"sv/Kom igang",ADOBE_THIRD_PARTY:"http://www.adobe.com/go/thirdparty_sv/",WEB_PLATFORM_DOCS_LICENSE:"http://creativecommons.org/licenses/by/3.0/deed.sv"});

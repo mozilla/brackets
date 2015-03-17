@@ -1,0 +1,1 @@
+module.exports={mixedContent:typeof window!=="undefined"?window.location.protocol==="https:":false};
