@@ -132,7 +132,7 @@
         color: @dark-bc-text;
     }
 
-    font-family: "SourceCodePro-Medium", "ＭＳ ゴシック", "MS Gothic", monospace;
+    font-family: @sourceFontFamily;
 }
 
 .code-font-win() {
@@ -251,3 +251,4 @@
 
 /* Variables and Mixins for non-code UI elements that can be styled */
 
+@sourceFontFamily: "Menlo Regular", Consolas, Inconsolata, "Vera Sans", "Lucida Console", Courier, fixed;
