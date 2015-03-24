@@ -7,7 +7,8 @@ define(function (require, exports, module) {
     var FileSystemError = require("filesystem/FileSystemError"),
         FileSystemStats = require("filesystem/FileSystemStats"),
         Filer           = require("thirdparty/filer/dist/filer"),
-        Dialog          = require("thirdparty/filer-dialogs/filer-dialogs");
+        Dialog          = require("thirdparty/filer-dialogs/filer-dialogs"),
+        BlobUtils       = require("filesystem/impls/filer/BlobUtils");
 
     var fs,
         Path            = Filer.Path,
@@ -158,7 +159,26 @@ define(function (require, exports, module) {
     }
 
     function rename(oldPath, newPath, callback) {
-        fs.rename(oldPath, newPath, _wrap(callback));
+        function updateBlobURL(err) {
+            if(err) {
+                return callback(err);
+            }
+
+            // If this was a rename on a file path, update the Blob cache too
+            stat(newPath, function(err, stat) {
+                if(err) {
+                    return callback(err);
+                }
+
+                if(stat.isFile) {
+                    BlobUtils.rename(oldPath, newPath);
+                }
+
+                callback();
+            });
+        }
+
+        fs.rename(oldPath, newPath, _wrap(updateBlobURL));
     }
 
     function readFile(path, options, callback) {
@@ -218,6 +238,10 @@ define(function (require, exports, module) {
                     callback(_mapError(err));
                     return;
                 }
+
+                // Add a BLOB cache record for this filename and data
+                BlobUtils.cache(path, data);
+
                 stat(path, function (err, stat) {
                     callback(err, stat, created);
                 });
@@ -261,6 +285,9 @@ define(function (require, exports, module) {
 
     function unlink(path, callback) {
         fs.unlink(path, function(err){
+            // TODO: deal with the symlink case (i.e., only remove cache
+            // item if file is really going away).
+            BlobUtils.remove(path);
             callback(_mapError(err));
         });
     }
