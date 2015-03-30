@@ -28,7 +28,11 @@
 define(function (require, exports, module) {
     "use strict";
     
-    var FileSystemEntry = require("filesystem/FileSystemEntry");
+    var FileSystemEntry = require("filesystem/FileSystemEntry"),
+    Content         = require("extensions/default/brackets-browser-livedev/nohost/src/content"),
+    Filer           = require("filesystem/impls/filer/BracketsFiler"),
+    defaultHTML     = require("text!filesystem/impls/lib/default.html"),
+    Path            = Filer.Path;
     
     
     /*
@@ -144,6 +148,10 @@ define(function (require, exports, module) {
             }
             
             callback = callback || function () {};
+        }
+
+        if(Content.isHTML(Path.extname(this._path)) && data === "") {
+            data = defaultHTML;
         }
         
         // Request a consistency check if the write is not blind

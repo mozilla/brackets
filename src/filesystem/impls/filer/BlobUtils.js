@@ -68,6 +68,7 @@ define(function (require, exports, module) {
         // We expect this to exist, if it doesn't, warn.
         if(!url) {
             Log.error("no blob URL for `" + filename + "`.");
+            return filename;
         }
 
         return url;
@@ -80,6 +81,7 @@ define(function (require, exports, module) {
         // We expect this to exist, if it doesn't, warn.
         if(!filename) {
             Log.error("no path for `" + blobUrl + "`.");
+            return blobUrl;
         }
 
         return filename;
