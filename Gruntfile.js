@@ -146,6 +146,8 @@ module.exports = function (grunt) {
                             '!thirdparty/CodeMirror2/mode/**/*.html',
                             '!thirdparty/CodeMirror2/**/*test.js',
                             'thirdparty/CodeMirror2/theme/{,*/}*',
+                            'thirdparty/filer-dialogs/bower_components/font-awesome/css/font-awesome.min.css ',
+                            'thirdparty/filer-dialogs/style/style.css',
                             'thirdparty/i18n/*.js',
                             'thirdparty/text/*.js'
                         ]

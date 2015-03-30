@@ -51,7 +51,7 @@
         "grunt-cleanempty": "1.0.3"
     },
     "scripts": {
-        "postinstall": "grunt install",
+        "postinstall": "cd src/thirdparty/filer-dialogs && bower install && cd ../.. && grunt install",
         "test": "grunt cla-check-pull test && grunt build-browser-compressed"
     },
     "licenses": [
