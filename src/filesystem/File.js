@@ -31,7 +31,7 @@ define(function (require, exports, module) {
     var FileSystemEntry = require("filesystem/FileSystemEntry"),
         Content         = require("extensions/default/brackets-browser-livedev/nohost/src/content"),
         Path            = require("filesystem/impls/filer/BracketsFiler").Path,
-        defaultHTML     = require("text!filesystem/impls/lib/default.html");
+        defaultHTML     = require("text!extensions/default/brackets-browser-livedev/lib/default.html");
     
     
     /*
