@@ -16,6 +16,8 @@ define(function (require, exports, module) {
         Path            = Filer.Path,
         watchers        = {};
 
+    var LiveDevMultiBrowser = brackets.getModule("LiveDevelopment/LiveDevMultiBrowser");
+
     var _changeCallback;            // Callback to notify FileSystem of watcher changes
 
     function showOpenDialog(allowMultipleSelection, chooseDirectories, title, initialPath, fileTypes, callback) {
@@ -233,6 +235,8 @@ define(function (require, exports, module) {
                 // only if it's not an HTML file
                 if(!Content.isHTML(Path.extname(path))) {
                     Handlers.handleFile(path, data);
+                    // Reload the live preview when CSS is cached
+                    LiveDevMultiBrowser.reload();
                 }
 
                 stat(path, function (err, stat) {
