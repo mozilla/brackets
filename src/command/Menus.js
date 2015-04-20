@@ -1072,7 +1072,7 @@ define(function (require, exports, module) {
             posTop = Math.max(0, posTop - clip.bottom);
         }
         posTop -= 30;   // shift top for hidden parent element
-        posLeft += 5;
+        posLeft += 2;
 
         
         if (clip.right > 0) {
