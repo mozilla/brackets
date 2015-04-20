@@ -1072,6 +1072,14 @@ define(function (require, exports, module) {
             posTop = Math.max(0, posTop - clip.bottom);
         }
         posTop -= 30;   // shift top for hidden parent element
+        /*
+         * Original value: 5
+         * Temporary fix for right click issue #163 within brackets
+         * This spawns the context menu 3 values higher than normal thus
+         * placing the context menu right underneath our mouse thus
+         * stopping the context menu from disappearing because it recognizes
+         * that we want to interact with the context menu
+         */
         posLeft += 2;
 
         
