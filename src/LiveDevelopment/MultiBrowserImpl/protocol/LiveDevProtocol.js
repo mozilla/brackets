@@ -49,7 +49,8 @@ define(function (require, exports, module) {
     // Text of the script we'll inject into the browser that handles protocol requests.
     var LiveDevProtocolRemote = require("text!LiveDevelopment/MultiBrowserImpl/protocol/remote/LiveDevProtocolRemote.js"),
         DocumentObserver = require("text!LiveDevelopment/MultiBrowserImpl/protocol/remote/DocumentObserver.js"),
-        RemoteFunctions = require("text!LiveDevelopment/Agents/RemoteFunctions.js");
+        RemoteFunctions = require("text!LiveDevelopment/Agents/RemoteFunctions.js"),
+        XHRShim = require("text!LiveDevelopment/Agents/XHRShim.js");
     
     /**
      * @private
@@ -223,7 +224,8 @@ define(function (require, exports, module) {
         var remoteFunctionsScript = getRemoteFunctionsScript() || "";
         return transportScript +
             "<script>\n" + LiveDevProtocolRemote + "</script>\n" +
-            remoteFunctionsScript;
+            remoteFunctionsScript +
+            "<script>\n" + XHRShim + "</script>";
     }
     
     /**
