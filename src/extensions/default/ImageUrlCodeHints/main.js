@@ -197,7 +197,7 @@ define(function (require, exports, module) {
 
         // add file/folder entries
         unfiltered.forEach(function (item) {
-            if(LanguageManager.getLanguageForPath(item).getId() === "image") { 
+            if(LanguageManager.getLanguageForPath(item).getId() === "image") {
                 result.push(item);
             }
         });
@@ -208,7 +208,7 @@ define(function (require, exports, module) {
         // New string: "Take a selfie"
         // Command: Commands.FILE_OPEN
 
-        
+
         return result;
     };
 
@@ -296,7 +296,6 @@ define(function (require, exports, module) {
         if (this.info.name !== "background") {
             return false;
         }
-// XXXsedge: Confirm that this picks up `background: url(` before triggering hinting
 
         var i;
         var val = "";
@@ -309,7 +308,7 @@ define(function (require, exports, module) {
             }
         }
 
-        // starts with "url(" ?
+        // Bail if it doesn't begin with `url(`
         if (!val.match(/^\s*url\(/i)) {
             return false;
         }
@@ -343,6 +342,11 @@ define(function (require, exports, module) {
         tagInfo = HTMLUtils.getTagInfo(editor, editor.getCursorPos());
         query = null;
         tokenType = tagInfo.position.tokenType;
+
+        // Bail out if this isn't an image tag
+        if (tagInfo.tagName !== "img") {
+            return false;
+        }
 
         if (tokenType === HTMLUtils.ATTR_VALUE) {
 
