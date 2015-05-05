@@ -36,6 +36,7 @@ define(function (require, exports, module) {
         HTMLUtils       = brackets.getModule("language/HTMLUtils"),
         ProjectManager  = brackets.getModule("project/ProjectManager"),
         StringUtils     = brackets.getModule("utils/StringUtils"),
+        LanguageManager = brackets.getModule("language/LanguageManager"),
 
         Data            = require("text!data.json"),
 
@@ -196,7 +197,9 @@ define(function (require, exports, module) {
 
         // add file/folder entries
         unfiltered.forEach(function (item) {
-            result.push(item);
+            if(LanguageManager.getLanguageForPath(item).getId() === "image") { 
+                result.push(item);
+            }
         });
 
         // TODO: filter by desired file type based on tag, type attr, etc.
@@ -205,6 +208,7 @@ define(function (require, exports, module) {
         // New string: "Take a selfie"
         // Command: Commands.FILE_OPEN
 
+        
         return result;
     };
 
@@ -293,8 +297,6 @@ define(function (require, exports, module) {
             return false;
         }
 // XXXsedge: Confirm that this picks up `background: url(` before triggering hinting
-
-        if (this.info.)
 
         var i;
         var val = "";
