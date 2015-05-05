@@ -45,6 +45,10 @@ define(function (require, exports, module) {
         htmlAttrs,
         styleModes      = ["css", "text/x-less", "text/x-scss"];
 
+
+    var selfieLabel = "Take a Selfie...";
+    var selfieFileName;
+
     /**
      * @constructor
      */
@@ -197,18 +201,29 @@ define(function (require, exports, module) {
 
         // add file/folder entries
         unfiltered.forEach(function (item) {
-            if(LanguageManager.getLanguageForPath(item).getId() === "image") { 
+            if(LanguageManager.getLanguageForPath(item).getId() === "image") {
                 result.push(item);
             }
         });
 
-        // TODO: filter by desired file type based on tag, type attr, etc.
+        var highestNumber = 0;
+        result.forEach(function (item){
+            item = item.split("/");
+            item = item[item.length-1];
+            if(item.indexOf("_selfie") !== -1 && item.indexOf("_selfie") === 0) {
+                //Removes extension from filename
+                item = item.split(".")[0];
+                if(item.substr(7) > highestNumber) {
+                    highestNumber = item.substr(7);
+                }
+            }
+        });
+        selfieFileName = "_selfie" + (highestNumber+1) + ".png";
 
-        // TODO: add list item to bottom of list to display selfie interface
-        // New string: "Take a selfie"
-        // Command: Commands.FILE_OPEN
+        result.sort();
 
-        
+        // Adding the label to the bottom of results which allows user to take a selfie
+        result.push(selfieLabel);
         return result;
     };
 
@@ -296,7 +311,6 @@ define(function (require, exports, module) {
         if (this.info.name !== "background") {
             return false;
         }
-// XXXsedge: Confirm that this picks up `background: url(` before triggering hinting
 
         var i;
         var val = "";
@@ -309,7 +323,7 @@ define(function (require, exports, module) {
             }
         }
 
-        // starts with "url(" ?
+        // Bail if it doesn't begin with `url(`
         if (!val.match(/^\s*url\(/i)) {
             return false;
         }
@@ -343,6 +357,11 @@ define(function (require, exports, module) {
         tagInfo = HTMLUtils.getTagInfo(editor, editor.getCursorPos());
         query = null;
         tokenType = tagInfo.position.tokenType;
+
+        // Bail out if this isn't an image tag
+        if (tagInfo.tagName !== "img") {
+            return false;
+        }
 
         if (tokenType === HTMLUtils.ATTR_VALUE) {
 
@@ -532,18 +551,31 @@ define(function (require, exports, module) {
      * additional explicit hint request.
      */
     ImageUrlCodeHints.prototype.insertHint = function (completion) {
-        var mode = this.editor.getModeForSelection();
+        var that = this;
 
-        // Encode the string just prior to inserting the hint into the editor
-        completion = encodeURI(completion);
+        function insert(text) {
+            var mode = that.editor.getModeForSelection();
 
-        if (mode === "html") {
-            return this.insertHtmlHint(completion);
-        } else if (styleModes.indexOf(mode) > -1) {
-            return this.insertCssHint(completion);
+            // Encode the string just prior to inserting the hint into the editor
+            text = encodeURI(text);
+
+            if (mode === "html") {
+                return that.insertHtmlHint(text);
+            } else if (styleModes.indexOf(mode) > -1) {
+                return that.insertCssHint(text);
+            }
+
+            return false;
         }
 
-        return false;
+        if (completion === selfieLabel) {
+            camera.show("/" + selfieFileName)
+                .success(function(selfieFilePath){
+                    insert(selfieFilePath);
+                });
+            return false;
+        }
+        return insert(completion);
     };
 
     /**
