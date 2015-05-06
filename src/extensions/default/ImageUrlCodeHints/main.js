@@ -45,6 +45,9 @@ define(function (require, exports, module) {
         htmlAttrs,
         styleModes      = ["css", "text/x-less", "text/x-scss"];
 
+
+    var selfieValue = "selfie";
+
     /**
      * @constructor
      */
@@ -536,18 +539,40 @@ define(function (require, exports, module) {
      * additional explicit hint request.
      */
     ImageUrlCodeHints.prototype.insertHint = function (completion) {
-        var mode = this.editor.getModeForSelection();
+        var that = this;
 
-        // Encode the string just prior to inserting the hint into the editor
-        completion = encodeURI(completion);
+        function insert(completion) {
+            var mode = that.editor.getModeForSelection();
 
-        if (mode === "html") {
-            return this.insertHtmlHint(completion);
-        } else if (styleModes.indexOf(mode) > -1) {
-            return this.insertCssHint(completion);
+            // Encode the string just prior to inserting the hint into the editor
+            completion = encodeURI(completion);
+
+            if (mode === "html") {
+                return that.insertHtmlHint(completion);
+            } else if (styleModes.indexOf(mode) > -1) {
+                return that.insertCssHint(completion);
+            }
+
+            return false;
         }
 
-        return false;
+        // XXXsedge - `selfieValue` should map to the completion value of that
+        //            hint. For now it's global to this file.
+        if (completion === selfieValue) {
+            // Show the selfie modal. We should use a promise object
+            // here to listen for the filename to insert into the code.
+
+            // Some pseudocode:
+            this.showWebcam()
+                .success(function(fileName){
+                    return that.insert(fileName);
+                })
+                .failure(function() {
+                    return false;
+                });
+        }
+
+
     };
 
     /**
