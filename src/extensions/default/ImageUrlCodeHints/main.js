@@ -37,6 +37,9 @@ define(function (require, exports, module) {
         ProjectManager  = brackets.getModule("project/ProjectManager"),
         StringUtils     = brackets.getModule("utils/StringUtils"),
         LanguageManager = brackets.getModule("language/LanguageManager"),
+        ExtensionUtils  = brackets.getModule("utils/ExtensionUtils"),
+        EditorManager   = brackets.getModule("editor/EditorManager"),
+        Camera          = require("camera"),
 
         Data            = require("text!data.json"),
 
@@ -44,6 +47,8 @@ define(function (require, exports, module) {
         data,
         htmlAttrs,
         styleModes      = ["css", "text/x-less", "text/x-scss"];
+
+    ExtensionUtils.loadStyleSheet(module, "style.less");
 
 
     var selfieLabel = "Take a Selfie...";
@@ -210,7 +215,7 @@ define(function (require, exports, module) {
         result.forEach(function (item){
             item = item.split("/");
             item = item[item.length-1];
-            if(item.indexOf("_selfie") !== -1 && item.indexOf("_selfie") === 0) {
+            if(item.indexOf("selfie") !== -1 && item.indexOf("selfie") === 0) {
                 //Removes extension from filename
                 item = item.split(".")[0];
                 if(item.substr(7) > highestNumber) {
@@ -218,7 +223,7 @@ define(function (require, exports, module) {
                 }
             }
         });
-        selfieFileName = "_selfie" + (highestNumber+1) + ".png";
+        selfieFileName = "selfie" + (highestNumber+1) + ".png";
 
         result.sort();
 
@@ -569,9 +574,22 @@ define(function (require, exports, module) {
         }
 
         if (completion === selfieLabel) {
-            camera.show("/" + selfieFileName)
-                .success(function(selfieFilePath){
-                    insert(selfieFilePath);
+            Camera.show("/" + selfieFileName)
+                .done(function(selfieFilePath){
+                    if(selfieFilePath) {
+                        insert(selfieFilePath);
+                    }
+                    EditorManager.getActiveEditor().focus();
+                })
+                .fail(function(err) {
+                    EditorManager.getActiveEditor().focus();
+                    console.error("[Selfie error] ", err);
+                })
+                .always(function() {
+                    var dialog = Camera.getDialog();
+                    if(dialog) {
+                        dialog.close();
+                    }
                 });
             return false;
         }
