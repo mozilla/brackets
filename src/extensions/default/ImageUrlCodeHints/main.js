@@ -46,7 +46,8 @@ define(function (require, exports, module) {
         styleModes      = ["css", "text/x-less", "text/x-scss"];
 
 
-    var selfieValue = "selfie";
+    var selfieLabel = "Take a Selfie...";
+    var selfieFileName;
 
     /**
      * @constructor
@@ -205,13 +206,24 @@ define(function (require, exports, module) {
             }
         });
 
-        // TODO: filter by desired file type based on tag, type attr, etc.
+        var highestNumber = 0;
+        result.forEach(function (item){
+            item = item.split("/");
+            item = item[item.length-1];
+            if(item.indexOf("_selfie") !== -1 && item.indexOf("_selfie") === 0) {
+                //Removes extension from filename
+                item = item.split(".")[0];
+                if(item.substr(7) > highestNumber) {
+                    highestNumber = item.substr(7);
+                }
+            }
+        });
+        selfieFileName = "_selfie" + (highestNumber+1) + ".png";
 
-        // TODO: add list item to bottom of list to display selfie interface
-        // New string: "Take a selfie"
-        // Command: Commands.FILE_OPEN
+        result.sort();
 
-
+        // Adding the label to the bottom of results which allows user to take a selfie
+        result.push(selfieLabel);
         return result;
     };
 
@@ -541,38 +553,29 @@ define(function (require, exports, module) {
     ImageUrlCodeHints.prototype.insertHint = function (completion) {
         var that = this;
 
-        function insert(completion) {
+        function insert(text) {
             var mode = that.editor.getModeForSelection();
 
             // Encode the string just prior to inserting the hint into the editor
-            completion = encodeURI(completion);
+            text = encodeURI(text);
 
             if (mode === "html") {
-                return that.insertHtmlHint(completion);
+                return that.insertHtmlHint(text);
             } else if (styleModes.indexOf(mode) > -1) {
-                return that.insertCssHint(completion);
+                return that.insertCssHint(text);
             }
 
             return false;
         }
 
-        // XXXsedge - `selfieValue` should map to the completion value of that
-        //            hint. For now it's global to this file.
-        if (completion === selfieValue) {
-            // Show the selfie modal. We should use a promise object
-            // here to listen for the filename to insert into the code.
-
-            // Some pseudocode:
-            this.showWebcam()
-                .success(function(fileName){
-                    return that.insert(fileName);
-                })
-                .failure(function() {
-                    return false;
+        if (completion === selfieLabel) {
+            camera.show("/" + selfieFileName)
+                .success(function(selfieFilePath){
+                    insert(selfieFilePath);
                 });
+            return false;
         }
-
-
+        return insert(completion);
     };
 
     /**
