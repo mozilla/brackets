@@ -223,12 +223,15 @@ define(function (require, exports, module) {
                 }
             }
         });
-        selfieFileName = "selfie" + (highestNumber+1) + ".png";
 
         result.sort();
 
         // Adding the label to the bottom of results which allows user to take a selfie
-        result.push(selfieLabel);
+        if(Camera.isSupported) {
+            result.push(selfieLabel);
+            selfieFileName = "selfie" + (highestNumber+1) + ".png";
+        }
+
         return result;
     };
 
