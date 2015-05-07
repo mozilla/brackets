@@ -21,6 +21,7 @@ define(function (require, exports, module) {
     var streaming = false;
     var height;
     var width = 320;
+    var vendorURL = window.URL || window.webkitURL;
     var navigator = window.navigator;
     navigator.getMedia =   (navigator.getUserMedia ||
                             navigator.webkitGetUserMedia ||
@@ -46,6 +47,12 @@ define(function (require, exports, module) {
         use.style.display = "none";
         video.style.display = "initial";
         snap.style.display = "initial";
+    }
+
+    function cleanup() {
+        if(video) {
+            video.pause();
+        }
     }
 
     function streamVideo() {
@@ -83,14 +90,17 @@ define(function (require, exports, module) {
     function playVideo(stream) {
         initWidget();
 
-        if (navigator.mozGetUserMedia) {
-            video.mozSrcObject = stream;
-        } else {
-            var vendorURL = window.URL || window.webkitURL;
-            video.src = vendorURL.createObjectURL(stream);
-        }
+        video.src = vendorURL.createObjectURL(stream);
 
         video.addEventListener("canplay", streamVideo, false);
+        video.addEventListener("pause", function() {
+            vendorURL.revokeObjectURL(video.src);
+
+            if(stream) {
+                stream.stop();
+                stream = null;
+            }
+        });
         snap.addEventListener("click", function() {
             snapPhoto(deferred, filePath);
         });
