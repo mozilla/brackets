@@ -49,12 +49,6 @@ define(function (require, exports, module) {
         snap.style.display = "initial";
     }
 
-    function cleanup() {
-        if(video) {
-            video.pause();
-        }
-    }
-
     function streamVideo() {
         if (streaming) {
             return;
@@ -99,6 +93,7 @@ define(function (require, exports, module) {
             if(stream) {
                 stream.stop();
                 stream = null;
+                streaming = false;
             }
         });
         snap.addEventListener("click", function() {
