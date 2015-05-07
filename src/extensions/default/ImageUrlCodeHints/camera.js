@@ -174,4 +174,5 @@ define(function (require, exports, module) {
 
     exports.show = show;
     exports.getDialog = getSelfieDialog;
+    exports.isSupported = !!navigator.getMedia;
 });
