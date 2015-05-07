@@ -216,10 +216,12 @@ define(function (require, exports, module) {
             item = item.split("/");
             item = item[item.length-1];
             if(item.indexOf("selfie") !== -1 && item.indexOf("selfie") === 0) {
-                //Removes extension from filename
+                // Removes extension from filename
                 item = item.split(".")[0];
-                if(item.substr(7) > highestNumber) {
-                    highestNumber = item.substr(7);
+
+                var currentNumber = Number(item.substr(6));
+                if(currentNumber > highestNumber) {
+                    highestNumber = currentNumber;
                 }
             }
         });
@@ -229,7 +231,7 @@ define(function (require, exports, module) {
         // Adding the label to the bottom of results which allows user to take a selfie
         if(Camera.isSupported) {
             result.push(selfieLabel);
-            selfieFileName = "selfie" + (highestNumber+1) + ".png";
+            selfieFileName = "selfie" + (highestNumber + 1) + ".png";
         }
 
         return result;
