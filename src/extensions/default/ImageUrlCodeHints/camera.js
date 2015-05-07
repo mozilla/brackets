@@ -13,7 +13,6 @@ define(function (require, exports, module) {
     var _selfieDialog;
     var video;
     var photo;
-    var retake;
     var snap;
     var canvas;
     var use;
@@ -57,14 +56,6 @@ define(function (require, exports, module) {
         return bytes.buffer;
     }
 
-    function clearPhoto() {
-        photo.style.display = "none";
-        retake.style.display = "none";
-        use.style.display = "none";
-        video.style.display = "initial";
-        snap.style.display = "initial";
-    }
-
     function streamVideo() {
         if (streaming) {
             return;
@@ -91,10 +82,10 @@ define(function (require, exports, module) {
         selfieContainer.prepend(selfieWidgetHTML);
         video = document.getElementById("selfie-video");
         photo = document.getElementById("selfie-photo");
-        retake = document.getElementById("selfie-retake");
         snap = document.getElementById("selfie-snap");
         canvas = document.getElementById("selfie-canvas");
         use = document.getElementById("selfie-use");
+        use.style.display = "initial";
     }
 
     function playVideo(stream) {
@@ -134,7 +125,6 @@ define(function (require, exports, module) {
         }
 
         if(!width || !height) {
-            clearPhoto();
             return deferred.reject();
         }
 
@@ -145,13 +135,6 @@ define(function (require, exports, module) {
         // TODO: Revoke data url on close
         data = canvas.toDataURL("image/png");
         photo.setAttribute("src", data);
-        photo.style.display = "initial";
-        retake.style.display = "initial";
-        use.style.display = "initial";
-        video.style.display = "none";
-        snap.style.display = "none";
-        retake.removeEventListener("click", clearPhoto);
-        retake.addEventListener("click", clearPhoto);
         use.removeEventListener("click", savePhoto);
         use.addEventListener("click", savePhoto);
     }
@@ -172,7 +155,7 @@ define(function (require, exports, module) {
         deferred = new $.Deferred();
         filePath = path;
         var obj = {
-            buttons: [{ className: DIALOG_BTN_CLASS_LEFT, id: DIALOG_BTN_CANCEL, text: "Cancel" },{ className: DIALOG_BTN_CLASS_PRIMARY, id: DIALOG_BTN_OK, text: "Select Selfie" }]
+            buttons: [{ className: DIALOG_BTN_CLASS_LEFT, dataId: DIALOG_BTN_CANCEL, text: "Cancel" },{ className: DIALOG_BTN_CLASS_PRIMARY, dataId: DIALOG_BTN_OK, text: "Select Selfie", id: "selfie-use" }]
         }
         selfieDialogHTML = Mustache.render(selfieDialogHTML, obj);
 
