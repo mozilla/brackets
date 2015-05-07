@@ -6,6 +6,7 @@ define(function (require, exports, module) {
 
     var Dialog = brackets.getModule("widgets/Dialogs");
     var Buffer = brackets.getModule("filesystem/impls/filer/BracketsFiler").Buffer;
+    var Strings = brackets.getModule("strings");
     var fs = brackets.getModule("fileSystemImpl");
     var selfieDialogHTML = require("text!dialog.html");
     var selfieWidgetHTML = require("text!selfieWidget.html");
@@ -27,6 +28,21 @@ define(function (require, exports, module) {
                             navigator.webkitGetUserMedia ||
                             navigator.mozGetUserMedia ||
                             navigator.msGetUserMedia);
+
+
+    /**
+     * Dialog Buttons IDs
+     * @const {string}
+     */
+    var DIALOG_BTN_CANCEL = "cancel";
+    var DIALOG_BTN_OK = "ok";
+    
+    /**
+     * Dialog Buttons Class Names
+     * @const {string}
+     */
+    var DIALOG_BTN_CLASS_PRIMARY = "primary";
+    var DIALOG_BTN_CLASS_LEFT = "left";    
 
     // Based on http://stackoverflow.com/questions/21797299/convert-base64-string-to-arraybuffer
     function base64ToBuffer(base64) {
@@ -96,7 +112,8 @@ define(function (require, exports, module) {
                 streaming = false;
             }
         });
-        snap.addEventListener("click", function() {
+        snap.addEventListener("click", function(ev) {
+            ev.preventDefault();
             snapPhoto(deferred, filePath);
         });
 
@@ -154,6 +171,10 @@ define(function (require, exports, module) {
     function show(path) {
         deferred = new $.Deferred();
         filePath = path;
+        var obj = {
+            buttons: [{ className: DIALOG_BTN_CLASS_LEFT, id: DIALOG_BTN_CANCEL, text: "Cancel" },{ className: DIALOG_BTN_CLASS_PRIMARY, id: DIALOG_BTN_OK, text: "Select Selfie" }]
+        }
+        selfieDialogHTML = Mustache.render(selfieDialogHTML, obj);
 
         _selfieDialog = Dialog.showModalDialogUsingTemplate(selfieDialogHTML);
 
