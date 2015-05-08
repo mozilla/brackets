@@ -3,7 +3,7 @@
 }
 
 #selfie-widget {
-  min-width: 560px;
+  min-width: 580px;
   overflow: hidden;
 }
 
@@ -11,13 +11,18 @@
   font-weight: bold;
 }
 
+.modal-body {
+  max-height: 290px;
+  overflow-y: hidden;
+}
+
 /* Button to take photos with */
 #selfie-snap {
 	width: 10%;
-	height:0;
+	height: 0;
 	padding-bottom: 10%;
   border-radius: 50%;
-	border:5px solid #ea0000;
+	border: 5px solid #ea0000;
   overflow:hidden;
   margin: 0 auto;
     
@@ -45,29 +50,29 @@
 #icon {
   background-image: url("./glyphicons-12-camera.png");
   background-repeat: no-repeat;
-  width:26px;
-  height:20px;
+  width: 26px;
+  height: 20px;
   margin-left: 3px;
   margin-top: 5px;
 }
 
 /* Container for the camera */
 #selfie-liveView {
-  display:inline-block;
-  float:left;
+  display: inline-block;
+  float: left;
 }
 
 /* Right-hand polaroid view */ 
 #selfie-gallery {
-  display:inline-block;
-  float:left;
-  margin-left:10px;
+  display: inline-block;
+  float: left;
+  margin-left: 10px;
 }
 
 .polaroid {
   position: relative;
-  width: 220px;
-  display:inline-block;
+  display: inline-block;
+  width: 224px;
 }
  
 .polaroid img {
@@ -76,17 +81,9 @@
   -webkit-box-shadow: 3px 3px 3px #777;
      -moz-box-shadow: 3px 3px 3px #777;
           box-shadow: 3px 3px 3px #777;
-    width:220px;
-    height:180px;
-    display:inline-block;
-}
- 
-.polaroid p {
-  position: absolute;
-  text-align: center;
-  width: 100%;
-  bottom: 0px;
-  font: 400 18px/1 'Kaushan Script', cursive;
-  color: #888;
+    width: 224px;
+    height: 168px;
+    display: inline-block;
+    background-image: url("./selfiePreview.png");
 }
 
