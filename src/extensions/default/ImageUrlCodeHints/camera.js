@@ -14,6 +14,7 @@ define(function (require, exports, module) {
     var video;
     var photo;
     var snap;
+    var snapAudio;
     var canvas;
     var use;
     var deferred;
@@ -35,13 +36,13 @@ define(function (require, exports, module) {
      */
     var DIALOG_BTN_CANCEL = "cancel";
     var DIALOG_BTN_OK = "ok";
-    
+
     /**
      * Dialog Buttons Class Names
      * @const {string}
      */
     var DIALOG_BTN_CLASS_PRIMARY = "primary";
-    var DIALOG_BTN_CLASS_LEFT = "left";    
+    var DIALOG_BTN_CLASS_LEFT = "left";
 
     // Based on http://stackoverflow.com/questions/21797299/convert-base64-string-to-arraybuffer
     function base64ToBuffer(base64) {
@@ -79,6 +80,7 @@ define(function (require, exports, module) {
     function initWidget() {
         var selfieContainer = $("#selfie-container");
         $("#selfie-allow-access").remove();
+        snapAudio = new Audio("./extensions/default/ImageUrlCodeHints/camera-shutter-click-08.mp3");
         selfieContainer.prepend(selfieWidgetHTML);
         video = document.getElementById("selfie-video");
         photo = document.getElementById("selfie-photo");
@@ -105,6 +107,16 @@ define(function (require, exports, module) {
         });
         snap.addEventListener("click", function(ev) {
             ev.preventDefault();
+            use.removeAttribute("disabled");
+
+            $("#selfie-video-bg").addClass("on");
+
+
+            snapAudio.play();
+            setTimeout(function() {
+                $("#selfie-video-bg").removeClass("on");
+            }, 105);
+
             snapPhoto(deferred, filePath);
         });
 
@@ -160,6 +172,8 @@ define(function (require, exports, module) {
         selfieDialogHTML = Mustache.render(selfieDialogHTML, obj);
 
         _selfieDialog = Dialog.showModalDialogUsingTemplate(selfieDialogHTML);
+
+        $("#selfie-use").attr("disabled", true);
 
         $("#selfie-close").on("click", function() {
             _selfieDialog.close();
