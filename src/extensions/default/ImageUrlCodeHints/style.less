@@ -3,12 +3,17 @@
 }
 
 #selfie-widget {
-  min-width: 560px;
+  min-width: 580px;
   overflow: hidden;
 }
 
 .emphasis {
   font-weight: bold;
+}
+
+.modal-body {
+  max-height: 290px;
+  overflow-y:hidden;
 }
 
 /* Button to take photos with */
@@ -66,8 +71,8 @@
 
 .polaroid {
   position: relative;
-  width: 220px;
   display:inline-block;
+  width: 224px;
 }
  
 .polaroid img {
@@ -76,17 +81,9 @@
   -webkit-box-shadow: 3px 3px 3px #777;
      -moz-box-shadow: 3px 3px 3px #777;
           box-shadow: 3px 3px 3px #777;
-    width:220px;
-    height:180px;
+    width:224px;
+    height:168px;
     display:inline-block;
-}
- 
-.polaroid p {
-  position: absolute;
-  text-align: center;
-  width: 100%;
-  bottom: 0px;
-  font: 400 18px/1 'Kaushan Script', cursive;
-  color: #888;
+    background-image: url("./selfiePreview.png");
 }
 
