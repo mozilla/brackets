@@ -2,7 +2,16 @@
     display: none;
 }
 
+#selfie-widget {
+  min-width: 560px;
+  overflow: hidden;
+}
 
+.emphasis {
+  font-weight: bold;
+}
+
+/* Button to take photos with */
 #selfie-snap {
 	width: 10%;
 	height:0;
@@ -24,9 +33,6 @@
 	background: #ea0000;
 }
 
-#selfie-photo {
-}
-
 #selfie-snap:active {
 	background: white;
 }
@@ -36,24 +42,26 @@
     height: auto;
 }
 
+#icon {
+  background-image: url("./glyphicons-12-camera.png");
+  background-repeat: no-repeat;
+  width:26px;
+  height:20px;
+  margin-left: 3px;
+  margin-top: 5px;
+}
+
+/* Container for the camera */
 #selfie-liveView {
   display:inline-block;
   float:left;
 }
 
+/* Right-hand polaroid view */ 
 #selfie-gallery {
   display:inline-block;
   float:left;
   margin-left:10px;
-}
-
-#icon {
-	background-image: url("./glyphicons-12-camera.png");
-	background-repeat: no-repeat;
-	width:26px;
-	height:20px;
-	margin-left: 3px;
-	margin-top: 5px;
 }
 
 .polaroid {
@@ -80,3 +88,4 @@
   font: 400 18px/1 'Kaushan Script', cursive;
   color: #888;
 }
+
