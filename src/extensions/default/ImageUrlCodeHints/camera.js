@@ -35,13 +35,13 @@ define(function (require, exports, module) {
      */
     var DIALOG_BTN_CANCEL = "cancel";
     var DIALOG_BTN_OK = "ok";
-    
+
     /**
      * Dialog Buttons Class Names
      * @const {string}
      */
     var DIALOG_BTN_CLASS_PRIMARY = "primary";
-    var DIALOG_BTN_CLASS_LEFT = "left";    
+    var DIALOG_BTN_CLASS_LEFT = "left";
 
     // Based on http://stackoverflow.com/questions/21797299/convert-base64-string-to-arraybuffer
     function base64ToBuffer(base64) {
@@ -105,6 +105,7 @@ define(function (require, exports, module) {
         });
         snap.addEventListener("click", function(ev) {
             ev.preventDefault();
+            use.removeAttribute("disabled");
             snapPhoto(deferred, filePath);
         });
 
@@ -160,6 +161,8 @@ define(function (require, exports, module) {
         selfieDialogHTML = Mustache.render(selfieDialogHTML, obj);
 
         _selfieDialog = Dialog.showModalDialogUsingTemplate(selfieDialogHTML);
+
+        $("#selfie-use").attr("disabled", true);
 
         $("#selfie-close").on("click", function() {
             _selfieDialog.close();
