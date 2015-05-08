@@ -106,6 +106,13 @@ define(function (require, exports, module) {
         snap.addEventListener("click", function(ev) {
             ev.preventDefault();
             use.removeAttribute("disabled");
+
+            $("#selfie-video-bg").addClass("on");
+
+            setTimeout(function() {
+                $("#selfie-video-bg").removeClass("on");
+            }, 105);
+
             snapPhoto(deferred, filePath);
         });
 
