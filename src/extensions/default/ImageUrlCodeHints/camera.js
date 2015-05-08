@@ -14,6 +14,7 @@ define(function (require, exports, module) {
     var video;
     var photo;
     var snap;
+    var snapAudio;
     var canvas;
     var use;
     var deferred;
@@ -79,6 +80,7 @@ define(function (require, exports, module) {
     function initWidget() {
         var selfieContainer = $("#selfie-container");
         $("#selfie-allow-access").remove();
+        snapAudio = new Audio("./extensions/default/ImageUrlCodeHints/camera-shutter-click-08.mp3");
         selfieContainer.prepend(selfieWidgetHTML);
         video = document.getElementById("selfie-video");
         photo = document.getElementById("selfie-photo");
@@ -109,6 +111,8 @@ define(function (require, exports, module) {
 
             $("#selfie-video-bg").addClass("on");
 
+
+            snapAudio.play();
             setTimeout(function() {
                 $("#selfie-video-bg").removeClass("on");
             }, 105);
