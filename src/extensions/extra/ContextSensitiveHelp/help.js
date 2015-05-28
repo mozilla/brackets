@@ -36,7 +36,6 @@ define(function (require, exports, module) {
   // Return the context-sensitive help information for a particular
   // position in the source code, or undefined if no help is available.
   function getHelp(index, helpIndex) {
-    debugger;
     Localized.ready(function(){});
     var help = helpIndex[index];
     if (help) {
