@@ -43,3 +43,6 @@
 [submodule "src/thirdparty/slowparse"]
 	path = src/thirdparty/slowparse
 	url = https://github.com/mozilla/slowparse.git
+[submodule "src/thirdparty/node-webmaker-i18n"]
+	path = src/thirdparty/node-webmaker-i18n
+	url = git@github.com:mozilla/node-webmaker-i18n.git
