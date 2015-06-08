@@ -92,12 +92,16 @@ define(function (require, exports, module) {
      * If a livedoc exists, serves the instrumented version of the file.
      * We either serve raw HTML or a Blob URL depending on browser compatibility.
      */
-    HTMLServer.prototype.serveLiveDoc = function(url) {
+    HTMLServer.prototype.serveLiveDoc = function(url, callback) {
         var path = BlobUtils.getFilename(url);
         var liveDocument = this._liveDocuments[path];
-        var html = Rewriter.rewrite(path, liveDocument.getResponseData().body);
-
-        return _shouldUseBlobURL ? BlobUtils.createURL(path, html, "text/html") : html;
+        Rewriter.rewrite(path, liveDocument.getResponseData().body, function(err, html) {
+            if(err) {
+                callback(err);
+                return;
+            }
+            callback(null, _shouldUseBlobURL ? BlobUtils.createURL(path, html, "text/html") : html);
+        });
     };
 
     exports.HTMLServer = HTMLServer;

@@ -21,6 +21,7 @@ for info on how we're using CodeMirror.
 # How to setup Bramble (Brackets) in your local machine
 
 Step 01: Make sure you fork and clone [Bramble](https://github.com/humphd/brackets).
+We do our work on the `bramble` branch, so make sure you aren't on `master`.
 
 ```
 $ git clone https://github.com/[yourusername]/brackets --recursive
@@ -50,6 +51,10 @@ Run one of the suggested local servers (or your own) from the root directory of 
 * [Python WebServer](https://docs.python.org/2/library/simplehttpserver.html)
 
 Assuming you have Bramble running on port `8080`. Now you can visit [http://localhost:8080/src](http://localhost:8080/src).
+
+NOTE: Bramble expects to be run in an iframe, which hosts its filesystem. For local
+development, use `src/hosted.html` instead of `src/index.html`.  To see how the remote end
+should host Bramble's iframe, see `src/hosted.js`.
 
 # Optional Extension Loading
 
