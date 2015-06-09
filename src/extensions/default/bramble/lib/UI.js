@@ -100,23 +100,46 @@ define(function (require, exports, module) {
         $(".content").addClass("hideRightToolbar");
     }
 
-    /**
-     * Used to show the mobile view.
-     */
-    function showMobile() {
+    // Make sure we don't lose focus and hide the status bar in mobile view
+    function stealFocus(e) {
+        e.preventDefault();
+        MainViewManager.setActivePaneId("first-pane");
+    }
+
+    function showDesktopView() {
+        // Switch the icon
+        $("#mobileViewButton").removeClass("desktopButton");
+        $("#mobileViewButton").addClass("mobileButton");
+        // Updates the tooltip
+        StatusBar.updateIndicator("mobileViewButtonBox", true, "",
+                                  "Click to open preview in a mobile view");
+
+        $("#bramble-iframe-browser").appendTo("#second-pane");
+        $(".phone-container").detach();
+        $("#second-pane").removeClass("second-pane-scroll");
+        $("#second-pane").off("click", stealFocus);
+
+        PostMessageTransport.reload();
+    }
+
+    function showMobileView() {
+        // Switch the icon
+        $("#mobileViewButton").removeClass("mobileButton");
+        $("#mobileViewButton").addClass("desktopButton");
+        // Updates the tooltip
+        StatusBar.updateIndicator("mobileViewButtonBox", true, "",
+                                  "Click to open preview in a desktop view");
+
         $("#bramble-iframe-browser").addClass("phone-body");
         $("#second-pane").append(PhonePreview);
         $("#bramble-iframe-browser").appendTo("#phone-content");
         $("#second-pane").addClass("second-pane-scroll");
-    }
 
-    /**
-     * Used to hide the mobile view.
-     */
-    function hideMobile() {
-        $("#bramble-iframe-browser").appendTo("#second-pane");
-        $(".phone-container").detach();
-        $("#second-pane").removeClass("second-pane-scroll");
+        // Give focus back to the editor when the outside of the mobile phone is clicked.
+        // Prevents the status bar from disappearing.
+        $("#second-pane").on("click", stealFocus);
+
+        PostMessageTransport.reload();
     }
 
     /**
@@ -132,35 +155,11 @@ define(function (require, exports, module) {
         $("#mobileViewButton").addClass("mobileButton");
 
         $("#mobileViewButton").click(function () {
-            PostMessageTransport.reload();
-
             if(!isMobileViewOpen) {
-                // Switch the icon
-                $("#mobileViewButton").removeClass("mobileButton");
-                $("#mobileViewButton").addClass("desktopButton");
-                // Updates the tooltip
-                StatusBar.updateIndicator("mobileViewButtonBox", true, "",
-                                          "Click to open preview in a desktop view");
-
-                showMobile();
-
+                showMobileView();
                 isMobileViewOpen = true;
-                // Give focus back to the editor when the outside of the mobile phone is clicked.
-                // Prevents the status bar from disappearing.
-                $("#second-pane").click(function() {
-                    MainViewManager.setActivePaneId("first-pane");
-                });
-            }
-            else {
-                // Switch the icon
-                $("#mobileViewButton").removeClass("desktopButton");
-                $("#mobileViewButton").addClass("mobileButton");
-                // Updates the tooltip
-                StatusBar.updateIndicator("mobileViewButtonBox", true, "",
-                                          "Click to open preview in a mobile view");
-
-                hideMobile();
-
+            } else {
+                showDesktopView();
                 isMobileViewOpen = false;
             }
         });
@@ -212,6 +211,8 @@ define(function (require, exports, module) {
 
     // Define public API
     exports.initUI                 = initUI;
+    exports.showMobileView         = showMobileView;
+    exports.showDesktopView        = showDesktopView;
     exports.removeLeftSideToolBar  = removeLeftSideToolBar;
     exports.removeMainToolBar      = removeMainToolBar;
     exports.removeRightSideToolBar = removeRightSideToolBar;

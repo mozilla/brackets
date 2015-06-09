@@ -10,22 +10,36 @@ This page is a helper for local development.
     <meta charset="utf-8">
     <title>Framed Bramble</title>
     <style>
-        html, body {
-            height: 100%;
+        body {
             margin: 0;
-            padding: 0;
         }
 
-        iframe: {
-            width: 100%;
-            height: 100%;
+        .full {
+            height: 100vh;
             overflow: hidden;
         }
+        
     </style>
 </head>
 <body>
-    <iframe id="bramble" frameborder="0" width="100%" height="100%"></iframe>
-    <script src="thirdparty/jquery-2.1.3.min.js"></script>
-    <script src="thirdparty/require.min.js" data-main="hosted"></script>
+    <div id="bramble" class="full"></div>
+
+    <script src="thirdparty/require.min.js"></script>
+    <script>
+        require.config({
+            baseUrl: './'
+        });
+        
+        require(["bramble/api"], function(Bramble) {
+            // Expose Bramble for debugging
+            window.Bramble = Bramble;
+
+            var bramble = Bramble.createInstance("#bramble", {
+                hideUntilReady: true,
+                url: "index.html",
+                ready: function() { console.log('Bramble ready!'); }
+            });
+        });
+    </script>
 </body>
 </html>

@@ -216,6 +216,23 @@ module.exports = function (grunt) {
                     exclude: ["text!config.json"],
                     uglify2: {} // https://github.com/mishoo/UglifyJS2
                 }
+            },
+            iframe: {
+                // Standalone dist/bramble.js iframe api
+                options: {
+                    name: 'thirdparty/almond',
+                    baseUrl: 'src',
+                    optimize: 'uglify2',
+                    preserveLicenseComments: false,
+                    useStrict: true,
+                    wrap: {
+                        startFile: 'src/bramble/bramble-start.frag',
+                        endFile: 'src/bramble/bramble-end.frag'
+                    },
+                    include: ['bramble/api'],
+                    out: 'dist/bramble.js',
+                    uglify2: {}
+                }
             }
         },
         targethtml: {
@@ -565,7 +582,7 @@ module.exports = function (grunt) {
         'targethtml',
         'useminPrepare',
         'htmlmin',
-        'requirejs',
+        'requirejs:dist',
         'concat',
         /*'cssmin',*/
         /*'uglify',*/
@@ -576,7 +593,12 @@ module.exports = function (grunt) {
     ]);
 
     // task: build dist/ for browser
-    grunt.registerTask('build-browser', ['build', 'replace:ternDefs', 'uglify']);
+    grunt.registerTask('build-browser', [
+        'build',
+        'replace:ternDefs',
+        'requirejs:iframe',
+        'uglify'
+    ]);
 
     // task: build dist/ for browser, pre-compressed with gzip
     grunt.registerTask('build-browser-compressed', ['build-browser', 'compress']);

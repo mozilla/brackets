@@ -279,6 +279,7 @@ define(function (require, exports, module) {
                     callback(_mapError(err));
                     return;
                 }
+
                 callback(null, result.stat, result.created);
             });
         }

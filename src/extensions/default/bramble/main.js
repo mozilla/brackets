@@ -12,18 +12,12 @@ define(function (require, exports, module) {
 
     // Load dependencies
     var AppInit              = brackets.getModule("utils/AppInit"),
-        CommandManager       = brackets.getModule("command/CommandManager"),
-        Commands             = brackets.getModule("command/Commands"),
         EditorManager        = brackets.getModule("editor/EditorManager"),
         LiveDevServerManager = brackets.getModule("LiveDevelopment/LiveDevServerManager"),
         PreferencesManager   = brackets.getModule("preferences/PreferencesManager"),
         ProjectManager       = brackets.getModule("project/ProjectManager"),
         LiveDevelopment      = brackets.getModule("LiveDevelopment/LiveDevMultiBrowser"),
         UrlParams            = brackets.getModule("utils/UrlParams").UrlParams,
-        Editor               = brackets.getModule("editor/Editor").Editor,
-        Rewriter             = brackets.getModule("filesystem/impls/filer/lib/HTMLRewriter"),
-
-        // Load nohost dependencies
         Browser              = require("lib/iframe-browser"),
         UI                   = require("lib/UI"),
         Launcher             = require("lib/launcher"),
@@ -35,9 +29,8 @@ define(function (require, exports, module) {
         Path                 = brackets.getModule("filesystem/impls/filer/BracketsFiler").Path,
         BlobUtils            = brackets.getModule("filesystem/impls/filer/BlobUtils"),
         XHRHandler           = require("lib/xhr/XHRHandler"),
-
-        // Other modules
-        Theme                = require("lib/Theme");
+        Theme                = require("lib/Theme"),
+        RemoteCommandHandler = require("lib/RemoteCommandHandler");
 
     ExtensionUtils.loadStyleSheet(module, "stylesheets/style.css");
 
@@ -147,60 +140,6 @@ define(function (require, exports, module) {
         LiveDevelopment.one("statusChange", _configureModules);
     }
     ProjectManager.one("projectOpen", _configureLiveDev);
-
-    /*
-     * This function is attached to the window as an event listener
-     * Its purpose is to intercept post messages from bramble proxy in thimble
-     * some of these being:
-     * undo, redo, size changer, or any other buttons relating to menu or view
-     * within event we expect to receive a JSONable object that contains a commandCategory:
-     * menuCommand: "Menu Command" relating to menu commands runable
-     * fontChange: refers to a method we use to change fonts size
-     * editorCommand: "Editor Command" relating to functions relating ot the editor itself
-     * also contains a variable of "params" which can be used to send further information needed
-     */
-    function _buttonListener(event) {
-        var msgObj;
-        var i;
-        try {
-            msgObj = JSON.parse(event.data);
-        } catch (e) {
-            return;
-        }
-
-        if(msgObj.commandCategory === "menuCommand"){
-            codeMirror.focus();
-            CommandManager.execute(Commands[msgObj.command]);
-        }
-        else if (msgObj.commandCategory === "fontChange") {
-            CommandManager.execute(Commands[msgObj.command]);
-            if(msgObj.params < "12") {
-                for(i = 12; i > msgObj.params; i--) {
-                    CommandManager.execute(Commands.VIEW_DECREASE_FONT_SIZE);
-                }
-            }
-            else if(msgObj.params > "12") {
-                for(i = 12; i < msgObj.params; i++) {
-                    CommandManager.execute(Commands.VIEW_INCREASE_FONT_SIZE);
-                }
-            }
-        }
-        else if (msgObj.commandCategory === "editorCommand") {
-            Editor[msgObj.command](msgObj.params);
-        }
-        else if (msgObj.commandCategory === "reloadCommand") {
-            PostMessageTransport.reload();
-        }
-        else if (msgObj.commandCategory === "runJavascript") {
-            if(msgObj.command) {
-                Rewriter.enableScripts();
-            }
-            else {
-                Rewriter.disableScripts();
-            }
-            PostMessageTransport.reload();
-        }
-    }
 
     // We configure Brackets to run the experimental live dev
     // with our nohost server and iframe combination. This has to
@@ -326,7 +265,7 @@ define(function (require, exports, module) {
                     fn: data.fn,
                     value: typeof value !== "object" ? value : undefined
                 }), "*");
-            });
+            }, false);
         }
 
         // When the app is loaded and ready, hide the menus/toolbars
@@ -352,16 +291,15 @@ define(function (require, exports, module) {
             // Set initial theme
             Theme.setTheme(data.theme);
 
-            window.removeEventListener("message", _getInitialDocument);
-
-            window.addEventListener("message", _buttonListener);
+            window.removeEventListener("message", _getInitialDocument, false);
+            window.addEventListener("message", RemoteCommandHandler.handleRequest, false);
 
             var fileHTML = FileSystem.getFileForPath("/index.html");
             var fileCSS  = FileSystem.getFileForPath("/style.css");
             var fileJS   = FileSystem.getFileForPath("/script.js");
 
             // Write the HTML file and block on it being done.
-            fileHTML.write(data.source ? data.source : defaultHTML,
+            fileHTML.write(data.source ? data.source : defaultHTML, {blind: true},
                 function(err) {
                     if (err) {
                         deferred.reject();
@@ -373,13 +311,13 @@ define(function (require, exports, module) {
             );
 
             // Write the CSS and JS file without blocking.
-            fileCSS.write(defaultCSS, function(err) {
+            fileCSS.write(defaultCSS, {blind: true}, function(err) {
                 if (err) {
                     console.error("Couldn't write /style.css");
                     return;
                 }
 
-                fileJS.write(defaultJS, function(err) {
+                fileJS.write(defaultJS, {blind: true}, function(err) {
                     if (err) {
                         console.error("Couldn't write /script.js");
                     }
@@ -387,7 +325,7 @@ define(function (require, exports, module) {
             });
         }
 
-        window.addEventListener("message", _getInitialDocument);
+        window.addEventListener("message", _getInitialDocument, false);
 
         // Signal to thimble that we're waiting for the
         // initial make source code
