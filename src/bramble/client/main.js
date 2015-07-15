@@ -112,7 +112,9 @@ define([
         _instance = new BrambleProxy(div, options);
     };
 
-    // After calling Bramble.load(), Bramble.mount() specifies project root entry path info
+    // After calling Bramble.load(), Bramble.mount() specifies project root entry path info.
+    // If called a second time, it means the mounted dir has been renamed, and Bramble should update
+    // its info about the mount point.
     Bramble.mount = function(root, filename) {
         if (!filename) {
             debug("no filename passed to Bramble.mount()");
@@ -329,11 +331,11 @@ define([
         }
 
         self.mount = function(root, filename) {
-            function _mount() {
-                setReadyState(Bramble.MOUNTING);
-
+            function _mount(isRename) {
+                var mountMessage;
                 root = Path.normalize(root);
-                filename = Path.resolve(root, filename || (_state.fullPath || "index.html"));
+
+                setReadyState(Bramble.MOUNTING);
 
                 // Make sure the path we were given exists in the filesystem, and is a dir
                 _fs.stat(root, function(err, stats) {
@@ -350,28 +352,47 @@ define([
                     if (!stats.isDirectory()) {
                         setReadyState(Bramble.ERROR, new Error("mount path is not a directory: " + root));
                     } else {
-                        var initMessage = {
-                            type: "bramble:init",
-                            mount: {
-                                root: root,
-                                filename: filename
-                            },
-                            state: {
-                                fontSize: _state.fontSize,
-                                theme: _state.theme,
-                                sidebarVisible: _state.sidebarVisible,
-                                sidebarWidth: _state.sidebarWidth,
-                                firstPaneWidth: _state.firstPaneWidth,
-                                secondPaneWidth: _state.secondPaneWidth,
-                                previewMode: _state.previewMode,
-                                wordWrap: _state.wordWrap
-                            }
-                        };
-                        _brambleWindow.postMessage(JSON.stringify(initMessage), _iframe.src);
+                        // If this is a rename, we just send the new root
+                        if(isRename) {
+                            mountMessage = {
+                                type: "bramble:mountRename",
+                                mount: {
+                                    root: root
+                                }
+                            };
+                        }
+                        // If this isn't a rename, we send mount info plus initial UI state
+                        else {
+                            filename = Path.resolve(root, filename || (_state.fullPath || "index.html"));
+                            mountMessage = {
+                                type: "bramble:init",
+                                mount: {
+                                    root: root,
+                                    filename: filename
+                                },
+                                state: {
+                                    fontSize: _state.fontSize,
+                                    theme: _state.theme,
+                                    sidebarVisible: _state.sidebarVisible,
+                                    sidebarWidth: _state.sidebarWidth,
+                                    firstPaneWidth: _state.firstPaneWidth,
+                                    secondPaneWidth: _state.secondPaneWidth,
+                                    previewMode: _state.previewMode,
+                                    wordWrap: _state.wordWrap
+                                }
+                            };
+                        }
+
+                        _brambleWindow.postMessage(JSON.stringify(mountMessage), _iframe.src);
                     }
                 });
             }
-            if (_readyState > Bramble.MOUNTABLE) {
+
+            if (_readyState === Bramble.READY) {
+                // Already mounted, so this means the mount point was renamed, and we need to update
+                debug("updating mount info for rename");
+                _mount(true);
+            } else if (_readyState > Bramble.MOUNTABLE) {
                 setReadyState(Bramble.ERROR,
                     new Error("Bramble.mount() while already mounted, or attempting to mount."));
                 return;
@@ -381,7 +402,7 @@ define([
                 _instance._mount = _mount;
             } else {
                 // MOUNTABLE, mount right now
-                _mount();
+                _mount(false);
             }
         };
 

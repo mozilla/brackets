@@ -179,6 +179,9 @@ define(function (require, exports, module) {
                 filename: data.mount.filename
             });
 
+            // Also have the project state listen for mount rename requests
+            window.addEventListener("message", BrambleStartupState.project.handleRename, false);
+
             // Set initial UI state values (if present)
             BrambleStartupState.ui.init({
                 fontSize: data.state.fontSize,

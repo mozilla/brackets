@@ -246,6 +246,27 @@ fs.mkdir("/project", function(err) {
 });
 ```
 
+After a project root directory is mounted, it can later be updated by calling `Bramble.mount()`
+a second time.  For example, if you need to rename the project folder:
+
+```js
+Bramble.mount("/project");
+...
+// Rename the project root dir in the filesystem
+fs.rename("/project", "/renamed-project", function(err) {
+  if (err) {
+    throw err;
+  }
+
+  // Now let Bramble know that the root dir has been changed,
+  // waiting on an event from the Bramble instance to tell us it worked.
+  bramble.once("mountRenamed", function() {
+    // The mount info was updated
+  });
+  Bramble.mount("/renamed-project");
+});
+```
+
 ## Bramble Instance Getters
 
 Once the Bramble instance is created (e.g., via `ready` event or `Bramble.mount()` callback),
@@ -310,6 +331,7 @@ the following events:
 * `"themeChange"` - triggered whenever the theme changes. It inclues an `Object` with a `theme` property that indicates the new theme
 * `"fontSizeChange"` - triggered whenever the font size changes. It includes an `Object` with a `fontSize` property that indicates the new size (e.g., `"12px"`).
 * `"wordWrapChange"` - triggered whenever the word wrap value changes. It includes an `Object` with a `wordWrap` property that indicates the new value (e.g., `true` or `false`).
+* `"mountRenamed"` - triggered when `Bramble.mount()` is called after mounting, indicating that project root info has been updated in the instance.
 
 There are also high-level events for changes to files:
 
