@@ -304,7 +304,7 @@ to be notified when the action completes:
 * `showTutorial([callback])` - shows tutorial (i.e., tutorial.html) vs editor contents in preview
 * `hideTutorial([callback])` - stops showing tutorial (i.e., tutorial.html) and uses editor contents in preview
 * `showUploadFilesDialog([callback])` - shows the Upload Files dialog, allowing users to drag-and-drop, upload a file, or take a selfie.
-* `addNewFile([ext, callback])` - adds a new file, using the optional `ext` as an extension if provided.
+* `addNewFile([options, callback])` - adds a new file. Options are `ext`: use as extension if provided, `contents`: binary or text to be inserted in the file
 * `addNewFolder([callback])` - adds a new folder.
 
 ## Bramble Instance Events
