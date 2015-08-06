@@ -118,7 +118,11 @@ define(function (require, exports, module) {
             break;
         case "BRAMBLE_ADD_NEW_FILE":
             skipCallback = true;
-            CommandManager.execute("bramble.addFileWithType", args[0]).always(callback);
+            if (!args[0].contents) {
+                CommandManager.execute("bramble.addFileWithType", args[0].ext).always(callback);
+                break;
+            }
+
             break;
         case "RESIZE":
             // The host window was resized, update all panes

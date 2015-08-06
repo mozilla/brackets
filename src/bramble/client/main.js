@@ -681,9 +681,9 @@ define([
         this._executeRemoteCommand({commandCategory: "bramble", command: "BRAMBLE_SHOW_UPLOAD_FILES_DIALOG"}, callback);
     };
 
-    BrambleProxy.prototype.addNewFile = function(ext, callback) {
+    BrambleProxy.prototype.addNewFile = function(options, callback) {
         if(ext) {
-            this._executeRemoteCommand({commandCategory: "bramble", command: "BRAMBLE_ADD_NEW_FILE", args: ext}, callback);
+            this._executeRemoteCommand({commandCategory: "bramble", command: "BRAMBLE_ADD_NEW_FILE", args: options}, callback);
         } else {
             this._executeRemoteCommand({commandCategory: "brackets", command: "FILE_NEW"}, callback);
         }
