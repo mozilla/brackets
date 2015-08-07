@@ -1,0 +1,16 @@
+/* Menu item goes to next line due to float:right issue on Firefox */
+@-moz-document url-prefix() {
+	.context-menu .menu-shortcut {
+		float: none;
+		margin-left: auto;
+	}
+	.dropdown-menu li a {
+		display: flex;
+		flex-flow: space-between;
+	}
+}
+
+/* Make it obvious that files in the sidebar are something you can click. */
+li.jstree-leaf > a {
+	cursor: pointer !important;
+}

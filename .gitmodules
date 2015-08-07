@@ -1,5 +1,5 @@
-[submodule "src/thirdparty/CodeMirror2"]
-	path = src/thirdparty/CodeMirror2
+[submodule "src/thirdparty/CodeMirror"]
+	path = src/thirdparty/CodeMirror
 	url = https://github.com/adobe/CodeMirror2.git
 [submodule "src/thirdparty/path-utils"]
 	path = src/thirdparty/path-utils
@@ -25,3 +25,24 @@
 [submodule "src/extensions/default/JSLint/thirdparty/jslint"]
 	path = src/extensions/default/JSLint/thirdparty/jslint
 	url = https://github.com/peterflynn/JSLint.git
+[submodule "src/thirdparty/filer"]
+	path = src/thirdparty/filer
+	url = https://github.com/filerjs/filer.git
+[submodule "src/extensions/default/brackets-paste-and-indent"]
+	path = src/extensions/default/brackets-paste-and-indent
+	url = https://github.com/ahuth/brackets-paste-and-indent.git
+[submodule "src/extensions/extra/brackets-cdn-suggestions"]
+	path = src/extensions/extra/brackets-cdn-suggestions
+	url = https://github.com/szdc/brackets-cdn-suggestions.git
+[submodule "src/thirdparty/marked"]
+	path = src/thirdparty/marked
+	url = https://github.com/chjj/marked.git
+[submodule "src/thirdparty/slowparse"]
+	path = src/thirdparty/slowparse
+	url = https://github.com/mozilla/slowparse.git
+[submodule "src/bramble/thirdparty/EventEmitter"]
+	path = src/bramble/thirdparty/EventEmitter
+	url = https://github.com/Wolfy87/EventEmitter.git
+[submodule "src/thirdparty/jszip"]
+	path = src/thirdparty/jszip
+	url = https://github.com/Stuk/jszip.git

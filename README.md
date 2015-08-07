@@ -1,116 +1,342 @@
-Welcome to Brackets! [![Build Status](https://travis-ci.org/adobe/brackets.svg?branch=master)](https://travis-ci.org/adobe/brackets)
--------------------
+# Bramble is based on Brackets
 
 Brackets is a modern open-source code editor for HTML, CSS
-and JavaScript that's *built* in HTML, CSS and JavaScript. 
-
-What makes Brackets different from other web code editors?
-
-* **Tools shouldn't get in your way.** Instead of cluttering up your coding
-environment with lots of panels and icons, the Quick Edit UI in Brackets puts 
-context-specific code and tools inline.
-* **Brackets is in sync with your browser.** With Live Preview, Brackets
-works directly with your browser to push code edits instantly and jump
-back and forth between your real source code and the browser view.
-* **Do it yourself.** Because Brackets is open source, and built with HTML, CSS
-and JavaScript, you can [help build](https://github.com/adobe/brackets/blob/master/CONTRIBUTING.md) the best code editor for the web.
+and JavaScript that's *built* in HTML, CSS and JavaScript.
 
 Brackets is at 1.0 and we're not stopping there. We have many feature ideas on our
 [trello board](http://bit.ly/BracketsTrelloBoard) that we're anxious to add and other
-innovative web development workflows that we're planning to build into Brackets. 
-So take Brackets out for a spin and let us know how we can make it your favorite editor. 
+innovative web development workflows that we're planning to build into Brackets.
+So take Brackets out for a spin and let us know how we can make it your favorite editor.
 
-You can see some 
+You can see some
 [screenshots of Brackets](https://github.com/adobe/brackets/wiki/Brackets-Screenshots)
 on the wiki, [intro videos](http://www.youtube.com/user/CodeBrackets) on YouTube, and news on the [Brackets blog](http://blog.brackets.io/).
 
-How to install and run Brackets
--------------------------------
-#### Download
-
-Installers for the latest stable build for Mac, Windows and Linux (Debian/Ubuntu) can be [downloaded here](http://brackets.io/).
-
-The Linux version has most of the features of the Mac and Windows versions, but
-is still missing a few things. See the [Linux wiki page](https://github.com/adobe/brackets/wiki/Linux-Version)
-for a list of known issues and to find out how you can help.
-
-#### Usage
-
-By default, Brackets opens a folder containing some simple "Getting Started" content.
-You can choose a different folder to edit using *File > Open Folder*.
-
-Most of Brackets should be pretty self-explanatory, but for information on how
-to use its unique features, like Quick Edit and Live Preview, please read
-[How to Use Brackets](http://github.com/adobe/brackets/wiki/How-to-Use-Brackets). 
-Also, see the [release notes](http://github.com/adobe/brackets/wiki/Release-Notes)
-for a list of new features and known issues in each build.
-
-In addition to the core features built into Brackets, there is a large and growing
-community of developers building extensions that add all sorts of useful functionality.
-See the [Brackets Extension Registry](https://brackets-registry.aboutweb.com/)
-for a list of available extensions. For installation instructions,
-see the [extensions wiki page](https://github.com/adobe/brackets/wiki/Brackets-Extensions).
-
-#### Need help?
-
-Having problems starting Brackets the first time, or not sure how to use Brackets?  Please 
-review [Troubleshooting](https://github.com/adobe/brackets/wiki/Troubleshooting), which helps 
-you to fix common problems and find extra help if needed.
-
-
-Helping Brackets
-----------------
-
-#### I found a bug!
-
-If you found a repeatable bug, and [troubleshooting](https://github.com/adobe/brackets/wiki/Troubleshooting) 
-tips didn't help, then be sure to [search existing issues](https://github.com/adobe/brackets/issues) first.
-Include steps to consistently reproduce the problem, actual vs. expected results, screenshots, and your OS and
-Brackets version number. Disable all extensions to verify the issue is a core Brackets bug.
-[Read more guidelines for filing good bugs.](https://github.com/adobe/brackets/wiki/How-to-Report-an-Issue)
-
-
-#### I have a new suggestion, but don't know how to program!
-
-For feature requests please first check our [Trello board](http://bit.ly/BracketsBacklog) to
-see if it's already there; you can upvote it if so. If not, feel free to file it as an issue as above; we'll
-move it to the feature backlog for you.
-
-
-#### I want to help with the code!
-
-Awesome! _There are lots of ways you can help._ First read 
-[CONTRIBUTING.md](https://github.com/adobe/brackets/blob/master/CONTRIBUTING.md), 
-then learn how to [pull the repo and hack on Brackets](https://github.com/adobe/brackets/wiki/How-to-Hack-on-Brackets).
-
-The text editor inside Brackets is based on 
+The text editor inside Brackets is based on
 [CodeMirror](http://github.com/codemirror/CodeMirror)&mdash;thanks to Marijn for
-taking our pull requests, implementing feature requests and fixing bugs! See 
+taking our pull requests, implementing feature requests and fixing bugs! See
 [Notes on CodeMirror](https://github.com/adobe/brackets/wiki/Notes-on-CodeMirror)
 for info on how we're using CodeMirror.
 
-Although Brackets is built in HTML/CSS/JS, it currently runs as a desktop 
-application in a thin native shell, so that it can access your local files.
-(If you just try to open the index.html file in a browser, it won't work yet.)
-The native shell for Brackets lives in a separate repo, 
-[adobe/brackets-shell](https://github.com/adobe/brackets-shell/).
+# How to setup Bramble (Brackets) in your local machine
 
+Step 1: Make sure you fork and clone [Bramble](https://github.com/humphd/brackets).
+We do our work on the `bramble` branch, so make sure you aren't on `master`.
 
-I want to keep track of how Brackets is doing!
-----------------------------------------------
+```
+$ git clone https://github.com/[yourusername]/brackets --recursive
+```
 
-Not sure you needed the exclamation point there, but we like your enthusiasm.
+Step 2: Install its dependencies
 
-#### What's Brackets working on next?
+Navigate to the root of the directory you cloned and run:
 
-* In our [feature backlog](http://bit.ly/BracketsBacklog), the columns to the right
-  (starting from "Development") list the features that we're currently working on.
-  "Ready" shows what we'll be working on next.
-* Watch our [GitHub activity stream](https://github.com/adobe/brackets/pulse).
+```
+$ npm install
+```
 
-#### Contact info
+Step 3: run the build
 
-* **Twitter:** [@brackets](https://twitter.com/brackets)
-* **Blog:** http://blog.brackets.io/
-* **IRC:** [#brackets on freenode](http://webchat.freenode.net/?channels=brackets)
-* **Developers mailing list:** http://groups.google.com/group/brackets-dev
+You can build Bramble by running the Grunt build process:
+
+```
+$ grunt build-browser
+```
+
+Step 4: Run Bramble:
+
+The easiest way to run Bramble is to simply use:
+
+```
+$ npm start
+```
+
+This starts a `live-server` session on port 8000 for you to work with.
+
+However, if you wish to run your own static server, there are several options available:
+* [Apache Webserver](http://www.apache.org/)
+* Host on [github pages](https://help.github.com/articles/what-are-github-pages)
+* [Python WebServer](https://docs.python.org/2/library/simplehttpserver.html)
+
+Assuming you have Bramble running on port `8000`. Now you can visit [http://localhost:8000/src](http://localhost:8000/src).
+
+NOTE: Bramble expects to be run in an iframe, which hosts its filesystem. For local
+development, use `src/hosted.html` instead of `src/index.html`.  To see how the remote end
+should host Bramble's iframe, see `src/hosted.js`.
+
+# Optional Extension Loading
+
+Bramble supports enabling and disabling various extensions via the URL and query params.
+A standard set of default extensions are always turned on:
+
+* CSSCodeHints
+* HTMLCodeHints
+* JavaScriptCodeHints
+* InlineColorEditor
+* JavaScriptQuickEdit
+* QuickOpenCSS
+* QuickOpenHTML
+* QuickOpenJavaScript
+* QuickView
+* UrlCodeHints
+* brackets-paste-and-indent
+* BrambleUrlCodeHints
+* Autosave
+* UploadFiles
+* WebPlatformDocs
+
+You could disable QuickView and CSSCodeHints by loading Bramble with `?disableExtensions=QuickView,CSSCodeHints`
+on the URL.
+
+In addition, you can enable other extra extensions:
+
+* SVGCodeHints
+* HtmlEntityCodeHints
+* LESSSupport
+* CloseOthers
+* InlineTimingFunctionEditor
+* CodeFolding
+* JSLint
+* QuickOpenCSS
+* RecentProjects
+* brackets-cdn-suggestions
+* HTMLHinter
+* MdnDocs
+* SVGasXML
+
+You could enable JSLint and LESSSupport by loading Bramble with `?enableExtensions=JSLint,LESSSupport`
+on the URL
+
+NOTE: you can combine `disableExtensions` and `enableExtensions` to mix loading/disabling extensions.
+You should check src/utils/BrambleExtensionLoader.js for the most up-to-date version of these
+extension lists.
+
+--------------
+
+## After installation
+
+After you have everything setup, you can now run the server you chose in the root of your local Bramble directory and see it in action by visiting [http://localhost:8080/src](http://localhost:8080/src).
+
+# Bramble IFrame API
+
+Bramble is desinged to be run in an iframe, and the hosting web app to communicate with it
+via `postMessage` and `MessageChannel`.  In order to simplify this, a convenience API exists
+for creating and managing the iframe, as well as providing JavaScript functions for interacting
+with the editor, preview, etc.
+
+## Loading the API
+
+The hosting app must include the Bramble IFrame API (i.e., `dist/bramble.js`).  Note: in
+development you can use `src/hosted.html`, which does this).  This script can either be used as
+an AMD module, or as a browser global:
+
+```html
+<script src="bramble.js"></script>
+<script>
+  // Option 1: AMD loading, assumes requirejs is loaded already
+  require(["bramble"], function(Bramble) {
+    ...
+  });
+
+  // Option 2: Browser global
+  var Bramble = window.Bramble;
+</script>
+```
+
+## Bramble
+
+The Bramble module has a number of methods, properties, and events. During its lifetime,
+Bramble goes through a number of states, including:
+
+* `Bramble.ERROR` - Bramble is in an error state
+* `Bramble.NOT_LOADED` - Initial state, `Bramble.load()` has not been called
+* `Bramble.LOADING` - `Bramble.load()` has been called, loading resources has begun
+* `Bramble.MOUNTABLE` - Loading is done and `Bramble.mount()` can be begin, or is safe to start
+* `Bramble.MOUNTING` - `Bramble.mount()` is being called, mounting is in process
+* `Bramble.READY` - `Bramble.mount()` has finished, Bramble is fully ready
+
+The current state of Bramble can be obtained by calling `Bramble.getReadyState()`.  There are
+also a number of events you can listen for (i.e., `Bramble` is an [`EventEmitter`](https://github.com/Wolfy87/EventEmitter/)):
+
+```js
+Bramble.once("ready", function(bramble) {
+  // bramble is the Bramble proxy instance, see below.
+});
+
+Bramble.on("error", function(err) {
+  // Bramble is in an error state, and `err` is the error.
+})
+
+Bramble.on("readyStateChange", function(previous, current) {
+  // Bramble's readyState changed from `previous` to `current`
+});
+```
+
+## Bramble.getFileSystem()
+
+The FileSystem is owned by the hosting application, and can be obtained at any time by calling:
+
+```js
+var fs = Bramble.getFileSystem();
+```
+
+This `fs` instance can be used to setup the filesystem for the Bramble editor prior to
+loading.  You can access things like `Path` and `Buffer` via `Bramble.Filer.*`.
+
+## Bramble.load(elem[, options])
+
+Once you have a reference to the `Bramble` object, you use it to starting loading the editor:
+
+```js
+// Start loading Bramble
+Bramble.load("#webmaker-bramble");
+
+Bramble.once("error", function(err) {
+  console.error("Bramble error", err);
+});
+```
+
+The `elem` argument specifies which element in the DOM should be used to hold the iframe.
+This element's contents will be replaced by the iframe.  You can pass a selector, a reference
+to an actual DOM element, or leave it blank, and `document.body` will be used.
+
+The `options` object allows you to configure Bramble:
+
+ * `url`: `<String>` a URL to use when loading the Bramble iframe (defaults to prod)
+ * `locale`: `<String>` the locale Brackets should use
+ * `useLocationSearch`: `<Boolean>` whether to copy the window's location.search string to the iframe's url
+ * `extensions:` `<Object>` with the following optional properties
+     * `enable`: `<Array(String)>` a list of extensions to enable
+     * `disable`: `<Array(String)>` a list of extensions to disable
+ * `hideUntilReady`: `<Boolean>` whether to hide Bramble until it's fully loaded.
+ * `disableUIState`: `<Boolean>` by default, UI state is kept between sessions.  This disables it (and clears old values), and uses the defaults from Bramble.
+ * `debug`: `<Boolean>` whether to log debug info.
+
+## Bramble.mount(root[, filename])
+
+After calling `Bramble.load()`, you can tell Bramble which project root directory
+to open, and which file to load into the editor.  NOTE: the optional `filename` argument,
+if provided, should be a relative path within the project root.  Bramble will use this information
+when it is ready to mount the filesystem.  Use the `"ready"` event to get access to the
+`bramble` instance:
+
+```js
+// Setup the filesystem while Bramble is loading
+var fs = Bramble.getFileSystem();
+
+Bramble.once("ready", function(bramble) {
+  // The bramble instance is now usable, see below.
+});
+
+fs.mkdir("/project", function(err) {
+  // If we run this multiple times, the dir will already exist
+  if (err && err.code !== "EEXIST") {
+    throw err;
+  }
+
+  var html = ""                    +
+    "<html>\n"                     +
+    "  <head>\n"                   +
+    "    <title>Bramble</title>\n" +
+    "  </head>\n"                  +
+    "  <body>\n"                   +
+    "    <p>Hello World</p>\n"     +
+    "  </body>\n"                  +
+    "</html>";
+
+  fs.writeFile("/project/index.html", html, function(err) {
+    if (err) {
+      throw err;
+    }
+
+    // Now that fs is setup, tell Bramble which root dir to mount
+    // and which file within that root to open on startup.
+    Bramble.mount("/project", "index.html");
+  });
+});
+```
+
+## Bramble Instance Getters
+
+Once the Bramble instance is created (e.g., via `ready` event or `Bramble.mount()` callback),
+a number of read-only getters are available in order to access state information in the Bramble editor:
+
+* `getID()` - returns the iframe element's `id` in the DOM
+* `getIFrame()` - returns a reference to the iframe that hosts Bramble
+* `getFullPath()` - returns the absolute path of the file currently being edited
+* `getFilename()` - returns the filename portion (i.e., no dir info) of the file currently being edited
+* `getPreviewMode()` - returns one of `"mobile"` or `"desktop"`, depending on current preview mode
+* `getSidebarVisible()` - returns `true` or `false` depending on whether the sidebar (file tree) is visible
+* `getLayout()` - returns an `Object` with three integer properties: `sidebarWidth`, `firstPaneWidth`, `secondPaneWidth`.  The `firstPaneWidth` refers to the editor, where `secondPaneWidth` is the preview.
+* `getRootDir()` - returns the project root directory to which Bramble is mounted
+* `getTheme()` - returns the name of the current theme.
+* `getFontSize()` - returns the current font size as a string (e.g., `"12px"`).
+* `getWordWrap()` - returns the current word wrap setting as a `Boolean` (i.e., enabled or disabled).
+* `getTutorialExists()` - returns `true` or `false` depending on whether or not there is a tutorial in the project (i.e., if `tutorial.html` is present)
+* `getTutorialVisible()` - returns `true` or `false` depending on whether or not the preview browser is showing a tutorial or not.
+
+**NOTE**: calling these getters before the `ready()` callback on the bramble instance
+won't do what you want.
+
+## Bramble Instance Methods
+
+The Bramble instance has a number of methods you can call in order to interact with the
+Bramble editor and preview, all of which take an optional `callback` argument if you want
+to be notified when the action completes:
+
+* `undo([callback])` - undo the last operation in the editor (waits for focus)
+* `redo([callback])` - redo the last operation that was undone in the editor (waits for focus)
+* `increaseFontSize([callback])` - increases the editor's font size
+* `decreaseFontSize([callback])` - decreases the edtior's font size
+* `restoreFontSize([callback])` - restores the editor's font size to normal
+* `save([callback])` - saves the current document
+* `saveAll([callback])` - saves all "dirty" documents
+* `useHorizontalSplitView([callback])` - splits the editor and preview horizontally
+* `useVerticalSplitView([callback])` - splits the editor and preview vertically (default)
+* `find([callback])` - opens the Find dialog to search within the current document
+* `findInFiles([callback])` - opens the Find in Files dialog to search in all project files
+* `replace([callback])` - opens the Replace dialog to replace text in the current document
+* `replaceInFiles([callback])` - opens the Replace In Files dialog to replace text in all project files
+* `useLightTheme([callback])` - sets the editor to use the light theme (default)
+* `useDarkTheme([callback])` - sets the editor to use the dark theme
+* `showSidebar([callback])` - opens the file tree sidebar
+* `hideSidebar([callback])` - hides the file tree sidebar
+* `showStatusbar([callback])` - enables and shows the statusbar
+* `hideStatusbar([callback])` - disables and hides the statusbar
+* `refreshPreview([callback])` - reloads the preview with the latest content in the editor and filesystem
+* `useMobilePreview([callback])` - uses a Mobile view in the preview, as it would look on a smartphone
+* `useDesktopPreview([callback])` - uses a Desktop view in the preview, as it would look on a desktop computer (default)
+* `enableJavaScript([callback])` - turns on JavaScript execution for the preview (default)
+* `disableJavaScript([callback])` - turns off JavaScript execution for the preview
+* `enableWordWrap([callback])` - turns on word wrap for the editor (default)
+* `disableWordWrap([callback])` - turns off word wrap for the editor
+* `showTutorial([callback])` - shows tutorial (i.e., tutorial.html) vs editor contents in preview
+* `hideTutorial([callback])` - stops showing tutorial (i.e., tutorial.html) and uses editor contents in preview
+* `showUploadFilesDialog([callback])` - shows the Upload Files dialog, allowing users to drag-and-drop, upload a file, or take a selfie.
+* `addNewFile([ext, callback])` - adds a new file, using the optional `ext` as an extension if provided.
+* `addNewFileWithContents(filename, contents[, callback])` - adds a new file to the mounted project's root dir with the given `filename` and `contents` (`Filer.Buffer` or `String`).
+* `addNewFolder([callback])` - adds a new folder.
+
+## Bramble Instance Events
+
+The Bramble instance is also an [`EventEmitter`](https://github.com/Wolfy87/EventEmitter/) and raises
+the following events:
+
+* `"layout"` - triggered whenever the sidebar, editor, or preview panes are changed. It includes an `Object` that returns the same infor as the `getLayout()` getter: : `sidebarWidth`, `firstPaneWidth`, `secondPathWidth`
+* `"activeEditorChange"` - triggered whenever the editor changes from one file to another. It includs an `Object` with the current file's `fullPath` and `filename`.
+* `"previewModeChange"` - triggered whenever the preview mode is changed. It includes an `Object` with the new `mode`
+* `"sidebarChange"` - triggered whenever the sidebar is hidden or shown. It includes an `Object` with a `visible` property set to `true` or `false`
+* `"themeChange"` - triggered whenever the theme changes. It inclues an `Object` with a `theme` property that indicates the new theme
+* `"fontSizeChange"` - triggered whenever the font size changes. It includes an `Object` with a `fontSize` property that indicates the new size (e.g., `"12px"`).
+* `"wordWrapChange"` - triggered whenever the word wrap value changes. It includes an `Object` with a `wordWrap` property that indicates the new value (e.g., `true` or `false`).
+* `"tutorialAdded"` - triggered when a new tutorial is added to the project
+* `"tutorialRemoved"` - triggered when an existing tutorial for the project is removed
+* `"tutorialVisibilityChange"` - triggered when the tutorial preview is turned on or off. It includes an `Object` with a `visibility` property that indicates whether the tutorial is visible.
+
+There are also high-level events for changes to files:
+
+* `"fileChange"` - triggered whenever a file is created or updated within the project root.  It includes the `filename` of the file that changed.
+* `"fileDelete"` - triggered whenever a file is deleted within the project root.  It includes the `filename` of the file that was deleted.
+* `"fileRename"` - triggered whenever a file is renamed within the project root.  It includes the `oldFilename` and the `newFilename` of the file that was renamed.
+
+NOTE: if you want to receive generic events for file system events, especially events across windows using the same file system, use [fs.watch()](https://github.com/filerjs/filer#watch) instead.

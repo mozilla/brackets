@@ -44,8 +44,8 @@ define(function (require, exports, module) {
         FileSystem     = require("filesystem/FileSystem"),
         FileUtils      = require("file/FileUtils"),
         Async          = require("utils/Async"),
-        ExtensionUtils = require("utils/ExtensionUtils"),
-        UrlParams      = require("utils/UrlParams").UrlParams;
+        UrlParams      = require("utils/UrlParams").UrlParams,
+        BrambleExtensionLoader = require("utils/BrambleExtensionLoader");
 
     // default async initExtension timeout
     var INIT_EXTENSION_TIMEOUT = 10000;
@@ -239,20 +239,11 @@ define(function (require, exports, module) {
      *              (Note: if extension contains a JS syntax error, promise is resolved not rejected).
      */
     function loadExtension(name, config, entryPoint) {
-        var promise = new $.Deferred();
+        // XXXBramble: we disable the loading of extension package.json files,
+        // since a) it would require many unnecessary trips to the server;
+        // b) the data isn't used, except for themes (and we do our own theme loading).
 
-        // Try to load the package.json to figure out if we are loading a theme.
-        ExtensionUtils.loadPackageJson(config.baseUrl).always(promise.resolve);
-
-        return promise
-            .then(function (metadata) {
-                // No special handling for themes... Let the promise propagate into the ExtensionManager
-                if (metadata && metadata.theme) {
-                    return;
-                }
-
-                return loadExtensionModule(name, config, entryPoint);
-            })
+        return loadExtensionModule(name, config, entryPoint)
             .then(function () {
                 exports.trigger("load", config.baseUrl);
             }, function (err) {
@@ -385,15 +376,27 @@ define(function (require, exports, module) {
      */
     function init(paths) {
         var params = new UrlParams();
-        
+        params.parse();
+
         if (_init) {
             // Only init once. Return a resolved promise.
             return new $.Deferred().resolve().promise();
         }
         
+        // Load *subset* of the usual builtin extensions list, and don't try to find any user/dev extensions
+        if (brackets.inBrowser) {
+            // Bramble: we have a more complex extension loading pattern based on URL params
+            var extensionList = BrambleExtensionLoader.getExtensionList(params);
+
+            return Async.doInParallel(extensionList, function (item) {
+                var extConfig = {
+                    baseUrl: item.path
+                };
+                return loadExtension(item.name, extConfig, "main");
+            });
+        }
+        
         if (!paths) {
-            params.parse();
-            
             if (params.get("reloadWithoutUserExts") === "true") {
                 paths = ["default"];
             } else {

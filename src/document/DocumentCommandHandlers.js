@@ -251,6 +251,23 @@ define(function (require, exports, module) {
             _updateTitle();
         }
     }
+    
+    /**
+     * Shows an error dialog indicating that the given file could not be opened due to the given error
+     * @param {!FileSystemError} name
+     * @return {!Dialog}
+     */
+    function showFileOpenError(name, path) {
+        return Dialogs.showModalDialog(
+            DefaultDialogs.DIALOG_ID_ERROR,
+            Strings.ERROR_OPENING_FILE_TITLE,
+            StringUtils.format(
+                Strings.ERROR_OPENING_FILE,
+                StringUtils.breakableUrl(path),
+                FileUtils.getFileErrorString(name)
+            )
+        );
+    }
 
     /**
      * @private
@@ -288,7 +305,7 @@ define(function (require, exports, module) {
             if (silent) {
                 _cleanup(fileError, fullFilePath);
             } else {
-                FileUtils.showFileOpenError(fileError, fullFilePath).done(function () {
+                showFileOpenError(fileError, fullFilePath).done(function () {
                     _cleanup(fileError, fullFilePath);
                 });
             }
@@ -593,8 +610,12 @@ define(function (require, exports, module) {
      * Bottleneck function for creating new files and folders in the project tree.
      * @private
      * @param {boolean} isFolder - true if creating a new folder, false if creating a new file
+     * @param {?string} optionalExtension - an optional extension to use when naming the file. Should be of the form ".ext" (note the leading '.').
      */
-    function _handleNewItemInProject(isFolder) {
+    function _handleNewItemInProject(isFolder, optionalExtension) {
+        // XXXBramble: allow specifying an extension.
+        optionalExtension = optionalExtension || "";
+
         if (fileNewInProgress) {
             ProjectManager.forceFinishRename();
             return;
@@ -622,6 +643,7 @@ define(function (require, exports, module) {
         // Create the new node. The createNewItem function does all the heavy work
         // of validating file name, creating the new file and selecting.
         function createWithSuggestedName(suggestedName) {
+            suggestedName = suggestedName + optionalExtension;
             return ProjectManager.createNewItem(baseDirEntry, suggestedName, false, isFolder)
                 .always(function () { fileNewInProgress = false; });
         }
@@ -652,6 +674,15 @@ define(function (require, exports, module) {
      */
     function handleFileNewInProject() {
         _handleNewItemInProject(false);
+    }
+
+    /**
+     * XXXBramble: create "Untitled.js" or "Untitled.html", etc
+     */
+    function handleNewFileWithType(ext) {
+        // Support both ".foo" and "foo", but make sure we have a .
+        ext = ext.replace(/^\.?/, ".");
+        _handleNewItemInProject(false, ext);
     }
 
     /**
@@ -803,7 +834,7 @@ define(function (require, exports, module) {
                 if (suppressError) {
                     result.resolve();
                 } else {
-                    FileUtils.showFileOpenError(error, doc.file.fullPath)
+                    showFileOpenError(error, doc.file.fullPath)
                         .done(function () {
                             result.reject(error);
                         });
@@ -1480,35 +1511,32 @@ define(function (require, exports, module) {
     /** Delete file command handler  **/
     function handleFileDelete() {
         var entry = ProjectManager.getSelectedItem();
-        if (entry.isDirectory) {
-            Dialogs.showModalDialog(
-                DefaultDialogs.DIALOG_ID_EXT_DELETED,
-                Strings.CONFIRM_FOLDER_DELETE_TITLE,
-                StringUtils.format(
-                    Strings.CONFIRM_FOLDER_DELETE,
-                    StringUtils.breakableUrl(entry.name)
-                ),
-                [
-                    {
-                        className : Dialogs.DIALOG_BTN_CLASS_NORMAL,
-                        id        : Dialogs.DIALOG_BTN_CANCEL,
-                        text      : Strings.CANCEL
-                    },
-                    {
-                        className : Dialogs.DIALOG_BTN_CLASS_PRIMARY,
-                        id        : Dialogs.DIALOG_BTN_OK,
-                        text      : Strings.DELETE
-                    }
-                ]
-            )
-                .done(function (id) {
-                    if (id === Dialogs.DIALOG_BTN_OK) {
-                        ProjectManager.deleteItem(entry);
-                    }
-                });
-        } else {
-            ProjectManager.deleteItem(entry);
-        }
+        // XXXBramble: always prompt, needs updated l10n
+        Dialogs.showModalDialog(
+            DefaultDialogs.DIALOG_ID_EXT_DELETED,
+            Strings.CONFIRM_FOLDER_DELETE_TITLE,
+            StringUtils.format(
+                "Are you sure you want to delete <span class='dialog-filename'>{0}</span>?",
+                StringUtils.breakableUrl(entry.name)
+            ),
+            [
+                {
+                    className : Dialogs.DIALOG_BTN_CLASS_NORMAL,
+                    id        : Dialogs.DIALOG_BTN_CANCEL,
+                    text      : Strings.CANCEL
+                },
+                {
+                    className : Dialogs.DIALOG_BTN_CLASS_PRIMARY,
+                    id        : Dialogs.DIALOG_BTN_OK,
+                    text      : Strings.DELETE
+                }
+            ]
+        )
+            .done(function (id) {
+                if (id === Dialogs.DIALOG_BTN_OK) {
+                    ProjectManager.deleteItem(entry);
+                }
+            });
     }
 
     /** Show the selected sidebar (tree or workingset) item in Finder/Explorer */
@@ -1675,6 +1703,9 @@ define(function (require, exports, module) {
     } else if (brackets.platform === "mac") {
         showInOS    = Strings.CMD_SHOW_IN_FINDER;
     }
+    
+    // Define public API
+    exports.showFileOpenError = showFileOpenError;
 
     // Deprecated commands
     CommandManager.register(Strings.CMD_ADD_TO_WORKING_SET,          Commands.FILE_ADD_TO_WORKING_SET,        handleFileAddToWorkingSet);
@@ -1714,6 +1745,9 @@ define(function (require, exports, module) {
     CommandManager.registerInternal(Commands.FILE_CLOSE_WINDOW,         handleFileCloseWindow);
     CommandManager.registerInternal(Commands.APP_RELOAD,                handleReload);
     CommandManager.registerInternal(Commands.APP_RELOAD_WITHOUT_EXTS,   handleReloadWithoutExts);
+
+    // XXXBramble: support adding a new file with a given type
+    CommandManager.registerInternal("bramble.addFileWithType",          handleNewFileWithType);
 
     // Listen for changes that require updating the editor titlebar
     ProjectManager.on("projectOpen", _updateTitle);

@@ -35,12 +35,21 @@ define(function (require, exports, module) {
         Strings             = require("strings"),
         StringUtils         = require("utils/StringUtils"),
         FileSystem          = require("filesystem/FileSystem"),
+        BlobUtils           = require("filesystem/impls/filer/BlobUtils"),
         FileUtils           = require("file/FileUtils"),
         _                   = require("thirdparty/lodash");
-    
-    
+
+    // XXXBramble specific bits to allow opening SVG as a regular image vs. XML doc
+    var PreferencesManager  = require("preferences/PreferencesManager");
+    PreferencesManager.definePreference("openSVGasXML", "boolean", false);
+
     var _viewers = {};
-        
+
+    // Get a Blob URL out of the cache
+    function _getImageUrl(file) {
+        return BlobUtils.getUrl(file.fullPath);
+    }
+
     /**
      * ImageView objects are constructed when an image is opened 
      * @see {@link Pane} for more information about where ImageViews are rendered
@@ -51,8 +60,7 @@ define(function (require, exports, module) {
      */
     function ImageView(file, $container) {
         this.file = file;
-        this.$el = $(Mustache.render(ImageViewTemplate, {fullPath: FileUtils.encodeFilePath(file.fullPath),
-                                                         now: new Date().valueOf()}));
+        this.$el = $(Mustache.render(ImageViewTemplate, {imgUrl: _getImageUrl(file)}));
         
         $container.append(this.$el);
 
@@ -393,22 +401,8 @@ define(function (require, exports, module) {
      * Refreshes the image preview with what's on disk
      */
     ImageView.prototype.refresh = function () {
-        var noCacheUrl = this.$imagePreview.attr("src"),
-            now = new Date().valueOf(),
-            index = noCacheUrl.indexOf("?");
-
-        // strip the old param off 
-        if (index > 0) {
-            noCacheUrl = noCacheUrl.slice(0, index);
-        }
-        
-        // add a new param which will force chrome to 
-        //  re-read the image from disk 
-        noCacheUrl = noCacheUrl + "?ver=" + now;
-        
-
         // Update the DOM node with the src URL 
-        this.$imagePreview.attr("src", noCacheUrl);
+        this.$imagePreview.attr("src", _getImageUrl(this.file));
     };
     
     /* 
@@ -465,7 +459,12 @@ define(function (require, exports, module) {
     MainViewFactory.registerViewFactory({
         canOpenFile: function (fullPath) {
             var lang = LanguageManager.getLanguageForPath(fullPath);
-            return (lang.getId() === "image");
+            var svgAsXML = PreferencesManager.get("openSVGasXML");
+            var id = lang.getId();
+
+            // Depending on whether or not the user wants to treat SVG files as XML
+            // we default to open as an image.
+            return id === "image" || (!svgAsXML && id === "svg");
         },
         openFile: function (file, pane) {
             return _createImageView(file, pane);

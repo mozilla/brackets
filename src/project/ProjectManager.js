@@ -69,7 +69,6 @@ define(function (require, exports, module) {
         PerfUtils           = require("utils/PerfUtils"),
         FileUtils           = require("file/FileUtils"),
         FileSystemError     = require("filesystem/FileSystemError"),
-        Urls                = require("i18n!nls/urls"),
         FileSyncManager     = require("project/FileSyncManager"),
         ProjectModel        = require("project/ProjectModel"),
         FileTreeView        = require("project/FileTreeView"),
@@ -102,6 +101,7 @@ define(function (require, exports, module) {
         _showErrorDialog,
         _saveTreeState,
         renameItemInline,
+        _renderTreeSync,
         _renderTree;
 
     /**
@@ -618,7 +618,7 @@ define(function (require, exports, module) {
      * 
      * @param {boolean} forceRender Force the tree to rerender. Should only be needed by extensions that call rerenderTree.
      */
-    _renderTree = function (forceRender) {
+    _renderTreeSync = function (forceRender) {
         var projectRoot = getProjectRoot();
         if (!projectRoot) {
             return;
@@ -627,7 +627,7 @@ define(function (require, exports, module) {
         FileTreeView.render(fileTreeViewContainer, model._viewModel, projectRoot, actionCreator, forceRender, brackets.platform);
     };
 
-    _renderTree = _.debounce(_renderTree, _RENDER_DEBOUNCE_TIME);
+    _renderTree = _.debounce(_renderTreeSync, _RENDER_DEBOUNCE_TIME);
 
     /**
      * @private
@@ -639,7 +639,8 @@ define(function (require, exports, module) {
      * @return {!string} fullPath reference
      */
     function _getWelcomeProjectPath() {
-        return ProjectModel._getWelcomeProjectPath(Urls.GETTING_STARTED, FileUtils.getNativeBracketsDirectoryPath());
+        // XXXhumphd: just use root dir for now in browser
+        return '/';
     }
 
     /**
@@ -728,7 +729,9 @@ define(function (require, exports, module) {
      * first launch.
      */
     function getInitialProjectPath() {
-        return updateWelcomeProjectPath(PreferencesManager.getViewState("projectPath"));
+        // This is where we specify the file used
+        // for the thimble project
+        return '/';
     }
 
     /**
@@ -819,6 +822,38 @@ define(function (require, exports, module) {
         // Some legacy code calls this API with a non-canonical path
         rootPath = ProjectModel._ensureTrailingSlash(rootPath);
 
+        var projectPrefFullPath = (rootPath + SETTINGS_FILENAME),
+            file   = FileSystem.getFileForPath(projectPrefFullPath);
+            
+        //Verify that the project preferences file (.brackets.json) is NOT corrupted.
+        //If corrupted, display the error message and open the file in editor for the user to edit.
+        FileUtils.readAsText(file)
+            .done(function (text) {
+                try {
+                    if (text) {
+                        JSON.parse(text);
+                    }
+                } catch (err) {
+                    // Cannot parse the text read from the project preferences file.
+                    var info = MainViewManager.findInAllWorkingSets(projectPrefFullPath);
+                    var paneId;
+                    if (info.length) {
+                        paneId = info[0].paneId;
+                    }
+                    FileViewController.openFileAndAddToWorkingSet(projectPrefFullPath, paneId)
+                        .done(function () {
+                            Dialogs.showModalDialog(
+                                DefaultDialogs.DIALOG_ID_ERROR,
+                                Strings.ERROR_PREFS_CORRUPT_TITLE,
+                                Strings.ERROR_PROJ_PREFS_CORRUPT
+                            ).done(function () {
+                                // give the focus back to the editor with the pref file
+                                MainViewManager.focusActivePane();
+                            });
+                        });
+                }
+            });
+
         if (isUpdating) {
             // We're just refreshing. Don't need to unwatch the project root, so we can start loading immediately.
             startLoad.resolve();
@@ -856,73 +891,71 @@ define(function (require, exports, module) {
                 PreferencesManager._stateProjectLayer.setProjectPath(rootPath);
             }
 
-            // Populate file tree as long as we aren't running in the browser
-            if (!brackets.inBrowser) {
-                if (!isUpdating) {
-                    _watchProjectRoot(rootPath);
-                }
-                // Point at a real folder structure on local disk
-                var rootEntry = FileSystem.getDirectoryForPath(rootPath);
-                rootEntry.exists(function (err, exists) {
-                    if (exists) {
-                        var projectRootChanged = (!model.projectRoot || !rootEntry) ||
-                            model.projectRoot.fullPath !== rootEntry.fullPath;
+            // Populate file tree
+            if (!isUpdating) {
+                _watchProjectRoot(rootPath);
+            }
+            // Point at a real folder structure on local disk
+            var rootEntry = FileSystem.getDirectoryForPath(rootPath);
+            rootEntry.exists(function (err, exists) {
+                if (exists) {
+                    var projectRootChanged = (!model.projectRoot || !rootEntry) ||
+                        model.projectRoot.fullPath !== rootEntry.fullPath;
 
-                        // Success!
-                        var perfTimerName = PerfUtils.markStart("Load Project: " + rootPath);
+                    // Success!
+                    var perfTimerName = PerfUtils.markStart("Load Project: " + rootPath);
 
-                        _projectWarnedForTooManyFiles = false;
-                        
-                        _setProjectRoot(rootEntry).always(function () {
-                            model.setBaseUrl(PreferencesManager.getViewState("project.baseUrl", context) || "");
+                    _projectWarnedForTooManyFiles = false;
+                    
+                    _setProjectRoot(rootEntry).always(function () {
+                        model.setBaseUrl(PreferencesManager.getViewState("project.baseUrl", context) || "");
 
-                            if (projectRootChanged) {
-                                _reloadProjectPreferencesScope();
-                                PreferencesManager._setCurrentFile(rootPath);
-                            }
+                        if (projectRootChanged) {
+                            _reloadProjectPreferencesScope();
+                            PreferencesManager._setCurrentFile(rootPath);
+                        }
 
-                            // If this is the most current welcome project, record it. In future launches, we want
-                            // to substitute the latest welcome project from the current build instead of using an
-                            // outdated one (when loading recent projects or the last opened project).
-                            if (rootPath === _getWelcomeProjectPath()) {
-                                addWelcomeProjectPath(rootPath);
-                            }
+                        // If this is the most current welcome project, record it. In future launches, we want
+                        // to substitute the latest welcome project from the current build instead of using an
+                        // outdated one (when loading recent projects or the last opened project).
+                        if (rootPath === _getWelcomeProjectPath()) {
+                            addWelcomeProjectPath(rootPath);
+                        }
 
-                            if (projectRootChanged) {
-                                // Allow asynchronous event handlers to finish before resolving result by collecting promises from them
-                                exports.trigger("projectOpen", model.projectRoot);
-                                result.resolve();
-                            } else {
-                                exports.trigger("projectRefresh", model.projectRoot);
-                                result.resolve();
-                            }
-                            PerfUtils.addMeasurement(perfTimerName);
-                        });
-                    } else {
-                        console.log("error loading project");
-                        _showErrorDialog(ERR_TYPE_LOADING_PROJECT_NATIVE, true, err || FileSystemError.NOT_FOUND, rootPath)
-                            .done(function () {
-                                // Reset _projectRoot to null so that the following _loadProject call won't
-                                // run the 'beforeProjectClose' event a second time on the original project,
-                                // which is now partially torn down (see #6574).
-                                model.projectRoot = null;
+                        if (projectRootChanged) {
+                            // Allow asynchronous event handlers to finish before resolving result by collecting promises from them
+                            exports.trigger("projectOpen", model.projectRoot);
+                            result.resolve();
+                        } else {
+                            exports.trigger("projectRefresh", model.projectRoot);
+                            result.resolve();
+                        }
+                        PerfUtils.addMeasurement(perfTimerName);
+                    });
+                } else {
+                    console.log("error loading project");
+                    _showErrorDialog(ERR_TYPE_LOADING_PROJECT_NATIVE, true, err || FileSystemError.NOT_FOUND, rootPath)
+                        .done(function () {
+                            // Reset _projectRoot to null so that the following _loadProject call won't
+                            // run the 'beforeProjectClose' event a second time on the original project,
+                            // which is now partially torn down (see #6574).
+                            model.projectRoot = null;
 
-                                // The project folder stored in preference doesn't exist, so load the default
-                                // project directory.
-                                // TODO (issue #267): When Brackets supports having no project directory
-                                // defined this code will need to change
-                                _getFallbackProjectPath().done(function (path) {
-                                    _loadProject(path).always(function () {
-                                        // Make sure not to reject the original deferred until the fallback
-                                        // project is loaded, so we don't violate expectations that there is always
-                                        // a current project before continuing after _loadProject().
-                                        result.reject();
-                                    });
+                            // The project folder stored in preference doesn't exist, so load the default
+                            // project directory.
+                            // TODO (issue #267): When Brackets supports having no project directory
+                            // defined this code will need to change
+                            _getFallbackProjectPath().done(function (path) {
+                                _loadProject(path).always(function () {
+                                    // Make sure not to reject the original deferred until the fallback
+                                    // project is loaded, so we don't violate expectations that there is always
+                                    // a current project before continuing after _loadProject().
+                                    result.reject();
                                 });
                             });
-                    }
-                });
-            }
+                        });
+                }
+            });
         });
 
         return result.promise();
@@ -1183,7 +1216,8 @@ define(function (require, exports, module) {
                 Menus.closeAll();
                 actionCreator.setContext(null);
             }
-            _renderTree();
+            // we need to render the tree without a delay to not cause selection extension issues (#10573)
+            _renderTreeSync();
         });
         
         _renderTree();
