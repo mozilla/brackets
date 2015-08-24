@@ -65,4 +65,3 @@ define(function (require, exports, module) {
     module.exports.getTheme = getTheme;
     module.exports.init = init;
 });
-
