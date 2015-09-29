@@ -19,3 +19,9 @@ li.jstree-leaf > a {
 .CodeMirror-sizer {
 	margin-left: 75px !important;
 }
+
+.CodeMirror-foldgutter-open:after,
+.CodeMirror-foldgutter-folded:after
+ {
+  font-size: .7em !important;
+}
