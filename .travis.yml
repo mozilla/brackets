@@ -29,6 +29,7 @@ deploy:
     on:
       repo: humphd/brackets
       branch: bramble
+    cache_control: "max-age=604800, must-revalidate, public"
   - provider: s3
     access_key_id: AKIAI7XHSZFYVHFRTRIA
     secret_access_key:
@@ -41,5 +42,6 @@ deploy:
     on:
       repo: humphd/brackets
       branch: production
+    cache_control: "max-age=604800, must-revalidate, public"
 after_deploy:
 - node invalidate.js
