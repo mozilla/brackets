@@ -25,7 +25,7 @@ define(function (require, exports, module) {
         "QuickOpenHTML",
         "QuickOpenJavaScript",
         "QuickView",
-        "WebPlatformDocs",
+        "MDNDocs",
         "CodeFolding",
 
         // Custom extensions we want loaded by default
@@ -52,7 +52,8 @@ define(function (require, exports, module) {
         "JSLint",
         "QuickOpenCSS",
         "RecentProjects",
-        "UrlCodeHints"
+        "UrlCodeHints",
+        "WebPlatformDocs"
     ];
 
     /**
@@ -64,7 +65,6 @@ define(function (require, exports, module) {
     var extraExtensions = [
         "brackets-cdn-suggestions",    // https://github.com/szdc/brackets-cdn-suggestions
         "HTMLHinter",
-        "MDNDocs",
         "SVGasXML"
     ];
 
