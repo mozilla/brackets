@@ -128,8 +128,13 @@ define(function (require, exports, module) {
         case "BRAMBLE_HIDE_TUTORIAL":
             Tutorial.setOverride(false);
             break;
+        case "BRAMBLE_SHOW_SELFIE_DIALOG":
+            // Show selfie dialog, see extensions/default/BrambleUrlCodeHints
+            skipCallback = true;
+            CommandManager.execute("bramble.selfie").always(callback);
+            break;
         case "BRAMBLE_SHOW_UPLOAD_FILES_DIALOG":
-            // Show dialog, see extensions/default/UploadFiles
+            // Show upload files dialog, see extensions/default/UploadFiles
             skipCallback = true;
             CommandManager.execute("bramble.showUploadFiles").always(callback);
             break;

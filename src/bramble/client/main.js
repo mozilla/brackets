@@ -850,6 +850,10 @@ define([
         this._executeRemoteCommand({commandCategory: "bramble", command: "BRAMBLE_SHOW_UPLOAD_FILES_DIALOG"}, callback);
     };
 
+    BrambleProxy.prototype.showSelfieDialog = function(callback) {
+        this._executeRemoteCommand({commandCategory: "bramble", command: "BRAMBLE_SHOW_SELFIE_DIALOG"}, callback);
+    };
+
     BrambleProxy.prototype.addNewFile = function(options, callback) {
         // We only support writing textual data this way
         if(typeof(options.contents) !== "string") {
