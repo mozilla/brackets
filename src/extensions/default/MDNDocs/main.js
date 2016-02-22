@@ -83,7 +83,9 @@ define(function (require, exports, module) {
      * @return {?$.Promise} resolved with an InlineWidget; null if we're not going to provide anything
      */
     function inlineProvider(hostEditor, pos) {
-        var jsonFile, propInfo,
+        var url,
+            slug,
+            propInfo,
             propQueue = [], // priority queue of propNames to try
             langId = hostEditor.getLanguageForSelection().getId(),
             supportedLangs = ["css", "scss", "less", "html"],
@@ -101,67 +103,63 @@ define(function (require, exports, module) {
         }
 
         if (langIndex <= 2) { // CSS-like language
-            jsonFile = "css.json";
             propInfo = CSSUtils.getInfoAtPos(hostEditor, sel.start);
             if (propInfo.name) {
                 propQueue.push(propInfo.name);
                 // remove possible vendor prefixes
-                propQueue.push(propInfo.name.replace(/^-(?:webkit|moz|ms|o)-/, ""));
-                console.log(propQueue);
+                slug = propInfo.name.replace(/^-(?:webkit|moz|ms|o)-/, "");
+                propQueue.push(slug);
+                url = "CSS/";
             }
         } else { // HTML
-            jsonFile = "html.json";
             propInfo = HTMLUtils.getTagInfo(hostEditor, sel.start);
             if (propInfo.position.tokenType === HTMLUtils.ATTR_NAME && propInfo.attr && propInfo.attr.name) {
                 // we're on an HTML attribute (and not on its value)
-                propQueue.push(propInfo.attr.name.toLowerCase());
+                slug = propInfo.attr.name.toLowerCase();
+                propQueue.push(slug);
             }
             if (propInfo.tagName) { // we're somehow on an HTML tag (no matter where exactly)
                 propInfo = propInfo.tagName.toLowerCase();
-                if (/^h[1-6]$/.test(propInfo)) { // h1..h6 are expressed as "hn" in Web Platform Docs
-                    propInfo = "hn";
-                }
-                propQueue.push("<" + propInfo + ">");
+                propQueue.push(propInfo);
             }
         }
 
         // Are we on a supported property? (no matter if info is available for the property)
-        if (propQueue.length) {
-            var result = new $.Deferred();
-
-            // Load JSON file if not done yet
-            getDocs(jsonFile)
-                .done(function (docs) {
-                    // Construct inline widget (if we have docs for this property)
-
-                    var displayName, propDetails,
-                        propName = _.find(propQueue, function (propName) { // find the first property where info is available
-                            return docs.hasOwnProperty(propName);
-                        });
-
-                    if (propName) {
-                        // strip off all prefixes from the propName
-                        var propPrefix = propName.substr(0, propName.lastIndexOf("/"));
-                        propDetails = docs[propName];
-                        displayName = propName.substr(propName.lastIndexOf("/") + 1);
-                    }
-                    if (propDetails) {
-                        var inlineWidget = new InlineDocsViewer(displayName, propDetails);
-                        inlineWidget.load(hostEditor);
-                        result.resolve(inlineWidget);
-                    } else {
-                        result.reject();
-                    }
-                })
-                .fail(function () {
-                    result.reject();
-                });
-
-            return result.promise();
-
-        } else {
+        if(!propQueue.length) {
             return null;
         }
+
+        var result = new $.Deferred();
+
+        // Load JSON file if not done yet
+        getDocs(url)
+            .done(function (docs) {
+                // Construct inline widget (if we have docs for this property)
+
+                var displayName, propDetails,
+                    propName = _.find(propQueue, function (propName) { // find the first property where info is available
+                        return docs.hasOwnProperty(propName);
+                    });
+
+                if (propName) {
+                    // strip off all prefixes from the propName
+                    var propPrefix = propName.substr(0, propName.lastIndexOf("/"));
+                    propDetails = docs[propName];
+                    displayName = propName.substr(propName.lastIndexOf("/") + 1);
+                }
+                if (propDetails) {
+                    var inlineWidget = new InlineDocsViewer(displayName, propDetails);
+                    inlineWidget.load(hostEditor);
+                    result.resolve(inlineWidget);
+                } else {
+                    result.reject();
+                }
+            })
+            .fail(function () {
+                result.reject();
+            });
+
+        return result.promise();
     }
 
     // Register as inline docs provider
