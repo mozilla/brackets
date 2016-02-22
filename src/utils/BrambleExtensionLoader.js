@@ -25,7 +25,6 @@ define(function (require, exports, module) {
         "QuickOpenHTML",
         "QuickOpenJavaScript",
         "QuickView",
-        "WebPlatformDocs",
         "CodeFolding",
 
         // Custom extensions we want loaded by default
@@ -34,7 +33,8 @@ define(function (require, exports, module) {
         "brackets-paste-and-indent",
         "BrambleUrlCodeHints",
         "UploadFiles",
-        "bramble-move-file"
+        "bramble-move-file",
+        "MDNDocs"
     ];
 
     /**
@@ -64,7 +64,6 @@ define(function (require, exports, module) {
     var extraExtensions = [
         "brackets-cdn-suggestions",    // https://github.com/szdc/brackets-cdn-suggestions
         "HTMLHinter",
-        "MDNDocs",
         "SVGasXML"
     ];
 

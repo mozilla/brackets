@@ -107,7 +107,6 @@ define(function (require, exports, module) {
                 propQueue.push(propInfo.name);
                 // remove possible vendor prefixes
                 propQueue.push(propInfo.name.replace(/^-(?:webkit|moz|ms|o)-/, ""));
-                console.log(propQueue);
             }
         } else { // HTML
             jsonFile = "html.json";
