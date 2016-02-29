@@ -29,8 +29,9 @@ define([
     "bramble/ChannelUtils",
     "bramble/thirdparty/EventEmitter/EventEmitter.min",
     "bramble/client/StateManager",
+    "bramble/client/HybridIndexedDBProvider",
     "bramble/thirdparty/MessageChannel/message_channel"
-], function(Filer, ChannelUtils, EventEmitter, StateManager) {
+], function(Filer, ChannelUtils, EventEmitter, StateManager, HybridIndexedDBProvider) {
     "use strict";
 
     // PROD URL for Bramble, which can be changed below
@@ -110,7 +111,7 @@ define([
 
     // Expose Filer for Path, Buffer, providers, etc.
     Bramble.Filer = Filer;
-    var _fs = new Filer.FileSystem();
+    var _fs = new Filer.FileSystem({provider: new HybridIndexedDBProvider()});
     Bramble.getFileSystem = function() {
         return _fs;
     };
