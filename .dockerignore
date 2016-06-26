@@ -1,0 +1,12 @@
+# Ignore everything
+**/*
+
+# Then un-ignore the following paths
+!locales/**/*
+!scripts/**/*
+!tasks/**/*
+!templates/**/*
+!.jshintrc
+!Gruntfile.js
+!package.json
+!sw-cache-file-list.json
