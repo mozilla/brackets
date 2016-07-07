@@ -608,7 +608,10 @@ define([
                 var children = [];
 
                 function storeRelativePath(childPath, next) {
-                    // We don't care about child folders, only files
+                    // We don't care about child folders, only files because
+                    // the current user of Bramble viz. Thimble does not keep
+                    // track of folder paths and hence including them would be
+                    // redundant (possibly problematic)
                     if(!childPath.endsWith("/")) {
                         children.push(Path.relative(folderPath, childPath));
                     }
