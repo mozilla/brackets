@@ -587,7 +587,7 @@ define(function (require, exports, module) {
             extension = "";
         }
 
-        var suggestedName = baseFileName + "-" + _nextUntitledIndexToUse++ + extension,
+        var suggestedName = baseFileName + "-" + (_nextUntitledIndexToUse++) + extension,
             deferred      = $.Deferred();
 
         if (_nextUntitledIndexToUse > 9999) {
