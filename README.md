@@ -20,8 +20,7 @@ for info on how we're using CodeMirror.
 
 # How to setup Bramble (Brackets) in your local machine
 
-Step 1: Make sure you fork and clone [Bramble](https://github.com/humphd/brackets).
-We do our work on the `bramble` branch, so make sure you aren't on `master`.
+Step 1: Make sure you fork and clone [Bramble](https://github.com/mozilla/brackets).
 
 ```
 $ git clone https://github.com/[yourusername]/brackets --recursive
@@ -60,9 +59,13 @@ However, if you wish to run your own static server, there are several options av
 
 Assuming you have Bramble running on port `8000`. Now you can visit [http://localhost:8000/src](http://localhost:8000/src).
 
-NOTE: Bramble expects to be run in an iframe, which hosts its filesystem. For local
+**NOTE 1:** Bramble expects to be run in an iframe, which hosts its filesystem. For local
 development, use `src/hosted.html` instead of `src/index.html`.  To see how the remote end
 should host Bramble's iframe, see `src/hosted.js`.
+
+**NOTE 2:** Using `npm run build` will overwrite contents in the `src/nls` folder. These changes are necessary if you access Bramble using [http://localhost:8000/src](http://localhost:8000/src). After using Bramble, you can undo the changes by running `npm run unlocalize`.
+
+**NOTE 3:** To use Bramble in a production setting locally, you can run `npm run production` and access Bramble at [http://localhost:8000/dist](http://localhost:8000/dist)
 
 # Optional Extension Loading
 
@@ -338,6 +341,8 @@ to be notified when the action completes:
 * `useDesktopPreview([callback])` - uses a Desktop view in the preview, as it would look on a desktop computer (default)
 * `enableFullscreenPreview([callback])` - shows a fullscreen preview of the current file
 * `disableFullscreenPreview([callback])` - turns off the fullscreen preview of the curent file
+* `enableAutoUpdate([callback])` - turns on auto-update for the preview (default)
+* `disableAutoUpdate([callback])` - turns off auto-update for the preview (manual reloads still work)
 * `enableJavaScript([callback])` - turns on JavaScript execution for the preview (default)
 * `disableJavaScript([callback])` - turns off JavaScript execution for the preview
 * `enableInspector([callback])` - turns on the preview inspector (shows code for hovered/clicked element)
@@ -373,5 +378,14 @@ There are also high-level events for changes to files:
 * `"fileChange"` - triggered whenever a file is created or updated within the project root.  It includes the `filename` of the file that changed.
 * `"fileDelete"` - triggered whenever a file is deleted within the project root.  It includes the `filename` of the file that was deleted.
 * `"fileRename"` - triggered whenever a file is renamed within the project root.  It includes the `oldFilename` and the `newFilename` of the file that was renamed.
+* `"folderRename"` - triggered whenever a folder is renamed within the project root. It includes an object that looks something like this:
+```js
+{
+  oldPath: "/path/before/rename",
+  newPath: "/path/after/rename",
+  // Paths to all files contained inside the folder being renamed
+  children: [ "relativeFilePath1",  "relativeFilePath2", ... ]
+}
+```
 
 NOTE: if you want to receive generic events for file system events, especially events across windows using the same file system, use [fs.watch()](https://github.com/filerjs/filer#watch) instead.

@@ -27,6 +27,8 @@ var habitat = require('habitat');
 habitat.load();
 var env = new habitat();
 
+var Path = require('path');
+
 var GIT_BRANCH = env.get("BRAMBLE_MAIN_BRANCH") || "bramble";
 var GIT_REMOTE = env.get("BRAMBLE_MAIN_REMOTE") || "upstream";
 
@@ -34,6 +36,7 @@ module.exports = function (grunt) {
     'use strict';
 
     var autoprefixer = require('autoprefixer-core');
+    var swPrecache = require('sw-precache');
 
     // load dependencies
     require('load-grunt-tasks')(grunt, {pattern: ['grunt-contrib-*', 'grunt-targethtml', 'grunt-usemin', 'grunt-cleanempty', 'grunt-npm', 'grunt-git', 'grunt-update-submodules', 'grunt-exec']});
@@ -65,7 +68,6 @@ module.exports = function (grunt) {
                     cwd: 'src/',
                     src: [
                         /* static files */
-                        'nls/{,*/}*.js',
                         'xorigin.js',
                         'dependencies.js',
                         'thirdparty/requirejs/require.js',
@@ -91,6 +93,14 @@ module.exports = function (grunt) {
                         'thirdparty/text/*.js'
                     ],
                     dest: 'dist/'
+                }]
+            },
+            nls: {
+                files: [{
+                    expand: true,
+                    cwd: 'dist/nls',
+                    src: [ '**/*.js' ],
+                    dest: 'dist/nls'
                 }]
             }
         },
@@ -387,7 +397,8 @@ module.exports = function (grunt) {
                 '<%= meta.src %>',
                 '<%= meta.test %>',
                 '!src/extensions/extra/**',
-                '!src/bramble/thirdparty/**'
+                '!src/bramble/thirdparty/**',
+                '!src/nls/**'
             ],
             grunt:  '<%= meta.grunt %>',
             src:    [
@@ -396,7 +407,8 @@ module.exports = function (grunt) {
                 '!src/extensions/default/HTMLHinter/slowparse/**',
                 '!src/extensions/default/HTMLHinter/tooltipsy.source.js',
                 '!src/extensions/extra/**',
-                '!src/bramble/thirdparty/**'
+                '!src/bramble/thirdparty/**',
+                '!src/nls/**'
             ],
             test:   '<%= meta.test %>',
             /* use strict options to mimic JSLINT until we migrate to JSHINT in Brackets */
@@ -508,7 +520,15 @@ module.exports = function (grunt) {
             }
         },
         exec: {
-            localize: 'node scripts/properties2js dist'
+            localize: 'node scripts/properties2js',
+            'localize-dist': 'node scripts/properties2js dist',
+            'clean-nls': 'rm -fr src/nls && git checkout -- src/nls'
+        },
+
+        swPrecache: {
+            dist: {
+                rootDir: 'dist'
+            }
         }
     });
 
@@ -566,6 +586,29 @@ module.exports = function (grunt) {
         ]);
     });
 
+    grunt.registerMultiTask('swPrecache', function() {
+        var done = this.async();
+        var rootDir = this.data.rootDir;
+        var files =  (function() {
+            return (require('./sw-cache-file-list.json')).files;
+        }());
+
+        var config = {
+            cacheId: 'bramble',
+            logger: grunt.log.writeln,
+            staticFileGlobs: files,
+            stripPrefix: 'dist/',
+            ignoreUrlParametersMatching: [/./]
+        };
+
+        swPrecache.write(Path.join(rootDir, 'bramble-sw.js'), config, function(err) {
+            if(err) {
+                grunt.fail.warn(err);
+            }
+            done();
+        });
+    });
+
     // task: install
     grunt.registerTask('install', ['write-config', 'less']);
 
@@ -586,6 +629,7 @@ module.exports = function (grunt) {
         'targethtml',
         'useminPrepare',
         'htmlmin',
+        'exec:localize',
         'requirejs:dist',
         'concat',
         /*'cssmin',*/
@@ -601,12 +645,19 @@ module.exports = function (grunt) {
         'build',
         'replace:ternDefs',
         'requirejs:iframe',
-        'exec:localize',
+        'exec:localize-dist',
         'uglify'
     ]);
 
-    // task: build dist/ for browser, pre-compressed with gzip
-    grunt.registerTask('build-browser-compressed', ['build-browser', 'compress']);
+    // task: build dist/ for browser, pre-compressed with gzip and SW precache
+    grunt.registerTask('build-browser-compressed', [
+        'build-browser',
+        'compress',
+        'swPrecache'
+    ]);
+
+    // task: undo changes to the src/nls directory
+    grunt.registerTask('unlocalize', ['exec:clean-nls']);
 
     // Default task.
     grunt.registerTask('default', ['test']);
