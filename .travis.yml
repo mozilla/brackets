@@ -4,7 +4,7 @@ node_js:
 sudo: false
 before_script:
 - npm install -g grunt-cli
-script: grunt build-browser-compressed
+script: grunt test && grunt build-browser-compressed
 branches:
   only:
   - master

@@ -22,15 +22,7 @@
  */
 /*global module, require*/
 
-// Brackets specific config vars
-var habitat = require('habitat');
-habitat.load();
-var env = new habitat();
-
 var Path = require('path');
-
-var GIT_BRANCH = env.get("BRAMBLE_MAIN_BRANCH") || "bramble";
-var GIT_REMOTE = env.get("BRAMBLE_MAIN_REMOTE") || "upstream";
 
 module.exports = function (grunt) {
     'use strict';
@@ -39,7 +31,7 @@ module.exports = function (grunt) {
     var swPrecache = require('sw-precache');
 
     // load dependencies
-    require('load-grunt-tasks')(grunt, {pattern: ['grunt-contrib-*', 'grunt-targethtml', 'grunt-usemin', 'grunt-cleanempty', 'grunt-npm', 'grunt-git', 'grunt-update-submodules', 'grunt-exec']});
+    require('load-grunt-tasks')(grunt, {pattern: ['grunt-contrib-*', 'grunt-targethtml', 'grunt-usemin', 'grunt-cleanempty', 'grunt-exec']});
     grunt.loadTasks('tasks');
 
     // Project configuration.
@@ -348,49 +340,6 @@ module.exports = function (grunt) {
                 tasks: ['jshint:test']
             }
         },
-        /* FIXME (jasonsanjose): how to handle extension tests */
-        jasmine : {
-            src : 'undefined.js', /* trick the default runner to run without importing src files */
-            options : {
-                junit : {
-                    path: 'test/results',
-                    consolidate: true
-                },
-                specs : '<%= meta.specs %>',
-                /* Keep in sync with test/SpecRunner.html dependencies */
-                vendor : [
-                    'test/polyfills.js', /* For reference to why this polyfill is needed see Issue #7951. The need for this should go away once the version of phantomjs gets upgraded to 2.0 */
-                    'src/thirdparty/jquery-2.1.3.min.js',
-                    'src/thirdparty/CodeMirror/lib/codemirror.js',
-                    'src/thirdparty/CodeMirror/lib/util/dialog.js',
-                    'src/thirdparty/CodeMirror/lib/util/searchcursor.js',
-                    'src/thirdparty/CodeMirror/addon/edit/closetag.js',
-                    'src/thirdparty/CodeMirror/addon/selection/active-line.js',
-                    'src/thirdparty/mustache/mustache.js',
-                    'src/thirdparty/path-utils/path-utils.min',
-                    'src/thirdparty/less-1.7.5.min.js'
-                ],
-                helpers : [
-                    'test/spec/PhantomHelper.js'
-                ],
-                template : require('grunt-template-jasmine-requirejs'),
-                templateOptions: {
-                    requireConfig : {
-                        baseUrl: 'src',
-                        paths: {
-                            'test' : '../test',
-                            'perf' : '../test/perf',
-                            'spec' : '../test/spec',
-                            'text' : 'thirdparty/text/text',
-                            'i18n' : 'thirdparty/i18n/i18n'
-                        }
-                    }
-                }
-            }
-        },
-        'jasmine_node': {
-            projectRoot: 'src/extensibility/node/spec/'
-        },
         jshint: {
             all: [
                 '<%= meta.grunt %>',
@@ -424,65 +373,6 @@ module.exports = function (grunt) {
         },
 
         // Brackets specific tasks
-        'npm-checkBranch': {
-            options: {
-                branch: GIT_BRANCH
-            }
-        },
-        gitfetch: {
-            smart: {
-                options: {}
-            }
-        },
-        "update_submodules": {
-            publish: {
-                options: {
-                    params: "--remote -- src/extensions/default/bramble src/extensions/default/HTMLHinter"
-                }
-            }
-        },
-        gitcommit: {
-            module: {
-                options: {
-                    // This is replaced during the 'publish' task
-                    message: "Placeholder"
-                }
-            },
-            publish: {
-                options: {
-                    noStatus: true,
-                    allowEmpty: true,
-                    message: "Latest distribution version of Bramble."
-                }
-            }
-        },
-        gitadd: {
-            publish: {
-                files: {
-                    src: ['./dist/*']
-                },
-                options: {
-                    force: true
-                }
-            },
-            modules: {
-                files: {
-                    src: ['./src/extensions/default/bramble', './src/extensions/default/HTMLHinter']
-                }
-            }
-        },
-        gitpush: {
-            smart: {
-                options: {
-                    remote: GIT_REMOTE,
-                    // These options are left in for
-                    // clarity. Their actual values
-                    // will be set by the `publish` task.
-                    branch: 'gh-pages',
-                    force: true
-                },
-            }
-        },
         compress: {
             dist: {
                 options: {
@@ -538,54 +428,6 @@ module.exports = function (grunt) {
     // Load text-replace
     grunt.loadNpmTasks('grunt-text-replace');
 
-    // Bramble-task: smartCheckout
-    //   Checks out to the branch provided as a target.
-    //   Takes:
-    //    [branch] - The branch to checkout to
-    //    [overwrite] - If true, resets the target branch to the
-    //                  value of the starting branch
-    grunt.registerTask('smartCheckout', function(branch, overwrite) {
-        overwrite = overwrite === "true" ? true : false;
-
-        grunt.config('gitcheckout.smart.options.branch', branch);
-        grunt.config('gitcheckout.smart.options.overwrite', overwrite);
-        grunt.task.run('gitcheckout:smart');
-    });
-
-    // Bramble-task: smartPush
-    //   Checks out to the branch provided as a target.
-    //   Takes:
-    //    [branch] - The branch to push to
-    //    [force] - If true, forces a push
-    grunt.registerTask('smartPush', function(branch, force) {
-        force = force === "true" ? true : false;
-
-        grunt.config('gitpush.smart.options.branch', branch);
-        grunt.config('gitpush.smart.options.force', force);
-        grunt.task.run('gitpush:smart');
-    });
-
-    // Bramble-task: publish-submodules
-    //  Updates submodules, committing and pushing
-    //  the result upstream, and also builds and pushes the
-    //  dist version for use in thimble.
-    grunt.registerTask('publish-submodules', 'Update submodules and the gh-pages branch with the latest built version of bramble.', function(patchLevel) {
-        var date = new Date(Date.now()).toString();
-        grunt.config("gitcommit.module.options.message", "Submodule update on " + date);
-
-        grunt.task.run([
-            // Confirm we're ready to start
-            'checkBranch',
-            'jshint:src',
-
-            // Update submodules, commit and push to "master"
-            'update_submodules:publish',
-            'gitadd:modules',
-            'gitcommit:module',
-            'smartPush:' + GIT_BRANCH + ":false",
-        ]);
-    });
-
     grunt.registerMultiTask('swPrecache', function() {
         var done = this.async();
         var rootDir = this.data.rootDir;
@@ -613,8 +455,7 @@ module.exports = function (grunt) {
     grunt.registerTask('install', ['write-config', 'less']);
 
     // task: test
-    grunt.registerTask('test', ['jshint:all', 'jasmine']);
-//    grunt.registerTask('test', ['jshint:all', 'jasmine', 'jasmine_node']);
+    grunt.registerTask('test', ['jshint:src']);
 
     // task: set-release
     // Update version number in package.json and rewrite src/config.json
@@ -622,7 +463,6 @@ module.exports = function (grunt) {
 
     // task: build
     grunt.registerTask('build', [
-        'jshint:src',
         'clean',
         'less',
         'postcss',
@@ -637,7 +477,7 @@ module.exports = function (grunt) {
         'copy',
         'cleanempty',
         'usemin',
-        'build-config'
+        'write-config'
     ]);
 
     // task: build dist/ for browser

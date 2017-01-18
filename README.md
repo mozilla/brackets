@@ -3,11 +3,6 @@
 Brackets is a modern open-source code editor for HTML, CSS
 and JavaScript that's *built* in HTML, CSS and JavaScript.
 
-Brackets is at 1.0 and we're not stopping there. We have many feature ideas on our
-[trello board](http://bit.ly/BracketsTrelloBoard) that we're anxious to add and other
-innovative web development workflows that we're planning to build into Brackets.
-So take Brackets out for a spin and let us know how we can make it your favorite editor.
-
 You can see some
 [screenshots of Brackets](https://github.com/adobe/brackets/wiki/Brackets-Screenshots)
 on the wiki, [intro videos](http://www.youtube.com/user/CodeBrackets) on YouTube, and news on the [Brackets blog](http://blog.brackets.io/).
@@ -18,54 +13,70 @@ taking our pull requests, implementing feature requests and fixing bugs! See
 [Notes on CodeMirror](https://github.com/adobe/brackets/wiki/Notes-on-CodeMirror)
 for info on how we're using CodeMirror.
 
-# How to setup Bramble (Brackets) in your local machine
+# How to setup Bramble (Brackets) on your local machine
 
-Step 1: Make sure you fork and clone [Bramble](https://github.com/mozilla/brackets).
+Locally, Bramble runs in a container-based environment. Hence, you will need [Docker](https://www.docker.com/) installed in your system. Docker works on [Mac](https://docs.docker.com/docker-for-mac/), [Windows](https://docs.docker.com/docker-for-windows/) and [Linux](https://docs.docker.com/engine/getstarted/step_one/) (click on the links for instructions on how to install Docker on your platform).
+
+**Step 1:** Make sure you fork and clone [Bramble](https://github.com/mozilla/brackets).
 
 ```
 $ git clone https://github.com/[yourusername]/brackets --recursive
 ```
 
-Step 2: Install its dependencies
+**Step 2:** Start Bramble
 
-Navigate to the root of the directory you cloned and run:
+Navigate to the root of the directory you cloned. Open up a terminal session there and run:
 
+**On OSX or Linux**
 ```
-$ npm install
-```
-
-Step 3: run the build
-
-You can build Bramble by running the npm build task:
-
-```
-$ npm run build
+$ sh ./run.sh
 ```
 
-Step 4: Run Bramble:
-
-The easiest way to run Bramble is to simply use:
-
+**On Windows**
 ```
-$ npm start
+$ run.bat
 ```
 
-This starts an `http-server` session on port 8000 for you to work with.
+That's it! Bramble should be up and running and should be accessible on [http://localhost:8000/src/hosted.html](http://localhost:8000/src/hosted.html).
 
-However, if you wish to run your own static server, there are several options available:
-* [Apache Webserver](http://www.apache.org/)
-* Host on [github pages](https://help.github.com/articles/what-are-github-pages)
-* [Python WebServer](https://docs.python.org/2/library/simplehttpserver.html)
+# Changing source code in Bramble
 
-Assuming you have Bramble running on port `8000`. Now you can visit [http://localhost:8000/src](http://localhost:8000/src).
+With Docker running, any changes you make in the `src` directory (with one exception mentioned below) will automatically be "taken in" by the docker container. Hence, you do not need to restart the server with `run.sh` or `run.bat` again. In fact, it is not recommended to stop Bramble from running unless you're done working with it or in the circumstances mentioned below.
 
-**NOTE 1:** Bramble expects to be run in an iframe, which hosts its filesystem. For local
-development, use `src/hosted.html` instead of `src/index.html`.  To see how the remote end
-should host Bramble's iframe, see `src/hosted.js`.
+There is one exception to the above rule! Any changes made in the `src/bramble` directory, although noticed and "taken in" by Docker, will need a re-build of the client code. See the section on [Running commands](#running-commands) for instructions on how to do this.
 
-**NOTE 2:** Using `npm run build` will overwrite contents in the `src/nls` folder. These changes are necessary if you access Bramble using [http://localhost:8000/src](http://localhost:8000/src). After using Bramble, you can undo the changes by running `npm run unlocalize`.
+Any changes to source code made outside the `src` directory will require you to stop Bramble from running (`Ctrl+C`) and restart it by running `run.sh` or `run.bat`.
 
-**NOTE 3:** To use Bramble in a production setting locally, you can run `npm run production` and access Bramble at [http://localhost:8000/dist](http://localhost:8000/dist)
+**NOTE:** When committing code using `git`, you might see some extra file changes in the `src/nls` directory (a result of the build step). To undo these changes (since they should not be committed), simply run `npm run unlocalize` in the docker container. See the section on [Running commands](#running-commands) for instructions on how to do this.
+
+# Running commands
+
+There are some occassions where you need to run a node command or simply explore the docker container while Bramble is running. The steps to do this are:
+
+**Step 1:** Open a new terminal session in the same directory that was cloned.
+
+**Step 2:** Start a docker shell
+
+**On OSX or Linux**
+```
+$ sh ./run.sh shell
+```
+
+**On Windows**
+```
+$ run.bat shell
+```
+
+This will start up a terminal session inside the docker container and you can play around with it.
+
+Here are the list of common commands that can be run inside the shell:
+
+|Command|Purpose|
+|-------|-------|
+|`npm run build`|Build the client code into the `dist` directory|
+|`npm test`|Lint the source code and check for syntax and code style errors|
+|`npm run unlocalize`|Undo changes to the `src/nls` directory that were created during the build|
+|`npm start`|Start a server that serves up the Bramble application|
 
 # Optional Extension Loading
 
@@ -116,10 +127,6 @@ You should check src/utils/BrambleExtensionLoader.js for the most up-to-date ver
 extension lists.
 
 --------------
-
-## After installation
-
-After you have everything setup, you can now run the server you chose in the root of your local Bramble directory and see it in action by visiting [http://localhost:8000/src](http://localhost:8000/src).
 
 # Bramble IFrame API
 
