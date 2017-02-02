@@ -510,6 +510,7 @@ define([
                     if(!err) {
                         self.trigger(type, [oldFilename, newFilename]);
                     }
+                    self.trigger(type,[oldFilename,oldFilename]);
                     callback(err);
                 };
             }
