@@ -132,7 +132,7 @@ define(function (require, exports, module) {
      */
     function loaded() {
         var initialFile = MainViewManager.getCurrentlyViewedFile();
-        var fullPath = initialFile.fullPath;
+        var fullPath = initialFile.fullPath; // this is where the issue
         var filename = Path.basename(fullPath);
 
         var $firstPane = $("#first-pane");
