@@ -635,7 +635,7 @@ define(function (require, exports, module) {
         if (!projectRoot) {
             return;
         }
-        //We don't want to allow the user to scroll off the right, hiding the files
+        //XXXbramble: We don't want to allow the user to scroll off the right, hiding the files
         model.setScrollerInfo($projectTreeContainer[0].scrollWidth, $projectTreeContainer.scrollTop(), 0, $projectTreeContainer.offset().top);
         FileTreeView.render(fileTreeViewContainer, model._viewModel, projectRoot, actionCreator, forceRender, brackets.platform);
     };
