@@ -292,9 +292,6 @@
     "navigate.toggleQuickEdit":  [
         {
             "key": "Ctrl-E"
-        },
-        {
-            "key": "Alt-E"
         }
     ],
     "navigate.toggleQuickDocs":  [
