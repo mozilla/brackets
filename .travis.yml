@@ -2,9 +2,7 @@ language: node_js
 node_js:
 - '4.3'
 sudo: false
-before_script:
-- npm install -g grunt-cli
-script: grunt build-browser-compressed
+script: bash ./scripts/test.sh
 branches:
   only:
   - master
