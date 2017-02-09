@@ -25,10 +25,12 @@ li.jstree-leaf>a>span {
 li.jstree-open>a>span {
 	font-size: 15px;
 	color: #666666;
+	cursor: pointer !important;
 }
 li.jstree-closed>a>span {
 	font-size: 15px;
 	color: #666666;
+        cursor: pointer !important;
 }
 li.jstree-leaf>a>span.extension {
 	color: #666666;
