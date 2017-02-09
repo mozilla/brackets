@@ -161,7 +161,7 @@ define(function (require, exports, module) {
         // transport, check message before sending to remote, and reload if necessary
         // without actually sending to remote for processing.
         if(msg.method === "Page.reload" || msg.method === "Page.navigate") {
-            reload();
+            reload(true);
             return;
         }
 
