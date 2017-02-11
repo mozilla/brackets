@@ -34,12 +34,15 @@ li.jstree-leaf>a>span.extension {
 	color: #666666;
 }
 .filetree-selection {
-	background-color: #333333;
-	border: none;
-	color: white;
+	background-color: rgba(255,255,255,0.2);
+	border: none;   
 	font-weight: bolder;
 	padding: 13px;
 	width: 100% !important;
+	display: block !important;
+}
+.file-test {
+	color:white;
 }
 .filetree-selection-extension {
 	opacity: 0;
@@ -55,7 +58,7 @@ li.jstree-leaf>a>span.extension {
 	font-size: 15px;
 }
 .context {
-	color: rgba(255,255,255,0.6); 
+	color: rgba(255,255,255,0.6);
 }
 li.jstree-leaf>a.jstree-clicked>span {
 	color: white;
