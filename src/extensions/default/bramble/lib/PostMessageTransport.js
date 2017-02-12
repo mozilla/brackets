@@ -160,10 +160,13 @@ define(function (require, exports, module) {
         // Because we need to deal with reloads on this side (i.e., editor) of the
         // transport, check message before sending to remote, and reload if necessary
         // without actually sending to remote for processing.
-        if(msg.method === "Page.reload" || msg.method === "Page.navigate") {
-            reload(true);
+        if(msg.method === "Page.reload") {
+            reload();
             return;
-        }
+        } else if(msg.method === "Page.navigate") {
+	    reload(true);
+	    return;
+	}
 
         win.postMessage(msgStr, "*");
 
