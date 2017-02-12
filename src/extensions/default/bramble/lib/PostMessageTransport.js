@@ -166,7 +166,7 @@ define(function (require, exports, module) {
         } else if(msg.method === "Page.navigate") {
             reload(true);
             return;
-	}
+        }
 
         win.postMessage(msgStr, "*");
 
