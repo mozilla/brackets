@@ -224,6 +224,11 @@ define(function (require, exports, module) {
         var launcher = Launcher.getCurrentInstance();
         var liveDoc = LiveDevMultiBrowser._getCurrentLiveDoc();
         var url;
+		
+		// When add the new file, set up the Auto clicked
+		if(force == null) {
+			force = true
+		}
 
         // If auto-updates are disabled, and force wasn't passed, bail.
         if(!_autoUpdate && !force) {
