@@ -133,6 +133,14 @@ define(function (require, exports, module) {
                 allowJavaScript: PreferencesManager.get("allowJavaScript")
             });
         });
+
+        // Listen for changes to open SVG as XML
+        PreferencesManager.on("change", "openSVGasXML", function () {
+            sendEvent({
+                type: "bramble:openSVGasXMLChange",
+                wordWrap: PreferencesManager.get("openSVGasXML")
+            });
+        });
     }
 
     /**
@@ -165,6 +173,7 @@ define(function (require, exports, module) {
             fontSize: ViewCommandHandlers.getFontSize(),
             theme: Theme.getTheme(),
             wordWrap: PreferencesManager.get("wordWrap"),
+            openSVGasXML: PreferencesManager.get("openSVGasXML"),
             allowJavaScript: PreferencesManager.get("allowJavaScript")
         });
     }

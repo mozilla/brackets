@@ -105,6 +105,10 @@ define(function() {
             allowJavaScript: {
                 get: function()  { return getBool(storage, "allowJavaScript"); },
                 set: function(v) { storage.setItem(prefix("allowJavaScript"), v); }
+            },
+            openSVGasXML: {
+                get: function()  { return getBool(storage, "openSVGasXML"); },
+                set: function(v) { storage.setItem(prefix("openSVGasXML"), v); }
             }
         });
     }
