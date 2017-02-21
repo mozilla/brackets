@@ -100,8 +100,6 @@ define(function (require, exports, module) {
         // Make the spaceUnits and tabSize consistent
         PreferencesManager.set("spaceUnits", 2);
         PreferencesManager.set("tabSize", 2);
-        // Allows the closeTags to indent consistently
-        PreferencesManager.set("closeTags", true);
         // Don't warn about opening file in split view (we steal second view for iframe)
         PreferencesManager.setViewState("splitview.multipane-info", true);
 
@@ -156,7 +154,7 @@ define(function (require, exports, module) {
                     // Setup the iframe browser and Blob URL live dev servers and
                     // load the initial document into the preview.
                     startLiveDev();
-		
+
                     BrambleCodeSnippets.init();
 
                     UI.initUI(finishStartup);
@@ -192,6 +190,7 @@ define(function (require, exports, module) {
             previewMode: data.state.previewMode,
             wordWrap: data.state.wordWrap,
             allowJavaScript: data.state.allowJavaScript,
+            autoCloseTags: data.state.autoCloseTags,
             autoUpdate: data.state.autoUpdate
         });
 
