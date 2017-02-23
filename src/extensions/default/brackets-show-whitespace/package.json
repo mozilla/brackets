@@ -1,0 +1,17 @@
+{
+    "name": "dkehrig.show-whitespace",
+    "title": "Show Whitespace",
+    "description": "Visualize whitespace (both spaces and tabs) in the same style as Sublime Text.",
+    "homepage": "https://github.com/DennisKehrig/brackets-show-whitespace",
+    "version": "2.1.0",
+    "author": "Dennis Kehrig <mailgithub@denniskehrig.de> (https://github.com/DennisKehrig)",
+    "contributors": [
+        "Lance Campbell <lkcampbell@gmail.com> (https://github.com/lkcampbell)"
+    ],
+    "license": "MIT",
+    "engines": { "brackets": ">=1.1.0" },
+    "i18n": [
+        "fi",
+        "en"
+    ]
+}
