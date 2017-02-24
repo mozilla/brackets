@@ -59,6 +59,24 @@ However, if you wish to run your own static server, there are several options av
 
 Assuming you have Bramble running on port `8000`. Now you can visit [http://localhost:8000/src](http://localhost:8000/src).
 
+
+
+## Keeping up to date
+
+Pull new commits from Mozilla (assuming your mozilla/brackets repo is named 'upstream'). Brackets uses a lot of submodules, which must also be kept up to date.
+```
+git checkout master
+git pull upstream master
+git submodule update --init --recursive
+```
+
+If any modules have updated, they must be installed and Bramble must be rebuilt:
+```
+npm install
+npm run build
+```
+
+
 **NOTE 1:** Bramble expects to be run in an iframe, which hosts its filesystem. For local
 development, use `src/hosted.html` instead of `src/index.html`.  To see how the remote end
 should host Bramble's iframe, see `src/hosted.js`.
@@ -123,7 +141,7 @@ After you have everything setup, you can now run the server you chose in the roo
 
 # Bramble IFrame API
 
-Bramble is desinged to be run in an iframe, and the hosting web app to communicate with it
+Bramble is designed to be run in an iframe, and the hosting web app to communicate with it
 via `postMessage` and `MessageChannel`.  In order to simplify this, a convenience API exists
 for creating and managing the iframe, as well as providing JavaScript functions for interacting
 with the editor, preview, etc.
@@ -234,16 +252,16 @@ to an actual DOM element, or leave it blank, and `document.body` will be used.
 
 The `options` object allows you to configure Bramble:
 
- * `url`: `<String>` a URL to use when loading the Bramble iframe (defaults to prod)
- * `locale`: `<String>` the locale Brackets should use
- * `useLocationSearch`: `<Boolean>` whether to copy the window's location.search string to the iframe's url
- * `extensions:` `<Object>` with the following optional properties
+* `url`: `<String>` a URL to use when loading the Bramble iframe (defaults to prod)
+* `locale`: `<String>` the locale Brackets should use
+* `useLocationSearch`: `<Boolean>` whether to copy the window's location.search string to the iframe's url
+* `extensions:` `<Object>` with the following optional properties
      * `enable`: `<Array(String)>` a list of extensions to enable
      * `disable`: `<Array(String)>` a list of extensions to disable
- * `hideUntilReady`: `<Boolean>` whether to hide Bramble until it's fully loaded.
- * `disableUIState`: `<Boolean>` by default, UI state is kept between sessions.  This disables it (and clears old values), and uses the defaults from Bramble.
- * `autoRecoverFileSystem`: `<Boolean>` whether to try and autorecover the filesystem on failure (see `Bramble.formatFileSystem` above).
- * `debug`: `<Boolean>` whether to log debug info.
+* `hideUntilReady`: `<Boolean>` whether to hide Bramble until it's fully loaded.
+* `disableUIState`: `<Boolean>` by default, UI state is kept between sessions.  This disables it (and clears old values), and uses the defaults from Bramble.
+* `autoRecoverFileSystem`: `<Boolean>` whether to try and autorecover the filesystem on failure (see `Bramble.formatFileSystem` above).
+* `debug`: `<Boolean>` whether to log debug info.
 
 ## Bramble.mount(root[, filename])
 
@@ -333,7 +351,7 @@ to be notified when the action completes:
 * `useLightTheme([callback])` - sets the editor to use the light theme (default)
 * `useDarkTheme([callback])` - sets the editor to use the dark theme
 * `showSidebar([callback])` - opens the file tree sidebar
-`* `hideSidebar([callback])` - hides the file tree sidebar
+  `* `hideSidebar([callback])` - hides the file tree sidebar
 * `showStatusbar([callback])` - enables and shows the statusbar
 * `hideStatusbar([callback])` - disables and hides the statusbar
 * `refreshPreview([callback])` - reloads the preview with the latest content in the editor and filesystem
@@ -342,7 +360,7 @@ to be notified when the action completes:
 * `enableFullscreenPreview([callback])` - shows a fullscreen preview of the current file
 * `disableFullscreenPreview([callback])` - turns off the fullscreen preview of the curent file
 * `enableAutoUpdate([callback])` - turns on auto-update for the preview (default)
-`* `disableAutoUpdate([callback])` - turns off auto-update for the preview (manual reloads still work)
+  `* `disableAutoUpdate([callback])` - turns off auto-update for the preview (manual reloads still work)
 * `enableJavaScript([callback])` - turns on JavaScript execution for the preview (default)
 * `disableJavaScript([callback])` - turns off JavaScript execution for the preview
 * `enableInspector([callback])` - turns on the preview inspector (shows code for hovered/clicked element)
