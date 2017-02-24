@@ -40,14 +40,6 @@
          * @param {string} msgStr The message to send.
          */
         send: function (msgStr, data) {
-            var consoleData = data || "unknown";
-
-            if (consoleData != "unknown"){
-                parent.postMessage(JSON.stringify({
-                    type: "console",
-                    message: consoleData
-                }))
-            }
 
             parent.postMessage(JSON.stringify({
                 type: "message",
