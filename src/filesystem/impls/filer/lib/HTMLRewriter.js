@@ -9,12 +9,7 @@ define(function (require, exports, module) {
     var BlobUtils = require("filesystem/impls/filer/BlobUtils");
     var Path = require("filesystem/impls/filer/FilerUtils").Path;
     var decodePath = require("filesystem/impls/filer/FilerUtils").decodePath;
-
-    /**
-     * This variable controls whether or not we want scripts to be run in the preview window or not
-     * We do this by altering the mime type from text/javascript to text/x-scripts-disabled below.
-     */
-    var jsEnabled = true;
+    var PreferencesManager = brackets.getModule("preferences/PreferencesManager");
 
     /**
      * Provides a way to force JS to run when disabled, but only once.
@@ -140,7 +135,7 @@ define(function (require, exports, module) {
                 return;
             }
 
-            if(jsEnabled || jsEnabledOverride) {
+            if(PreferencesManager.get("allowJavaScript") || jsEnabledOverride) {
                 if(element.getAttribute("type") === "text/x-scripts-disabled") {
                     element.removeAttribute("type");
                 }
@@ -217,12 +212,6 @@ define(function (require, exports, module) {
     }
 
     exports.rewrite = rewrite;
-    exports.enableScripts = function() {
-        jsEnabled = true;
-    };
-    exports.disableScripts = function() {
-        jsEnabled = false;
-    };
     exports.forceScriptsOnce = function() {
         jsEnabledOverride = true;
     };
