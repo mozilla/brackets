@@ -39,7 +39,7 @@
     "grunt-jasmine-node": "0.1.0",
     "grunt-lib-phantomjs": "0.3.0",
     "grunt-npm": "git://github.com/sedge/grunt-npm.git#branchcheck",
-    "grunt-postcss": "^0.8.0",
+    "grunt-postcss": "0.3.0",
     "grunt-shell": "^2.1.0",
     "grunt-targethtml": "0.2.6",
     "grunt-template-jasmine-requirejs": "0.1.0",
