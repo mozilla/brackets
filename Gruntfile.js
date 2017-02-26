@@ -36,7 +36,7 @@ var GIT_BRANCH = env.get("BRAMBLE_MAIN_BRANCH") || "bramble";
 var GIT_REMOTE = env.get("BRAMBLE_MAIN_REMOTE") || "upstream";
 
 module.exports = function (grunt) {
-    var autoprefixer = require('autoprefixer-core');
+    var autoprefixer = require('autoprefixer');
     var swPrecache = require('sw-precache');
 
     // load dependencies
@@ -242,7 +242,7 @@ module.exports = function (grunt) {
                             "iOS >= 3.2",
                             "Android >= 4.4"
                         ]
-                    }).postcss
+                    })
                 ]
             },
             dist: { src: 'src/styles/brackets.min.css' }
