@@ -76,3 +76,8 @@ li.jstree-leaf > a {
 .bramble-inspector-highlight {
     background: rgba(0, 135, 207, .3) !important;
 }
+
+/* Make it obvious that files in the sidebar are something you can click. */
+li.jstree-leaf > a {
+	cursor: pointer !important;
+}
