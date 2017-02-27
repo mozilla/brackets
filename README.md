@@ -59,11 +59,17 @@ However, if you wish to run your own static server, there are several options av
 
 Assuming you have Bramble running on port `8000`. Now you can visit [http://localhost:8000/src](http://localhost:8000/src).
 
+**NOTE 1:** Bramble expects to be run in an iframe, which hosts its filesystem. For local
+development, use `src/hosted.html` instead of `src/index.html`.  To see how the remote end
+should host Bramble's iframe, see `src/hosted.js`.
 
+**NOTE 2:** Using `npm run build` will overwrite contents in the `src/nls` folder. These changes are necessary if you access Bramble using [http://localhost:8000/src](http://localhost:8000/src). After using Bramble, you can undo the changes by running `npm run unlocalize`.
+
+**NOTE 3:** To use Bramble in a production setting locally, you can run `npm run production` and access Bramble at [http://localhost:8000/dist](http://localhost:8000/dist)
 
 ## Keeping up to date
 
-Pull new commits from Mozilla (assuming your mozilla/brackets repo is named 'upstream'). Brackets uses a lot of submodules, which must also be kept up to date.
+Pull new commits from Mozilla (assuming your mozilla/brackets remote is named 'upstream'). Brackets uses a lot of submodules, which must also be kept up to date.
 ```
 git checkout master
 git pull upstream master
@@ -75,15 +81,6 @@ If any modules have updated, they must be installed and Bramble must be rebuilt:
 npm install
 npm run build
 ```
-
-
-**NOTE 1:** Bramble expects to be run in an iframe, which hosts its filesystem. For local
-development, use `src/hosted.html` instead of `src/index.html`.  To see how the remote end
-should host Bramble's iframe, see `src/hosted.js`.
-
-**NOTE 2:** Using `npm run build` will overwrite contents in the `src/nls` folder. These changes are necessary if you access Bramble using [http://localhost:8000/src](http://localhost:8000/src). After using Bramble, you can undo the changes by running `npm run unlocalize`.
-
-**NOTE 3:** To use Bramble in a production setting locally, you can run `npm run production` and access Bramble at [http://localhost:8000/dist](http://localhost:8000/dist)
 
 # Optional Extension Loading
 
@@ -351,7 +348,7 @@ to be notified when the action completes:
 * `useLightTheme([callback])` - sets the editor to use the light theme (default)
 * `useDarkTheme([callback])` - sets the editor to use the dark theme
 * `showSidebar([callback])` - opens the file tree sidebar
-  `* `hideSidebar([callback])` - hides the file tree sidebar
+* `hideSidebar([callback])` - hides the file tree sidebar
 * `showStatusbar([callback])` - enables and shows the statusbar
 * `hideStatusbar([callback])` - disables and hides the statusbar
 * `refreshPreview([callback])` - reloads the preview with the latest content in the editor and filesystem
@@ -360,7 +357,7 @@ to be notified when the action completes:
 * `enableFullscreenPreview([callback])` - shows a fullscreen preview of the current file
 * `disableFullscreenPreview([callback])` - turns off the fullscreen preview of the curent file
 * `enableAutoUpdate([callback])` - turns on auto-update for the preview (default)
-  `* `disableAutoUpdate([callback])` - turns off auto-update for the preview (manual reloads still work)
+* `disableAutoUpdate([callback])` - turns off auto-update for the preview (manual reloads still work)
 * `enableJavaScript([callback])` - turns on JavaScript execution for the preview (default)
 * `disableJavaScript([callback])` - turns off JavaScript execution for the preview
 * `enableInspector([callback])` - turns on the preview inspector (shows code for hovered/clicked element)
