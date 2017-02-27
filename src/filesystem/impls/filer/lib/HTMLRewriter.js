@@ -128,14 +128,14 @@ define(function (require, exports, module) {
 
     HTMLRewriter.prototype.scripts = function(callback) {
         var elements = this.doc.querySelectorAll("script");
-        var allowJavaScript = PreferencesManager.get("allowJavaScript");
+        var jsEnabled = PreferencesManager.get("allowJavaScript");
         function maybeDisable(element) {
             // Skip any scripts we've injected for live dev.
             if(!element.getAttribute("data-brackets-id")) {
                 return;
             }
 
-            if(allowJavaScript || jsEnabledOverride) {
+            if(jsEnabled || jsEnabledOverride) {
                 if(element.getAttribute("type") === "text/x-scripts-disabled") {
                     element.removeAttribute("type");
                 }
