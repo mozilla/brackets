@@ -128,6 +128,7 @@ define(function (require, exports, module) {
 
     HTMLRewriter.prototype.scripts = function(callback) {
         var elements = this.doc.querySelectorAll("script");
+        //This variable "jsEnabled" controls whether or not we want scripts to be run in the preview window or not
         var jsEnabled = PreferencesManager.get("allowJavaScript");
         function maybeDisable(element) {
             // Skip any scripts we've injected for live dev.
