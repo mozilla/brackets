@@ -108,8 +108,7 @@ define(function() {
             },
             editHint: {
                 get: function()  { return getBool(storage, "editHint"); },
-                set: function(v) { storage.setItem(prefix("editHint"), v); }
-
+                set: function(v) { storage.setItem(prefix("editHint"), v); },
             autoUpdate: {
                 get: function()  { return getBool(storage, "autoUpdate"); },
                 set: function(v) { storage.setItem(prefix("autoUpdate"), v); }
