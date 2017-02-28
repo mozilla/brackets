@@ -125,7 +125,7 @@ define(function (require, exports, module) {
                 wordWrap: PreferencesManager.get("wordWrap")
             });
         });
-        
+
         // Listen for changes to allow javascript
         PreferencesManager.on("change", "allowJavaScript", function () {
             sendEvent({
@@ -133,6 +133,14 @@ define(function (require, exports, module) {
                 allowJavaScript: PreferencesManager.get("allowJavaScript")
             });
         });
+
+        MainViewManager.on("editHintChange", function() {
+          sendEvent({
+              type: "bramble:editHintChange",
+              allowJavaScript: MainViewManager.get("editHint")
+          });
+        });
+
     }
 
     /**
@@ -165,7 +173,8 @@ define(function (require, exports, module) {
             fontSize: ViewCommandHandlers.getFontSize(),
             theme: Theme.getTheme(),
             wordWrap: PreferencesManager.get("wordWrap"),
-            allowJavaScript: PreferencesManager.get("allowJavaScript")
+            allowJavaScript: PreferencesManager.get("allowJavaScript"),
+            editHint : MainViewManager._findEditProvider()
         });
     }
 

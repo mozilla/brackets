@@ -239,6 +239,7 @@ define(function (require, exports, module) {
         // Keep looping until a provider is found. If a provider is not found,
         // display highest priority error message that was found, otherwise display
         // default error message
+
         for (i = 0; i < providers.length && !inlinePromise; i++) {
             var provider = providers[i].provider;
             providerRet = provider(editor, pos);
@@ -290,7 +291,6 @@ define(function (require, exports, module) {
      */
     function _toggleInlineWidget(providers, errorMsg) {
         var result = new $.Deferred();
-
         var currentEditor = getCurrentFullEditor();
 
         if (currentEditor) {
@@ -778,6 +778,28 @@ define(function (require, exports, module) {
             handleFileRemoved(removedFiles);
         }
     }
+    function findEditProvider(){
+        var providers = _inlineEditProviders,
+            inlinePromise,// incase we want to send this back to thimble
+            i,
+            editor = getCurrentFullEditor(),
+            pos = editor.getCursorPos(),
+            providerRet;// incase we want to send this back to thimble
+
+
+        for (i = 0; i < providers.length && !inlinePromise; i++) {
+            var provider = providers[i].provider;
+            providerRet = provider(editor, pos);
+            if (providerRet) {
+                if (providerRet.hasOwnProperty("done")) {
+                    inlinePromise = providerRet;
+                }
+            }
+        }
+
+        return (providerRet)?true:false;
+    }
+
 
 
     // Set up event dispatching
@@ -821,6 +843,7 @@ define(function (require, exports, module) {
     exports.closeInlineWidget             = closeInlineWidget;
     exports.openDocument                  = openDocument;
     exports.canOpenPath                   = canOpenPath;
+    exports.findEditProvider              = findEditProvider;
 
     // Convenience Methods
     exports.getActiveEditor               = getActiveEditor;

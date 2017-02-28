@@ -831,7 +831,7 @@ define(function (require, exports, module) {
 
         sourcePane.moveView(file, destinationPane, destinationIndex)
             .done(function () {
-                // remove existing entry from mrulist for the same document if present 
+                // remove existing entry from mrulist for the same document if present
                 _removeFileFromMRU(destinationPane.id, file);
                 // update the mru list
                 _mruList.every(function (record) {
@@ -1683,8 +1683,10 @@ define(function (require, exports, module) {
 
         return result;
     }
-    
-    
+    function _findEditProvider(){
+        return EditorManager.findEditProvider();
+    }
+
     /**
      * Setup a ready event to initialize ourself
      */
@@ -1720,6 +1722,7 @@ define(function (require, exports, module) {
     exports._closeAll                     = _closeAll;
     exports._closeList                    = _closeList;
     exports._getPaneIdForPath             = _getPaneIdForPath;
+    exports._findEditProvider             = _findEditProvider;
 
     // WorkingSet Management
     exports.addToWorkingSet               = addToWorkingSet;

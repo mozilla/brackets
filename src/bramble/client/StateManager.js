@@ -105,6 +105,10 @@ define(function() {
             allowJavaScript: {
                 get: function()  { return getBool(storage, "allowJavaScript"); },
                 set: function(v) { storage.setItem(prefix("allowJavaScript"), v); }
+            },
+            editHint: {
+                get: function()  { return getBool(storage, "editHint"); },
+                set: function(v) { storage.setItem(prefix("editHint"), v); }
             }
         });
     }
