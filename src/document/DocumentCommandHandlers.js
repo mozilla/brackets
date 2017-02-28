@@ -593,8 +593,7 @@ define(function (require, exports, module) {
 	    var suggestedName = baseFileName  + extension,
             deferred      = $.Deferred();
 	    _nextUntitledIndexToUse++;
-	}
-	else {
+	} else {
 	    var suggestedName = baseFileName + "-" + (_nextUntitledIndexToUse++) + extension,
             deferred      = $.Deferred();
 	}
