@@ -589,18 +589,15 @@ define(function (require, exports, module) {
         if(isFolder) {
             extension = "";
         }
-		
-		if (_nextUntitledIndexToUse === 1)
-		{
-			var suggestedName = baseFileName  + extension,
+	if (_nextUntitledIndexToUse === 1) {
+	    var suggestedName = baseFileName  + extension,
             deferred      = $.Deferred();
-			_nextUntitledIndexToUse++;
-		}
-		else
-		{
-			var suggestedName = baseFileName + "-" + (_nextUntitledIndexToUse++) + extension,
+	    _nextUntitledIndexToUse++;
+	}
+	else {
+	    var suggestedName = baseFileName + "-" + (_nextUntitledIndexToUse++) + extension,
             deferred      = $.Deferred();
-		}
+	}
 
         if (_nextUntitledIndexToUse > 9999) {
             //we've tried this enough
