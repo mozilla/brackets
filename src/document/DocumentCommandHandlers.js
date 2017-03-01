@@ -593,7 +593,7 @@ define(function (require, exports, module) {
 
         if (_nextUntitledIndexToUse === 1) {
             suggestedName = baseFileName + extension;
-	    } else {
+        } else {
             suggestedName = baseFileName + "-" + _nextUntitledIndexToUse + extension;
         }
         
