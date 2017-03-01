@@ -790,10 +790,8 @@ define(function (require, exports, module) {
         for (i = 0; i < providers.length && !inlinePromise; i++) {
             var provider = providers[i].provider;
             providerRet = provider(editor, pos);
-            if (providerRet) {
-                if (providerRet.hasOwnProperty("done")) {
-                    inlinePromise = providerRet;
-                }
+            if (providerRet && providerRet.hasOwnProperty("done")) {
+                inlinePromise = providerRet;
             }
         }
 
