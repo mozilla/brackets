@@ -40,10 +40,10 @@
          * @param {string} msgStr The message to send.
          */
         send: function (msgStr, data) {
-
             parent.postMessage(JSON.stringify({
                 type: "message",
-                message: msgStr
+                message: msgStr,
+                data: data
             }), "*");
         },
 
