@@ -596,9 +596,9 @@ define(function (require, exports, module) {
 	    } else {
 	        suggestedName = baseFileName + "-" + _nextUntitledIndexToUse + extension;
         }
-        
+
         _nextUntitledIndexToUse++;
-        var deferred      = $.Deferred();
+        var deferred = $.Deferred();
 
         if (_nextUntitledIndexToUse > 9999) {
             //we've tried this enough
