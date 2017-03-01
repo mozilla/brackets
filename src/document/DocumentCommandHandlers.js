@@ -590,13 +590,13 @@ define(function (require, exports, module) {
         if(isFolder) {
             extension = "";
         }
-	    
-        if (_nextUntitledIndexToUse === 1) {
-	        suggestedName = baseFileName + extension;
-	    } else {
-	        suggestedName = baseFileName + "-" + _nextUntitledIndexToUse + extension;
-        }
 
+        if (_nextUntitledIndexToUse === 1) {
+            suggestedName = baseFileName + extension;
+	    } else {
+            suggestedName = baseFileName + "-" + _nextUntitledIndexToUse + extension;
+        }
+        
         _nextUntitledIndexToUse++;
         var deferred = $.Deferred();
 
