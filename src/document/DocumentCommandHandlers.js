@@ -583,20 +583,22 @@ define(function (require, exports, module) {
      *   the given base name
      */
     function _getUntitledFileSuggestion(dir, fileNameOptions, isFolder) {
-        var baseFileName = fileNameOptions.baseFileName,
-            extension    = fileNameOptions.extension ? fileNameOptions.extension.replace(/^\.?/, ".") : "";
+        var baseFileName  = fileNameOptions.baseFileName,
+            extension     = fileNameOptions.extension ? fileNameOptions.extension.replace(/^\.?/, ".") : "",
+            suggestedName = "";
 
         if(isFolder) {
             extension = "";
         }
-	if (_nextUntitledIndexToUse === 1) {
-	    var suggestedName = baseFileName  + extension,
-            deferred      = $.Deferred();
-	    _nextUntitledIndexToUse++;
-	} else {
-	    var suggestedName = baseFileName + "-" + (_nextUntitledIndexToUse++) + extension,
-            deferred      = $.Deferred();
-	}
+	    
+        if (_nextUntitledIndexToUse === 1) {
+	        suggestedName = baseFileName + extension;
+	    } else {
+	        suggestedName = baseFileName + "-" + _nextUntitledIndexToUse + extension;
+        }
+        
+        _nextUntitledIndexToUse++;
+        var deferred      = $.Deferred();
 
         if (_nextUntitledIndexToUse > 9999) {
             //we've tried this enough
