@@ -98,7 +98,7 @@ define(function (require, exports, module) {
         WORD_WRAP           = "wordWrap",
         INDENT_LINE_COMMENT  = "indentLineComment",
         ALLOW_JAVASCRIPT    = "allowJavaScript";
-    
+
 
     var cmOptions         = {};
 
@@ -212,7 +212,7 @@ define(function (require, exports, module) {
     PreferencesManager.definePreference(WORD_WRAP,          "boolean", true, {
         description: Strings.DESCRIPTION_WORD_WRAP
     });
-    
+
     PreferencesManager.definePreference(INDENT_LINE_COMMENT,  "boolean", false, {
         description: Strings.DESCRIPTION_INDENT_LINE_COMMENT
     });
@@ -345,7 +345,7 @@ define(function (require, exports, module) {
 
         // To track which pane the editor is being attached to if it's a full editor
         this._paneId = null;
-        
+
         // To track the parent editor ( host editor at that time of creation) of an inline editor
         this._hostEditor = null;
 
@@ -549,6 +549,7 @@ define(function (require, exports, module) {
      */
     Editor.prototype._handleCursorActivity = function (event) {
         this._updateStyleActiveLine();
+        MainViewManager._findEditProvider();
     };
 
     /**
@@ -1017,7 +1018,7 @@ define(function (require, exports, module) {
         this._codeMirror.on("focus", function () {
             self._focused = true;
             self.trigger("focus", self);
-            
+
         });
 
         this._codeMirror.on("blur", function () {
@@ -2547,7 +2548,7 @@ define(function (require, exports, module) {
 
     /**
      * Sets lineCommentIndent option.
-     * 
+     *
      * @param {boolean} value
      * @param {string=} fullPath Path to file to get preference for
      * @return {boolean} true if value was valid
@@ -2556,7 +2557,7 @@ define(function (require, exports, module) {
         var options = fullPath && {context: fullPath};
         return PreferencesManager.set(INDENT_LINE_COMMENT, value, options);
     };
-    
+
     /**
      * Returns true if word wrap is enabled for the specified or current file
      * @param {string=} fullPath Path to file to get preference for
@@ -2565,7 +2566,7 @@ define(function (require, exports, module) {
     Editor.getIndentLineComment = function (fullPath) {
         return PreferencesManager.get(INDENT_LINE_COMMENT, _buildPreferencesContext(fullPath));
     };
-    
+
     Editor.setAllowJavaScript = function (value, fullPath) {
         var options = fullPath && {context: fullPath};
         return PreferencesManager.set(ALLOW_JAVASCRIPT, value, options);

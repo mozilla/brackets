@@ -91,7 +91,7 @@ define(function (require, exports, module) {
      * @private
      */
     var _inlineDocsProviders = [];
-
+    var _inlineEditProviderCheck = [];
     /**
      * Registered jump-to-definition providers.
      * @see {@link #registerJumpToDefProvider}.
@@ -404,6 +404,12 @@ define(function (require, exports, module) {
         }
         _insertProviderSorted(_inlineEditProviders, provider, priority);
     }
+
+    function registerInlineEditProviderCheck(provider){
+       _inlineEditProviderCheck=_inlineEditProviders.slice(0);
+       _insertProviderSorted(_inlineEditProviderCheck, provider, 0);
+    }
+
 
     /**
      * Registers a new inline docs provider. When Quick Docs is invoked each registered provider is
@@ -779,25 +785,25 @@ define(function (require, exports, module) {
         }
     }
     function findEditProvider(){
-        var providers = _inlineEditProviders,
+        var providers = _inlineEditProviderCheck,
             inlinePromise,// incase we want to send this back to thimble
             i,
             editor = getCurrentFullEditor(),
-            pos = editor.getCursorPos(),
-            providerRet;// incase we want to send this back to thimble
-
-
-        for (i = 0; i < providers.length && !inlinePromise; i++) {
+            pos = (editor!=null)?editor.getCursorPos():null,
+            providerRet;
+        for (i = 0; i < providers.length && !inlinePromise&& pos!=null; i++) {
             var provider = providers[i].provider;
+
             providerRet = provider(editor, pos);
-            if (providerRet) {
-                if (providerRet.hasOwnProperty("done")) {
-                    inlinePromise = providerRet;
-                }
+            if (providerRet && providerRet.hasOwnProperty("done")) {
+                break;
+
             }
         }
+        var val = (providerRet)?true:false;
+        console.log(val);
+        // trigger event
 
-        return (providerRet)?true:false;
     }
 
 
@@ -854,6 +860,7 @@ define(function (require, exports, module) {
     exports.registerInlineEditProvider    = registerInlineEditProvider;
     exports.registerInlineDocsProvider    = registerInlineDocsProvider;
     exports.registerJumpToDefProvider     = registerJumpToDefProvider;
+    exports.registerInlineEditProviderCheck = registerInlineEditProviderCheck
 
     // Deprecated
     exports.registerCustomViewer          = registerCustomViewer;

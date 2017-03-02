@@ -151,6 +151,34 @@ define(function (require, exports, module) {
         return html;
     }
 
+    function checkProvider(hostEditor,pos){
+
+      // can make htmlToCSSProvider call this later
+
+      // Only provide a CSS editor when cursor is in HTML content
+      if (hostEditor.getLanguageForSelection().getId() !== "html") {
+          return null;
+      }
+
+      // Only provide CSS editor if the selection is within a single line
+      var sel = hostEditor.getSelection();
+      if (sel.start.line !== sel.end.line) {
+          return null;
+      }
+
+      // Always use the selection start for determining selector name. The pos
+      // parameter is usually the selection end.
+      var selectorResult = _getSelectorName(hostEditor, sel.start);
+      if (selectorResult.selectorName === "") {
+          return selectorResult.reason || null;
+      }
+
+      var selectorName = selectorResult.selectorName;
+
+      var result = new $.Deferred();
+      return result.promise();
+
+    }
     /**
      * This function is registered with EditManager as an inline editor provider. It creates a CSSInlineEditor
      * when cursor is on an HTML tag name, class attribute, or id attribute, find associated
@@ -182,13 +210,11 @@ define(function (require, exports, module) {
             return selectorResult.reason || null;
         }
 
-        var selectorName = selectorResult.selectorName;
-
         var result = new $.Deferred(),
             cssInlineEditor,
             cssFileInfos = [],
             newRuleButton;
-
+          //  return result.promise();
         /**
          * @private
          * Callback when item from dropdown list is selected
@@ -362,7 +388,7 @@ define(function (require, exports, module) {
 
         return result.promise();
     }
-
+    EditorManager.registerInlineEditProviderCheck(checkProvider);
     EditorManager.registerInlineEditProvider(htmlToCSSProvider);
 
     _newRuleCmd = CommandManager.register(Strings.CMD_CSS_QUICK_EDIT_NEW_RULE, Commands.CSS_QUICK_EDIT_NEW_RULE, _handleNewRule);
