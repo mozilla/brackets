@@ -12,7 +12,8 @@ define(function (require, exports, module) {
     var isConsoleEnabled = false;
 
     function getRemoteScript() {
-        return "<script>\n" + ConsoleManagerRemote + "<script>\n"
+        return "<script>\n" + ConsoleManagerRemote + "<script>\n";
     }
 
+    exports.getRemoteScript = getRemoteScript;
 });
