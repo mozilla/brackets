@@ -125,7 +125,7 @@ define(function (require, exports, module) {
      * index to use for next, new Untitled document
      * @type {number}
      */
-    var _nextUntitledIndexToUse = 1;
+    var _nextUntitledIndexToUse = {};
 
     /**
      * prevents reentrancy of browserReload()
@@ -583,24 +583,28 @@ define(function (require, exports, module) {
      *   the given base name
      */
     function _getUntitledFileSuggestion(dir, fileNameOptions, isFolder) {
-        var baseFileName  = fileNameOptions.baseFileName,
-            extension     = fileNameOptions.extension ? fileNameOptions.extension.replace(/^\.?/, ".") : "",
-            suggestedName = "";
+        var baseFileName = fileNameOptions.baseFileName,
+            extension    = fileNameOptions.extension ? fileNameOptions.extension.replace(/^\.?/, ".") : "",
+            deferred     = $.Deferred(),
+            suggestedName;
 
         if(isFolder) {
             extension = "";
         }
 
-        if (_nextUntitledIndexToUse === 1) {
+        _nextUntitledIndexToUse[baseFileName] = _nextUntitledIndexToUse[baseFileName] || 1;
+
+        if (_nextUntitledIndexToUse[baseFileName] === 1) {
+            //if we've deleted all the files in the file tree
+            //replace the suggestedName with baseFileName.extension
             suggestedName = baseFileName + extension;
         } else {
-            suggestedName = baseFileName + "-" + _nextUntitledIndexToUse + extension;
+            suggestedName = baseFileName + "-" + _nextUntitledIndexToUse[baseFileName]+ extension;
         }
-        
-        _nextUntitledIndexToUse++;
-        var deferred = $.Deferred();
 
-        if (_nextUntitledIndexToUse > 9999) {
+        _nextUntitledIndexToUse[baseFileName]++;
+
+        if (_nextUntitledIndexToUse[baseFileName] > 9999) {
             //we've tried this enough
             deferred.reject();
         } else {
