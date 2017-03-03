@@ -797,7 +797,7 @@ define(function (require, exports, module) {
             providerRet = provider(editor, pos);
             if (providerRet && providerRet.hasOwnProperty("done")) {
                 break;
-
+                inlinePromise = providerRet;
             }
         }
         var val = (providerRet)?true:false;
