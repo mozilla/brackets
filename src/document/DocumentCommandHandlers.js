@@ -123,7 +123,8 @@ define(function (require, exports, module) {
 
     /**
      * index to use for next, new Untitled document
-     * @type {number}
+     * @type {Object}
+     * XXXBramble: we keep track of new index per filename type ("index", "style", etc).
      */
     var _nextUntitledIndexToUse = {};
 
