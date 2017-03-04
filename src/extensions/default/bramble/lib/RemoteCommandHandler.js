@@ -158,10 +158,6 @@ define(function (require, exports, module) {
             skipCallback = true;
             CommandManager.execute("bramble.addCodeSnippet", args[0]).always(callback);
             break;
-        case "EDIT_PROVIDER":
-            skipCallback=true;
-            EditorManager.findEditProvider();
-            break;
         default:
             console.log('[Bramble] unknown command:', command);
             skipCallback = true;

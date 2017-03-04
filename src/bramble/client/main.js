@@ -205,7 +205,6 @@ define([
         self.getRootDir = function() { return _root; };
         self.getWordWrap = function() { return _state.wordWrap; };
         self.getAllowJavaScript = function() { return _state.allowJavaScript; };
-        self.getEditHint = function() { return _state.editHint; };
         self.getAutoUpdate = function() { return _state.autoUpdate; };
         self.getTutorialExists = function() { return _tutorialExists; };
         self.getTutorialVisible = function() { return _tutorialVisible; };
@@ -266,7 +265,6 @@ define([
                     _state.theme = data.theme;
                     _state.wordWrap = data.wordWrap;
                     _state.allowJavaScript = data.allowJavaScript;
-                    _state.editHint = data.editHint;
                     _state.autoUpdate = data.autoUpdate;
 
                     setReadyState(Bramble.READY);
@@ -307,8 +305,6 @@ define([
                         _state.allowJavaScript = data.allowJavaScript;
                     } else if (eventName === "tutorialVisibilityChange") {
                         _tutorialVisible = data.visible;
-                    } else if (eventName === "editHintChange") {
-                        _state.editHint = data.editHint;
                     } else if (eventName === "autoUpdateChange") {
                         _state.autoUpdate = data.autoUpdate;
                     }
@@ -426,7 +422,6 @@ define([
                                     previewMode: _state.previewMode,
                                     wordWrap: _state.wordWrap,
                                     allowJavaScript: _state.allowJavaScript,
-                                    editHint: _state.editHint
                                     autoUpdate: _state.autoUpdate
                                 }
                             };
@@ -957,10 +952,6 @@ define([
 
     BrambleProxy.prototype.export = function(callback) {
         this._executeRemoteCommand({commandCategory: "bramble", command: "BRAMBLE_EXPORT"}, callback);
-    };
-
-    BrambleProxy.prototype.getEditProvider = function(callback){
-      this._executeRemoteCommand({commandCategory:"bramble",command:"EDIT_PROVIDER"},callback);
     };
 
     BrambleProxy.prototype.addCodeSnippet = function(options, callback) {

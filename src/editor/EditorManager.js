@@ -239,7 +239,6 @@ define(function (require, exports, module) {
         // Keep looping until a provider is found. If a provider is not found,
         // display highest priority error message that was found, otherwise display
         // default error message
-
         for (i = 0; i < providers.length && !inlinePromise; i++) {
             var provider = providers[i].provider;
             providerRet = provider(editor, pos);
@@ -784,26 +783,19 @@ define(function (require, exports, module) {
             handleFileRemoved(removedFiles);
         }
     }
-    function findEditProvider(){
+    function findEditProvider(editor) {
         var providers = _inlineEditProviderCheck,
-            inlinePromise,// incase we want to send this back to thimble
             i,
-            editor = getCurrentFullEditor(),
-            pos = (editor!=null)?editor.getCursorPos():null,
             providerRet;
-        for (i = 0; i < providers.length && !inlinePromise&& pos!=null; i++) {
+        for (i = 0; i < providers.length; i++) {
             var provider = providers[i].provider;
 
-            providerRet = provider(editor, pos);
+            providerRet = provider(editor,0);
             if (providerRet && providerRet.hasOwnProperty("done")) {
                 break;
-                inlinePromise = providerRet;
             }
         }
-        var val = (providerRet)?true:false;
-        console.log(val);
-        // trigger event
-
+        return (providerRet)?true:false;
     }
 
 
@@ -860,7 +852,7 @@ define(function (require, exports, module) {
     exports.registerInlineEditProvider    = registerInlineEditProvider;
     exports.registerInlineDocsProvider    = registerInlineDocsProvider;
     exports.registerJumpToDefProvider     = registerJumpToDefProvider;
-    exports.registerInlineEditProviderCheck = registerInlineEditProviderCheck
+    exports.registerInlineEditProviderCheck = registerInlineEditProviderCheck;
 
     // Deprecated
     exports.registerCustomViewer          = registerCustomViewer;

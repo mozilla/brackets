@@ -212,7 +212,6 @@ define(function (require, exports, module) {
     PreferencesManager.definePreference(WORD_WRAP,          "boolean", true, {
         description: Strings.DESCRIPTION_WORD_WRAP
     });
-
     PreferencesManager.definePreference(INDENT_LINE_COMMENT,  "boolean", false, {
         description: Strings.DESCRIPTION_INDENT_LINE_COMMENT
     });
@@ -434,6 +433,9 @@ define(function (require, exports, module) {
 
         this.on("cursorActivity", function (event, editor) {
             self._handleCursorActivity(event);
+            if(MainViewManager._findEditProvider(editor)){
+                self.trigger("providerAvailable", self);
+            }
         });
         this.on("keypress", function (event, editor, domEvent) {
             self._handleKeypressEvents(domEvent);
@@ -449,6 +451,9 @@ define(function (require, exports, module) {
                 // Set this full editor as master editor for the document
                 self.document._toggleMasterEditor(self);
             }
+        });
+        this.on("providerAvailable", function (event, editor) {
+            console.log("ProviderFound");
         });
 
         // Set code-coloring mode BEFORE populating with text, to avoid a flash of uncolored text
@@ -553,7 +558,6 @@ define(function (require, exports, module) {
      */
     Editor.prototype._handleCursorActivity = function (event) {
         this._updateStyleActiveLine();
-        MainViewManager._findEditProvider();
     };
 
     /**
@@ -1022,7 +1026,6 @@ define(function (require, exports, module) {
         this._codeMirror.on("focus", function () {
             self._focused = true;
             self.trigger("focus", self);
-
         });
 
         this._codeMirror.on("blur", function () {
@@ -2552,7 +2555,6 @@ define(function (require, exports, module) {
 
     /**
      * Sets lineCommentIndent option.
-     *
      * @param {boolean} value
      * @param {string=} fullPath Path to file to get preference for
      * @return {boolean} true if value was valid

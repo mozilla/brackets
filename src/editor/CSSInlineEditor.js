@@ -151,33 +151,26 @@ define(function (require, exports, module) {
         return html;
     }
 
-    function checkProvider(hostEditor,pos){
+    function checkProvider(hostEditor){
 
-      // can make htmlToCSSProvider call this later
+        // Only provide a CSS editor when cursor is in HTML content
+        if (hostEditor.getLanguageForSelection().getId() !== "html") {
+           return false;
+        }
 
-      // Only provide a CSS editor when cursor is in HTML content
-      if (hostEditor.getLanguageForSelection().getId() !== "html") {
-          return null;
-      }
+        // Only provide CSS editor if the selection is within a single line
+        var sel = hostEditor.getSelection();
+        if (sel.start.line !== sel.end.line) {
+           return false;
+        }
 
-      // Only provide CSS editor if the selection is within a single line
-      var sel = hostEditor.getSelection();
-      if (sel.start.line !== sel.end.line) {
-          return null;
-      }
-
-      // Always use the selection start for determining selector name. The pos
-      // parameter is usually the selection end.
-      var selectorResult = _getSelectorName(hostEditor, sel.start);
-      if (selectorResult.selectorName === "") {
-          return selectorResult.reason || null;
-      }
-
-      var selectorName = selectorResult.selectorName;
-
-      var result = new $.Deferred();
-      return result.promise();
-
+        // Always use the selection start for determining selector name. The pos
+        // parameter is usually the selection end.
+        var selectorResult = _getSelectorName(hostEditor, sel.start);
+        if (selectorResult.selectorName === "") {
+           return false;
+        }
+        return true;
     }
     /**
      * This function is registered with EditManager as an inline editor provider. It creates a CSSInlineEditor
@@ -209,6 +202,8 @@ define(function (require, exports, module) {
         if (selectorResult.selectorName === "") {
             return selectorResult.reason || null;
         }
+        
+        var selectorName = selectorResult.selectorName;
 
         var result = new $.Deferred(),
             cssInlineEditor,
