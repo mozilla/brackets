@@ -92,7 +92,11 @@ define(function (require, exports, module) {
                 msgObj.message = resolveLinks(msgObj.message);
             }
 
-            //trigger message event
+            if(ConsoleManager.isConsoleRequest(msgObj.message)) {
+                ConsoleManager.consoleRequest(msgObj.data);
+                return;
+            }
+            //trigger message event 
             module.exports.trigger("message", [connId, msgObj.message]);
         } else if (msgObj.type === "connect") {
             Browser.setListener();

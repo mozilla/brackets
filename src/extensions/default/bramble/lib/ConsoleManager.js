@@ -15,5 +15,14 @@ define(function (require, exports, module) {
         return "<script>\n" + ConsoleManagerRemote + "</script>\n";
     }
 
+    function isConsoleRequest(msg) {
+        return msg.match(/^bramble-console/);
+    }
+
+    function consoleRequest(msg) {
+        alert(msg);
+    }
     exports.getRemoteScript = getRemoteScript;
+    exports.isConsoleRequest = isConsoleRequest;
+    exports.consoleRequest = consoleRequest;
 });
