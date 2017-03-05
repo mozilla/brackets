@@ -9,8 +9,8 @@
         return function() {
             var args = fixedArguments.concat(Array.prototype.slice.call(arguments, 0));
             (func).apply(scope, args);
-        }
-    }
+        };
+    };
 
     function _log(s){
         //See Note below about fixing transport for 'data'
