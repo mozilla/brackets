@@ -263,7 +263,8 @@ define(function HTMLDocumentModule(require, exports, module) {
                 console.warn("Browser DOM does not match after change: " + JSON.stringify(change));
 
                 edits.forEach(function (delta) {
-                    console.log(delta);
+                    // Uncomment to see all delta values (issue-619)
+                    //console.log(delta);
                 });
             }
         });
@@ -326,8 +327,9 @@ define(function HTMLDocumentModule(require, exports, module) {
         // edit this file or set a conditional breakpoint at the top of this function:
         //     "this._debug = true, false"
         if (this._debug) {
-            console.log("Edits applied to browser were:");
-            console.log(JSON.stringify(result.edits, null, 2));
+            // This is used for debug only (issue-619)
+            //console.log("Edits applied to browser were:");
+            //console.log(JSON.stringify(result.edits, null, 2));
             applyEditsPromise.done(function () {
                 self._compareWithBrowser(change);
             });

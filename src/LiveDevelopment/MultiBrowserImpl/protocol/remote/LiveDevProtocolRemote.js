@@ -84,7 +84,7 @@
             } else {
                 // no subscribers, ignore it.
                 // TODO: any other default handling? (eg. specific respond, trigger as a generic event, etc.);
-                console.log("[Brackets LiveDev] No subscribers for message " + msg.method);
+                //console.log("[Brackets LiveDev] No subscribers for message " + msg.method);
                 return;
             }
         },
@@ -139,7 +139,8 @@
          * Evaluate an expresion and return its result.
          */
         evaluate: function (msg) {
-            console.log("Runtime.evaluate");
+            // Logs every actions overpopulates the console in browser (issue-619)
+            //console.log("Runtime.evaluate");
             var result = eval(msg.params.expression);
             MessageBroker.respond(msg, {
                 result: JSON.stringify(result) // TODO: in original protocol this is an object handle

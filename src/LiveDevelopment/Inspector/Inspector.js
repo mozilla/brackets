@@ -116,7 +116,8 @@ define(function Inspector(require, exports, module) {
      */
     function _send(method, signature, varargs) {
         if (!_socket) {
-            console.log("You must connect to the WebSocket before sending messages.");
+            // Can leave this commented, not really neccasry for debugging (issue-619)
+            //console.log("You must connect to the WebSocket before sending messages.");
 
             // FUTURE: Our current implementation closes and re-opens an inspector connection whenever
             // a new HTML file is selected. If done quickly enough, pending requests from the previous
