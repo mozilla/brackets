@@ -243,7 +243,7 @@ define(function (require, exports, module) {
 
 
     function loadStyle() {
-        ExtensionUtils.loadStyleSheet(module, "styles/main.less").done(function (node) {
+        ExtensionUtils.loadStyleSheet(module, "styles/main.css").done(function (node) {
             _styleTag = node;
         });
         _styleInline = $(ExtensionUtils.addEmbeddedStyleSheet(""));
