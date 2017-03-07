@@ -396,6 +396,7 @@ module.exports = function (grunt) {
                 '<%= meta.grunt %>',
                 '<%= meta.src %>',
                 '<%= meta.test %>',
+                '!src/extensions/default/brackets-show-whitespace/**',
                 '!src/extensions/extra/**',
                 '!src/bramble/thirdparty/**',
                 '!src/nls/**'
@@ -406,6 +407,7 @@ module.exports = function (grunt) {
                 // These modules include lots of third-party code, so we skip them
                 '!src/extensions/default/HTMLHinter/slowparse/**',
                 '!src/extensions/default/HTMLHinter/tooltipsy.source.js',
+                '!src/extensions/default/brackets-show-whitespace/**',
                 '!src/extensions/extra/**',
                 '!src/bramble/thirdparty/**',
                 '!src/nls/**'
