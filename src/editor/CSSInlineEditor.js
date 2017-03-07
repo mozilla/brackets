@@ -202,14 +202,13 @@ define(function (require, exports, module) {
         if (selectorResult.selectorName === "") {
             return selectorResult.reason || null;
         }
-        
+
         var selectorName = selectorResult.selectorName;
 
         var result = new $.Deferred(),
             cssInlineEditor,
             cssFileInfos = [],
             newRuleButton;
-          //  return result.promise();
         /**
          * @private
          * Callback when item from dropdown list is selected
@@ -383,8 +382,9 @@ define(function (require, exports, module) {
 
         return result.promise();
     }
-    EditorManager.registerInlineEditProviderCheck(checkProvider);
+    
     EditorManager.registerInlineEditProvider(htmlToCSSProvider);
+    EditorManager.registerEditProvider(checkProvider);
 
     _newRuleCmd = CommandManager.register(Strings.CMD_CSS_QUICK_EDIT_NEW_RULE, Commands.CSS_QUICK_EDIT_NEW_RULE, _handleNewRule);
     _newRuleCmd.setEnabled(false);

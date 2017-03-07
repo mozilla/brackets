@@ -83,7 +83,7 @@ define(function (require, exports, module) {
      * @private
      */
     var _inlineEditProviders = [];
-    var _inlineEditProviderCheck = [];
+    var editProvider;
     /**
      * Registered inline documentation widget providers sorted descending by priority.
      * @see {@link #registerInlineDocsProvider}.
@@ -91,7 +91,7 @@ define(function (require, exports, module) {
      * @private
      */
     var _inlineDocsProviders = [];
-    var _inLineDocsProviderCheck = [];
+    var docProvider;
     /**
      * Registered jump-to-definition providers.
      * @see {@link #registerJumpToDefProvider}.
@@ -404,12 +404,6 @@ define(function (require, exports, module) {
         _insertProviderSorted(_inlineEditProviders, provider, priority);
     }
 
-    function registerInlineEditProviderCheck(provider){
-       _inlineEditProviderCheck=_inlineEditProviders.slice(0);
-       _insertProviderSorted(_inlineEditProviderCheck, provider, 0);
-    }
-
-
     /**
      * Registers a new inline docs provider. When Quick Docs is invoked each registered provider is
      * asked if it wants to provide inline docs given the current editor and cursor location.
@@ -426,11 +420,6 @@ define(function (require, exports, module) {
             priority = 0;
         }
         _insertProviderSorted(_inlineDocsProviders, provider, priority);
-    }
-
-    function registerInlineDocsProviderCheck(provider){
-        _inLineDocsProviderCheck=_inlineDocsProviders.slice(0);
-        _insertProviderSorted(_inLineDocsProviderCheck,provider,0);
     }
 
     /**
@@ -789,19 +778,24 @@ define(function (require, exports, module) {
         }
     }
 
-    function findEditProvider(editor,editprovider) {
-        var providers = (editprovider)?_inlineEditProviderCheck:_inLineDocsProviderCheck,
+    function findProvider(editor,provider) {
+        var providers = (provider)?editProvider:docProvider,
             i,
             providerRet;
-        for (i = 0; i < providers.length; i++) {
-            var provider = providers[i].provider;
 
-            providerRet = provider(editor,0);
-            if (providerRet) {
-                return true;
-            }
+        providerRet = providers(editor);
+        if (providerRet) {
+            return true;
         }
         return false;
+    }
+
+    function registerEditProvider(provider){
+        editProvider = provider;
+    }
+
+    function registerDocProvider(provider){
+        docProvider = provider;
     }
 
     // Set up event dispatching
@@ -845,7 +839,7 @@ define(function (require, exports, module) {
     exports.closeInlineWidget             = closeInlineWidget;
     exports.openDocument                  = openDocument;
     exports.canOpenPath                   = canOpenPath;
-    exports.findEditProvider              = findEditProvider;
+    exports.findProvider                  = findProvider;
 
     // Convenience Methods
     exports.getActiveEditor               = getActiveEditor;
@@ -856,8 +850,8 @@ define(function (require, exports, module) {
     exports.registerInlineEditProvider    = registerInlineEditProvider;
     exports.registerInlineDocsProvider    = registerInlineDocsProvider;
     exports.registerJumpToDefProvider     = registerJumpToDefProvider;
-    exports.registerInlineEditProviderCheck = registerInlineEditProviderCheck;
-    exports.registerInlineDocsProviderCheck = registerInlineDocsProviderCheck;
+    exports.registerEditProvider          = registerEditProvider;
+    exports.registerDocProvider           = registerDocProvider;
 
     // Deprecated
     exports.registerCustomViewer          = registerCustomViewer;

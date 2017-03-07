@@ -1684,10 +1684,10 @@ define(function (require, exports, module) {
         return result;
     }
 
-    function _findEditProvider(editor){
+    function _findProvider(editor){
         //true = checking for edit provider
         //false = checking for doc provider
-        return (EditorManager.findEditProvider(editor,true)||EditorManager.findEditProvider(editor,false));
+        return (EditorManager.findProvider(editor,true)||EditorManager.findProvider(editor,false));
     }
 
     /**
@@ -1725,7 +1725,7 @@ define(function (require, exports, module) {
     exports._closeAll                     = _closeAll;
     exports._closeList                    = _closeList;
     exports._getPaneIdForPath             = _getPaneIdForPath;
-    exports._findEditProvider             = _findEditProvider;
+    exports._findProvider                 = _findProvider;
 
     // WorkingSet Management
     exports.addToWorkingSet               = addToWorkingSet;

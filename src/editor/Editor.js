@@ -433,7 +433,7 @@ define(function (require, exports, module) {
 
         this.on("cursorActivity", function (event, editor) {
             self._handleCursorActivity(event);
-            if(MainViewManager._findEditProvider(editor)){
+            if(MainViewManager._findProvider(editor)){
                 self.trigger("providerAvailable", self);
             }
         });
