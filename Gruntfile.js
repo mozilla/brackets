@@ -322,6 +322,7 @@ module.exports = function (grunt) {
                 '!src/widgets/bootstrap-*.js',
                 '!src/extensions/**/unittest-files/**/*.js',
                 '!src/extensions/**/thirdparty/**/*.js',
+                '!src/extensions/default/brackets-show-whitespace/**',
                 '!src/extensions/dev/**',
                 '!src/extensions/extra/brackets-cdn-suggestions/**',
                 '!src/extensions/extra/HTMLHinter/**',
@@ -413,27 +414,9 @@ module.exports = function (grunt) {
         'jasmine_node': {
             projectRoot: 'src/extensibility/node/spec/'
         },
-        jshint: {
-            all: [
-                '<%= meta.grunt %>',
-                '<%= meta.src %>',
-                '<%= meta.test %>',
-                '!src/extensions/default/brackets-show-whitespace/**',
-                '!src/extensions/extra/**',
-                '!src/bramble/thirdparty/**',
-                '!src/nls/**'
-            ],
+        eslint: {
             grunt:  '<%= meta.grunt %>',
-            src:    [
-                '<%= meta.src %>',
-                // These modules include lots of third-party code, so we skip them
-                '!src/extensions/default/HTMLHinter/slowparse/**',
-                '!src/extensions/default/HTMLHinter/tooltipsy.source.js',
-                '!src/extensions/default/brackets-show-whitespace/**',
-                '!src/extensions/extra/**',
-                '!src/bramble/thirdparty/**',
-                '!src/nls/**'
-            ],
+            src:    '<%= meta.src %>',
             test:   '<%= meta.test %>',
             options: {
                 quiet: true
