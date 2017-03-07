@@ -38,7 +38,7 @@ define(function (require, exports, module) {
         ExtensionUtils     = brackets.getModule("utils/ExtensionUtils"),
         Menus              = brackets.getModule("command/Menus"),
         PreferencesManager = brackets.getModule("preferences/PreferencesManager"),
-        stylesTemplate     = require("text!styles/whitespace-colors-css.tmpl"),
+        //stylesTemplate     = require("text!styles/whitespace-colors-css.tmpl"),
         Strings            = require("strings");
 
     
@@ -247,7 +247,7 @@ define(function (require, exports, module) {
             _styleTag = node;
         });
         _styleInline = $(ExtensionUtils.addEmbeddedStyleSheet(""));
-        _styleInlineTemplate = _.template(stylesTemplate);
+        //_styleInlineTemplate = _.template(stylesTemplate);
         _applyColors();
     }
 
