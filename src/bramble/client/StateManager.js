@@ -101,6 +101,14 @@ define(function() {
             wordWrap: {
                 get: function()  { return getBool(storage, "wordWrap"); },
                 set: function(v) { storage.setItem(prefix("wordWrap"), v); }
+            },
+            allowJavaScript: {
+                get: function()  { return getBool(storage, "allowJavaScript"); },
+                set: function(v) { storage.setItem(prefix("allowJavaScript"), v); }
+            },
+            autoUpdate: {
+                get: function()  { return getBool(storage, "autoUpdate"); },
+                set: function(v) { storage.setItem(prefix("autoUpdate"), v); }
             }
         });
     }

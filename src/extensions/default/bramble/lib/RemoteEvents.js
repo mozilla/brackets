@@ -125,6 +125,22 @@ define(function (require, exports, module) {
                 wordWrap: PreferencesManager.get("wordWrap")
             });
         });
+        
+        // Listen for changes to allow javascript
+        PreferencesManager.on("change", "allowJavaScript", function () {
+            sendEvent({
+                type: "bramble:allowJavaScriptChange",
+                allowJavaScript: PreferencesManager.get("allowJavaScript")
+            });
+        });
+
+        //Listen for changes to auto update
+        PreferencesManager.on("change", "autoUpdate", function () {
+            sendEvent({
+                type: "bramble:autoUpdateChange",
+                autoUpdate: PreferencesManager.get("autoUpdate")
+            });
+        });
     }
 
     /**
@@ -132,8 +148,14 @@ define(function (require, exports, module) {
      */
     function loaded() {
         var initialFile = MainViewManager.getCurrentlyViewedFile();
-        var fullPath = initialFile.fullPath;
-        var filename = Path.basename(fullPath);
+        var fullPath = "";
+        var filename = "";
+
+        // avoid exception when the editor is not viewing any file
+        if (initialFile) {
+            fullPath = initialFile.fullPath;
+            filename = Path.basename(fullPath);
+        }
 
         var $firstPane = $("#first-pane");
         var $secondPane = $("#second-pane");
@@ -150,7 +172,9 @@ define(function (require, exports, module) {
             previewMode: UI.getPreviewMode(),
             fontSize: ViewCommandHandlers.getFontSize(),
             theme: Theme.getTheme(),
-            wordWrap: PreferencesManager.get("wordWrap")
+            wordWrap: PreferencesManager.get("wordWrap"),
+            allowJavaScript: PreferencesManager.get("allowJavaScript"),
+            autoUpdate: PreferencesManager.get("autoUpdate")
         });
     }
 

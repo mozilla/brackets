@@ -10,11 +10,6 @@
     }
 }
 
-/* Make it obvious that files in the sidebar are something you can click. */
-li.jstree-leaf > a {
-    cursor: pointer !important;
-}
-
 /* Reduce the size of the code-folding gutter markers  with our larger font size */
 .CodeMirror-foldgutter-open:after,
 .CodeMirror-foldgutter-folded:after {

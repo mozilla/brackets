@@ -16,7 +16,8 @@ define(function (require, exports, module) {
         LiveDevMultiBrowser = brackets.getModule("LiveDevelopment/LiveDevMultiBrowser"),
         BlobUtils           = brackets.getModule("filesystem/impls/filer/BlobUtils"),
         BrambleEvents       = brackets.getModule("bramble/BrambleEvents"),
-        Path                = brackets.getModule("filesystem/impls/filer/BracketsFiler").Path;
+        Path                = brackets.getModule("filesystem/impls/filer/BracketsFiler").Path,
+        BrambleStartupState = brackets.getModule("bramble/StartupState");
 
     // The script that will be injected into the previewed HTML to handle the other side of the post message connection.
     var PostMessageTransportRemote = require("text!lib/PostMessageTransportRemote.js");
@@ -105,6 +106,11 @@ define(function (require, exports, module) {
     function start(){
         window.addEventListener("message", _listener);
 
+        var autoUpdate = BrambleStartupState.ui("autoUpdate");
+        if(typeof autoUpdate === "boolean") {
+            setAutoUpdate(autoUpdate);
+        }
+
         // Reload whenever files are removed or renamed
         BrambleEvents.on("fileRemoved", reload);
         BrambleEvents.on("fileRenamed", reload);
@@ -160,8 +166,11 @@ define(function (require, exports, module) {
         // Because we need to deal with reloads on this side (i.e., editor) of the
         // transport, check message before sending to remote, and reload if necessary
         // without actually sending to remote for processing.
-        if(msg.method === "Page.reload" || msg.method === "Page.navigate") {
+        if(msg.method === "Page.reload") {
             reload();
+            return;
+        } else if(msg.method === "Page.navigate") {
+            reload(true);
             return;
         }
 

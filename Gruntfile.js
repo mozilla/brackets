@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013 Adobe Systems Incorporated. All rights reserved.
+ * Copyright (c) 2013 - present Adobe Systems Incorporated. All rights reserved.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
@@ -20,26 +20,32 @@
  * DEALINGS IN THE SOFTWARE.
  *
  */
-/*global module, require*/
 
-// Brackets specific config vars
-var habitat = require('habitat');
-habitat.load();
-var env = new habitat();
+/*eslint-env node */
+/*jslint node: true */
+'use strict';
 
 var Path = require('path');
-
-var GIT_BRANCH = env.get("BRAMBLE_MAIN_BRANCH") || "bramble";
-var GIT_REMOTE = env.get("BRAMBLE_MAIN_REMOTE") || "upstream";
+var LessPluginAutoPrefix = require('less-plugin-autoprefix');
 
 module.exports = function (grunt) {
-    'use strict';
-
-    var autoprefixer = require('autoprefixer-core');
     var swPrecache = require('sw-precache');
 
     // load dependencies
-    require('load-grunt-tasks')(grunt, {pattern: ['grunt-contrib-*', 'grunt-targethtml', 'grunt-usemin', 'grunt-cleanempty', 'grunt-npm', 'grunt-git', 'grunt-update-submodules', 'grunt-exec']});
+    require('load-grunt-tasks')(grunt, {
+        pattern: [
+            'grunt-*',
+            '!grunt-cli',
+            '!grunt-lib-phantomjs',
+            '!grunt-template-jasmine-requirejs',
+            'grunt-contrib-*',
+            'grunt-targethtml',
+            'grunt-usemin',
+            'grunt-cleanempty',
+            'grunt-exec'
+        ]
+    });
+
     grunt.loadTasks('tasks');
 
     // Project configuration.
@@ -71,18 +77,15 @@ module.exports = function (grunt) {
                         'xorigin.js',
                         'dependencies.js',
                         'thirdparty/requirejs/require.js',
-                        'LiveDevelopment/MultiBrowserImpl/transports/**/*.js',
-                        'LiveDevelopment/MultiBrowserImpl/launchers/**/*.js',
 
                         /* extensions and CodeMirror modes */
                         '!extensions/default/*/unittests.js',
                         'extensions/default/*/**/*.js',
                         '!extensions/extra/*/unittests.js',
                         'extensions/extra/*/**/*.js',
+                        '!extensions/**/node_modules/**/*.js',
+                        '!extensions/**/test/**/*.js',
                         '!**/unittest-files/**',
-                        '!extensions/default/JavaScriptCodeHints/thirdparty/*/test/**/*',
-                        '!extensions/default/**/node_modules/**/*',
-                        '!extensions/extra/**/node_modules/**/*',
                         'thirdparty/CodeMirror/addon/{,*/}*.js',
                         'thirdparty/CodeMirror/keymap/{,*/}*.js',
                         'thirdparty/CodeMirror/lib/{,*/}*.js',
@@ -123,8 +126,6 @@ module.exports = function (grunt) {
                             'thirdparty/slowparse/locale/*',
                             'thirdparty/github-markdown.css',
                             'LiveDevelopment/launch.html',
-                            'LiveDevelopment/MultiBrowserImpl/transports/**',
-                            'LiveDevelopment/MultiBrowserImpl/launchers/**',
                             'hosted.*'
                         ]
                     },
@@ -173,6 +174,31 @@ module.exports = function (grunt) {
                         src: ['jsTreeTheme.css', 'fonts/{,*/}*.*', 'images/*', 'brackets.min.css*', 'bramble_overrides.css']
                     }
                 ]
+            },
+            thirdparty: {
+                files: [
+                    {
+                        expand: true,
+                        dest: 'src/thirdparty/CodeMirror',
+                        cwd: 'src/node_modules/codemirror',
+                        src: [
+                            'addon/{,*/}*',
+                            'keymap/{,*/}*',
+                            'lib/{,*/}*',
+                            'mode/{,*/}*',
+                            'theme/{,*/}*',
+                        ]
+                    },
+                    {
+                        expand: true,
+                        flatten: true,
+                        dest: 'src/thirdparty',
+                        cwd: 'src/node_modules',
+                        src: [
+                            'less/dist/less.min.js'
+                        ]
+                    }
+                ]
             }
         },
         cleanempty: {
@@ -188,27 +214,22 @@ module.exports = function (grunt) {
                     "src/styles/brackets.min.css": "src/styles/brackets.less"
                 },
                 options: {
-                    compress: true
+                    compress: true,
+                    plugins: [
+                        new LessPluginAutoPrefix({
+                            browsers: [
+                                "Explorer >= 10",
+                                "Firefox >= 26",
+                                "Chrome >= 31",
+                                "Safari >= 7",
+                                "Opera >= 19",
+                                "iOS >= 3.2",
+                                "Android >= 4.4"
+                            ]
+                        })
+                    ]
                 }
             }
-        },
-        postcss: {
-            options: {
-                processors: [
-                    autoprefixer({
-                        browsers: [
-                            "Explorer >= 10",
-                            "Firefox >= 26",
-                            "Chrome >= 31",
-                            "Safari >= 7",
-                            "Opera >= 19",
-                            "iOS >= 3.2",
-                            "Android >= 4.4"
-                        ]
-                    }).postcss
-                ]
-            },
-            dist: { src: 'src/styles/brackets.min.css' }
         },
         requirejs: {
             dist: {
@@ -302,6 +323,11 @@ module.exports = function (grunt) {
                 '!src/extensions/**/unittest-files/**/*.js',
                 '!src/extensions/**/thirdparty/**/*.js',
                 '!src/extensions/dev/**',
+                '!src/extensions/extra/brackets-cdn-suggestions/**',
+                '!src/extensions/extra/HTMLHinter/**',
+                '!src/extensions/extra/MDNDocs/**',
+                '!src/bramble/thirdparty/EventEmitter/**',
+                '!src/bramble/thirdparty/MessageChannel/**',
                 '!src/extensions/disabled/**',
                 '!**/node_modules/**/*.js',
                 '!src/**/*-min.js',
@@ -333,19 +359,19 @@ module.exports = function (grunt) {
         watch: {
             all : {
                 files: ['**/*', '!**/node_modules/**'],
-                tasks: ['jshint']
+                tasks: ['eslint']
             },
             grunt : {
                 files: ['<%= meta.grunt %>', 'tasks/**/*'],
-                tasks: ['jshint:grunt']
+                tasks: ['eslint:grunt']
             },
             src : {
                 files: ['<%= meta.src %>', 'src/**/*'],
-                tasks: ['jshint:src']
+                tasks: ['eslint:src']
             },
             test : {
                 files: ['<%= meta.test %>', 'test/**/*'],
-                tasks: ['jshint:test']
+                tasks: ['eslint:test']
             }
         },
         /* FIXME (jasonsanjose): how to handle extension tests */
@@ -359,16 +385,12 @@ module.exports = function (grunt) {
                 specs : '<%= meta.specs %>',
                 /* Keep in sync with test/SpecRunner.html dependencies */
                 vendor : [
-                    'test/polyfills.js', /* For reference to why this polyfill is needed see Issue #7951. The need for this should go away once the version of phantomjs gets upgraded to 2.0 */
+                    // For reference to why this polyfill is needed see Issue #7951.
+                    // The need for this should go away once the version of phantomjs gets upgraded to 2.0
+                    'test/polyfills.js',
+
                     'src/thirdparty/jquery-2.1.3.min.js',
-                    'src/thirdparty/CodeMirror/lib/codemirror.js',
-                    'src/thirdparty/CodeMirror/lib/util/dialog.js',
-                    'src/thirdparty/CodeMirror/lib/util/searchcursor.js',
-                    'src/thirdparty/CodeMirror/addon/edit/closetag.js',
-                    'src/thirdparty/CodeMirror/addon/selection/active-line.js',
-                    'src/thirdparty/mustache/mustache.js',
-                    'src/thirdparty/path-utils/path-utils.min',
-                    'src/thirdparty/less-1.7.5.min.js'
+                    'src/thirdparty/less.min.js'
                 ],
                 helpers : [
                     'test/spec/PhantomHelper.js'
@@ -391,6 +413,7 @@ module.exports = function (grunt) {
         'jasmine_node': {
             projectRoot: 'src/extensibility/node/spec/'
         },
+<<<<<<< HEAD
         jshint: {
             all: [
                 '<%= meta.grunt %>',
@@ -412,77 +435,14 @@ module.exports = function (grunt) {
                 '!src/bramble/thirdparty/**',
                 '!src/nls/**'
             ],
+=======
+        eslint: {
+            grunt:  '<%= meta.grunt %>',
+            src:    '<%= meta.src %>',
+>>>>>>> b83342eab2602b8e5170871d4d4a590323512717
             test:   '<%= meta.test %>',
-            /* use strict options to mimic JSLINT until we migrate to JSHINT in Brackets */
             options: {
-                jshintrc: '.jshintrc'
-            }
-        },
-        shell: {
-            repo: grunt.option("shell-repo") || "../brackets-shell",
-            mac: "<%= shell.repo %>/installer/mac/staging/<%= pkg.name %>.app",
-            win: "<%= shell.repo %>/installer/win/staging/<%= pkg.name %>.exe",
-            linux: "<%= shell.repo %>/installer/linux/debian/package-root/opt/brackets/brackets"
-        },
-
-        // Brackets specific tasks
-        'npm-checkBranch': {
-            options: {
-                branch: GIT_BRANCH
-            }
-        },
-        gitfetch: {
-            smart: {
-                options: {}
-            }
-        },
-        "update_submodules": {
-            publish: {
-                options: {
-                    params: "--remote -- src/extensions/default/bramble src/extensions/default/HTMLHinter"
-                }
-            }
-        },
-        gitcommit: {
-            module: {
-                options: {
-                    // This is replaced during the 'publish' task
-                    message: "Placeholder"
-                }
-            },
-            publish: {
-                options: {
-                    noStatus: true,
-                    allowEmpty: true,
-                    message: "Latest distribution version of Bramble."
-                }
-            }
-        },
-        gitadd: {
-            publish: {
-                files: {
-                    src: ['./dist/*']
-                },
-                options: {
-                    force: true
-                }
-            },
-            modules: {
-                files: {
-                    src: ['./src/extensions/default/bramble', './src/extensions/default/HTMLHinter']
-                }
-            }
-        },
-        gitpush: {
-            smart: {
-                options: {
-                    remote: GIT_REMOTE,
-                    // These options are left in for
-                    // clarity. Their actual values
-                    // will be set by the `publish` task.
-                    branch: 'gh-pages',
-                    force: true
-                },
+                quiet: true
             }
         },
         compress: {
@@ -497,30 +457,6 @@ module.exports = function (grunt) {
             }
         },
 
-        // Reduce the size of Tern.js def files by stripping !doc and !url fields,
-        // Which seem to be unused in Brackets. Turn something like this:
-        //
-        // "assign": {
-        //   "!type": "fn(url: string)",
-        //   "!url": "https://developer.mozilla.org/en/docs/DOM/window.location",
-        //   "!doc": "Load the document at the provided URL."
-        // }
-        //
-        // into this:
-        //
-        // "assign": {
-        //   "!type": "fn(url: string)"
-        // }
-        replace: {
-            ternDefs: {
-                src: ['src/extensions/default/JavaScriptCodeHints/thirdparty/tern/defs/*.json'],
-                dest: 'dist/extensions/default/JavaScriptCodeHints/thirdparty/tern/defs/',
-                replacements: [{
-                    from: /,?\n\s*"!url":[^\n]+\n(\s*"!doc":[^\n]+\n)?/g,
-                    to: ''
-                }]
-            }
-        },
         exec: {
             localize: 'node scripts/properties2js',
             'localize-dist': 'node scripts/properties2js dist',
@@ -532,60 +468,6 @@ module.exports = function (grunt) {
                 rootDir: 'dist'
             }
         }
-    });
-
-    // Load postcss
-    grunt.loadNpmTasks('grunt-postcss');
-
-    // Load text-replace
-    grunt.loadNpmTasks('grunt-text-replace');
-
-    // Bramble-task: smartCheckout
-    //   Checks out to the branch provided as a target.
-    //   Takes:
-    //    [branch] - The branch to checkout to
-    //    [overwrite] - If true, resets the target branch to the
-    //                  value of the starting branch
-    grunt.registerTask('smartCheckout', function(branch, overwrite) {
-        overwrite = overwrite === "true" ? true : false;
-
-        grunt.config('gitcheckout.smart.options.branch', branch);
-        grunt.config('gitcheckout.smart.options.overwrite', overwrite);
-        grunt.task.run('gitcheckout:smart');
-    });
-
-    // Bramble-task: smartPush
-    //   Checks out to the branch provided as a target.
-    //   Takes:
-    //    [branch] - The branch to push to
-    //    [force] - If true, forces a push
-    grunt.registerTask('smartPush', function(branch, force) {
-        force = force === "true" ? true : false;
-
-        grunt.config('gitpush.smart.options.branch', branch);
-        grunt.config('gitpush.smart.options.force', force);
-        grunt.task.run('gitpush:smart');
-    });
-
-    // Bramble-task: publish-submodules
-    //  Updates submodules, committing and pushing
-    //  the result upstream, and also builds and pushes the
-    //  dist version for use in thimble.
-    grunt.registerTask('publish-submodules', 'Update submodules and the gh-pages branch with the latest built version of bramble.', function(patchLevel) {
-        var date = new Date(Date.now()).toString();
-        grunt.config("gitcommit.module.options.message", "Submodule update on " + date);
-
-        grunt.task.run([
-            // Confirm we're ready to start
-            'checkBranch',
-            'jshint:src',
-
-            // Update submodules, commit and push to "master"
-            'update_submodules:publish',
-            'gitadd:modules',
-            'gitcommit:module',
-            'smartPush:' + GIT_BRANCH + ":false",
-        ]);
     });
 
     grunt.registerMultiTask('swPrecache', function() {
@@ -612,11 +494,11 @@ module.exports = function (grunt) {
     });
 
     // task: install
-    grunt.registerTask('install', ['write-config', 'less']);
+    grunt.registerTask('install', ['write-config', 'less', 'npm-install-source']);
 
     // task: test
-    grunt.registerTask('test', ['jshint:all', 'jasmine']);
-//    grunt.registerTask('test', ['jshint:all', 'jasmine', 'jasmine_node']);
+    grunt.registerTask('test', ['eslint', 'jasmine', 'nls-check']);
+//    grunt.registerTask('test', ['eslint', 'jasmine', 'jasmine_node', 'nls-check']);
 
     // task: set-release
     // Update version number in package.json and rewrite src/config.json
@@ -624,10 +506,9 @@ module.exports = function (grunt) {
 
     // task: build
     grunt.registerTask('build', [
-        'jshint:src',
+        'eslint:src',
         'clean',
         'less',
-        'postcss',
         'targethtml',
         'useminPrepare',
         'htmlmin',
@@ -636,8 +517,11 @@ module.exports = function (grunt) {
         'concat',
         /*'cssmin',*/
         /*'uglify',*/
-        'copy',
+        'copy:dist',
+        /* XXXBramble: we skip this, since we don't use any of the node_modules in Bramble.
+         'npm-install', */
         'cleanempty',
+        'exec:clean-nls',
         'usemin',
         'build-config'
     ]);
@@ -645,7 +529,6 @@ module.exports = function (grunt) {
     // task: build dist/ for browser
     grunt.registerTask('build-browser', [
         'build',
-        'replace:ternDefs',
         'requirejs:iframe',
         'exec:localize-dist',
         'uglify'
