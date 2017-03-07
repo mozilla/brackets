@@ -413,7 +413,6 @@ module.exports = function (grunt) {
         'jasmine_node': {
             projectRoot: 'src/extensibility/node/spec/'
         },
-<<<<<<< HEAD
         jshint: {
             all: [
                 '<%= meta.grunt %>',
@@ -435,11 +434,6 @@ module.exports = function (grunt) {
                 '!src/bramble/thirdparty/**',
                 '!src/nls/**'
             ],
-=======
-        eslint: {
-            grunt:  '<%= meta.grunt %>',
-            src:    '<%= meta.src %>',
->>>>>>> b83342eab2602b8e5170871d4d4a590323512717
             test:   '<%= meta.test %>',
             options: {
                 quiet: true
