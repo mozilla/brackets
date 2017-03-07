@@ -1,10 +1,7 @@
 (function(transport) {
     "use strict";
 
-    //TODO: add support for console.log(one,two, three) arguments
-
     function _log(s){
-        //See Note below about fixing transport for 'data'
         transport.send("bramble-console", s);
     }
 
@@ -38,10 +35,10 @@
 
     if (!console.assert) {
         console.assert = function() {
-            var args = Array.from(arguments).slicer();
+            var args = Array.from(arguments).slice();
             var expr = args.shift();
             if (!expr) {
-                args[0] = " Assertion Failed: " +args[0];
+                args[0] = "Assertion Failed: " + args[0];
                 console.error.apply(console,args);
             }
         };
@@ -49,5 +46,4 @@
 
     window.console = console;
 
-    // TODO: add support for other methods in console
 }(window._Brackets_LiveDev_Transport));

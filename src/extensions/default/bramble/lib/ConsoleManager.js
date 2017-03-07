@@ -13,8 +13,8 @@ define(function (require, exports, module) {
 
     function consoleRequest(msg) {
         console.log("Bramble Console: " + msg);
-        //alert(msg);
     }
+
     exports.getRemoteScript = getRemoteScript;
     exports.isConsoleRequest = isConsoleRequest;
     exports.consoleRequest = consoleRequest;
