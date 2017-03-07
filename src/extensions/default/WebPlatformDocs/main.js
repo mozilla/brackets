@@ -69,6 +69,39 @@ define(function (require, exports, module) {
         return promiseCache[fileName];
     }
 
+    function checkProvider(hostEditor){
+      var propInfo,
+          langId = hostEditor.getLanguageForSelection().getId(),
+          supportedLangs = ["css", "scss", "less", "html"],
+          langIndex = langId ? supportedLangs.indexOf(langId) : -1; // fail if langId is falsy
+
+      // Only provide docs when cursor is in supported language
+      if (langIndex < 0) {
+          return false;
+      }
+
+      // Only provide docs if the selection is within a single line
+      var sel = hostEditor.getSelection();
+      if (sel.start.line !== sel.end.line) {
+          return false;
+      }
+
+      if (langIndex <= 2) { // CSS-like language
+          propInfo = CSSUtils.getInfoAtPos(hostEditor, sel.start);
+          if (propInfo.name) {
+              return true;
+          }
+      } else { // HTML
+          propInfo = HTMLUtils.getTagInfo(hostEditor, sel.start);
+          if (propInfo.position.tokenType === HTMLUtils.ATTR_NAME && propInfo.attr && propInfo.attr.name) {
+              return true;
+          }
+          if (propInfo.tagName) { // we're somehow on an HTML tag (no matter where exactly)
+              return true;
+          }
+      }
+      return false;
+    }
 
     /**
      * Inline docs provider.
@@ -163,6 +196,7 @@ define(function (require, exports, module) {
     }
 
     // Register as inline docs provider
+    EditorManager.registerInlineDocsProviderCheck(checkProvider);
     EditorManager.registerInlineDocsProvider(inlineProvider);
 
     exports._getDocs         = getDocs;

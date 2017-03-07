@@ -1683,8 +1683,11 @@ define(function (require, exports, module) {
 
         return result;
     }
-    function _findEditProvider(){
-        return EditorManager.findEditProvider();
+
+    function _findEditProvider(editor){
+        //true = checking for edit provider
+        //false = checking for doc provider
+        return (EditorManager.findEditProvider(editor,true)||EditorManager.findEditProvider(editor,false));
     }
 
     /**

@@ -83,7 +83,7 @@ define(function (require, exports, module) {
      * @private
      */
     var _inlineEditProviders = [];
-
+    var _inlineEditProviderCheck = [];
     /**
      * Registered inline documentation widget providers sorted descending by priority.
      * @see {@link #registerInlineDocsProvider}.
@@ -91,7 +91,7 @@ define(function (require, exports, module) {
      * @private
      */
     var _inlineDocsProviders = [];
-    var _inlineEditProviderCheck = [];
+    var _inLineDocsProviderCheck = [];
     /**
      * Registered jump-to-definition providers.
      * @see {@link #registerJumpToDefProvider}.
@@ -426,6 +426,11 @@ define(function (require, exports, module) {
             priority = 0;
         }
         _insertProviderSorted(_inlineDocsProviders, provider, priority);
+    }
+
+    function registerInlineDocsProviderCheck(provider){
+        _inLineDocsProviderCheck=_inlineDocsProviders.slice(0);
+        _insertProviderSorted(_inLineDocsProviderCheck,provider,0);
     }
 
     /**
@@ -783,22 +788,21 @@ define(function (require, exports, module) {
             handleFileRemoved(removedFiles);
         }
     }
-    function findEditProvider(editor) {
-        var providers = _inlineEditProviderCheck,
+
+    function findEditProvider(editor,editprovider) {
+        var providers = (editprovider)?_inlineEditProviderCheck:_inLineDocsProviderCheck,
             i,
             providerRet;
         for (i = 0; i < providers.length; i++) {
             var provider = providers[i].provider;
 
             providerRet = provider(editor,0);
-            if (providerRet && providerRet.hasOwnProperty("done")) {
-                break;
+            if (providerRet) {
+                return true;
             }
         }
-        return (providerRet)?true:false;
+        return false;
     }
-
-
 
     // Set up event dispatching
     EventDispatcher.makeEventDispatcher(exports);
@@ -853,6 +857,7 @@ define(function (require, exports, module) {
     exports.registerInlineDocsProvider    = registerInlineDocsProvider;
     exports.registerJumpToDefProvider     = registerJumpToDefProvider;
     exports.registerInlineEditProviderCheck = registerInlineEditProviderCheck;
+    exports.registerInlineDocsProviderCheck = registerInlineDocsProviderCheck;
 
     // Deprecated
     exports.registerCustomViewer          = registerCustomViewer;
