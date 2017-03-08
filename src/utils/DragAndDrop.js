@@ -53,6 +53,9 @@ define(function (require, exports, module) {
     // error message we generate in rejectImport() below!
     var byteLimit = 3145728;
 
+    // 5MB size limit for imported archives (zip & tar)
+    var archiveByteLimit = 5242880;
+
     /**
      * Returns true if the drag and drop items contains valid drop objects.
      * @param {Array.<DataTransferItem>} items Array of items being dragged
@@ -332,13 +335,21 @@ define(function (require, exports, module) {
          * or not a mime type we care about, reject it.
          */
         function rejectImport(item) {
-            if (item.size > byteLimit) {
+            var ext = Path.extname(item.name).replace(/^\./, "").toLowerCase();
+            if (item.size > archiveByteLimit) {
                 return new Error(Strings.DND_MAX_FILE_SIZE_EXCEEDED);
+            } 
+            else if (item.size > byteLimit) {
+                if (ext !== "zip" && ext !== "tar") {
+                    return new Error(Strings.DND_MAX_FILE_SIZE_EXCEEDED);
+                }
             }
+
+            
 
             // If we don't know about this language type, or the OS doesn't think
             // it's text, reject it.
-            var ext = Path.extname(item.name).replace(/^\./, "").toLowerCase();
+            //var ext = Path.extname(item.name).replace(/^\./, "").toLowerCase();
             var languageIsSupported = !!LanguageManager.getLanguageForExtension(ext);
             var typeIsText = Content.isTextType(item.type);
 
