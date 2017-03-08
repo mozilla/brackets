@@ -173,12 +173,13 @@ define(function (require, exports, module) {
             stat(path, callback);
         });
     }
-
-    function rename(oldPath, newPath, callback) {
+   function rename(oldPath, newPath, callback) {
         oldPath = decodePath(oldPath);
         newPath = decodePath(newPath);
 
-        function updateBlobURL(err) {
+        FileSystemCache.refresh(callback);
+        FileSystemCache.reload();
+        /*function updateBlobURL(err) {
             if(err) {
                 return callback(_mapError(err));
             }
@@ -192,14 +193,12 @@ define(function (require, exports, module) {
                 if(stat.isFile) {
                     BlobUtils.rename(oldPath, newPath);
                     BrambleEvents.triggerFileRenamed(oldPath, newPath);
-                }
-
-                callback();
+                } 
+                callback(); 
             });
         }
-
-        fs.rename(oldPath, newPath, _wrap(updateBlobURL));
-    }
+         fs.rename(oldPath, newPath, _wrap(updateBlobURL));*/
+    } 
 
     function readFile(path, options, callback) {
         path = decodePath(path);
