@@ -28,7 +28,8 @@ define(function (require, exports, module) {
     var FILE_SAVE       = brackets.getModule("command/Commands").FILE_SAVE, 
         SaveCommand     = brackets.getModule("command/CommandManager").get(FILE_SAVE),
         DocumentManager = brackets.getModule("document/DocumentManager"),
-        EditorManager   = brackets.getModule("editor/EditorManager");
+        EditorManager   = brackets.getModule("editor/EditorManager"),
+		BrambleEvents   = brackets.getModule("bramble/BrambleEvents");
 
     // Save operations that are pending
     var pending = {};
@@ -50,6 +51,12 @@ define(function (require, exports, module) {
             doc.releaseRef();
             clearTimeout(pending[path]);
             delete pending[path];
+			
+			// if statement cheks if there is no more pending saves
+			if(Object.keys(pending).length === 0) {
+				// call triggerProjectDirty to handles dirtyFlagChange event
+				BrambleEvents.triggerProjectSaved(path);
+			}
         }
 
         function doSave() {
@@ -78,6 +85,8 @@ define(function (require, exports, module) {
     // When the editor's document is flagged as having changes, schedule a save
     DocumentManager.on("dirtyFlagChange", function(evt, doc) {
         if(doc.isDirty) {
+			// call triggerProjectDirty to handles dirtyFlagChange event
+			BrambleEvents.triggerProjectDirty(doc.file.fullPath);
             scheduleSave(doc);
         }
     });
