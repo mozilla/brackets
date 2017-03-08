@@ -1,37 +1,17 @@
-(function(transport) {
+(function(transport, global, console) {
     "use strict";
 
     function _log(s){
         transport.send("bramble-console", s);
     }
 
-    // Create Console if not present
-    if (!window.console) {
-        window.console = ({});
-    }
-
-    var console = (window.console);
-
-    // Implement Console Log
-    if (!console.log) {
-        console.log = ({});
-    }
-
     // Bind _log to iframe console.
     console.log = _log;
 
     // Implement other Log Levels to console.log
-    if (!console.debug) {
-        console.debug = console.log;
-    }
-
-    if (!console.info) {
-        console.info = console.log;
-    }
-
-    if (!console.warn) {
-        console.warn = console.log;
-    }
+    console.debug = console.log;
+    console.info = console.log;
+    console.warn = console.log;
 
     if (!console.assert) {
         console.assert = function() {
@@ -44,6 +24,6 @@
         };
     }
 
-    window.console = console;
+    global.console = console;
 
-}(window._Brackets_LiveDev_Transport));
+}(window._Brackets_LiveDev_Transport, window, window.console));

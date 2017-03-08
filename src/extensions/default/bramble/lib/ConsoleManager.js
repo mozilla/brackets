@@ -11,11 +11,11 @@ define(function (require, exports, module) {
         return msg.match(/^bramble-console/);
     }
 
-    function consoleRequest(msg) {
+    function handleConsoleRequest(msg) {
         console.log("Bramble Console: " + msg);
     }
 
     exports.getRemoteScript = getRemoteScript;
     exports.isConsoleRequest = isConsoleRequest;
-    exports.consoleRequest = consoleRequest;
+    exports.handleConsoleRequest = handleConsoleRequest;
 });
