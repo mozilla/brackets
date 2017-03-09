@@ -807,7 +807,6 @@ define(function (require, exports, module) {
      */
     function setLauncher(launcher) {
         if (!(launcher && launcher.launch)) {
-            // Useful for debugging on a condition where launcher failed
             console.log("Invalid launcher object: ", launcher, new Error("LiveDevMultiBrowser.setLauncher()"));
             return;
         }

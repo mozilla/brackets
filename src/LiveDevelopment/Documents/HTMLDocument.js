@@ -63,7 +63,7 @@ define(function HTMLDocumentModule(require, exports, module) {
 
         this.editor = editor;
         this._instrumentationEnabled = false;
-
+        this._debug = false;
         this._onActiveEditorChange = this._onActiveEditorChange.bind(this);
         EditorManager.on("activeEditorChange", this._onActiveEditorChange);
 
@@ -261,11 +261,12 @@ define(function HTMLDocumentModule(require, exports, module) {
 
             if (edits.length > 0) {
                 console.warn("Browser DOM does not match after change: " + JSON.stringify(change));
-
-                edits.forEach(function (delta) {
+                if(this._debug){
+                  edits.forEach(function (delta) {
                     // Uncomment to see all delta values (issue-619)
                     //console.log(delta);
-                });
+                  });
+                }
             }
         });
     };
@@ -327,9 +328,8 @@ define(function HTMLDocumentModule(require, exports, module) {
         // edit this file or set a conditional breakpoint at the top of this function:
         //     "this._debug = true, false"
         if (this._debug) {
-            // This is used for debug only (issue-619)
-            //console.log("Edits applied to browser were:");
-            //console.log(JSON.stringify(result.edits, null, 2));
+            console.log("Edits applied to browser were:");
+            console.log(JSON.stringify(result.edits, null, 2));
             applyEditsPromise.done(function () {
                 self._compareWithBrowser(change);
             });

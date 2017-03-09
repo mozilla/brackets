@@ -57,7 +57,7 @@ define(function (require, exports, module) {
             stylesheets: {},
             scripts: {}
         };
-
+        this._debug = false;
         this._onChange = this._onChange.bind(this);
         this.doc.on("change", this._onChange);
 
@@ -231,9 +231,8 @@ define(function (require, exports, module) {
         // edit this file or set a conditional breakpoint at the top of this function:
         //     "this._debug = true, false"
         if (this._debug) {
-            // Mostly debugging code, can leave out for production (issue-619)
-            //console.log("Edits applied to browser were:");
-            //console.log(JSON.stringify(result.edits, null, 2));
+            console.log("Edits applied to browser were:");
+            console.log(JSON.stringify(result.edits, null, 2));
             applyEditsPromise.done(function () {
                 self._compareWithBrowser(change);
             });
