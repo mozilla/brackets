@@ -338,18 +338,14 @@ define(function (require, exports, module) {
             var ext = Path.extname(item.name).replace(/^\./, "").toLowerCase();
             if (item.size > archiveByteLimit) {
                 return new Error(Strings.DND_MAX_FILE_SIZE_EXCEEDED);
-            } 
-            else if (item.size > byteLimit) {
+            } else if (item.size > byteLimit) {
                 if (ext !== "zip" && ext !== "tar") {
                     return new Error(Strings.DND_MAX_FILE_SIZE_EXCEEDED);
                 }
             }
 
-            
-
             // If we don't know about this language type, or the OS doesn't think
             // it's text, reject it.
-            //var ext = Path.extname(item.name).replace(/^\./, "").toLowerCase();
             var languageIsSupported = !!LanguageManager.getLanguageForExtension(ext);
             var typeIsText = Content.isTextType(item.type);
 
