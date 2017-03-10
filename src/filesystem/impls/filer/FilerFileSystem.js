@@ -12,8 +12,9 @@ define(function (require, exports, module) {
         Handlers        = require("filesystem/impls/filer/lib/handlers"),
         Content         = require("filesystem/impls/filer/lib/content"),
         Async           = require("utils/Async"),
-        BrambleEvents   = require("bramble/BrambleEvents");
-
+        BrambleEvents   = require("bramble/BrambleEvents"),
+        FileSystemCache = require("filesystem/impls/filer/FileSystemCache");  
+          
     var fs              = BracketsFiler.fs(),
         Path            = BracketsFiler.Path,
         watchers        = {};
@@ -173,7 +174,7 @@ define(function (require, exports, module) {
             stat(path, callback);
         });
     }
-   function rename(oldPath, newPath, callback) {
+    function rename(oldPath, newPath, callback) {
         oldPath = decodePath(oldPath);
         newPath = decodePath(newPath);
 
@@ -181,10 +182,9 @@ define(function (require, exports, module) {
             if(err) {
                 return callback(_mapError(err));
             }
-        fs.refresh(callback);
-        fs.reload();
+       
             // If this was a rename on a file path, update the Blob cache too
-            /*stat(newPath, function(err, stat) {
+            stat(newPath, function(err, stat) {
                 if(err) {
                     return callback(_mapError(err));
                 }
@@ -193,10 +193,12 @@ define(function (require, exports, module) {
                     BlobUtils.rename(oldPath, newPath);
                     BrambleEvents.triggerFileRenamed(oldPath, newPath);
                 } 
+                FileSystemCache.refresh(callback);
+                reload();
                 callback(); 
-            });*/
+            });
         }
-         fs.rename(oldPath, newPath, _wrap(updateBlobURL));
+        fs.rename(oldPath, newPath, _wrap(updateBlobURL));
     } 
 
     function readFile(path, options, callback) {
