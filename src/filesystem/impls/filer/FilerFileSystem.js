@@ -183,7 +183,6 @@ define(function (require, exports, module) {
             if(err) {
                 return callback(_mapError(err));
             }
-       
             // If this was a rename on a file path, update the Blob cache too
             stat(newPath, function(err, stat) {
                 if(err) {
@@ -193,14 +192,18 @@ define(function (require, exports, module) {
                 if(stat.isFile) {
                     BlobUtils.rename(oldPath, newPath);
                     BrambleEvents.triggerFileRenamed(oldPath, newPath);
-                } 
-                FileSystemCache.refresh(callback);
-                LiveDevMultiBrowser.reload();
-                callback(); 
+                }
+                FileSystemCache.refresh(function(){
+                  if(err){    
+                    return callback(err);
+                  }
+                    LiveDevMultiBrowser.reload();
+                    callback();
+                })();
             });
         }
         fs.rename(oldPath, newPath, _wrap(updateBlobURL));
-    } 
+    }
 
     function readFile(path, options, callback) {
         path = decodePath(path);
