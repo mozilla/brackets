@@ -93,10 +93,11 @@ define(function (require, exports, module) {
             }
 
             if(ConsoleManager.isConsoleRequest(msgObj.message)) {
-                ConsoleManager.handleConsoleRequest(msgObj.data);
+                ConsoleManager.handleConsoleRequest(msgObj.data, msgObj.data_type);
                 return;
             }
-            //trigger message event 
+            
+            // Trigger message event 
             module.exports.trigger("message", [connId, msgObj.message]);
         } else if (msgObj.type === "connect") {
             Browser.setListener();
