@@ -38,16 +38,33 @@
         transportSend(args, "warn");
     }
     
+    // Implement console.clear replacement
+    console.clear = function() {
+        var args = Array.from(arguments).slice();
+        transportSend(args, "clear");
+    }
+    
+    // Implement console.time replacement
+    console.time = function() {
+        var args = Array.from(arguments).slice();  
+        transportSend(args, "time");
+    }
+    
+        // Implement console.time replacement
+    console.timeEnd = function() {
+        var args = Array.from(arguments).slice();
+        transportSend(args, "timeEnd");
+    }
+    
     // Replace default console.assert with custom
     console.assert = function() {
         var args = Array.from(arguments).slice();
         var expr = args.shift();
         if (!expr) {
             args[0] = "Assertion Failed: " + args[0];
-            console.error.apply(console, args);
+            transportSend(args, "error");
         }
     };
-    
 
     global.console = console;
 
