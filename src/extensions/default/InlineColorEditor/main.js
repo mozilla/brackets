@@ -27,7 +27,9 @@ define(function (require, exports, module) {
     var EditorManager       = brackets.getModule("editor/EditorManager"),
         ExtensionUtils      = brackets.getModule("utils/ExtensionUtils"),
         InlineColorEditor   = require("InlineColorEditor").InlineColorEditor,
-        ColorUtils          = brackets.getModule("utils/ColorUtils");
+        ColorUtils          = brackets.getModule("utils/ColorUtils"),
+	 CSSProperties = brackets.getModule("text!extensions/default/CSSCodeHints/CSSProperties.json"),
+        properties          = JSON.parse(CSSProperties);
 
 
     /**
@@ -39,41 +41,29 @@ define(function (require, exports, module) {
      * @return {?{color:String, marker:TextMarker}}
      */
     function prepareEditorForProvider(hostEditor, pos) {
-        var colorRegEx, cursorLine, match, sel, start, end, endPos, marker;
-
-        sel = hostEditor.getSelection();
-        if (sel.start.line !== sel.end.line) {
-            return null;
-        }
-
-        colorRegEx = new RegExp(ColorUtils.COLOR_REGEX);
+        var cursorLine, cursorLine2, marker, endPos, end;
         cursorLine = hostEditor.document.getLine(pos.line);
 
-        // Loop through each match of colorRegEx and stop when the one that contains pos is found.
-        do {
-            match = colorRegEx.exec(cursorLine);
-            if (match) {
-                start = match.index;
-                end = start + match[0].length;
+        // Make a copy of cursorLine after removing spaces and ":" so that we can check for it in properties
+        cursorLine2 = cursorLine.replace(/\s/g,'');
+        cursorLine2 = cursorLine2.replace(":", "");
+        
+        if (properties[cursorLine2]) {
+            if (properties[cursorLine2].type == "color") {
+                pos.ch = cursorLine.length-1;
+                endPos = {line: pos.ch, ch: cursorLine[cursorLine.length]};
+                console.log(endPos);
+                hostEditor.setSelection(pos, endPos);
+                marker = hostEditor._codeMirror.markText(pos, endPos);
+                return {
+                    color: "white",
+                    marker: marker
+                };
             }
-        } while (match && (pos.ch < start || pos.ch > end));
-
-        if (!match) {
+        }
+        else {
             return null;
         }
-
-        // Adjust pos to the beginning of the match so that the inline editor won't get
-        // dismissed while we're updating the color with the new values from user's inline editing.
-        pos.ch = start;
-        endPos = {line: pos.line, ch: end};
-
-        marker = hostEditor._codeMirror.markText(pos, endPos);
-        hostEditor.setSelection(pos, endPos);
-
-        return {
-            color: match[0],
-            marker: marker
-        };
     }
 
     /**
