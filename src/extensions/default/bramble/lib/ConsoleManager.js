@@ -11,8 +11,10 @@ define(function (require, exports, module) {
         return msg.match(/^bramble-console/);
     }
 
-    function handleConsoleRequest(msg) {
-        console.log("Bramble Console: " + msg);
+    function handleConsoleRequest(args) {
+        // Add an indentifier to the front of the args list
+		args.unshift("[Bramble Console]:");
+        console.log.apply(console, args);
     }
 
     exports.getRemoteScript = getRemoteScript;
