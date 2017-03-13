@@ -76,3 +76,9 @@ li.jstree-leaf > a {
 .bramble-inspector-highlight {
     background: rgba(0, 135, 207, .3) !important;
 }
+
+.CodeMirror-foldgutter-open:after,
+.CodeMirror-foldgutter-folded:after
+ {
+  font-size: .7em !important;
+}
