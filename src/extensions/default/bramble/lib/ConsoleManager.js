@@ -11,10 +11,28 @@ define(function (require, exports, module) {
         return msg.match(/^bramble-console/);
     }
 
-    function handleConsoleRequest(args) {
+    function handleConsoleRequest(args, type) {
         // Add an indentifier to the front of the args list
-		args.unshift("[Bramble Console]:");
-        console.log.apply(console, args);
+        args.unshift("[Bramble Console]:");
+        
+        switch(type) {
+            case "log":
+                console.log.apply(console, args);
+                break;
+            case "info":
+                console.info.apply(console, args);
+                break;
+            case "debug":
+                console.debug.apply(console, args);
+                break;
+            case "warn":
+                console.warn.apply(console, args);
+                break;
+            case "error":
+                console.error.apply(console, args);
+                break;
+            default:
+        }
     }
 
     exports.getRemoteScript = getRemoteScript;

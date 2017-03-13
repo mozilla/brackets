@@ -38,12 +38,15 @@
         /**
          * Sends a message over the transport.
          * @param {string} msgStr The message to send.
+         * @param {string} data The data to be shown in console
+         * @param {string} level The console type used
          */
-        send: function (msgStr, data) {
+        send: function (msgStr, data, level) {
             parent.postMessage(JSON.stringify({
                 type: "message",
                 message: msgStr,
-                data: data
+                data: data,
+                data_type: level
             }), "*");
         },
 

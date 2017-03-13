@@ -1,18 +1,43 @@
 (function(transport, global, console) {
     "use strict";
+    
+    function transportSend(args, type) {        
+        // To avoid Runtime.evaluate messages
+        if(args[0] !== "Runtime.evaluate") {
+            transport.send("bramble-console", args, type);
+        }
+    }
+    
+    // Implement console.log replacement
+    console.log = function() {    
+        var args = Array.from(arguments).slice();
+        transportSend(args, "log");
+    };
 
-    function _log(){
-        transport.send("bramble-console", Array.from(arguments).slice());
+    // Implement console.debug replacement
+    console.debug = function() {        
+        var args = Array.from(arguments).slice();
+        transportSend(args, "debug");
+    };
+    
+    // Implement console.error replacement
+    console.error = function() {        
+        var args = Array.from(arguments).slice();
+        transportSend(args, "error");
+    }
+    
+    // Implement console.info replacement
+    console.info = function() {
+        var args = Array.from(arguments).slice();
+        transportSend(args, "info");
     }
 
-    // Bind _log to iframe console.
-    console.log = _log;
-
-    // Implement other Log Levels to console.log
-    console.debug = console.log;
-    console.info = console.log;
-    console.warn = console.log;
-
+    // Implement console.info replacement
+    console.warn = function() {
+        var args = Array.from(arguments).slice();
+        transportSend(args, "warn");
+    }
+    
     // Replace default console.assert with custom
     console.assert = function() {
         var args = Array.from(arguments).slice();
@@ -21,12 +46,8 @@
             args[0] = "Assertion Failed: " + args[0];
             console.error.apply(console, args);
         }
-	};
-	
-	// Replace default clear console with custom
-	console.count = function() {
-	console.log(console);
-	}
+    };
+    
 
     global.console = console;
 
