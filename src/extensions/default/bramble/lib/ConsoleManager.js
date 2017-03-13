@@ -31,6 +31,17 @@ define(function (require, exports, module) {
             case "error":
                 console.error.apply(console, args);
                 break;
+            case "clear":
+                console.clear.apply(console);
+                break;
+            case "time":
+                args[0] = args[0] + " " + args[1];
+                console.time.apply(console, args);
+                break;
+            case "timeEnd":
+                args[0] = args[0] + " " + args[1];
+                console.timeEnd.apply(console, args);
+                break;
             default:
         }
     }
