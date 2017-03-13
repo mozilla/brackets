@@ -83,7 +83,7 @@ define(function (require, exports, module) {
      * @private
      */
     var _inlineEditProviders = [];
-    var editProvider;
+
     /**
      * Registered inline documentation widget providers sorted descending by priority.
      * @see {@link #registerInlineDocsProvider}.
@@ -91,7 +91,7 @@ define(function (require, exports, module) {
      * @private
      */
     var _inlineDocsProviders = [];
-    var docProvider;
+    var _inlineproviders = [];
     /**
      * Registered jump-to-definition providers.
      * @see {@link #registerJumpToDefProvider}.
@@ -778,24 +778,22 @@ define(function (require, exports, module) {
         }
     }
 
-    function findProvider(editor,provider) {
-        var providers = (provider)?editProvider:docProvider,
-            i,
-            providerRet;
+    function findProvider(editor) {
+        var i,
+            providerFoundResult = false;
 
-        providerRet = providers(editor);
-        if (providerRet) {
-            return true;
+        for(i = 0 ; i < _inlineproviders.length && !providerFoundResult ; i++){
+            var provider = _inlineproviders[i];
+            if(provider(editor)){
+                providerFoundResult = true;
+            }
         }
-        return false;
+
+        return providerFoundResult;
     }
 
-    function registerEditProvider(provider){
-        editProvider = provider;
-    }
-
-    function registerDocProvider(provider){
-        docProvider = provider;
+    function registerProvider(provider){
+        _inlineproviders.push(provider);
     }
 
     // Set up event dispatching
@@ -850,8 +848,7 @@ define(function (require, exports, module) {
     exports.registerInlineEditProvider    = registerInlineEditProvider;
     exports.registerInlineDocsProvider    = registerInlineDocsProvider;
     exports.registerJumpToDefProvider     = registerJumpToDefProvider;
-    exports.registerEditProvider          = registerEditProvider;
-    exports.registerDocProvider           = registerDocProvider;
+    exports.registerProvider              = registerProvider;
 
     // Deprecated
     exports.registerCustomViewer          = registerCustomViewer;

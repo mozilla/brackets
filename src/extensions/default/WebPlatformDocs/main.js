@@ -70,53 +70,20 @@ define(function (require, exports, module) {
     }
 
     function checkProvider(hostEditor){
-        var propInfo,
-            langId = hostEditor.getLanguageForSelection().getId(),
-            supportedLangs = ["css", "scss", "less", "html"],
-            langIndex = langId ? supportedLangs.indexOf(langId) : -1; // fail if langId is falsy
+        var jsonFile = {file: ""},
+        propQueue = [];
 
-        // Only provide docs when cursor is in supported language
-        if (langIndex < 0) {
-            return false;
-        }
+        propQueue = validateProvider(hostEditor,jsonFile);
 
-        // Only provide docs if the selection is within a single line
-        var sel = hostEditor.getSelection();
-        if (sel.start.line !== sel.end.line) {
-            return false;
-        }
+        return (propQueue.length) ? true : false;
 
-        if (langIndex <= 2) { // CSS-like language
-            propInfo = CSSUtils.getInfoAtPos(hostEditor, sel.start);
-            if (propInfo.name) {
-                return true;
-            }
-        } else { // HTML
-            propInfo = HTMLUtils.getTagInfo(hostEditor, sel.start);
-            if (propInfo.position.tokenType === HTMLUtils.ATTR_NAME && propInfo.attr && propInfo.attr.name) {
-                return true;
-            }
-            if (propInfo.tagName) { // we're somehow on an HTML tag (no matter where exactly)
-                return true;
-            }
-        }
-        return false;
     }
 
-    /**
-     * Inline docs provider.
-     *
-     * @param {!Editor} editor
-     * @param {!{line:Number, ch:Number}} pos
-     * @return {?$.Promise} resolved with an InlineWidget; null if we're not going to provide anything
-     */
-    function inlineProvider(hostEditor, pos) {
-        var jsonFile, propInfo,
-            propQueue = [], // priority queue of propNames to try
+    function validateProvider(hostEditor,jsonFile) {
+        var propInfo,propQueue = [],
             langId = hostEditor.getLanguageForSelection().getId(),
             supportedLangs = ["css", "scss", "less", "html"],
             langIndex = langId ? supportedLangs.indexOf(langId) : -1; // fail if langId is falsy
-
         // Only provide docs when cursor is in supported language
         if (langIndex < 0) {
             return null;
@@ -129,7 +96,7 @@ define(function (require, exports, module) {
         }
 
         if (langIndex <= 2) { // CSS-like language
-            jsonFile = "css.json";
+            jsonFile.file = "css.json";
             propInfo = CSSUtils.getInfoAtPos(hostEditor, sel.start);
             if (propInfo.name) {
                 propQueue.push("css/properties/" + propInfo.name);
@@ -137,7 +104,7 @@ define(function (require, exports, module) {
                 propQueue.push("css/properties/" + propInfo.name.replace(/^-(?:webkit|moz|ms|o)-/, ""));
             }
         } else { // HTML
-            jsonFile = "html.json";
+            jsonFile.file = "html.json";
             propInfo = HTMLUtils.getTagInfo(hostEditor, sel.start);
             if (propInfo.position.tokenType === HTMLUtils.ATTR_NAME && propInfo.attr && propInfo.attr.name) {
                 // we're on an HTML attribute (and not on its value)
@@ -151,13 +118,28 @@ define(function (require, exports, module) {
                 propQueue.push("html/elements/" + propInfo);
             }
         }
+        return propQueue;
+    }
+
+    /**
+     * Inline docs provider.
+     *
+     * @param {!Editor} editor
+     * @param {!{line:Number, ch:Number}} pos
+     * @return {?$.Promise} resolved with an InlineWidget; null if we're not going to provide anything
+     */
+    function inlineProvider(hostEditor, pos) {
+        var jsonFile = {file: ""},
+            propQueue = []; // priority queue of propNames to try
+
+        propQueue = validateProvider(hostEditor,jsonFile);
 
         // Are we on a supported property? (no matter if info is available for the property)
         if (propQueue.length) {
             var result = new $.Deferred();
 
             // Load JSON file if not done yet
-            getDocs(jsonFile)
+            getDocs(jsonFile.file)
                 .done(function (docs) {
                     docs = docs.PROPERTIES;
                     // Construct inline widget (if we have docs for this property)
@@ -197,7 +179,7 @@ define(function (require, exports, module) {
 
     // Register as inline docs provider
     EditorManager.registerInlineDocsProvider(inlineProvider);
-    EditorManager.registerDocProvider(checkProvider);
+    EditorManager.registerProvider(checkProvider);
 
     exports._getDocs         = getDocs;
     exports._inlineProvider  = inlineProvider;

@@ -1685,9 +1685,7 @@ define(function (require, exports, module) {
     }
 
     function _findProvider(editor){
-        //true = checking for edit provider
-        //false = checking for doc provider
-        return (EditorManager.findProvider(editor,true)||EditorManager.findProvider(editor,false));
+        return EditorManager.findProvider(editor);
     }
 
     /**

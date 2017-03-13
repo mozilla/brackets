@@ -435,6 +435,7 @@ define(function (require, exports, module) {
             self._handleCursorActivity(event);
             if(MainViewManager._findProvider(editor)){
                 self.trigger("providerAvailable", self);
+                console.log("ProviderFound");
             }
         });
         this.on("keypress", function (event, editor, domEvent) {
@@ -451,9 +452,6 @@ define(function (require, exports, module) {
                 // Set this full editor as master editor for the document
                 self.document._toggleMasterEditor(self);
             }
-        });
-        this.on("providerAvailable", function (event, editor) {
-            console.log("ProviderFound");
         });
 
         // Set code-coloring mode BEFORE populating with text, to avoid a flash of uncolored text

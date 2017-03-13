@@ -152,26 +152,30 @@ define(function (require, exports, module) {
     }
 
     function checkProvider(hostEditor){
+        var selectorResult = {result : undefined};
+        return (validateProvider(hostEditor,selectorResult) === true) ? true : false;
+    }
 
-        // Only provide a CSS editor when cursor is in HTML content
+    function validateProvider(hostEditor,selectorResult){
         if (hostEditor.getLanguageForSelection().getId() !== "html") {
-           return false;
+            return null;
         }
 
         // Only provide CSS editor if the selection is within a single line
         var sel = hostEditor.getSelection();
         if (sel.start.line !== sel.end.line) {
-           return false;
+            return null;
         }
 
         // Always use the selection start for determining selector name. The pos
         // parameter is usually the selection end.
-        var selectorResult = _getSelectorName(hostEditor, sel.start);
-        if (selectorResult.selectorName === "") {
-           return false;
+        selectorResult.result = _getSelectorName(hostEditor, sel.start);
+        if (selectorResult.result.selectorName === "") {
+            return selectorResult.result.reason || null;
         }
         return true;
     }
+
     /**
      * This function is registered with EditManager as an inline editor provider. It creates a CSSInlineEditor
      * when cursor is on an HTML tag name, class attribute, or id attribute, find associated
@@ -184,31 +188,20 @@ define(function (require, exports, module) {
      *         selection isn't even close to a context where we could provide anything.
      */
     function htmlToCSSProvider(hostEditor, pos) {
+        var selectorResult = {result : undefined};
+        var result = validateProvider(hostEditor,selectorResult);
 
-        // Only provide a CSS editor when cursor is in HTML content
-        if (hostEditor.getLanguageForSelection().getId() !== "html") {
-            return null;
+        if(result !== true){
+            return result;
         }
 
-        // Only provide CSS editor if the selection is within a single line
-        var sel = hostEditor.getSelection();
-        if (sel.start.line !== sel.end.line) {
-            return null;
-        }
-
-        // Always use the selection start for determining selector name. The pos
-        // parameter is usually the selection end.
-        var selectorResult = _getSelectorName(hostEditor, sel.start);
-        if (selectorResult.selectorName === "") {
-            return selectorResult.reason || null;
-        }
-
-        var selectorName = selectorResult.selectorName;
+        var selectorName = selectorResult.result.selectorName;
 
         var result = new $.Deferred(),
             cssInlineEditor,
             cssFileInfos = [],
             newRuleButton;
+
         /**
          * @private
          * Callback when item from dropdown list is selected
@@ -382,9 +375,9 @@ define(function (require, exports, module) {
 
         return result.promise();
     }
-    
+
     EditorManager.registerInlineEditProvider(htmlToCSSProvider);
-    EditorManager.registerEditProvider(checkProvider);
+    EditorManager.registerProvider(checkProvider);
 
     _newRuleCmd = CommandManager.register(Strings.CMD_CSS_QUICK_EDIT_NEW_RULE, Commands.CSS_QUICK_EDIT_NEW_RULE, _handleNewRule);
     _newRuleCmd.setEnabled(false);
