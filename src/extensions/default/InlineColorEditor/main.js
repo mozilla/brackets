@@ -49,7 +49,7 @@ define(function (require, exports, module) {
         cursorLine2 = cursorLine2.replace(":", "");
         
         if (properties[cursorLine2]) {
-            if (properties[cursorLine2].type == "color") {
+            if (properties[cursorLine2].type === "color") {
                 pos.ch = cursorLine.length-1;
                 endPos = {line: pos.ch, ch: cursorLine[cursorLine.length]};
                 console.log(endPos);
