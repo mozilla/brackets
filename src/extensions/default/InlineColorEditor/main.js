@@ -28,7 +28,7 @@ define(function (require, exports, module) {
         ExtensionUtils      = brackets.getModule("utils/ExtensionUtils"),
         InlineColorEditor   = require("InlineColorEditor").InlineColorEditor,
         ColorUtils          = brackets.getModule("utils/ColorUtils"),
-	 CSSProperties = brackets.getModule("text!extensions/default/CSSCodeHints/CSSProperties.json"),
+	 CSSProperties       = brackets.getModule("text!extensions/default/CSSCodeHints/CSSProperties.json"),
         properties          = JSON.parse(CSSProperties);
 
 
@@ -41,18 +41,16 @@ define(function (require, exports, module) {
      * @return {?{color:String, marker:TextMarker}}
      */
     function prepareEditorForProvider(hostEditor, pos) {
-        var cursorLine, cursorLine2, marker, endPos, end;
+        var cursorLine, cssPropertyName, marker, endPos, end;
         cursorLine = hostEditor.document.getLine(pos.line);
 
         // Make a copy of cursorLine after removing spaces and ":" so that we can check for it in properties
-        cursorLine2 = cursorLine.replace(/\s/g,'');
-        cursorLine2 = cursorLine2.replace(":", "");
-        
-        if (properties[cursorLine2]) {
-            if (properties[cursorLine2].type === "color") {
+        cssPropertyName = cursorLine.split(':')[0].trim();
+
+        if (properties[cssPropertyName]) {
+            if (properties[cssPropertyName].type === "color") {
                 pos.ch = cursorLine.length-1;
                 endPos = {line: pos.ch, ch: cursorLine[cursorLine.length]};
-                console.log(endPos);
                 hostEditor.setSelection(pos, endPos);
                 marker = hostEditor._codeMirror.markText(pos, endPos);
                 return {
@@ -60,8 +58,7 @@ define(function (require, exports, module) {
                     marker: marker
                 };
             }
-        }
-        else {
+        } else {
             return null;
         }
     }
