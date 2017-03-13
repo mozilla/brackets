@@ -52,10 +52,10 @@ define(function (require, exports, module) {
             clearTimeout(pending[path]);
             delete pending[path];
 
-        // if statement cheks if there is no more pending saves
-        if(Object.keys(pending).length === 0) {
-            BrambleEvents.triggerProjectSaved(path);
-        }
+            // if statement cheks if there is no more pending saves
+            if(Object.keys(pending).length === 0) {
+                BrambleEvents.triggerProjectSaved(path);
+            }
         }
 
         function doSave() {
