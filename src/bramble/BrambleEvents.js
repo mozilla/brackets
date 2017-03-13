@@ -73,7 +73,7 @@ define(function (require, exports, module) {
         exports.trigger("bramble:projectDirty", path);
     };
 
-    // bramble:projectSaved event when file is clean;
+    // bramble:projectSaved event when all files in the project are currently saved;
     exports.triggerProjectSaved = function(){
         exports.trigger("bramble:projectSaved");
 	};

@@ -64,17 +64,17 @@ define(function (require, exports, module) {
                 visible: visible
             });
         });
-		
-		// Listen for user changing file content
+
+        // Listen for user changing file content
         BrambleEvents.on("bramble:projectDirty", function(e, path) {
             sendEvent({
                 type: "bramble:projectDirty",
                 path: path
             });
         });
-		
-		// Listen for clean file
-		BrambleEvents.on("bramble:projectSaved", function(e, path) {
+        
+        // Listen for clean file
+        BrambleEvents.on("bramble:projectSaved", function(e, path) {
             sendEvent({
                 type: "bramble:projectSaved",
                 path: path
