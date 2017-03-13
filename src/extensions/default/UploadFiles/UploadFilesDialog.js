@@ -4,6 +4,8 @@
 define(function (require, exports, module) {
     "use strict";
 
+    var _uploadDialog = null;
+
     var StartupState   = brackets.getModule("bramble/StartupState");
     var Path           = brackets.getModule("filesystem/impls/filer/BracketsFiler").Path;
     var CommandManager = brackets.getModule("command/CommandManager");
@@ -164,13 +166,17 @@ define(function (require, exports, module) {
         Dialogs.cancelModalDialogIfOpen("upload-files-dialog");
     };
     FileUploadDialog.prototype.destroy = function() {
+        _uploadDialog = null;
         this.fileInput.remove();
     };
 
-
     function show() {
-        var uploadDialog = new FileUploadDialog();
-        return uploadDialog.show();
+        if(_uploadDialog) {
+           return _uploadDialog.deferred.promise();
+        }
+
+        _uploadDialog = new FileUploadDialog();
+        return _uploadDialog.show();
     }
 
     exports.show = show;
