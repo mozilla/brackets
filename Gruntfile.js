@@ -126,7 +126,10 @@ module.exports = function (grunt) {
                             'thirdparty/slowparse/locale/*',
                             'thirdparty/github-markdown.css',
                             'LiveDevelopment/launch.html',
-                            'hosted.*'
+                            'hosted.*',
+                            // XXXBramble: we don't use src/config.json like Brackets does,
+                            // but it needs to exist in dist/ so copy it
+                            'config.json'
                         ]
                     },
                     /* extensions and CodeMirror modes */
@@ -498,8 +501,9 @@ module.exports = function (grunt) {
          'npm-install', */
         'cleanempty',
         'exec:clean-nls',
-        'usemin',
-        'build-config'
+        'usemin'
+        /* XXXBramble: we skip this, since we don't bother with its info, and copy it in copy:dist
+        'build-config' */
     ]);
 
     // task: build dist/ for browser

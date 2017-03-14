@@ -54,10 +54,10 @@ define(function (require, exports, module) {
         $projectTitle,
         $projectFilesContainer,
         $workingSetViewsContainer;
-
     var _cmdSplitNone,
         _cmdSplitVertical,
         _cmdSplitHorizontal;
+    var MinimumSidebarWidthPX = 200;
 
     /**
      * @private
@@ -90,7 +90,12 @@ define(function (require, exports, module) {
      * Show the sidebar.
      */
     function show() {
-        Resizer.show($sidebar);
+        // XXXBramble: don't allow the sidebar to open at less than our minimum width
+        if($sidebar.width() < MinimumSidebarWidthPX){
+            $sidebar.width(MinimumSidebarWidthPX); 
+        }
+        
+        Resizer.show($sidebar); 	    
     }
 
     /**

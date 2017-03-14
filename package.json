@@ -52,7 +52,7 @@
         "gunzip-maybe": "^1.3.1",
         "http-server": "^0.9.0",
         "mkdirp": "0.5.1",
-        "nunjucks": "^3.0.0",
+        "nunjucks": "^2.4.3",
         "properties-parser": "0.3.1",
         "request": "^2.69.0",
         "requirejs": "^2.3.3",
