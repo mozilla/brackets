@@ -1,0 +1,149 @@
+<!doctype html>
+
+<!--
+  Copyright (c) 2012 - present Adobe Systems Incorporated. All rights reserved.
+   
+  Permission is hereby granted, free of charge, to any person obtaining a
+  copy of this software and associated documentation files (the "Software"),
+  to deal in the Software without restriction, including without limitation
+  the rights to use, copy, modify, merge, publish, distribute, sublicense,
+  and/or sell copies of the Software, and to permit persons to whom the
+  Software is furnished to do so, subject to the following conditions:
+   
+  The above copyright notice and this permission notice shall be included in
+  all copies or substantial portions of the Software.
+   
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+  DEALINGS IN THE SOFTWARE.
+-->
+
+<html spellcheck="false">
+<head>
+    <meta charset="utf-8">
+    <title></title>
+
+    <!-- CSS/LESS -->
+    <style>
+        /*
+         * Initial loading spinner css, inlined so we don't block loading.
+         * Spinner is based on https://github.com/tobiasahlin/SpinKit (MIT)
+         */
+        #spinner-container {
+            height: 100vh;
+            background-color: #f8f8f8;
+        }
+
+        .sk-spinner-rotating-plane.sk-spinner {
+            bottom: 0;
+            top: 0;
+            left: 0;
+            right: 0;
+            margin: auto;
+            position: absolute;
+            max-width: 50%;
+            width: 50px;
+            height: 50px;
+            background-color: #47484b;
+            -webkit-animation: sk-rotatePlane 1.2s infinite ease-in-out;
+                    animation: sk-rotatePlane 1.2s infinite ease-in-out;
+            /**
+             * Fix for Firefox's jagged edges:
+             * http://stackoverflow.com/questions/9235342/3d-css-transform-jagged-edges-in-firefox
+             */
+            outline: 1px solid transparent;
+        }
+
+        @-webkit-keyframes sk-rotatePlane {
+            0% {
+                -webkit-transform: perspective(120px) rotateX(0deg) rotateY(0deg);
+                        transform: perspective(120px) rotateX(0deg) rotateY(0deg);
+            }
+
+            50% {
+                -webkit-transform: perspective(120px) rotateX(-180.1deg) rotateY(0deg);
+                        transform: perspective(120px) rotateX(-180.1deg) rotateY(0deg);
+            }
+
+            100% {
+                -webkit-transform: perspective(120px) rotateX(-180deg) rotateY(-179.9deg);
+                        transform: perspective(120px) rotateX(-180deg) rotateY(-179.9deg);
+            }
+        }
+
+        @keyframes sk-rotatePlane {
+            0% {
+                -webkit-transform: perspective(120px) rotateX(0deg) rotateY(0deg);
+                        transform: perspective(120px) rotateX(0deg) rotateY(0deg);
+            }
+
+            50% {
+                -webkit-transform: perspective(120px) rotateX(-180.1deg) rotateY(0deg);
+                        transform: perspective(120px) rotateX(-180.1deg) rotateY(0deg);
+            }
+
+            100% {
+                -webkit-transform: perspective(120px) rotateX(-180deg) rotateY(-179.9deg);
+                        transform: perspective(120px) rotateX(-180deg) rotateY(-179.9deg);
+            }
+        }
+
+        #main-view {
+            height: 100vh;
+            visibility: hidden;
+        }
+    </style>
+
+    <!-- NOTE: All scripts must be external for Chrome App support: http://developer.chrome.com/apps/app_csp.html -->
+
+    <!-- Warn about failed cross origin requests in Chrome -->
+    <script type="application/javascript" src="xorigin.js"></script>
+
+    <link rel="stylesheet" type="text/css" href="thirdparty/CodeMirror/lib/codemirror.css">
+
+    <!--(if target dev)><!-->
+    <link rel="stylesheet/less" type="text/css" href="styles/brackets.less">
+    <!--<!(endif)-->
+    <!--(if target dist)>
+    <link rel="stylesheet" type="text/css" href="styles/brackets.min.css">
+    <!--<!(endif)-->
+    
+    <!-- Bramble CSS overrides for cross-browser compatibility issues -->
+    <link rel="stylesheet" type="text/css" href="styles/bramble_overrides.css">
+</head>
+<body>
+    <!-- We show a spinner on startup, which gets removed when loaded by
+         bramble's UI.initUI().
+    -->
+    <div id="spinner-container">
+        <div class="sk-spinner sk-spinner-rotating-plane"></div>
+    </div>
+
+    <!-- HTML content is dynamically loaded and rendered by brackets.js.
+         Any modules that depend on or modify HTML during load should
+         require the "utils/AppInit" module and install a callback for
+         "htmlReady" (e.g. AppInit.htmlReady(handler)) before touching the DOM.
+    -->
+    <div id="main-view"></div>
+
+    <!-- JavaScript -->
+    <!-- Pre-load third party scripts that cannot be async loaded. -->
+    <!-- build:js thirdparty/thirdparty.min.js -->
+    <script src="thirdparty/browser-appshell.js"></script>
+    <script src="thirdparty/less.min.js"></script>
+    <script src="thirdparty/jquery-2.1.3.min.js"></script>
+    <!-- endbuild -->
+    
+    <!-- All other scripts are loaded through require. -->
+    <!-- build:js main.js -->
+    <script src="thirdparty/require.min.js" data-main="main"></script>
+    <!-- endbuild -->
+
+    <!-- Verify that all dependencies are loaded. -->
+    <script src="dependencies.js"></script>
+</body>
+</html>

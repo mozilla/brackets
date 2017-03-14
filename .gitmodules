@@ -1,0 +1,39 @@
+[submodule "src/thirdparty/path-utils"]
+	path = src/thirdparty/path-utils
+	url = https://github.com/jblas/path-utils.git
+[submodule "src/thirdparty/mustache"]
+	path = src/thirdparty/mustache
+	url = https://github.com/janl/mustache.js.git
+[submodule "src/thirdparty/requirejs"]
+	path = src/thirdparty/requirejs
+	url = https://github.com/jrburke/requirejs.git
+[submodule "src/thirdparty/text"]
+	path = src/thirdparty/text
+	url = https://github.com/requirejs/text.git
+[submodule "src/thirdparty/i18n"]
+	path = src/thirdparty/i18n
+	url = https://github.com/requirejs/i18n.git
+[submodule "src/extensions/default/JSLint/thirdparty/jslint"]
+	path = src/extensions/default/JSLint/thirdparty/jslint
+	url = https://github.com/peterflynn/JSLint.git
+[submodule "src/thirdparty/filer"]
+	path = src/thirdparty/filer
+	url = https://github.com/filerjs/filer.git
+[submodule "src/extensions/default/brackets-paste-and-indent"]
+	path = src/extensions/default/brackets-paste-and-indent
+	url = https://github.com/ahuth/brackets-paste-and-indent.git
+[submodule "src/extensions/extra/brackets-cdn-suggestions"]
+	path = src/extensions/extra/brackets-cdn-suggestions
+	url = https://github.com/szdc/brackets-cdn-suggestions.git
+[submodule "src/thirdparty/marked"]
+	path = src/thirdparty/marked
+	url = https://github.com/chjj/marked.git
+[submodule "src/thirdparty/slowparse"]
+	path = src/thirdparty/slowparse
+	url = https://github.com/mozilla/slowparse.git
+[submodule "src/bramble/thirdparty/EventEmitter"]
+	path = src/bramble/thirdparty/EventEmitter
+	url = https://github.com/Wolfy87/EventEmitter.git
+[submodule "src/thirdparty/jszip"]
+	path = src/thirdparty/jszip
+	url = https://github.com/Stuk/jszip.git

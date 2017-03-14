@@ -1,0 +1,27 @@
+<!doctype html>
+
+<!--
+Bramble must be hosted in an iframe vs. loaded directly.
+This page is a helper for local development.
+-->
+
+<html spellcheck="false">
+<head>
+    <meta charset="utf-8">
+    <title>Framed Bramble</title>
+    <style>
+        body {
+            margin: 0;
+        }
+
+        .full {
+            height: 100vh;
+            overflow: hidden;
+        }
+    </style>
+</head>
+<body>
+    <div id="bramble" class="full"></div>
+    <script src="thirdparty/require.min.js" data-main="hosted.js"></script>
+</body>
+</html>
