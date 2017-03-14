@@ -10,7 +10,7 @@
     &-open:after {
         content: "\25bc";
         font-size: @font-size;
-        color: @color-triangle;
+        color: @color-triangle-collapsed;
     }
     &-folded:after {
         content: "\25b6";
@@ -20,9 +20,11 @@
 }
 
 .CodeMirror.over-gutter, .CodeMirror-activeline {
-    .CodeMirror-foldgutter-open:after {
-        color: @color-triangle-mouseover;
+
+    .CodeMirror-foldgutter-open:after, .CodeMirror-foldgutter-folded:after {
+        color: @color-triangle;
     }
+
 }
 
 .CodeMirror-foldgutter,
@@ -30,7 +32,7 @@
 .CodeMirror-foldgutter-folded,
 .CodeMirror-foldgutter-blank {
     width: @font-size;
-    cursor: default;
+    cursor: pointer;
     line-height: 100%;
 }
 
