@@ -28,7 +28,7 @@ define(function (require, exports, module) {
         ExtensionUtils      = brackets.getModule("utils/ExtensionUtils"),
         InlineColorEditor   = require("InlineColorEditor").InlineColorEditor,
         ColorUtils          = brackets.getModule("utils/ColorUtils"),
-	 CSSProperties       = brackets.getModule("text!extensions/default/CSSCodeHints/CSSProperties.json"),
+	 CSSProperties       = require("text!CSSProperties.json"),
         properties          = JSON.parse(CSSProperties);
 
 
