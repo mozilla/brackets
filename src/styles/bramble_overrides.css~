@@ -1,0 +1,74 @@
+/* Menu item goes to next line due to float:right issue on Firefox */
+@-moz-document url-prefix() {
+    .context-menu .menu-shortcut {
+        float: none;
+        margin-left: auto;
+    }
+    .dropdown-menu li a {
+        display: flex;
+        flex-flow: space-between;
+    }
+}
+
+/* Reduce the size of the code-folding gutter markers  with our larger font size */
+.CodeMirror-foldgutter-open:after,
+.CodeMirror-foldgutter-folded:after {
+    font-size: .7em !important;
+}
+
+.image-view-swatches {
+    margin-top: 10px;
+    overflow: auto;
+    -webkit-user-select: text;
+    -khtml-user-select: text;
+    -moz-user-select: text;
+    -ms-user-select: text;
+    -o-user-select: text;
+    user-select: text;
+}
+
+.swatch-wrapper {
+    float: left;
+    margin: 0 10px 10px 0;
+    min-width: 110px;
+    text-align: left;
+}
+
+.image-view-swatch {
+    display: block;
+    float: left;
+    height: 25px;
+    width: 25px;
+    border-radius: 1px;
+    -webkit-transition: .2s;
+    -moz-transition: .2s;
+    transition: .2s;
+    margin-right: 10px;
+}
+
+.image-view-hex {
+    font-size: 15px;
+    text-transform: uppercase;
+    position: relative;
+    top: 4px;
+    cursor: text;
+    opacity: .6;
+}
+
+.image-header {
+    height: auto !important;
+}
+
+
+.fullscreen-preview #first-pane {
+    width: 0 !important;
+}
+
+.fullscreen-preview .main-view .content {
+    left: 0 !important;
+}
+
+.bramble-inspector-highlight {
+    background: rgba(0, 135, 207, .3) !important;
+}
+
