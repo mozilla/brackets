@@ -22,6 +22,7 @@ define(function (require, exports, module) {
         "HTMLCodeHints",
         "JavaScriptCodeHints",
         "InlineColorEditor",
+        "Inline3DParametersEditor",
         "JavaScriptQuickEdit",
         "QuickOpenCSS",
         "QuickOpenHTML",
