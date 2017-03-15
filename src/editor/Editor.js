@@ -433,9 +433,11 @@ define(function (require, exports, module) {
 
         this.on("cursorActivity", function (event, editor) {
             self._handleCursorActivity(event);
-            if(MainViewManager._findProvider(editor)){
+
+            var provider = MainViewManager._findProvider(editor);
+            if(provider){
                 self.trigger("providerAvailable", self);
-                console.log("ProviderFound");
+                console.log(provider +" ProviderFound");
             }
         });
         this.on("keypress", function (event, editor, domEvent) {

@@ -29,7 +29,8 @@ define(function (require, exports, module) {
         EditorManager   = brackets.getModule("editor/EditorManager"),
         CSSUtils        = brackets.getModule("language/CSSUtils"),
         HTMLUtils       = brackets.getModule("language/HTMLUtils"),
-        ExtensionUtils  = brackets.getModule("utils/ExtensionUtils");
+        ExtensionUtils  = brackets.getModule("utils/ExtensionUtils"),
+        Commands        = brackets.getModule("command/Commands");
 
     // Extension modules
     var InlineDocsViewer = require("InlineDocsViewer");
@@ -179,7 +180,7 @@ define(function (require, exports, module) {
 
     // Register as inline docs provider
     EditorManager.registerInlineDocsProvider(inlineProvider);
-    EditorManager.registerProvider(checkProvider);
+    EditorManager.registerProvider(checkProvider,Commands.PROVIDER_DOCS);
 
     exports._getDocs         = getDocs;
     exports._inlineProvider  = inlineProvider;

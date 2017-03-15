@@ -778,22 +778,37 @@ define(function (require, exports, module) {
         }
     }
 
+    /**
+    * @param {Object} editor - function that is called to validate provider
+    * @return {String} id - name of the provider so we can return it to know which
+    * provider we have found
+    */
     function findProvider(editor) {
-        var i,
-            providerFoundResult = false;
+        var i;
 
-        for(i = 0 ; i < _inlineproviders.length && !providerFoundResult ; i++){
-            var provider = _inlineproviders[i];
+        for(i = 0 ; i < _inlineproviders.length; i++){
+            var provider = _inlineproviders[i].provider;
             if(provider(editor)){
-                providerFoundResult = true;
+                return _inlineproviders[i].id;
             }
         }
 
-        return providerFoundResult;
+        return null;
     }
 
-    function registerProvider(provider){
-        _inlineproviders.push(provider);
+    /**
+    * @param {Function} provider - function that is called to validate provider
+    * @param {String} id - name of the provider so we can return it to know which
+    * provider we have found
+    */
+    function Provider(provider,id){
+        this.provider = provider;
+        this.id = id;
+    }
+
+    function registerProvider(provider,id){
+        var prov = new Provider(provider,id);
+        _inlineproviders.push(prov);
     }
 
     // Set up event dispatching

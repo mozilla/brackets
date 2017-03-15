@@ -377,7 +377,7 @@ define(function (require, exports, module) {
     }
 
     EditorManager.registerInlineEditProvider(htmlToCSSProvider);
-    EditorManager.registerProvider(checkProvider);
+    EditorManager.registerProvider(checkProvider,Commands.PROVIDER_EDIT);
 
     _newRuleCmd = CommandManager.register(Strings.CMD_CSS_QUICK_EDIT_NEW_RULE, Commands.CSS_QUICK_EDIT_NEW_RULE, _handleNewRule);
     _newRuleCmd.setEnabled(false);
