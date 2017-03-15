@@ -18,10 +18,15 @@ define(function (require, exports, module) {
         this._callback = callback;
 
         this._handleXValueSliderDrag = this._handleXValueSliderDrag.bind(this);
+        this._handleYValueSliderDrag = this._handleYValueSliderDrag.bind(this);
+        this._handleZValueSliderDrag = this._handleZValueSliderDrag.bind(this);
         this.$xValueSlider = this.$element.find("#_x");
         this.$yValueSlider = this.$element.find("#_y");
         this.$zValueSlider = this.$element.find("#_z");
         this._x = parseFloat(this.$xValueSlider.val());
+        this._y = parseFloat(this.$yValueSlider.val());
+        this._z = parseFloat(this.$zValueSlider.val());
+
         this.$selectionBase = this.$element.find(".selector-base");
 
         // Attach event listeners to main UI elements
@@ -38,14 +43,28 @@ define(function (require, exports, module) {
         var self = this;
         this.$xValueSlider.mousedown(function(e) {
             self._x = parseFloat(e.currentTarget.value);
-            self._xPosition = e.clientX;
+            self._position = e.clientX;
         });
+
+        this.$yValueSlider.mousedown(function(e) {
+            self._y = parseFloat(e.currentTarget.value);
+            self._position = e.clientX;
+        });
+
+        this.$zValueSlider.mousedown(function(e) {
+            self._z = parseFloat(e.currentTarget.value);
+            self._position = e.clientX;
+        });
+
         
         this.$xValueSlider.change(function(e) {
             self._commitParameters(self.$xValueSlider.val() + " 3 0");
         });
 
         this._registerDragHandler(this.$xValueSlider, this._handleXValueSliderDrag);
+        this._registerDragHandler(this.$yValueSlider, this._handleYValueSliderDrag);
+        this._registerDragHandler(this.$zValueSlider, this._handleZValueSliderDrag);
+
     };
 
     ParameterEditor.prototype.focus = function () {
@@ -83,11 +102,31 @@ define(function (require, exports, module) {
     };
 
     ParameterEditor.prototype._handleXValueSliderDrag = function(event) {
-        var xPos = this._xPosition;
+        var xPos = this._position;
         var offset = _getNewOffset(event.clientX, xPos );
         var n = this._x + offset;
         this.$xValueSlider.val(n.toFixed(2));
-        this._commitParameters(this.$xValueSlider.val() + " 3 0");
+        this._commitParameters(this._getParameters());
+    };
+
+    ParameterEditor.prototype._handleYValueSliderDrag = function(event) {
+        var xPos = this._position;
+        var offset = _getNewOffset(event.clientX, xPos );
+        var n = this._y + offset;
+        this.$yValueSlider.val(n.toFixed(2));
+        this._commitParameters(this._getParameters());
+    };
+
+    ParameterEditor.prototype._handleZValueSliderDrag = function(event) {
+        var xPos = this._position;
+        var offset = _getNewOffset(event.clientX, xPos );
+        var n = this._z + offset;
+        this.$zValueSlider.val(n.toFixed(2));
+        this._commitParameters(this._getParameters());
+    };
+
+    ParameterEditor.prototype._getParameters = function() {
+        return (this.$xValueSlider.val() + " " + this.$yValueSlider.val() + " " + this.$zValueSlider.val());
     };
 
     ParameterEditor.prototype._registerDragHandler = function ($element, handler) {
