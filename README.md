@@ -34,6 +34,11 @@ Navigate to the root of the directory you cloned and run:
 $ npm install
 ```
 
+NOTE: if you are running on Windows, and experience a build error with the `iltorb` package,
+consider adding the `--no-optional` flag to have npm skip installing `iltorb`, which is optional
+and requires python, gyp and a working c++ build environment.
+See comment in https://github.com/mozilla/brackets/pull/588#issuecomment-280438175
+
 Step 3: run the build
 
 You can build Bramble by running the npm build task:
@@ -307,6 +312,7 @@ a number of read-only getters are available in order to access state information
 * `getWordWrap()` - returns the current word wrap setting as a `Boolean` (i.e., enabled or disabled).
 * `getTutorialExists()` - returns `true` or `false` depending on whether or not there is a tutorial in the project (i.e., if `tutorial.html` is present)
 * `getTutorialVisible()` - returns `true` or `false` depending on whether or not the preview browser is showing a tutorial or not.
+* `getAutoUpdate()` - returns `true` or `false` depending on whether or not the auto update preference is enabled or not.
 
 **NOTE**: calling these getters before the `ready()` callback on the bramble instance
 won't do what you want.
@@ -373,6 +379,7 @@ the following events:
 * `"tutorialRemoved"` - triggered when an existing tutorial for the project is removed
 * `"tutorialVisibilityChange"` - triggered when the tutorial preview is turned on or off. It includes an `Object` with a `visibility` property that indicates whether the tutorial is visible.
 * `"inspectorChange"` - triggered whenever the inspector changes from enabled to disabled, or vice versa. It includes an `Object` with an `enabled` property set to `true` or `false`.
+* `"autoUpdateChange"` - triggered whenever the auto update preference changes from enabled to disabled, or vice versa. It includes an `Object` with a `autoUpdate` property set to `true` or `false`
 
 There are also high-level events for changes to files:
 

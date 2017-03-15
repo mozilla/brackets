@@ -25,18 +25,10 @@
 /*jslint node: true */
 'use strict';
 
-// Brackets specific config vars
-var habitat = require('habitat');
-habitat.load();
-var env = new habitat();
-
 var Path = require('path');
-
-var GIT_BRANCH = env.get("BRAMBLE_MAIN_BRANCH") || "bramble";
-var GIT_REMOTE = env.get("BRAMBLE_MAIN_REMOTE") || "upstream";
+var LessPluginAutoPrefix = require('less-plugin-autoprefix');
 
 module.exports = function (grunt) {
-    var autoprefixer = require('autoprefixer-core');
     var swPrecache = require('sw-precache');
 
     // load dependencies
@@ -50,9 +42,6 @@ module.exports = function (grunt) {
             'grunt-targethtml',
             'grunt-usemin',
             'grunt-cleanempty',
-            'grunt-npm',
-            'grunt-git',
-            'grunt-update-submodules',
             'grunt-exec'
         ]
     });
@@ -87,7 +76,6 @@ module.exports = function (grunt) {
                         /* static files */
                         'xorigin.js',
                         'dependencies.js',
-                        'thirdparty/requirejs/require.js',
 
                         /* extensions and CodeMirror modes */
                         '!extensions/default/*/unittests.js',
@@ -97,12 +85,6 @@ module.exports = function (grunt) {
                         '!extensions/**/node_modules/**/*.js',
                         '!extensions/**/test/**/*.js',
                         '!**/unittest-files/**',
-                        'thirdparty/CodeMirror/addon/{,*/}*.js',
-                        'thirdparty/CodeMirror/keymap/{,*/}*.js',
-                        'thirdparty/CodeMirror/lib/{,*/}*.js',
-                        'thirdparty/CodeMirror/mode/{,*/}*.js',
-                        'thirdparty/CodeMirror/theme/{,*/}*.js',
-                        'thirdparty/slowparse/slowparse.js',
                         'thirdparty/i18n/*.js',
                         'thirdparty/text/*.js'
                     ],
@@ -133,11 +115,11 @@ module.exports = function (grunt) {
                             'nls/{,*/}*.js',
                             'xorigin.js',
                             'dependencies.js',
-                            'thirdparty/requirejs/require.js',
-                            'thirdparty/slowparse/locale/*',
                             'thirdparty/github-markdown.css',
-                            'LiveDevelopment/launch.html',
-                            'hosted.*'
+                            'hosted.*',
+                            // XXXBramble: we don't use src/config.json like Brackets does,
+                            // but it needs to exist in dist/ so copy it
+                            'config.json'
                         ]
                     },
                     /* extensions and CodeMirror modes */
@@ -166,13 +148,7 @@ module.exports = function (grunt) {
                             '!extensions/extra/*/thirdparty/**/*.htm{,l}',
                             '!extensions/dev/*',
                             '!extensions/samples/**/*',
-                            'thirdparty/CodeMirror/addon/{,*/}*',
-                            'thirdparty/CodeMirror/keymap/{,*/}*',
-                            'thirdparty/CodeMirror/lib/{,*/}*',
-                            'thirdparty/CodeMirror/mode/{,*/}*',
-                            '!thirdparty/CodeMirror/mode/**/*.html',
-                            '!thirdparty/CodeMirror/**/*test.js',
-                            'thirdparty/CodeMirror/theme/{,*/}*',
+                            'thirdparty/CodeMirror/lib/codemirror.css',
                             'thirdparty/i18n/*.js',
                             'thirdparty/text/*.js'
                         ]
@@ -225,27 +201,22 @@ module.exports = function (grunt) {
                     "src/styles/brackets.min.css": "src/styles/brackets.less"
                 },
                 options: {
-                    compress: true
+                    compress: true,
+                    plugins: [
+                        new LessPluginAutoPrefix({
+                            browsers: [
+                                "Explorer >= 10",
+                                "Firefox >= 26",
+                                "Chrome >= 31",
+                                "Safari >= 7",
+                                "Opera >= 19",
+                                "iOS >= 3.2",
+                                "Android >= 4.4"
+                            ]
+                        })
+                    ]
                 }
             }
-        },
-        postcss: {
-            options: {
-                processors: [
-                    autoprefixer({
-                        browsers: [
-                            "Explorer >= 10",
-                            "Firefox >= 26",
-                            "Chrome >= 31",
-                            "Safari >= 7",
-                            "Opera >= 19",
-                            "iOS >= 3.2",
-                            "Android >= 4.4"
-                        ]
-                    }).postcss
-                ]
-            },
-            dist: { src: 'src/styles/brackets.min.css' }
         },
         requirejs: {
             dist: {
@@ -437,73 +408,6 @@ module.exports = function (grunt) {
                 quiet: true
             }
         },
-        shell: {
-            repo: grunt.option("shell-repo") || "../brackets-shell",
-            mac: "<%= shell.repo %>/installer/mac/staging/<%= pkg.name %>.app",
-            win: "<%= shell.repo %>/installer/win/staging/<%= pkg.name %>.exe",
-            linux: "<%= shell.repo %>/installer/linux/debian/package-root/opt/brackets/brackets"
-        },
-
-        // Brackets specific tasks
-        'npm-checkBranch': {
-            options: {
-                branch: GIT_BRANCH
-            }
-        },
-        gitfetch: {
-            smart: {
-                options: {}
-            }
-        },
-        "update_submodules": {
-            publish: {
-                options: {
-                    params: "--remote -- src/extensions/default/bramble src/extensions/default/HTMLHinter"
-                }
-            }
-        },
-        gitcommit: {
-            module: {
-                options: {
-                    // This is replaced during the 'publish' task
-                    message: "Placeholder"
-                }
-            },
-            publish: {
-                options: {
-                    noStatus: true,
-                    allowEmpty: true,
-                    message: "Latest distribution version of Bramble."
-                }
-            }
-        },
-        gitadd: {
-            publish: {
-                files: {
-                    src: ['./dist/*']
-                },
-                options: {
-                    force: true
-                }
-            },
-            modules: {
-                files: {
-                    src: ['./src/extensions/default/bramble', './src/extensions/default/HTMLHinter']
-                }
-            }
-        },
-        gitpush: {
-            smart: {
-                options: {
-                    remote: GIT_REMOTE,
-                    // These options are left in for
-                    // clarity. Their actual values
-                    // will be set by the `publish` task.
-                    branch: 'gh-pages',
-                    force: true
-                },
-            }
-        },
         compress: {
             dist: {
                 options: {
@@ -527,57 +431,6 @@ module.exports = function (grunt) {
                 rootDir: 'dist'
             }
         }
-    });
-
-    // Load postcss
-    grunt.loadNpmTasks('grunt-postcss');
-
-    // Bramble-task: smartCheckout
-    //   Checks out to the branch provided as a target.
-    //   Takes:
-    //    [branch] - The branch to checkout to
-    //    [overwrite] - If true, resets the target branch to the
-    //                  value of the starting branch
-    grunt.registerTask('smartCheckout', function(branch, overwrite) {
-        overwrite = overwrite === "true" ? true : false;
-
-        grunt.config('gitcheckout.smart.options.branch', branch);
-        grunt.config('gitcheckout.smart.options.overwrite', overwrite);
-        grunt.task.run('gitcheckout:smart');
-    });
-
-    // Bramble-task: smartPush
-    //   Checks out to the branch provided as a target.
-    //   Takes:
-    //    [branch] - The branch to push to
-    //    [force] - If true, forces a push
-    grunt.registerTask('smartPush', function(branch, force) {
-        force = force === "true" ? true : false;
-
-        grunt.config('gitpush.smart.options.branch', branch);
-        grunt.config('gitpush.smart.options.force', force);
-        grunt.task.run('gitpush:smart');
-    });
-
-    // Bramble-task: publish-submodules
-    //  Updates submodules, committing and pushing
-    //  the result upstream, and also builds and pushes the
-    //  dist version for use in thimble.
-    grunt.registerTask('publish-submodules', 'Update submodules and the gh-pages branch with the latest built version of bramble.', function(patchLevel) {
-        var date = new Date(Date.now()).toString();
-        grunt.config("gitcommit.module.options.message", "Submodule update on " + date);
-
-        grunt.task.run([
-            // Confirm we're ready to start
-            'checkBranch',
-            'jshint:src',
-
-            // Update submodules, commit and push to "master"
-            'update_submodules:publish',
-            'gitadd:modules',
-            'gitcommit:module',
-            'smartPush:' + GIT_BRANCH + ":false",
-        ]);
     });
 
     grunt.registerMultiTask('swPrecache', function() {
@@ -619,7 +472,6 @@ module.exports = function (grunt) {
         'eslint:src',
         'clean',
         'less',
-        'postcss',
         'targethtml',
         'useminPrepare',
         'htmlmin',
@@ -632,8 +484,10 @@ module.exports = function (grunt) {
         /* XXXBramble: we skip this, since we don't use any of the node_modules in Bramble.
          'npm-install', */
         'cleanempty',
-        'usemin',
-        'build-config'
+        'exec:clean-nls',
+        'usemin'
+        /* XXXBramble: we skip this, since we don't bother with its info, and copy it in copy:dist
+        'build-config' */
     ]);
 
     // task: build dist/ for browser

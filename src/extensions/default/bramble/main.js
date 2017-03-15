@@ -193,6 +193,8 @@ define(function (require, exports, module) {
             wordWrap: data.state.wordWrap,
             openSVGasXML: data.state.openSVGasXML,
             allowJavaScript: data.state.allowJavaScript
+            allowJavaScript: data.state.allowJavaScript,
+            autoUpdate: data.state.autoUpdate
         });
 
         RemoteEvents.start();

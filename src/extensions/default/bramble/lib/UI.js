@@ -100,6 +100,11 @@ define(function (require, exports, module) {
             PreferencesManager.set("allowJavaScript", allowJavaScript);
         }
 
+        var autoUpdate = BrambleStartupState.ui("autoUpdate");
+        if(typeof autoUpdate === "boolean") {
+            PreferencesManager.set("autoUpdate", autoUpdate);
+        }
+
         var sidebarWidth = BrambleStartupState.ui("sidebarWidth");
         if(sidebarWidth) {
             SidebarView.resize(sidebarWidth);
