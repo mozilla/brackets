@@ -19,20 +19,12 @@
     }
 }
 
-.CodeMirror.over-gutter, .CodeMirror-activeline {
-
-    .CodeMirror-foldgutter-open:after, .CodeMirror-foldgutter-folded:after {
-        color: @color-triangle;
-    }
-
-}
-
 .CodeMirror-foldgutter,
 .CodeMirror-foldgutter-open,
 .CodeMirror-foldgutter-folded,
 .CodeMirror-foldgutter-blank {
     width: @font-size;
-    cursor: pointer;
+    cursor: default;
     line-height: 100%;
 }
 
@@ -65,7 +57,7 @@
     border: 1px solid @color-marker-border;
     color: @color-marker-text;
     background-color: @color-marker-bg;
-    
+
     &:after {
         content: "...";
         font-size: 1em;
