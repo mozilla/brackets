@@ -426,7 +426,6 @@ define([
                                     previewMode: _state.previewMode,
                                     wordWrap: _state.wordWrap,
                                     openSVGasXML: _state.openSVGasXML,
-                                    allowJavaScript: _state.allowJavaScript
                                     allowJavaScript: _state.allowJavaScript,
                                     autoUpdate: _state.autoUpdate
                                 }
