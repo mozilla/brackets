@@ -16,7 +16,7 @@ define(function (require, exports, module) {
         args.unshift("[Bramble Console]:");
        
         // Time related arguments
-        if(type == "time" || type == "timeEnd") {
+        if(type === "time" || type === "timeEnd") {
             args[0] = args[0] + " " + args[1];
         }
         
