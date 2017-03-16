@@ -14,36 +14,13 @@ define(function (require, exports, module) {
     function handleConsoleRequest(args, type) {
         // Add an indentifier to the front of the args list
         args.unshift("[Bramble Console]:");
-        
-        switch(type) {
-            case "log":
-                console.log.apply(console, args);
-                break;
-            case "info":
-                console.info.apply(console, args);
-                break;
-            case "debug":
-                console.debug.apply(console, args);
-                break;
-            case "warn":
-                console.warn.apply(console, args);
-                break;
-            case "error":
-                console.error.apply(console, args);
-                break;
-            case "clear":
-                console.clear.apply(console);
-                break;
-            case "time":
-                args[0] = args[0] + " " + args[1];
-                console.time.apply(console, args);
-                break;
-            case "timeEnd":
-                args[0] = args[0] + " " + args[1];
-                console.timeEnd.apply(console, args);
-                break;
-            default:
+       
+        // Time related arguments
+        if(type == "time" || type == "timeEnd") {
+            args[0] = args[0] + " " + args[1];
         }
+        
+        console[type].apply(console, args);
     }
 
     exports.getRemoteScript = getRemoteScript;

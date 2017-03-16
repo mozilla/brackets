@@ -8,53 +8,58 @@
         }
     }
     
+    function generateRouter(fname) {
+        var args = Array.from(arguments).slice();
+        transportSend(args, fname);
+    }
+    
     // Implement console.log replacement
-    console.log = function() {    
+    console.log = function() {
         var args = Array.from(arguments).slice();
         transportSend(args, "log");
     };
-
+    
     // Implement console.debug replacement
-    console.debug = function() {        
+    console.debug = function() {
         var args = Array.from(arguments).slice();
         transportSend(args, "debug");
     };
     
     // Implement console.error replacement
-    console.error = function() {        
+    console.error = function() {
         var args = Array.from(arguments).slice();
         transportSend(args, "error");
-    }
+    };
     
     // Implement console.info replacement
     console.info = function() {
         var args = Array.from(arguments).slice();
         transportSend(args, "info");
-    }
-
-    // Implement console.info replacement
+    };
+    
+    // Implement console.warn replacement
     console.warn = function() {
         var args = Array.from(arguments).slice();
         transportSend(args, "warn");
-    }
+    };
     
     // Implement console.clear replacement
     console.clear = function() {
         var args = Array.from(arguments).slice();
         transportSend(args, "clear");
-    }
+    };
     
     // Implement console.time replacement
     console.time = function() {
-        var args = Array.from(arguments).slice();  
+        var args = Array.from(arguments).slice();
         transportSend(args, "time");
-    }
+    };
     
-        // Implement console.time replacement
+    // Implement console.timeEnd replacement
     console.timeEnd = function() {
         var args = Array.from(arguments).slice();
         transportSend(args, "timeEnd");
-    }
+    };
     
     // Replace default console.assert with custom
     console.assert = function() {
