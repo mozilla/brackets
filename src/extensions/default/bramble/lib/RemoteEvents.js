@@ -139,7 +139,9 @@ define(function (require, exports, module) {
             sendEvent({
                 type: "bramble:openSVGasXMLChange",
                 openSVGasXML: PreferencesManager.get("openSVGasXML")
-              
+            });
+        });
+        
         //Listen for changes to auto update
         PreferencesManager.on("change", "autoUpdate", function () {
             sendEvent({
@@ -180,7 +182,6 @@ define(function (require, exports, module) {
             theme: Theme.getTheme(),
             wordWrap: PreferencesManager.get("wordWrap"),
             openSVGasXML: PreferencesManager.get("openSVGasXML"),
-            allowJavaScript: PreferencesManager.get("allowJavaScript")
             allowJavaScript: PreferencesManager.get("allowJavaScript"),
             autoUpdate: PreferencesManager.get("autoUpdate")
         });
