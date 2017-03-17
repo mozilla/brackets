@@ -47,7 +47,7 @@ define(function (require, exports, module) {
     var commandID          = "denniskehrig.ShowWhitespace.toggle";
     var preferencesID      = "denniskehrig.ShowWhitespace";
     var defaultPreferences = {
-        enabled: true,
+        enabled: false,
         colors: {
             "light": {
                 "empty": "#ccc",
