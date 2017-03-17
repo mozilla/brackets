@@ -91,8 +91,8 @@ define(function (require, exports, module) {
 
     // XXXBramble: we need to get this loaded so our extension can require/use it later
     require("LiveDevelopment/Servers/BaseServer");
-
-    /**
+    
+    /** 
      * @private
      * The live HTML document for the currently active preview.
      * @type {LiveHTMLDocument}
@@ -734,10 +734,10 @@ define(function (require, exports, module) {
         if (!isActive() || !_server) {
             return;
         }
-
+        
         var absolutePath            = doc.file.fullPath;
 
-        // reload the page if the given document is a JS or CSS file related
+        // reload the page if the given document is a JS or CSS file related 
         // to the current live document.
         if (_liveDocument.isRelated(absolutePath)) {
             if (doc.getLanguage().getId() === "javascript" || doc.getLanguage().getId() === "css") {
