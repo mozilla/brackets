@@ -20,17 +20,95 @@ div.working-set-option-btn[style] {
 
 
 /* File bar hover styles */
-.sidebar-hover {
-    background-color: #333533 !important;
-    text-shadow: none !important;
+#sidebar.sidebar-hover .hover-helper {
+  display: block;
+}
+
+.hover-helper {
+    display: none;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: black;
+    pointer-events: none;
+}
+
+.hover-helper .border-region {
+    position: absolute;
+    border: dashed 2px rgba(255,255,255,.2);
+    box-sizing: border-box;
+    border-radius: 1px;
+    width: calc(100% - 20px);
+    left: 10px;
+    top: 10px;
+    height: calc(100% - 20px);
+}
+
+.hover-helper .border-region .cloud {
+    position: absolute;
+    top: 30%;
+    left: calc(50% - 50px);
+    background-image: url(../images/cloud-dark.svg);
+    background-position: center;
+    background-size: 100%;
+    background-repeat: no-repeat;
+    width: 100px;
+    height: 100px;
+    animation: cloudappear .2s cubic-bezier(.17,.67,.63,1.31);
+}
+
+@keyframes cloudappear {
+    0%   { transform: scale(.8); }
+    100% { transform: scale(1); }
+}
+
+.hover-helper .border-region .cloud .arrow {
+    position: relative;
+    top: 18px;
+    background-image: url(../images/arrow-dark.svg);
+    background-position: center;
+    background-size: 100%;
+    background-repeat: no-repeat;
+    width: 40px;
+    height: 100px;
+    margin: 0 auto;
+    animation: updown 1s ease-in-out infinite;
+}
+
+[data-theme='light-theme'] .hover-helper {
+    background: #cccccc;
+}
+
+[data-theme='light-theme'] .hover-helper .border-region {
+    border: dashed 2px rgba(0,0,0,.2);
+}
+
+[data-theme='light-theme'] .hover-helper .border-region .cloud {
+    background-image: url(../images/cloud-light.svg);
+}
+
+[data-theme='light-theme'] .hover-helper .border-region .cloud .arrow {
+    background-image: url(../images/arrow-light.svg);
+}
+
+@keyframes updown {
+  0% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(3px);
+  }
+  100% {
+    transform: translateY(0);
+  }
 }
 
 [data-theme='light-theme'] #sidebar {
     background-color: rgba(0,0,0,.2);
     text-shadow: none;
 }
-
-
 
 #project-files-container {
     padding-left: 0;
