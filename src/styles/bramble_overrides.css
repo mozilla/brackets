@@ -71,3 +71,23 @@
 .bramble-inspector-highlight {
     background: rgba(0, 135, 207, .3) !important;
 }
+
+.CodeMirror-lines {
+    padding-left: 10px;
+}
+
+.CodeMirror .CodeMirror-gutters {
+    padding-right: 10px;
+}
+
+.CodeMirror-linenumber {
+    padding: 0 15px 0 0;
+}
+
+.CodeMirror-foldgutter {
+    transform: translateX(8px);
+}
+
+.CodeMirror-foldgutter:after {
+    display: none;
+}
