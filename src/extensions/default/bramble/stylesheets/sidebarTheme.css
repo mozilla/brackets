@@ -13,13 +13,16 @@ div.working-set-option-btn[style] {
     display: none !important;
 }
 
-/* Dark Theme Color */
-/* TODO - move this to the dark theme CSS later */
-
 #sidebar {
     background-color: black;
     text-shadow: none;
 }
+
+[data-theme='light-theme'] #sidebar {
+    background-color: rgba(0,0,0,.2);
+    text-shadow: none;
+}
+
 
 #project-files-container {
     padding-left: 0;
@@ -44,6 +47,14 @@ li.jstree-closed > a span,
 li.jstree-open > a span {
     font-size: 15px;
     color: rgba(255,255,255,.7);
+}
+
+
+body[data-theme='light-theme'] li.jstree-leaf a span,
+body[data-theme='light-theme'] li.jstree-leaf span.extension,
+body[data-theme='light-theme'] li.jstree-closed > a span,
+body[data-theme='light-theme'] li.jstree-open > a span {
+    color: rgba(0,0,0,.6);
 }
 
 
@@ -78,9 +89,18 @@ li.jstree-closed > a {
 
 li.jstree-leaf a.selected-node,
 li.jstree-leaf a.selected-node span,
+li.jstree-leaf a.selected-node:hover .extension,
 li.jstree-leaf a.selected-node .extension {
-    color: white !important;
+    color: white;
 }
+
+[data-theme='light-theme'] li.jstree-leaf a.selected-node,
+[data-theme='light-theme'] li.jstree-leaf a.selected-node span,
+[data-theme='light-theme'] li.jstree-leaf a.selected-node:hover .extension,
+[data-theme='light-theme'] li.jstree-leaf a.selected-node .extension {
+    color: black;
+}
+
 
 
 /* Hover state for all items */
@@ -89,6 +109,12 @@ li.jstree-leaf a:not(.selected-node):hover,
 li.jstree-open a:first-of-type:hover,
 li.jstree-closed a:first-of-type:hover {
     background: rgba(255,255,255,.08);
+}
+
+[data-theme='light-theme'] li.jstree-leaf a:not(.selected-node):hover,
+[data-theme='light-theme'] li.jstree-open a:first-of-type:hover,
+[data-theme='light-theme'] li.jstree-closed a:first-of-type:hover {
+    background: rgba(0,0,0,.08);
 }
 
 
@@ -104,6 +130,16 @@ li.jstree-closed > a span {
 }
 
 
+[data-theme='light-theme'] li.jstree-leaf a:not(.selected-node):hover > span {
+    color: rgba(0,0,0,.6);
+}
+
+[data-theme='light-theme'] li.jstree-open > a span,
+[data-theme='light-theme'] li.jstree-closed > a span {
+    color: rgba(0,0,0,.7);
+}
+
+
 /* Message for when there are no files in a folder */
 
 li.jstree-open > ul:empty:after {
@@ -114,13 +150,18 @@ li.jstree-open > ul:empty:after {
     display: block;
 }
 
+[data-theme='light-theme'] li.jstree-open > ul:empty:after {
+    color: rgba(0,0,0,.4);
+}
+
+
 
 /* Right-clicked file */
 
 li.jstree-closed a.context-node,
 li.jstree-open a.context-node,
 li.jstree-leaf a.context-node {
-    background: rgba(255,255,255,0.08);
+    background: rgba(0,0,0,.08);
 }
 
 
@@ -129,6 +170,11 @@ li.jstree-leaf a.context-node {
 li.jstree-leaf a.selected-node,
 li.jstree-leaf a.selected-node:hover {
     background: #222;
+}
+
+body[data-theme='light-theme'] li.jstree-leaf a.selected-node,
+body[data-theme='light-theme'] li.jstree-leaf a.selected-node:hover {
+    background: white;
 }
 
 
@@ -171,6 +217,10 @@ li.jstree-leaf a.selected-node:hover {
 }
 
 
+[data-theme='light-theme'] .jstree-open > ul {
+    border-left: solid 2px rgba(0,0,0,.1);
+}
+
 /* Hides selected (and right-clicked) file overlay, not needed */
 /* Still keeping the DOM element in case it has a functional purpose */
 
@@ -197,10 +247,16 @@ li.jstree-leaf a.selected-node:hover {
     color: black;
     border-radius: 0;
     position: static;
-    border: none !important;
+    border: none;
     width: calc(100% - 40px) !important;
     box-sizing: border-box;
 }
+
+[data-theme='light-theme'] #project-files-container .jstree-brackets .jstree-rename-input {
+    border: solid 1px rgba(0,0,0,.3);
+}
+
+
 
 /* Overrides for Folder rename UI */
 
@@ -218,10 +274,17 @@ li.jstree-leaf a.selected-node:hover {
 /* Right-click File Menu */
 /* TODO - separate dark and light styles into separate theme CSS files. */
 
+
 .context-menu .dropdown-menu    {
     padding: 0;
     border-radius: 0;
     border: none;
+    background: black;
+    border: solid 1px rgba(255,255,255,.1);
+}
+
+.context-menu .menu-shortcut {
+    display: none;
 }
 
 .context-menu .dropdown-menu li a {
@@ -229,6 +292,7 @@ li.jstree-leaf a.selected-node:hover {
     line-height: 16px;
     font-size: 16px;
     cursor: pointer;
+    color: rgba(255,255,255,.8);
 }
 
 .context-menu .dropdown-menu li a:before {
@@ -236,14 +300,20 @@ li.jstree-leaf a.selected-node:hover {
 }
 
 .context-menu .dropdown-menu li a:hover {
-    background: rgba(0,0,0,.1);
-}
-
-.dark .context-menu .dropdown-menu li a {
-    color: rgba(255,255,255,.5);
-}
-
-.dark .context-menu .dropdown-menu li a:hover {
     background: rgba(255,255,255,.1);
     color: rgba(255,255,255,.8);
+}
+
+[data-theme='light-theme'] .context-menu .dropdown-menu {
+    background: white;
+    border: solid 1px rgba(0,0,0,.1);
+}
+
+[data-theme='light-theme'] .context-menu .dropdown-menu li a {
+    color: rgba(0,0,0,.5);
+}
+
+[data-theme='light-theme'] .context-menu .dropdown-menu li a:hover {
+    background: rgba(0,0,0,.1);
+    color: rgba(0,0,0,.8);
 }

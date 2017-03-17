@@ -76,7 +76,6 @@ module.exports = function (grunt) {
                         /* static files */
                         'xorigin.js',
                         'dependencies.js',
-                        'thirdparty/requirejs/require.js',
 
                         /* extensions and CodeMirror modes */
                         '!extensions/default/*/unittests.js',
@@ -86,12 +85,6 @@ module.exports = function (grunt) {
                         '!extensions/**/node_modules/**/*.js',
                         '!extensions/**/test/**/*.js',
                         '!**/unittest-files/**',
-                        'thirdparty/CodeMirror/addon/{,*/}*.js',
-                        'thirdparty/CodeMirror/keymap/{,*/}*.js',
-                        'thirdparty/CodeMirror/lib/{,*/}*.js',
-                        'thirdparty/CodeMirror/mode/{,*/}*.js',
-                        'thirdparty/CodeMirror/theme/{,*/}*.js',
-                        'thirdparty/slowparse/slowparse.js',
                         'thirdparty/i18n/*.js',
                         'thirdparty/text/*.js'
                     ],
@@ -122,11 +115,11 @@ module.exports = function (grunt) {
                             'nls/{,*/}*.js',
                             'xorigin.js',
                             'dependencies.js',
-                            'thirdparty/requirejs/require.js',
-                            'thirdparty/slowparse/locale/*',
                             'thirdparty/github-markdown.css',
-                            'LiveDevelopment/launch.html',
-                            'hosted.*'
+                            'hosted.*',
+                            // XXXBramble: we don't use src/config.json like Brackets does,
+                            // but it needs to exist in dist/ so copy it
+                            'config.json'
                         ]
                     },
                     /* extensions and CodeMirror modes */
@@ -155,13 +148,7 @@ module.exports = function (grunt) {
                             '!extensions/extra/*/thirdparty/**/*.htm{,l}',
                             '!extensions/dev/*',
                             '!extensions/samples/**/*',
-                            'thirdparty/CodeMirror/addon/{,*/}*',
-                            'thirdparty/CodeMirror/keymap/{,*/}*',
-                            'thirdparty/CodeMirror/lib/{,*/}*',
-                            'thirdparty/CodeMirror/mode/{,*/}*',
-                            '!thirdparty/CodeMirror/mode/**/*.html',
-                            '!thirdparty/CodeMirror/**/*test.js',
-                            'thirdparty/CodeMirror/theme/{,*/}*',
+                            'thirdparty/CodeMirror/lib/codemirror.css',
                             'thirdparty/i18n/*.js',
                             'thirdparty/text/*.js'
                         ]
@@ -499,8 +486,9 @@ module.exports = function (grunt) {
          'npm-install', */
         'cleanempty',
         'exec:clean-nls',
-        'usemin',
-        'build-config'
+        'usemin'
+        /* XXXBramble: we skip this, since we don't bother with its info, and copy it in copy:dist
+        'build-config' */
     ]);
 
     // task: build dist/ for browser

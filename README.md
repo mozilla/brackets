@@ -34,6 +34,11 @@ Navigate to the root of the directory you cloned and run:
 $ npm install
 ```
 
+NOTE: if you are running on Windows, and experience a build error with the `iltorb` package,
+consider adding the `--no-optional` flag to have npm skip installing `iltorb`, which is optional
+and requires python, gyp and a working c++ build environment.
+See comment in https://github.com/mozilla/brackets/pull/588#issuecomment-280438175
+
 Step 3: run the build
 
 You can build Bramble by running the npm build task:
