@@ -478,7 +478,8 @@ define(function (require, exports, module) {
         render: function () {
             var fullname = this.props.name,
                 extension = LanguageManager.getCompoundFileExtension(fullname),
-                name = _getName(fullname, extension);
+                name = _getName(fullname, extension),
+                insClassName = "jstree-icon-" + extension.toLowerCase();
 
             if (extension) {
                 extension = DOM.span({
@@ -502,7 +503,7 @@ define(function (require, exports, module) {
                     onDoubleClick: this.handleDoubleClick
                 },
                 DOM.ins({
-                    className: "jstree-icon"
+                    className: insClassName
                 }),
             ];
 
@@ -799,6 +800,9 @@ define(function (require, exports, module) {
                 this.props.extensions !== nextProps.extensions;
         },
 
+/**
+TODO shoould get cions
+*/
         render: function () {
             var extensions = this.props.extensions,
                 iconClass = extensions && extensions.get("icons") ? "jstree-icons" : "jstree-no-icons",

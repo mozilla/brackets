@@ -95,8 +95,30 @@ li.jstree-closed > ul { display:none; }
 .jstree ins {
     position: absolute;
 }
+@extensionName: gif, html, svg;
 ins.jstree-icon {
-    left: -@jstree-icon-backindent !important;
+    left: @jstree-icon-backindent !important;
+    background: url("images/icons/default.gif") center center no-repeat !important;
+}
+
+.for(@extensionName, {
+    ins.jstree-icon-@{value} {
+      left: @jstree-icon-backindent + 8px !important;
+      top: 8px;
+      background: @bg;
+    }
+});
+
+.for(@list, @code) {
+    & {
+        .loop(@i:1) when (@i =< length(@list)) {
+            @value: extract(@list, @i);
+            @bg  : url("images/icons/@{value}.gif") center center no-repeat !important;
+            @code();
+            .loop (@i + 1);
+        }
+        .loop();
+    }
 }
 
 .jstree-brackets a .jstree-icon { background-position:-56px -19px; }
