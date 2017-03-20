@@ -26,7 +26,7 @@ define(function (require, exports, module) {
         
         // If mobile view is on.
         // we need to preserve it.
-        if ( UI.getPreviewMode() == "mobile") {
+        if ( UI.getPreviewMode() === "mobile") {
             _preserveMobileView = true;
         }
 
