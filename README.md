@@ -376,7 +376,7 @@ the following events:
 * `"inspectorChange"` - triggered whenever the inspector changes from enabled to disabled, or vice versa. It includes an `Object` with an `enabled` property set to `true` or `false`.
 * `"autoUpdateChange"` - triggered whenever the auto update preference changes from enabled to disabled, or vice versa. It includes an `Object` with a `autoUpdate` property set to `true` or `false`
 * `"projectDirty"` - triggered when one of the files in the project has been edited and those changes haven't been saved yet. It includes an `Object` with the `path` to the current file.
-* `"projectSaved"` - triggered whenever the changes are saved to the file sistem in the browser are completed.
+* `"projectSaved"` - triggered whenever the changes are saved to the filesystem in the browser are completed.
 
 There are also high-level events for changes to files:
 

@@ -76,5 +76,5 @@ define(function (require, exports, module) {
     // bramble:projectSaved event when all files in the project are currently saved;
     exports.triggerProjectSaved = function(){
         exports.trigger("bramble:projectSaved");
-	};
+    };
 });

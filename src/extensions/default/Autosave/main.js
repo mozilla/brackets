@@ -54,7 +54,7 @@ define(function (require, exports, module) {
 
             // if statement cheks if there is no more pending saves
             if(Object.keys(pending).length === 0) {
-                BrambleEvents.triggerProjectSaved(path);
+                BrambleEvents.triggerProjectSaved();
             }
         }
 

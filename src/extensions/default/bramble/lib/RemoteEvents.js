@@ -73,11 +73,10 @@ define(function (require, exports, module) {
             });
         });
         
-        // Listen for clean file
-        BrambleEvents.on("bramble:projectSaved", function(e, path) {
+        // Listen for files being saved for the whole project
+        BrambleEvents.on("bramble:projectSaved", function(e) {
             sendEvent({
-                type: "bramble:projectSaved",
-                path: path
+                type: "bramble:projectSaved"
             });
         });
 
