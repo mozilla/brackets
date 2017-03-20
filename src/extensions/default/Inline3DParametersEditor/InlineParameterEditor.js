@@ -1,8 +1,9 @@
 define(function (require, exports, module) {
     "use strict";
 
-    var InlineWidget         = brackets.getModule("editor/InlineWidget").InlineWidget,
-        ParameterEditor      = require("ParameterEditor").ParameterEditor;
+    var InlineWidget            = brackets.getModule("editor/InlineWidget").InlineWidget,
+        ParameterEditor         = require("ParameterEditor").ParameterEditor,
+        Inline3dParametersUtils = brackets.getModule("utils/Parameters3DUtils");
 
     /** @type {number} Global var used to provide a unique ID for each parameter editor instance's _origin field. */
     var lastOriginId = 1;
@@ -69,7 +70,7 @@ define(function (require, exports, module) {
         }
 
         var line = this.hostEditor.document.getLine(start.line),
-            matches = line.substr(start.ch).match(/((-)?\d+(\.\d+)?) ((-)?\d+(\.\d+)?) ((-)?\d+(\.\d+)?)/g);
+            matches = line.substr(start.ch).match(Inline3dParametersUtils.COLOR_REGEX);
 
         // Note that end.ch is exclusive, so we don't need to add 1 before comparing to
         // the matched length here.

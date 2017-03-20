@@ -1,10 +1,11 @@
 define(function (require, exports, module) {
     "use strict";
 
-    var EditorManager       = brackets.getModule("editor/EditorManager"),
-        ExtensionUtils      = brackets.getModule("utils/ExtensionUtils"),
+    var EditorManager           = brackets.getModule("editor/EditorManager"),
+        ExtensionUtils          = brackets.getModule("utils/ExtensionUtils"),
         InlineParameterEditor   = require("InlineParameterEditor").InlineParameterEditor,
-        HTMLUtils           = brackets.getModule("language/HTMLUtils");
+        Inline3dParametersUtils = brackets.getModule("utils/Parameters3DUtils"),
+        HTMLUtils               = brackets.getModule("language/HTMLUtils");
 
     /**
      * Prepare hostEditor for an InlineParameterEditor at pos if possible. Return
@@ -22,7 +23,7 @@ define(function (require, exports, module) {
             return null;
         }
 
-        ParameterRegex = new RegExp(/((-)?\d+(\.\d+)?) ((-)?\d+(\.\d+)?) ((-)?\d+(\.\d+)?)/g);
+        ParameterRegex = new RegExp(Inline3dParametersUtils.COLOR_REGEX);
         cursorLine = hostEditor.document.getLine(pos.line);
 
         // Loop through each match of ParameterRegex and stop when the one that contains pos is found.
