@@ -58,7 +58,7 @@ define(function (require, exports, module) {
 
         
         this.$xValueSlider.change(function(e) {
-            self._commitParameters(self.$xValueSlider.val() + " 3 0");
+            self._commitParameters(self.$xValueSlider.val() + self.$yValueSlider.val() + self.$zValueSlider.val());
         });
 
         this._registerDragHandler(this.$xValueSlider, this._handleXValueSliderDrag);
