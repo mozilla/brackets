@@ -339,7 +339,7 @@ to be notified when the action completes:
 * `useLightTheme([callback])` - sets the editor to use the light theme (default)
 * `useDarkTheme([callback])` - sets the editor to use the dark theme
 * `showSidebar([callback])` - opens the file tree sidebar
-`* `hideSidebar([callback])` - hides the file tree sidebar
+* `hideSidebar([callback])` - hides the file tree sidebar
 * `showStatusbar([callback])` - enables and shows the statusbar
 * `hideStatusbar([callback])` - disables and hides the statusbar
 * `refreshPreview([callback])` - reloads the preview with the latest content in the editor and filesystem
@@ -348,7 +348,7 @@ to be notified when the action completes:
 * `enableFullscreenPreview([callback])` - shows a fullscreen preview of the current file
 * `disableFullscreenPreview([callback])` - turns off the fullscreen preview of the curent file
 * `enableAutoUpdate([callback])` - turns on auto-update for the preview (default)
-`* `disableAutoUpdate([callback])` - turns off auto-update for the preview (manual reloads still work)
+* `disableAutoUpdate([callback])` - turns off auto-update for the preview (manual reloads still work)
 * `enableJavaScript([callback])` - turns on JavaScript execution for the preview (default)
 * `disableJavaScript([callback])` - turns off JavaScript execution for the preview
 * `enableInspector([callback])` - turns on the preview inspector (shows code for hovered/clicked element)
