@@ -12,10 +12,10 @@ define(function (require, exports, module) {
     }
 
     function handleConsoleRequest(data) {
-		var args = data.args;
-		var type = data.type || "log";
+        var args = data.args;
+        var type = data.type || "log";
 
-		// TODO: Show this in Custom Console UI, see issue #1675 in Thimble
+        // TODO: Show this in Custom Console UI, see issue #1675 in Thimble
         console[type].apply(console, args);
     }
 
