@@ -403,7 +403,17 @@ module.exports = function (grunt) {
         },
         eslint: {
             grunt:  '<%= meta.grunt %>',
-            src:    '<%= meta.src %>',
+            src: [
+	            'src/extensions/default/Autosave',
+		    'src/extensions/default/BrambleUrlCodeHints',
+		    'src/extensions/default/UploadFiles',
+		    'src/extensions/default/bramble-move-file',
+		    'src/extensions/default/bramble',
+		    'src/extensions/extra/SVGasXML',
+		    'src/extensions/extra/HTMLHinter',
+		    'src/extensions/extra/MDNDocs',
+		    'src/extensions/extra/bramble-watch-index.html'
+	    ],
             test:   '<%= meta.test %>',
             options: {
                 quiet: true
