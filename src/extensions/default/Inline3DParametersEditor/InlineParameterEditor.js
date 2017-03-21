@@ -70,7 +70,7 @@ define(function (require, exports, module) {
         }
 
         var line = this.hostEditor.document.getLine(start.line),
-            matches = line.substr(start.ch).match(Inline3dParametersUtils.COLOR_REGEX);
+            matches = line.substr(start.ch).match(Inline3dParametersUtils.PARAMETERS_3D_REGEX);
 
         // Note that end.ch is exclusive, so we don't need to add 1 before comparing to
         // the matched length here.

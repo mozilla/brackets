@@ -23,7 +23,7 @@ define(function (require, exports, module) {
             return null;
         }
 
-        ParameterRegex = new RegExp(Inline3dParametersUtils.COLOR_REGEX);
+        ParameterRegex = new RegExp(Inline3dParametersUtils.PARAMETERS_3D_REGEX);
         cursorLine = hostEditor.document.getLine(pos.line);
 
         // Loop through each match of ParameterRegex and stop when the one that contains pos is found.
