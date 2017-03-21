@@ -12,7 +12,7 @@ define(function (require, exports, module) {
     var MODIFIER = [];
     MODIFIER[TRANSLATE_STRING] = 50;
     MODIFIER[SCALE_STRING] = 30;
-    MODIFIER[ROTATE_STRING] = 10;
+    MODIFIER[ROTATE_STRING] = 5;
 
     /*
      * Adds a color swatch to code hints where this is supported.
