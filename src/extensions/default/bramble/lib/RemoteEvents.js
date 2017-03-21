@@ -65,6 +65,21 @@ define(function (require, exports, module) {
             });
         });
 
+        // Listen for user changing file content
+        BrambleEvents.on("bramble:projectDirty", function(e, path) {
+            sendEvent({
+                type: "bramble:projectDirty",
+                path: path
+            });
+        });
+        
+        // Listen for files being saved for the whole project
+        BrambleEvents.on("bramble:projectSaved", function(e) {
+            sendEvent({
+                type: "bramble:projectSaved"
+            });
+        });
+
         // Listen for the user changing what file is being viewed
         var lastKnownEditorFilePath;
         MainViewManager.on("currentFileChange", function(e, file) {
