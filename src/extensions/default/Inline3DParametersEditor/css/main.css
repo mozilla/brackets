@@ -19,6 +19,7 @@ div.vec3 {
   cursor: col-resize;
   font-size: 12px;
   padding: 2px;
+  margin-bottom: 0px;
 }
 
 .parameter-editor {
