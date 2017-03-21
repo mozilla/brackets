@@ -103,23 +103,23 @@ define(function (require, exports, module) {
 
     ParameterEditor.prototype._handleXValueSliderDrag = function(event) {
         var xPos = this._position;
-        var offset = _getNewOffset(event.clientX, xPos );
+        var offset = _getNewOffset(event.clientX, xPos);
         var n = this._x + offset;
         this.$xValueSlider.val(n.toFixed(2));
         this._commitParameters(this._getParameters());
     };
 
     ParameterEditor.prototype._handleYValueSliderDrag = function(event) {
-        var xPos = this._position;
-        var offset = _getNewOffset(event.clientX, xPos );
+        var yPos = this._position;
+        var offset = _getNewOffset(event.clientX, yPos);
         var n = this._y + offset;
         this.$yValueSlider.val(n.toFixed(2));
         this._commitParameters(this._getParameters());
     };
 
     ParameterEditor.prototype._handleZValueSliderDrag = function(event) {
-        var xPos = this._position;
-        var offset = _getNewOffset(event.clientX, xPos );
+        var zPos = this._position;
+        var offset = _getNewOffset(event.clientX, zPos);
         var n = this._z + offset;
         this.$zValueSlider.val(n.toFixed(2));
         this._commitParameters(this._getParameters());

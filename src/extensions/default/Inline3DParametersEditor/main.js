@@ -80,9 +80,6 @@ define(function (require, exports, module) {
     }
 
     ExtensionUtils.loadStyleSheet(module, "css/main.css");
-
     EditorManager.registerInlineEditProvider(inline3DParametersEditor);
-    
-
     exports.prepareParametersForProvider = prepareParametersForProvider;
 });
