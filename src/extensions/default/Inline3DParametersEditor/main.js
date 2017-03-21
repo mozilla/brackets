@@ -16,7 +16,7 @@ define(function (require, exports, module) {
      * @return {?{parameter:String, marker:TextMarker}}
      */
     function prepareParametersForProvider(hostEditor, pos) {
-        var ParameterRegex, cursorLine, match, sel, start, end, endPos, marker;
+        var ParameterRegex, cursorLine, match, sel, start, end, endPos, marker, tagInfo;
 
         sel = hostEditor.getSelection();
         if (sel.start.line !== sel.end.line) {
@@ -24,6 +24,7 @@ define(function (require, exports, module) {
         }
 
         ParameterRegex = new RegExp(Inline3dParametersUtils.PARAMETERS_3D_REGEX);
+        tagInfo = HTMLUtils.getTagInfo(hostEditor, pos),
         cursorLine = hostEditor.document.getLine(pos.line);
 
         // Loop through each match of ParameterRegex and stop when the one that contains pos is found.
@@ -49,7 +50,8 @@ define(function (require, exports, module) {
 
         return {
             parameters: match[0],
-            marker: marker
+            marker: marker,
+            tag : tagInfo.attr.name
         };
     }
 
@@ -70,7 +72,7 @@ define(function (require, exports, module) {
         if (!context) {
             return null;
         } else {
-            inlineParameterEditor = new InlineParameterEditor(context.parameters, context.marker);
+            inlineParameterEditor = new InlineParameterEditor(context.parameters, context.marker, context.tag);
             inlineParameterEditor.load(hostEditor);
 
             result = new $.Deferred();

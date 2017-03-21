@@ -1,28 +1,28 @@
 define(function (require, exports, module) {
     "use strict";
 
-    var Strings            = brackets.getModule("strings"),
-        Mustache           = brackets.getModule("thirdparty/mustache/mustache");
+    var Strings                 = brackets.getModule("strings"),
+        Inline3dParametersUtils = brackets.getModule("utils/Parameters3DUtils"),
+        Mustache                = brackets.getModule("thirdparty/mustache/mustache");
 
     /** Mustache template that forms the bare DOM structure of the UI */
     var Template = require("text!ParameterEditorTemplate.html");
 
-     //used to control the smoothness of scroll.
-     var MODIFIER = 10;
-
-    function ParameterEditor($parent, callback) {
+    function ParameterEditor($parent, callback, tag) {
         // Create the DOM structure, filling in localized strings via Mustache
         this.$element = $(Mustache.render(Template, Strings));
         $parent.append(this.$element);
-
         this._callback = callback;
+        this._modifier = Inline3dParametersUtils.getModifier(tag);
 
         this._handleXValueSliderDrag = this._handleXValueSliderDrag.bind(this);
         this._handleYValueSliderDrag = this._handleYValueSliderDrag.bind(this);
         this._handleZValueSliderDrag = this._handleZValueSliderDrag.bind(this);
+
         this.$xValueSlider = this.$element.find("#_x");
         this.$yValueSlider = this.$element.find("#_y");
         this.$zValueSlider = this.$element.find("#_z");
+
         this._x = parseFloat(this.$xValueSlider.val());
         this._y = parseFloat(this.$yValueSlider.val());
         this._z = parseFloat(this.$zValueSlider.val());
@@ -96,14 +96,14 @@ define(function (require, exports, module) {
         this.$zValueSlider.val(parametersArray[2]);        
     };
 
-    function _getNewOffset(pos, zeroPos) {
+    ParameterEditor.prototype._getNewOffset = function(pos, zeroPos) {
         var offset = pos - zeroPos;
-        return offset/MODIFIER;
+        return offset / this._modifier;
     };
 
     ParameterEditor.prototype._handleXValueSliderDrag = function(event) {
         var xPos = this._position;
-        var offset = _getNewOffset(event.clientX, xPos);
+        var offset = this._getNewOffset(event.clientX, xPos);
         var n = this._x + offset;
         this.$xValueSlider.val(n.toFixed(2));
         this._commitParameters(this._getParameters());
@@ -111,7 +111,7 @@ define(function (require, exports, module) {
 
     ParameterEditor.prototype._handleYValueSliderDrag = function(event) {
         var yPos = this._position;
-        var offset = _getNewOffset(event.clientX, yPos);
+        var offset = this._getNewOffset(event.clientX, yPos);
         var n = this._y + offset;
         this.$yValueSlider.val(n.toFixed(2));
         this._commitParameters(this._getParameters());
@@ -119,7 +119,7 @@ define(function (require, exports, module) {
 
     ParameterEditor.prototype._handleZValueSliderDrag = function(event) {
         var zPos = this._position;
-        var offset = _getNewOffset(event.clientX, zPos);
+        var offset = this._getNewOffset(event.clientX, zPos);
         var n = this._z + offset;
         this.$zValueSlider.val(n.toFixed(2));
         this._commitParameters(this._getParameters());

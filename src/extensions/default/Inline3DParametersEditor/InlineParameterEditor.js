@@ -13,9 +13,10 @@ define(function (require, exports, module) {
      * @param {!string} parameters  Initial Parameters
      * @param {!CodeMirror.TextMarker} marker
      */
-    function InlineParameterEditor(parameters, marker) {
+    function InlineParameterEditor(parameters, marker, tag) {
         this._parameters = parameters;
         this._marker = marker;
+        this._tag = tag;
         this._isOwnChange = false;
         this._isHostChange = false;
         this._origin = "+InlineParameterditor_" + (lastOriginId++);
@@ -129,7 +130,7 @@ define(function (require, exports, module) {
      */
     InlineParameterEditor.prototype.load = function (hostEditor) {
         InlineParameterEditor.prototype.parentClass.load.apply(this, arguments);
-        this.parameterEditor = new ParameterEditor(this.$htmlContent, this._handleParametersChange);
+        this.parameterEditor = new ParameterEditor(this.$htmlContent, this._handleParametersChange, this._tag);
         this.parameterEditor.setSliderProperties(this._parameters);
     };
 
