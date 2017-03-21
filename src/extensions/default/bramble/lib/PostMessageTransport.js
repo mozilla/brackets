@@ -93,7 +93,7 @@ define(function (require, exports, module) {
             }
 
             if(ConsoleManager.isConsoleRequest(msgObj.message)) {
-                ConsoleManager.handleConsoleRequest(msgObj.data, msgObj.data_type);
+                ConsoleManager.handleConsoleRequest(msgObj.data);
                 return;
             }
             

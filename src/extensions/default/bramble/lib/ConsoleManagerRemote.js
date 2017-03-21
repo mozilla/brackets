@@ -1,65 +1,26 @@
-(function(transport, global, console) {
+(function(transport, console) {
     "use strict";
     
-    function transportSend(args, type) {        
-        // To avoid Runtime.evaluate messages
-        if(args[0] !== "Runtime.evaluate") {
-            transport.send("bramble-console", args, type);
-        }
+    function transportSend(type, args) {  
+		var data = {args: args, type: type};
+        transport.send("bramble-console", data);
     }
     
-    function generateRouter(fname) {
-        var args = Array.from(arguments).slice();
-        transportSend(args, fname);
-    }
-    
-    // Implement console.log replacement
-    console.log = function() {
-        var args = Array.from(arguments).slice();
-        transportSend(args, "log");
-    };
-    
-    // Implement console.debug replacement
-    console.debug = function() {
-        var args = Array.from(arguments).slice();
-        transportSend(args, "debug");
-    };
-    
-    // Implement console.error replacement
-    console.error = function() {
-        var args = Array.from(arguments).slice();
-        transportSend(args, "error");
-    };
-    
-    // Implement console.info replacement
-    console.info = function() {
-        var args = Array.from(arguments).slice();
-        transportSend(args, "info");
-    };
-    
-    // Implement console.warn replacement
-    console.warn = function() {
-        var args = Array.from(arguments).slice();
-        transportSend(args, "warn");
-    };
-    
-    // Implement console.clear replacement
-    console.clear = function() {
-        var args = Array.from(arguments).slice();
-        transportSend(args, "clear");
-    };
-    
-    // Implement console.time replacement
-    console.time = function() {
-        var args = Array.from(arguments).slice();
-        transportSend(args, "time");
-    };
-    
-    // Implement console.timeEnd replacement
-    console.timeEnd = function() {
-        var args = Array.from(arguments).slice();
-        transportSend(args, "timeEnd");
-    };
+	// Implement standard console.* functions
+	["log"
+		, "warn"
+		, "info"
+		, "debug"
+		, "info"
+		, "error"
+		, "clear"
+		, "time"
+		, "timeEnd"].forEach(function(type) {
+		console[type] = function() {
+			var args = Array.from(arguments).slice();
+			transportSend(type, args);
+		};
+	});
     
     // Replace default console.assert with custom
     console.assert = function() {
@@ -71,6 +32,4 @@
         }
     };
 
-    global.console = console;
-
-}(window._Brackets_LiveDev_Transport, window, window.console));
+}(window._Brackets_LiveDev_Transport, window.console));

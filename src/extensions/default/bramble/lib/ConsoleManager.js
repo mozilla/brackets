@@ -11,15 +11,11 @@ define(function (require, exports, module) {
         return msg.match(/^bramble-console/);
     }
 
-    function handleConsoleRequest(args, type) {
-        // Add an indentifier to the front of the args list
-        args.unshift("[Bramble Console]:");
-       
-        // Time related arguments
-        if(type === "time" || type === "timeEnd") {
-            args[0] = args[0] + " " + args[1];
-        }
-        
+    function handleConsoleRequest(data) {
+		var args = data.args;
+		var type = data.type || "log";
+
+		// TODO: Show this in Custom Console UI, see issue #1675 in Thimble
         console[type].apply(console, args);
     }
 
