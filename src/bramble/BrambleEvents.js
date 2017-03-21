@@ -67,4 +67,14 @@ define(function (require, exports, module) {
     exports.triggerInspectorChange = function(enabled) {
         exports.trigger("bramble:inspectorChange", enabled);
     };
+
+    // bramble:projectDirty event when file is dirty. Second arg is the path to the dirty file;
+    exports.triggerProjectDirty = function (path){
+        exports.trigger("bramble:projectDirty", path);
+    };
+
+    // bramble:projectSaved event when all files in the project are currently saved;
+    exports.triggerProjectSaved = function(){
+        exports.trigger("bramble:projectSaved");
+    };
 });

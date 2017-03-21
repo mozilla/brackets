@@ -307,6 +307,7 @@ module.exports = function (grunt) {
                 'src/**/*.js',
                 '!src/thirdparty/**',
                 '!src/widgets/bootstrap-*.js',
+                '!src/extensions/default/brackets-show-whitespace/**',
                 '!src/extensions/**/unittest-files/**/*.js',
                 '!src/extensions/**/thirdparty/**/*.js',
                 '!src/extensions/dev/**',
