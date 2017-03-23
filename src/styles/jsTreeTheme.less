@@ -113,7 +113,7 @@ ins.jstree-icon {
     & {
         .loop(@i:1) when (@i =< length(@list)) {
             @value: extract(@list, @i);
-            @bg  : url("images/icons/@{value}.gif") center center no-repeat !important;
+            @bg : url("images/icons/@{value}.gif") center center no-repeat !important;
             @code();
             .loop (@i + 1);
         }
