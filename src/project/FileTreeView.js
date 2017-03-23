@@ -800,9 +800,6 @@ define(function (require, exports, module) {
                 this.props.extensions !== nextProps.extensions;
         },
 
-/**
-TODO shoould get cions
-*/
         render: function () {
             var extensions = this.props.extensions,
                 iconClass = extensions && extensions.get("icons") ? "jstree-icons" : "jstree-no-icons",
