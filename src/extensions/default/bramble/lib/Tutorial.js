@@ -19,15 +19,14 @@ define(function (require, exports, module) {
     var _forceReload;
 
     // Preserves the mobile view state
-    var _preserveMobileView = false;
+    var _shouldRestoreMobileView = false;
 
     function setOverride(val) {
         _tutorialOverride = !!val;
         
-        // If mobile view is on.
-        // we need to preserve it.
-        if ( UI.getPreviewMode() === "mobile") {
-            _preserveMobileView = true;
+        // If mobile view is on we need to preserve it.
+        if (UI.getPreviewMode() === "mobile") {
+            _shouldRestoreMobileView = true;
         }
 
         // We need to reload the browser preview. If we're going to override,
@@ -39,12 +38,13 @@ define(function (require, exports, module) {
             UI.showDesktopView(true);  // Always show in desktop mode
             PostMessageTransport.reload();
         } else {
-            
-            if(_preserveMobileView) {
+
+            if(_shouldRestoreMobileView) {
                 // If mobile view was preserved.
-                _preserveMobileView = false; 
-                UI.showMobileView(true);
+                _shouldRestoreMobileView = false; 
+                UI.showMobileView(true); 
             }
+
             
             // If we're turning off the override, we need to open the project's
             // "main" web file, and the easiest way is to close/re-open live dev.
