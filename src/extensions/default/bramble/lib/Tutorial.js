@@ -42,7 +42,7 @@ define(function (require, exports, module) {
             if(_shouldRestoreMobileView) {
                 // If mobile view was preserved.
                 _shouldRestoreMobileView = false; 
-                UI.showMobileView(true); 
+                UI.showMobileView(true);
             }
 
             
