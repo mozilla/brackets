@@ -412,7 +412,7 @@ module.exports = function (grunt) {
 		    'src/extensions/extra/SVGasXML',
 		    'src/extensions/extra/HTMLHinter',
 		    'src/extensions/extra/MDNDocs',
-		    'src/extensions/extra/bramble-watch-index.html'
+		    'src/extensions/extra/bramble-watch-index.html',
 		    '!src/extensions/**/node_modules'     
 	    ],
             test:   '<%= meta.test %>',
