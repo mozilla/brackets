@@ -134,9 +134,6 @@ define(function (require, exports, module) {
     exports.QUICK_EDIT_PREV_MATCH       = "navigate.previousMatch";     // MultiRangeInlineEditor.js    _previousRange()
     exports.CSS_QUICK_EDIT_NEW_RULE     = "navigate.newRule";           // CSSInlineEditor.js           _handleNewRule()
 
-    exports.PROVIDER_EDIT               = "provider.edit";              // CCSInlineEditor.js           checkProvider()
-    exports.PROVIDER_DOCS               = "provider.docs";              // Extensions/default/WebPlatformDocs/main.js   checkProvider()
-
     // HELP
     exports.HELP_CHECK_FOR_UPDATE       = "help.checkForUpdate";        // HelpCommandHandlers.js       _handleCheckForUpdates()
     exports.HELP_HOW_TO_USE_BRACKETS    = "help.howToUseBrackets";      // HelpCommandHandlers.js       _handleLinkMenuItem()
