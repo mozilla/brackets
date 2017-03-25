@@ -219,29 +219,29 @@ define(function (require, exports, module) {
      * @return {$.Promise} a promise that will be resolved when an InlineWidget
      *      is created or rejected if no inline providers have offered one.
      */
-    function _openInlineWidget(editor, providers, defaultErrorMsg, type) {
-        PerfUtils.markStart(PerfUtils.INLINE_WIDGET_OPEN);
+     function _openInlineWidget(editor, providers, defaultErrorMsg) {
+         PerfUtils.markStart(PerfUtils.INLINE_WIDGET_OPEN);
 
-        // Run through inline-editor providers until one responds
-        var pos = editor.getCursorPos(),
-            inlinePromise,
-            i,
-            result = new $.Deferred(),
-            errorMsg,
-            providerRet;
+         // Run through inline-editor providers until one responds
+         var pos = editor.getCursorPos(),
+             inlinePromise,
+             i,
+             result = new $.Deferred(),
+             errorMsg,
+             providerRet;
 
-        // Query each provider in priority order. Provider may return:
-        // 1. `null` to indicate it does not apply to current cursor position
-        // 2. promise that should resolve to an InlineWidget
-        // 3. string which indicates provider does apply to current cursor position,
-        //    but reason it could not create InlineWidget
-        //
-        // Keep looping until a provider is found. If a provider is not found,
-        // display highest priority error message that was found, otherwise display
-        // default error message
+         // Query each provider in priority order. Provider may return:
+         // 1. `null` to indicate it does not apply to current cursor position
+         // 2. promise that should resolve to an InlineWidget
+         // 3. string which indicates provider does apply to current cursor position,
+         //    but reason it could not create InlineWidget
+         //
+         // Keep looping until a provider is found. If a provider is not found,
+         // display highest priority error message that was found, otherwise display
+         // default error message
         for (i = 0; i < providers.length && !inlinePromise; i++) {
             var provider = providers[i].provider;
-            providerRet = provider(editor, pos,type);
+            providerRet = provider(editor, pos);
             if (providerRet) {
                 if (providerRet.hasOwnProperty("done")) {
                     inlinePromise = providerRet;
@@ -253,33 +253,27 @@ define(function (require, exports, module) {
 
         // Use default error message if none other provided
         errorMsg = errorMsg || defaultErrorMsg;
-        if(type === undefined){
-            // If one of them will provide a widget, show it inline once ready
-            if (inlinePromise) {
-                inlinePromise.done(function (inlineWidget) {
-                    editor.addInlineWidget(pos, inlineWidget).done(function () {
-                        PerfUtils.addMeasurement(PerfUtils.INLINE_WIDGET_OPEN);
-                        result.resolve();
-                    });
-                }).fail(function () {
-                    // terminate timer that was started above
-                    PerfUtils.finalizeMeasurement(PerfUtils.INLINE_WIDGET_OPEN);
-                    editor.displayErrorMessageAtCursor(errorMsg);
-                    result.reject();
+
+        // If one of them will provide a widget, show it inline once ready
+        if (inlinePromise) {
+            inlinePromise.done(function (inlineWidget) {
+                editor.addInlineWidget(pos, inlineWidget).done(function () {
+                    PerfUtils.addMeasurement(PerfUtils.INLINE_WIDGET_OPEN);
+                    result.resolve();
                 });
-            } else {
+            }).fail(function () {
                 // terminate timer that was started above
                 PerfUtils.finalizeMeasurement(PerfUtils.INLINE_WIDGET_OPEN);
                 editor.displayErrorMessageAtCursor(errorMsg);
                 result.reject();
-            }
-        }else{
+            });
+        } else {
+            // terminate timer that was started above
             PerfUtils.finalizeMeasurement(PerfUtils.INLINE_WIDGET_OPEN);
-
-            if (inlinePromise) {
-
-            }else{return null;}
+            editor.displayErrorMessageAtCursor(errorMsg);
+            result.reject();
         }
+
         return result.promise();
     }
 
@@ -786,9 +780,12 @@ define(function (require, exports, module) {
         }
     }
 
+    /**
+    * @param {Object} editor - function that is called to validate provider
+    * @return {String} id - name of the provider so we can return it to know which
+    * provider we have found
+    */
     function findProvider(editor) {
-        // iterate through the registered providers and push them into a list
-        // if they are found on the editor then return them.
         var pos = editor.getCursorPos(),
             i, len,
             type = true,

@@ -292,6 +292,7 @@ define(function (require, exports, module) {
 
         CSSUtils.findMatchingRules(selectorName, hostEditor.document)
             .done(function (rules) {
+                // if we only want to check if a provider exists
                 if(!type){
                     var inlineEditorDeferred = new $.Deferred();
                     cssInlineEditor = new MultiRangeInlineEditor.MultiRangeInlineEditor(CSSUtils.consolidateRules(rules),
