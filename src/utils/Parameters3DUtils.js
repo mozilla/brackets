@@ -5,7 +5,7 @@
 define(function (require, exports, module) {
     "use strict";
 
-    var PARAMETERS_3D_REGEX = /((-)?\d+(\.\d+)?) ((-)?\d+(\.\d+)?) ((-)?\d+(\.\d+)?)/g;
+    var PARAMETERS_3D_REGEX = /( )*((-)?\d+(\.\d+)?)( )+((-)?\d+(\.\d+)?)( )+((-)?\d+(\.\d+)?( )*)/g;
     var TRANSLATE_STRING = "position";
     var ROTATE_STRING = "rotation";
     var SCALE_STRING = "scale";

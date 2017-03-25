@@ -90,7 +90,30 @@ define(function (require, exports, module) {
     };
 
     ParameterEditor.prototype.setSliderProperties = function (parameters) {
-        var parametersArray = parameters.split(" ");
+        var parametersArray = parameters.trim().match(/\S+/g);
+        this._spaces = [];
+
+        this._spaces.push(parameters.search(/\S/));
+        if(this._spaces[0] === -1) {
+            this._spaces[0] = 0;
+        }
+        parameters = parameters.substr(this._spaces[0]);
+        parameters = parameters.substr(parameters.indexOf(" "));
+
+        this._spaces.push(parameters.search(/\S/));
+        parameters = parameters.substr(this._spaces[1]);
+        parameters = parameters.substr(parameters.indexOf(" "));
+
+        this._spaces.push(parameters.search(/\S/));
+        parameters = parameters.substr(this._spaces[2]);
+        if(parameters.indexOf(" ") === -1) {
+            this._spaces.push(0);
+        } else {
+            parameters = parameters.substr(parameters.indexOf(" "));
+            parameters = parameters + "$";
+            this._spaces.push(parameters.search(/\S/));
+        }
+
         this.$xValueSlider.val(parametersArray[0]);
         this.$yValueSlider.val(parametersArray[1]);
         this.$zValueSlider.val(parametersArray[2]);        
@@ -125,8 +148,23 @@ define(function (require, exports, module) {
         this._commitParameters(this._getParameters());
     };
 
+    ParameterEditor.prototype._getWhiteSpaces = function(number) {
+        var spaces = "";
+        for(var i = 0 ; i<number; i++) {
+            spaces += " ";
+        }
+        return spaces;
+    };
+
     ParameterEditor.prototype._getParameters = function() {
-        return (this.$xValueSlider.val() + " " + this.$yValueSlider.val() + " " + this.$zValueSlider.val());
+        var parameters = this._getWhiteSpaces(this._spaces[0]);
+        parameters += this.$xValueSlider.val();
+        parameters += this._getWhiteSpaces(this._spaces[1]);
+        parameters += this.$yValueSlider.val();
+        parameters += this._getWhiteSpaces(this._spaces[2]);
+        parameters += this.$zValueSlider.val();
+        parameters += this._getWhiteSpaces(this._spaces[3]);
+        return parameters;
     };
 
     ParameterEditor.prototype._registerDragHandler = function ($element, handler) {
