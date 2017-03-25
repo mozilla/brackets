@@ -192,6 +192,7 @@ define(function (require, exports, module) {
             previewMode: data.state.previewMode,
             wordWrap: data.state.wordWrap,
             allowJavaScript: data.state.allowJavaScript,
+            allowWhiteSpace: data.state.allowWhiteSpace,
             autoUpdate: data.state.autoUpdate
         });
 

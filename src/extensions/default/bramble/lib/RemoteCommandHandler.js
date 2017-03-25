@@ -99,6 +99,15 @@ define(function (require, exports, module) {
             PreferencesManager.set("allowJavaScript", false);
             PostMessageTransport.reload();
             break;
+        case "BRAMBLE_ENABLE_WHITESPACE":
+            PreferencesManager.getExtensionPrefs("denniskehrig.ShowWhitespace").set("enabled", true);
+            //PreferencesManager.set("allowWhiteSpace", true);
+            //whitespacePrefs.set("enabled", true);
+            break;
+        case "BRAMBLE_DISABLE_WHITESPACE":
+            PreferencesManager.getExtensionPrefs("denniskehrig.ShowWhitespace").set("enabled", false);
+            //PreferencesManager.set("allowWhiteSpace", false);
+            break;
         case "BRAMBLE_ENABLE_INSPECTOR":
             MouseManager.enableInspector();
             break;
