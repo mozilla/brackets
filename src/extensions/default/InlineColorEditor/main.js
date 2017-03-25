@@ -85,7 +85,7 @@ define(function (require, exports, module) {
      * @return {?$.Promise} synchronously resolved with an InlineWidget, or null if there's
      *      no color at pos.
      */
-    function inlineColorEditorProvider(hostEditor, pos) {
+    function inlineColorEditorProvider(hostEditor, pos, type) {
         var context = prepareEditorForProvider(hostEditor, pos),
             inlineColorEditor,
             result;
@@ -93,11 +93,13 @@ define(function (require, exports, module) {
         if (!context) {
             return null;
         } else {
-            inlineColorEditor = new InlineColorEditor(context.color, context.marker);
-            inlineColorEditor.load(hostEditor);
+            if (!type) {
+                inlineColorEditor = new InlineColorEditor(context.color, context.marker);
+                inlineColorEditor.load(hostEditor);
 
-            result = new $.Deferred();
-            result.resolve(inlineColorEditor);
+                result = new $.Deferred();
+                result.resolve(inlineColorEditor);
+            }
             return result.promise();
         }
     }

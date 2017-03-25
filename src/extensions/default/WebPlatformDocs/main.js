@@ -127,7 +127,7 @@ define(function (require, exports, module) {
             getDocs(jsonFile)
                 .done(function (docs) {
                     // if we only want to check if a provider exists
-                    if(!type){
+                    if (!type) {
                         docs = docs.PROPERTIES;
                         // Construct inline widget (if we have docs for this property)
 

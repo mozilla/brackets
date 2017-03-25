@@ -435,12 +435,12 @@ define(function (require, exports, module) {
             self._handleCursorActivity(event);
 
             var providersFound = MainViewManager._findProvider(editor);
-            if(providersFound.length){
+            if (providersFound.length) {
                 self.trigger("providerAvailable", self, providersFound);
 
                 var i,
                     len;
-                for(i = 0, len = providersFound.length ; i < len ; i++){
+                for (i = 0, len = providersFound.length ; i < len ; i++) {
                     console.log(providersFound[i].name+" ProviderFound");
                 }
             }
