@@ -29,8 +29,7 @@ define(function (require, exports, module) {
         EditorManager   = brackets.getModule("editor/EditorManager"),
         CSSUtils        = brackets.getModule("language/CSSUtils"),
         HTMLUtils       = brackets.getModule("language/HTMLUtils"),
-        ExtensionUtils  = brackets.getModule("utils/ExtensionUtils"),
-        Commands        = brackets.getModule("command/Commands");
+        ExtensionUtils  = brackets.getModule("utils/ExtensionUtils");
 
     // Extension modules
     var InlineDocsViewer = require("InlineDocsViewer");
@@ -70,21 +69,21 @@ define(function (require, exports, module) {
         return promiseCache[fileName];
     }
 
-    function checkProvider(hostEditor){
-        var jsonFile = {file: ""},
-        propQueue = [];
 
-        propQueue = validateProvider(hostEditor,jsonFile);
-
-        return (propQueue.length) ? true : false;
-
-    }
-
-    function validateProvider(hostEditor,jsonFile) {
-        var propInfo,propQueue = [],
+    /**
+     * Inline docs provider.
+     *
+     * @param {!Editor} editor
+     * @param {!{line:Number, ch:Number}} pos
+     * @return {?$.Promise} resolved with an InlineWidget; null if we're not going to provide anything
+     */
+    function inlineProvider(hostEditor, pos, type) {
+        var jsonFile, propInfo,
+            propQueue = [], // priority queue of propNames to try
             langId = hostEditor.getLanguageForSelection().getId(),
             supportedLangs = ["css", "scss", "less", "html"],
             langIndex = langId ? supportedLangs.indexOf(langId) : -1; // fail if langId is falsy
+
         // Only provide docs when cursor is in supported language
         if (langIndex < 0) {
             return null;
@@ -97,7 +96,7 @@ define(function (require, exports, module) {
         }
 
         if (langIndex <= 2) { // CSS-like language
-            jsonFile.file = "css.json";
+            jsonFile = "css.json";
             propInfo = CSSUtils.getInfoAtPos(hostEditor, sel.start);
             if (propInfo.name) {
                 propQueue.push("css/properties/" + propInfo.name);
@@ -105,7 +104,7 @@ define(function (require, exports, module) {
                 propQueue.push("css/properties/" + propInfo.name.replace(/^-(?:webkit|moz|ms|o)-/, ""));
             }
         } else { // HTML
-            jsonFile.file = "html.json";
+            jsonFile = "html.json";
             propInfo = HTMLUtils.getTagInfo(hostEditor, sel.start);
             if (propInfo.position.tokenType === HTMLUtils.ATTR_NAME && propInfo.attr && propInfo.attr.name) {
                 // we're on an HTML attribute (and not on its value)
@@ -119,57 +118,46 @@ define(function (require, exports, module) {
                 propQueue.push("html/elements/" + propInfo);
             }
         }
-        return propQueue;
-    }
-
-    /**
-     * Inline docs provider.
-     *
-     * @param {!Editor} editor
-     * @param {!{line:Number, ch:Number}} pos
-     * @return {?$.Promise} resolved with an InlineWidget; null if we're not going to provide anything
-     */
-    function inlineProvider(hostEditor, pos) {
-        var jsonFile = {file: ""},
-            propQueue = []; // priority queue of propNames to try
-
-        propQueue = validateProvider(hostEditor,jsonFile);
 
         // Are we on a supported property? (no matter if info is available for the property)
         if (propQueue.length) {
             var result = new $.Deferred();
 
             // Load JSON file if not done yet
-            getDocs(jsonFile.file)
+            getDocs(jsonFile)
                 .done(function (docs) {
-                    docs = docs.PROPERTIES;
-                    // Construct inline widget (if we have docs for this property)
+                    // if we only want to check if a provider exists
+                    if(!type){
+                        docs = docs.PROPERTIES;
+                        // Construct inline widget (if we have docs for this property)
 
-                    var displayName, propDetails,
-                        propName = _.find(propQueue, function (propName) { // find the first property where info is available
-                            return docs.hasOwnProperty(propName);
-                        });
+                        var displayName, propDetails,
+                            propName = _.find(propQueue, function (propName) { // find the first property where info is available
+                                return docs.hasOwnProperty(propName);
+                            });
 
-                    if (propName) {
-                        // strip off all prefixes from the propName
-                        var propPrefix = propName.substr(0, propName.lastIndexOf("/"));
-                        propDetails = docs[propName];
-                        displayName = propName.substr(propName.lastIndexOf("/") + 1);
-                        if (propPrefix === "html/elements") {
-                            displayName = "<" + displayName + ">";
+                        if (propName) {
+                            // strip off all prefixes from the propName
+                            var propPrefix = propName.substr(0, propName.lastIndexOf("/"));
+                            propDetails = docs[propName];
+                            displayName = propName.substr(propName.lastIndexOf("/") + 1);
+                            if (propPrefix === "html/elements") {
+                                displayName = "<" + displayName + ">";
+                            }
                         }
-                    }
-                    if (propDetails) {
-                        var inlineWidget = new InlineDocsViewer(displayName, propDetails);
-                        inlineWidget.load(hostEditor);
-                        result.resolve(inlineWidget);
-                    } else {
-                        result.reject();
+                        if (propDetails) {
+                            var inlineWidget = new InlineDocsViewer(displayName, propDetails);
+                            inlineWidget.load(hostEditor);
+                            result.resolve(inlineWidget);
+                        } else {
+                            result.reject();
+                        }
                     }
                 })
                 .fail(function () {
                     result.reject();
                 });
+
 
             return result.promise();
 
@@ -180,7 +168,6 @@ define(function (require, exports, module) {
 
     // Register as inline docs provider
     EditorManager.registerInlineDocsProvider(inlineProvider);
-    EditorManager.registerProvider(checkProvider,Commands.PROVIDER_DOCS);
 
     exports._getDocs         = getDocs;
     exports._inlineProvider  = inlineProvider;

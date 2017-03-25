@@ -91,7 +91,7 @@ define(function (require, exports, module) {
      * @private
      */
     var _inlineDocsProviders = [];
-    var _inlineproviders = [];
+    var _inlineProviders = [];
     /**
      * Registered jump-to-definition providers.
      * @see {@link #registerJumpToDefProvider}.
@@ -219,7 +219,7 @@ define(function (require, exports, module) {
      * @return {$.Promise} a promise that will be resolved when an InlineWidget
      *      is created or rejected if no inline providers have offered one.
      */
-    function _openInlineWidget(editor, providers, defaultErrorMsg) {
+    function _openInlineWidget(editor, providers, defaultErrorMsg, type) {
         PerfUtils.markStart(PerfUtils.INLINE_WIDGET_OPEN);
 
         // Run through inline-editor providers until one responds
@@ -241,7 +241,7 @@ define(function (require, exports, module) {
         // default error message
         for (i = 0; i < providers.length && !inlinePromise; i++) {
             var provider = providers[i].provider;
-            providerRet = provider(editor, pos);
+            providerRet = provider(editor, pos,type);
             if (providerRet) {
                 if (providerRet.hasOwnProperty("done")) {
                     inlinePromise = providerRet;
@@ -253,27 +253,33 @@ define(function (require, exports, module) {
 
         // Use default error message if none other provided
         errorMsg = errorMsg || defaultErrorMsg;
-
-        // If one of them will provide a widget, show it inline once ready
-        if (inlinePromise) {
-            inlinePromise.done(function (inlineWidget) {
-                editor.addInlineWidget(pos, inlineWidget).done(function () {
-                    PerfUtils.addMeasurement(PerfUtils.INLINE_WIDGET_OPEN);
-                    result.resolve();
+        if(type === undefined){
+            // If one of them will provide a widget, show it inline once ready
+            if (inlinePromise) {
+                inlinePromise.done(function (inlineWidget) {
+                    editor.addInlineWidget(pos, inlineWidget).done(function () {
+                        PerfUtils.addMeasurement(PerfUtils.INLINE_WIDGET_OPEN);
+                        result.resolve();
+                    });
+                }).fail(function () {
+                    // terminate timer that was started above
+                    PerfUtils.finalizeMeasurement(PerfUtils.INLINE_WIDGET_OPEN);
+                    editor.displayErrorMessageAtCursor(errorMsg);
+                    result.reject();
                 });
-            }).fail(function () {
+            } else {
                 // terminate timer that was started above
                 PerfUtils.finalizeMeasurement(PerfUtils.INLINE_WIDGET_OPEN);
                 editor.displayErrorMessageAtCursor(errorMsg);
                 result.reject();
-            });
-        } else {
-            // terminate timer that was started above
+            }
+        }else{
             PerfUtils.finalizeMeasurement(PerfUtils.INLINE_WIDGET_OPEN);
-            editor.displayErrorMessageAtCursor(errorMsg);
-            result.reject();
-        }
 
+            if (inlinePromise) {
+
+            }else{return null;}
+        }
         return result.promise();
     }
 
@@ -332,6 +338,8 @@ define(function (require, exports, module) {
                 priority: priority,
                 provider: provider
             };
+
+        _inlineProviders.push(provider);
 
         for (index = 0; index < array.length; index++) {
             if (array[index].priority < priority) {
@@ -778,37 +786,25 @@ define(function (require, exports, module) {
         }
     }
 
-    /**
-    * @param {Object} editor - function that is called to validate provider
-    * @return {String} id - name of the provider so we can return it to know which
-    * provider we have found
-    */
     function findProvider(editor) {
-        var i;
+        // iterate through the registered providers and push them into a list
+        // if they are found on the editor then return them.
+        var pos = editor.getCursorPos(),
+            i, len,
+            type = true,
+            providerRet,
+            providersFound = [];
 
-        for(i = 0 ; i < _inlineproviders.length; i++){
-            var provider = _inlineproviders[i].provider;
-            if(provider(editor)){
-                return _inlineproviders[i].id;
+        for (i = 0, len = _inlineProviders.length; i < len; i++) {
+            var provider = _inlineProviders[i];
+            providerRet = provider(editor, pos, type);
+            if (providerRet) {
+                if (providerRet.hasOwnProperty("done")) {
+                    providersFound.push(provider);
+                }
             }
         }
-
-        return null;
-    }
-
-    /**
-    * @param {Function} provider - function that is called to validate provider
-    * @param {String} id - name of the provider so we can return it to know which
-    * provider we have found
-    */
-    function Provider(provider,id){
-        this.provider = provider;
-        this.id = id;
-    }
-
-    function registerProvider(provider,id){
-        var prov = new Provider(provider,id);
-        _inlineproviders.push(prov);
+        return providersFound;
     }
 
     // Set up event dispatching
@@ -863,7 +859,6 @@ define(function (require, exports, module) {
     exports.registerInlineEditProvider    = registerInlineEditProvider;
     exports.registerInlineDocsProvider    = registerInlineDocsProvider;
     exports.registerJumpToDefProvider     = registerJumpToDefProvider;
-    exports.registerProvider              = registerProvider;
 
     // Deprecated
     exports.registerCustomViewer          = registerCustomViewer;

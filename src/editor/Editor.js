@@ -434,10 +434,15 @@ define(function (require, exports, module) {
         this.on("cursorActivity", function (event, editor) {
             self._handleCursorActivity(event);
 
-            var provider = MainViewManager._findProvider(editor);
-            if(provider){
-                self.trigger("providerAvailable", self);
-                console.log(provider +" ProviderFound");
+            var providersFound = MainViewManager._findProvider(editor);
+            if(providersFound.length){
+                self.trigger("providerAvailable", self, providersFound);
+
+                var i,
+                    len;
+                for(i = 0, len = providersFound.length ; i < len ; i++){
+                    console.log(providersFound[i].name+" ProviderFound");
+                }
             }
         });
         this.on("keypress", function (event, editor, domEvent) {
