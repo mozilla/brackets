@@ -64,7 +64,7 @@ define(function (require, exports, module) {
     };
 
     ParameterEditor.prototype.isValidSetOfParameters = function (parameters) {
-        var ParameterRegex = new RegExp(/((-)?\d+(\.\d+)?) ((-)?\d+(\.\d+)?) ((-)?\d+(\.\d+)?)/g);
+        var ParameterRegex = new RegExp(Inline3dParametersUtils.PARAMETERS_3D_REGEX);
         return ParameterRegex.test(parameters);
     };
 
