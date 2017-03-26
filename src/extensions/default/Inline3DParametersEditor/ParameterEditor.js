@@ -13,7 +13,7 @@ define(function (require, exports, module) {
         this.$element = $(Mustache.render(Template, Strings));
         $parent.append(this.$element);
         this._callback = callback;
-        this._modifier = Inline3dParametersUtils.getModifier(tag);
+        this._modifier = Inline3dParametersUtils.getModifier(tag) || 10;
 
         this._handleSliderDrag = this._handleSliderDrag.bind(this);
 

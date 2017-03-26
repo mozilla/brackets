@@ -9,10 +9,12 @@ define(function (require, exports, module) {
     var TRANSLATE_STRING = "position";
     var ROTATE_STRING = "rotation";
     var SCALE_STRING = "scale";
+    var RADIUS_STRING = "radius";
     var MODIFIER = [];
     MODIFIER[TRANSLATE_STRING] = 50;
     MODIFIER[SCALE_STRING] = 30;
     MODIFIER[ROTATE_STRING] = 5;
+    MODIFIER[RADIUS_STRING] = 50;
 
     /*
      * Adds a color swatch to code hints where this is supported.

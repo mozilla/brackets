@@ -70,8 +70,15 @@ define(function (require, exports, module) {
             end = {line: start.line};
         }
 
-        var line = this.hostEditor.document.getLine(start.line),
-            matches = line.substr(start.ch).match(Inline3dParametersUtils.PARAMETERS_3D_REGEX);
+        var line = this.hostEditor.document.getLine(start.line);
+
+        /**
+         * Returns an array of string that match the
+         * given Regex
+         * Eg : line = <a-cylinder position="-0.04 1.40 0.80"  rotation = "171.00 -0.10 "></a-cylinder>
+         * matches = ["-0.04 1.18 0.80", "227", " 0.34", "171.00 -0.10 "]
+         */
+        var matches = line.substr(start.ch).match(Inline3dParametersUtils.PARAMETERS_3D_REGEX);
 
         // Note that end.ch is exclusive, so we don't need to add 1 before comparing to
         // the matched length here.
