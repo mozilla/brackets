@@ -41,7 +41,7 @@ define(function (require, exports, module) {
      * @return {?{color:String, marker:TextMarker}}
      */
     function prepareEditorForProvider(hostEditor, pos) {
-        var cursorLine, cssPropertyName, marker, endPos, end;
+        var cursorLine, cssPropertyName, marker, endPos, end, semiColon, colorValue, hash, colon;
         cursorLine = hostEditor.document.getLine(pos.line);
 
         // Make a copy of cursorLine after removing spaces and ":" so that we can check for it in properties
@@ -49,12 +49,29 @@ define(function (require, exports, module) {
 
         if (properties[cssPropertyName]) {
             if (properties[cssPropertyName].type === "color") {
-                pos.ch = cursorLine.length-1;
-                endPos = {line: pos.ch, ch: cursorLine[cursorLine.length]};
-                hostEditor.setSelection(pos, endPos);
+                colon = cursorLine.indexOf(":");
+                semiColon = cursorLine.indexOf(";");
+                if (semiColon !== -1) {
+                  hash = cursorLine.indexOf("#");
+                  if (hash !== -1) {
+                    pos.ch = hash;
+                    colorValue = cursorLine.substring(hash, semiColon);
+                  } else {
+                    var colorString = cursorLine.substring(colon, semiColon);
+                    var firstCharacter = colorString.search(/\w/);
+                    pos.ch = colon + firstCharacter;
+                    colorValue = cursorLine.substring(colon + firstCharacter, semiColon);
+                  }
+                  endPos = {line: pos.line, ch: semiColon};
+                } else {
+                  pos.ch =  colon + 1;
+                  endPos = {line: pos.line, ch: cursorLine.length};
+                  colorValue = "white";
+                }
                 marker = hostEditor._codeMirror.markText(pos, endPos);
+                hostEditor.setSelection(pos, endPos);
                 return {
-                    color: "white",
+                    color: colorValue,
                     marker: marker
                 };
             }
