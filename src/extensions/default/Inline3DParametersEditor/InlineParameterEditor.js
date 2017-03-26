@@ -130,8 +130,7 @@ define(function (require, exports, module) {
      */
     InlineParameterEditor.prototype.load = function (hostEditor) {
         InlineParameterEditor.prototype.parentClass.load.apply(this, arguments);
-        this.parameterEditor = new ParameterEditor(this.$htmlContent, this._handleParametersChange, this._tag);
-        this.parameterEditor.setSliderProperties(this._parameters);
+        this.parameterEditor = new ParameterEditor(this.$htmlContent, this._handleParametersChange, this._tag, this._parameters);
     };
 
     /**
