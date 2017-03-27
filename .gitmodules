@@ -46,3 +46,6 @@
 [submodule "src/thirdparty/jszip"]
 	path = src/thirdparty/jszip
 	url = https://github.com/Stuk/jszip.git
+[submodule "src/extensions/extra/Brackets-wsSanitizer"]
+	path = src/extensions/extra/Brackets-wsSanitizer
+	url = https://github.com/MiguelCastillo/Brackets-wsSanitizer

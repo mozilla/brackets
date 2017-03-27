@@ -104,6 +104,7 @@ In addition, you can enable other extra extensions:
 * HTMLHinter
 * MdnDocs
 * SVGasXML
+* Brackets-wsSanitizer (https://github.com/MiguelCastillo/Brackets-wsSanitizer)
 
 You could enable JSLint and LESSSupport by loading Bramble with `?enableExtensions=JSLint,LESSSupport`
 on the URL
