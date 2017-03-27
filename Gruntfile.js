@@ -412,8 +412,8 @@ module.exports = function (grunt) {
 		    'src/extensions/extra/SVGasXML',
 		    'src/extensions/extra/HTMLHinter',
 		    'src/extensions/extra/MDNDocs',
-		    'src/extensions/extra/bramble-watch-index.html',
-		    '!src/extensions/extra/MDNDocs/tools/scrape-mdn/node_modules/**/.eslintrc'	     
+		    '!src/extensions/extra/MDNDocs/**/node_modules/**',
+		    'src/extensions/extra/bramble-watch-index.html'	     
 	    ],
             test:   '<%= meta.test %>',
             options: {
