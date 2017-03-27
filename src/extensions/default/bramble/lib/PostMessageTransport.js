@@ -24,6 +24,7 @@ define(function (require, exports, module) {
     var Tutorial = require("lib/Tutorial");
     var MouseManager = require("lib/MouseManager");
     var LinkManager = require("lib/LinkManager");
+    var ConsoleManager = require("lib/ConsoleManager");
 
     // An XHR shim will be injected as well to allow XHR to the file system
     var XHRShim = require("text!lib/xhr/XHRShim.js");
@@ -91,7 +92,12 @@ define(function (require, exports, module) {
                 msgObj.message = resolveLinks(msgObj.message);
             }
 
-            //trigger message event
+            if(ConsoleManager.isConsoleRequest(msgObj.message)) {
+                ConsoleManager.handleConsoleRequest(msgObj.data);
+                return;
+            }
+            
+            // Trigger message event 
             module.exports.trigger("message", [connId, msgObj.message]);
         } else if (msgObj.type === "connect") {
             Browser.setListener();
@@ -204,7 +210,8 @@ define(function (require, exports, module) {
             "<script>\n" + PostMessageTransportRemote + "</script>\n" +
             "<script>\n" + XHRShim + "</script>\n" +
             MouseManager.getRemoteScript(currentPath) +
-            LinkManager.getRemoteScript();
+            LinkManager.getRemoteScript() +
+            ConsoleManager.getRemoteScript();
     }
 
     // URL of document being rewritten/launched (if any)
