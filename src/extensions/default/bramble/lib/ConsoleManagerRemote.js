@@ -8,14 +8,14 @@
     
     // Implement standard console.* functions
     ["log",
-        "warn",
-        "info",
-        "debug",
-        "info",
-        "error",
-        "clear",
-        "time",
-        "timeEnd"].forEach(function(type) {
+     "warn",
+     "info",
+     "debug",
+     "info",
+     "error",
+     "clear",
+     "time",
+     "timeEnd"].forEach(function(type) {
         console[type] = function() {
             var args = Array.from(arguments).slice();
             transportSend(type, args);
