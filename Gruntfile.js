@@ -413,7 +413,7 @@ module.exports = function (grunt) {
 		    'src/extensions/extra/HTMLHinter',
 		    'src/extensions/extra/MDNDocs',
 		    'src/extensions/extra/bramble-watch-index.html',
-		    '!src/extensions/**/node_modules/*'	// prevent from going deep into node_modules     
+		    '!src/extensions/extra/MDNDocs/tools/scrape-mdn/node_modules/**'	     
 	    ],
             test:   '<%= meta.test %>',
             options: {
