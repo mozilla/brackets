@@ -82,7 +82,8 @@ module.exports = function (grunt) {
                         'extensions/default/*/**/*.js',
                         '!extensions/extra/*/unittests.js',
                         'extensions/extra/*/**/*.js',
-                        '!extensions/**/node_modules/**/*.js',
+                      //'!extensions/**/node_modules/**/*.js',		// I don't want anything going into node_modules!
+			'!extensions/**/node_modules/**',		// eliminate everything from node_modules (MY CODE)
                         '!extensions/**/test/**/*.js',
                         '!**/unittest-files/**',
                         'thirdparty/i18n/*.js',
@@ -130,6 +131,7 @@ module.exports = function (grunt) {
                         src: [
                             'extensions/default/**/*',
                             'extensions/extra/**/*',
+	                    '!**/node_modules/**',						// (MY CODE) prevents anything from node_modules.
                             '!extensibility/node/spec/**',
                             '!extensibility/node/node_modules/**/{test,tst}/**/*',
                             '!extensibility/node/node_modules/**/examples/**/*',
