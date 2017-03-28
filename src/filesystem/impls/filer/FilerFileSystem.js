@@ -47,7 +47,6 @@ define(function (require, exports, module) {
         if (!err) {
             return null;
         }
-
         // If we get a raw Brackets error string passed through,
         // we don't need to map anything, and can just use it directly.
         if (typeof err === "string") {
