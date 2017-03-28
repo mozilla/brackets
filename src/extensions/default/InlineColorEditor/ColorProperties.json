@@ -1,0 +1,13 @@
+{
+    "background-color":            {"values": ["inherit"], "type": "color"},
+    "border-color":                {"values": ["inherit"], "type": "color"},
+    "border-bottom-color":         {"values": ["inherit"], "type": "color"},
+    "border-left-color":           {"values": ["inherit"], "type": "color"},
+    "border-right-color":          {"values": ["inherit"], "type": "color"},
+    "border-top-color":            {"values": ["inherit"], "type": "color"},
+    "color":                       {"values": ["inherit"], "type": "color"},
+    "column-rule-color":           {"values": [], "type": "color"},
+    "outline-color":               {"values": ["invert", "inherit"], "type": "color"},
+    "text-decoration-color":       {"values": [], "type": "color"},
+    "text-emphasis-color":         {"values": [], "type": "color"}
+}
