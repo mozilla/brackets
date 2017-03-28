@@ -332,7 +332,8 @@ module.exports = function (grunt) {
                 '!test/smokes/**',
                 '!test/temp/**',
                 '!test/thirdparty/**',
-                '!test/**/node_modules/**/*.js'
+              //'!test/**/node_modules/**/*.js'
+		'!test/**/node_modules/**'			// be more specific with node_modules (MY CODE)
             ],
             grunt: [
                 'Gruntfile.js',
