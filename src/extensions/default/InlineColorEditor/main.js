@@ -24,12 +24,18 @@
 define(function (require, exports, module) {
     "use strict";
 
-    var EditorManager       = brackets.getModule("editor/EditorManager"),
-        ExtensionUtils      = brackets.getModule("utils/ExtensionUtils"),
-        InlineColorEditor   = require("InlineColorEditor").InlineColorEditor,
-        ColorUtils          = brackets.getModule("utils/ColorUtils"),
-	 CSSProperties       = require("text!CSSProperties.json"),
-        properties          = JSON.parse(CSSProperties);
+    try {
+        var EditorManager       = brackets.getModule("editor/EditorManager"),
+            ExtensionUtils      = brackets.getModule("utils/ExtensionUtils"),
+            InlineColorEditor   = require("InlineColorEditor").InlineColorEditor,
+            ColorUtils          = brackets.getModule("utils/ColorUtils"),
+            ColorProperties     = require("text!ColorProperties.json"),
+            properties          = JSON.parse(ColorProperties);        
+    } catch(err) {
+        throw err.message;
+    }
+
+    var DEFAULT_COLOR = "white";
 
 
     /**
@@ -41,42 +47,46 @@ define(function (require, exports, module) {
      * @return {?{color:String, marker:TextMarker}}
      */
     function prepareEditorForProvider(hostEditor, pos) {
-        var cursorLine, cssPropertyName, marker, endPos, end, semiColon, colorValue, hash, colon;
+        var cursorLine, cssPropertyName, marker, end, endPos, semiColonPos, hashPos, colonPos, colorValue;
         cursorLine = hostEditor.document.getLine(pos.line);
 
-        // Make a copy of cursorLine after removing spaces and ":" so that we can check for it in properties
+        // Get the css property name after removing spaces and ":" so that we can check for it in the file ColorProperties.json
         cssPropertyName = cursorLine.split(':')[0].trim();
 
-        if (properties[cssPropertyName]) {
-            if (properties[cssPropertyName].type === "color") {
-                colon = cursorLine.indexOf(":");
-                semiColon = cursorLine.indexOf(";");
-                if (semiColon !== -1) {
-                  hash = cursorLine.indexOf("#");
-                  if (hash !== -1) {
-                    pos.ch = hash;
-                    colorValue = cursorLine.substring(hash, semiColon);
-                  } else {
-                    var colorString = cursorLine.substring(colon, semiColon);
-                    var firstCharacter = colorString.search(/\w/);
-                    pos.ch = colon + firstCharacter;
-                    colorValue = cursorLine.substring(colon + firstCharacter, semiColon);
-                  }
-                  endPos = {line: pos.line, ch: semiColon};
-                } else {
-                  pos.ch =  colon + 1;
-                  endPos = {line: pos.line, ch: cursorLine.length};
-                  colorValue = "white";
-                }
-                marker = hostEditor._codeMirror.markText(pos, endPos);
-                hostEditor.setSelection(pos, endPos);
-                return {
-                    color: colorValue,
-                    marker: marker
-                };
-            }
-        } else {
+        if (!cssPropertyName || !properties[cssPropertyName]) {
             return null;
+        }
+
+        if (properties[cssPropertyName].type === "color") {
+            colonPos = cursorLine.indexOf(":");
+            semiColonPos = cursorLine.indexOf(";");
+            if (semiColonPos !== -1) {
+                // edit the color value of an already existing css rule
+                hashPos = cursorLine.indexOf("#");
+                if (hashPos !== -1) {
+                    // color value is a hex number
+                    pos.ch = hashPos;
+                    colorValue = cursorLine.substring(hashPos, semiColonPos);
+                } else {
+                    // color value is a string
+                    var colorString = cursorLine.substring(colonPos, semiColonPos);
+                    var firstCharacterPos = colorString.search(/\w/);
+                    pos.ch = colonPos + firstCharacterPos;
+                    colorValue = cursorLine.substring(colonPos + firstCharacterPos, semiColonPos);
+                }
+                endPos = {line: pos.line, ch: semiColonPos};
+            } else {
+                // edit the color value of a new css rule
+                pos.ch = colonPos + 1;
+                endPos = {line: pos.line, ch: cursorLine.length};
+                colorValue = DEFAULT_COLOR;
+            }
+            marker = hostEditor._codeMirror.markText(pos, endPos);
+            hostEditor.setSelection(pos, endPos);
+            return {
+                color: colorValue,
+                marker: marker
+            };
         }
     }
 
