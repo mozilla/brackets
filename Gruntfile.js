@@ -431,7 +431,7 @@ module.exports = function (grunt) {
                 },
                 expand: true,
                 cwd: 'dist/',
-                src: ['**/*'],
+                src: ['!**/node_modules/**', '**/*'],		// more changes
                 dest: 'dist/'
             }
         },
