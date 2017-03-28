@@ -357,7 +357,7 @@ module.exports = function (grunt) {
                 tasks: ['eslint:grunt']
             },
             src : {
-                files: ['<%= meta.src %>', 'src/**/*'],
+                files: ['<%= meta.src %>', 'src/**/*', '!src/**/node_modules/**'],	// added the !src/**/node_modules/** part... (MY CODE)
                 tasks: ['eslint:src']
             },
             test : {
