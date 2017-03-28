@@ -306,7 +306,8 @@ module.exports = function (grunt) {
         },
         meta : {
             src   : [
-                'src/**/*.js',
+                '!src/**/node_modules/**',
+		'src/**/*.js',
                 '!src/thirdparty/**',
                 '!src/widgets/bootstrap-*.js',
                 '!src/extensions/default/brackets-show-whitespace/**',
@@ -357,7 +358,7 @@ module.exports = function (grunt) {
                 tasks: ['eslint:grunt']
             },
             src : {
-                files: ['<%= meta.src %>', 'src/**/*', '!src/**/node_modules/**'],	// added the !src/**/node_modules/** part... (MY CODE)
+                files: ['<%= meta.src %>', '!src/**/node_modules/**', 'src/**/*'],	// added the !src/**/node_modules/** part... (MY CODE)
                 tasks: ['eslint:src']
             },
             test : {
