@@ -46,7 +46,7 @@ define(function (require, exports, module) {
     function _mapError(err) {
         if (!err) {
             return null;
-         }
+        }
 
         // If we get a raw Brackets error string passed through,
         // we don't need to map anything, and can just use it directly.
