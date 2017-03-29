@@ -408,7 +408,8 @@ module.exports = function (grunt) {
         eslint: {
             grunt:  '<%= meta.grunt %>',
             src: [
-	            'src/extensions/default/Autosave',
+	            '<%= meta.src %>',
+		    'src/extensions/default/Autosave',
 		    'src/extensions/default/BrambleUrlCodeHints',
 		    'src/extensions/default/UploadFiles',
 		    'src/extensions/default/bramble-move-file',
@@ -431,7 +432,7 @@ module.exports = function (grunt) {
                 },
                 expand: true,
                 cwd: 'dist/',
-                src: ['!**/node_modules/**', '**/*'],		// more changes
+                src: ['**/*'],		// more changes
                 dest: 'dist/'
             }
         },
