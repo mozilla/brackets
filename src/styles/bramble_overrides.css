@@ -72,22 +72,44 @@
     background: rgba(0, 135, 207, .3) !important;
 }
 
-.CodeMirror-lines {
-    padding-left: 10px;
-}
-
-.CodeMirror .CodeMirror-gutters {
-    padding-right: 10px;
+.CodeMirror .CodeMirror-gutters .CodeMirror-gutter:after {
+    display: none;
 }
 
 .CodeMirror-linenumber {
-    padding: 0 15px 0 0;
+    padding: 0 10px;
 }
 
-.CodeMirror-foldgutter {
-    transform: translateX(8px);
+.inline-widget .CodeMirror-foldgutter,
+.inline-widget .CodeMirror-linenumbers,
+.inline-widget .CodeMirror-gutters {
+    background: transparent !important;
 }
 
-.CodeMirror-foldgutter:after {
-    display: none;
+
+/* Makes the resize handles wider, and visile on hover & drag */
+
+#sidebar {
+  position: relative;
+}
+
+.horz-resizer {
+  transition: opacity .15s ease-out;
+  background: rgba(0,0,0,.08);
+  width: 12px;
+}
+
+#sidebar .horz-resizer {
+  right: -12px !important;
+  left: auto !important;
+}
+
+.dark .main-view > .horz-resizer,
+.dark #sidebar .horz-resizer {
+  background: rgba(255,255,255,.1);
+}
+
+.horz-resizer.active,
+.horz-resizer:hover {
+  opacity: 1;
 }
