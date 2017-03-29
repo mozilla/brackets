@@ -47,7 +47,7 @@ define(function (require, exports, module) {
      * @return {?{color:String, marker:TextMarker}}
      */
     function prepareEditorForProvider(hostEditor, pos) {
-        var cursorLine, colorRegEx, match, marker, end, start, sel, endPos;
+        var colorRegEx, cursorLine, match, sel, start, end, endPos, marker;
 
         sel = hostEditor.getSelection();
         if (sel.start.line !== sel.end.line) {
@@ -68,7 +68,7 @@ define(function (require, exports, module) {
 
         if (!match) {
             // Check if the cursorLine has a CSS rule of type color
-            var cssPropertyName, semiColonPos, hashPos, colonPos, colorValue, cursorLineSubstring, firstCharacterPos;
+            var cssPropertyName, semiColonPos, colonPos, colorValue, cursorLineSubstring, firstCharacterPos;
 
             // Get the css property name after removing spaces and ":" so that we can check for it in the file ColorProperties.json
             cssPropertyName = cursorLine.split(':')[0].trim();
