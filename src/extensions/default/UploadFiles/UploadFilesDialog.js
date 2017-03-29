@@ -15,6 +15,7 @@ define(function (require, exports, module) {
     var Mustache       = brackets.getModule("thirdparty/mustache/mustache");
 
     var dialogHTML     = require("text!htmlContent/upload-files-dialog.html");
+    var _uploadDialog = null;
 
     // Not all browsers support access to camera
     var isCameraSupported = (function(navigator) {
@@ -165,12 +166,15 @@ define(function (require, exports, module) {
     };
     FileUploadDialog.prototype.destroy = function() {
         this.fileInput.remove();
+        _uploadDialog = null;
     };
 
-
     function show() {
-        var uploadDialog = new FileUploadDialog();
-        return uploadDialog.show();
+        if(_uploadDialog) {
+            return;
+        }
+        _uploadDialog = new FileUploadDialog();
+        return _uploadDialog.show();
     }
 
     exports.show = show;
