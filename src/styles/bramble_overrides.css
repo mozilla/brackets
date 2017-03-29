@@ -85,3 +85,31 @@
 .inline-widget .CodeMirror-gutters {
     background: transparent !important;
 }
+
+
+/* Makes the resize handles wider, and visile on hover & drag */
+
+#sidebar {
+  position: relative;
+}
+
+.horz-resizer {
+  transition: opacity .15s ease-out;
+  background: rgba(0,0,0,.08);
+  width: 12px;
+}
+
+#sidebar .horz-resizer {
+  right: -12px !important;
+  left: auto !important;
+}
+
+.dark .main-view > .horz-resizer,
+.dark #sidebar .horz-resizer {
+  background: rgba(255,255,255,.1);
+}
+
+.horz-resizer.active,
+.horz-resizer:hover {
+  opacity: 1;
+}
