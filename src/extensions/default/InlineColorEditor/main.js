@@ -47,47 +47,79 @@ define(function (require, exports, module) {
      * @return {?{color:String, marker:TextMarker}}
      */
     function prepareEditorForProvider(hostEditor, pos) {
-        var cursorLine, cssPropertyName, marker, end, endPos, semiColonPos, hashPos, colonPos, colorValue;
-        cursorLine = hostEditor.document.getLine(pos.line);
+        var cursorLine, colorRegEx, match, marker, end, start, sel, endPos;
 
-        // Get the css property name after removing spaces and ":" so that we can check for it in the file ColorProperties.json
-        cssPropertyName = cursorLine.split(':')[0].trim();
-
-        if (!cssPropertyName || !properties[cssPropertyName]) {
+        sel = hostEditor.getSelection();
+        if (sel.start.line !== sel.end.line) {
             return null;
         }
 
-        if (properties[cssPropertyName].type === "color") {
-            colonPos = cursorLine.indexOf(":");
-            semiColonPos = cursorLine.indexOf(";");
-            if (semiColonPos !== -1) {
-                // edit the color value of an already existing css rule
-                hashPos = cursorLine.indexOf("#");
-                if (hashPos !== -1) {
-                    // color value is a hex number
-                    pos.ch = hashPos;
-                    colorValue = cursorLine.substring(hashPos, semiColonPos);
-                } else {
-                    // color value is a string
-                    var colorString = cursorLine.substring(colonPos, semiColonPos);
-                    var firstCharacterPos = colorString.search(/\w/);
-                    pos.ch = colonPos + firstCharacterPos;
-                    colorValue = cursorLine.substring(colonPos + firstCharacterPos, semiColonPos);
-                }
-                endPos = {line: pos.line, ch: semiColonPos};
-            } else {
-                // edit the color value of a new css rule
-                pos.ch = colonPos + 1;
-                endPos = {line: pos.line, ch: cursorLine.length};
-                colorValue = DEFAULT_COLOR;
+        colorRegEx = new RegExp(ColorUtils.COLOR_REGEX);
+        cursorLine = hostEditor.document.getLine(pos.line);
+
+        // Loop through each match of colorRegEx and stop when the one that contains pos is found.
+        do {
+            match = colorRegEx.exec(cursorLine);
+            if (match) {
+                start = match.index;
+                end = start + match[0].length;
             }
-            marker = hostEditor._codeMirror.markText(pos, endPos);
-            hostEditor.setSelection(pos, endPos);
-            return {
-                color: colorValue,
-                marker: marker
-            };
+        } while (match && (pos.ch < start || pos.ch > end));
+
+        if (!match) {
+            // Check if the cursorLine has a CSS rule of type color
+            var cssPropertyName, semiColonPos, hashPos, colonPos, colorValue, cursorLineSubstring, firstCharacterPos;
+
+            // Get the css property name after removing spaces and ":" so that we can check for it in the file ColorProperties.json
+            cssPropertyName = cursorLine.split(':')[0].trim();
+
+            if (!cssPropertyName || !properties[cssPropertyName]) {
+                return null;
+            }
+
+            if (properties[cssPropertyName].type === "color") {
+                colonPos = cursorLine.indexOf(":");
+                semiColonPos = cursorLine.indexOf(";");
+                if (semiColonPos !== -1) {
+                    // edit the color value of an existing css rule
+                    cursorLineSubstring = cursorLine.substring(colonPos + 1, semiColonPos);
+                    colorValue = cursorLineSubstring.trim();
+                    if (colorRegEx.test(colorValue)) {
+                        firstCharacterPos = cursorLineSubstring.search(/\S/);
+                        pos.ch = colonPos + 1 + firstCharacterPos;
+                        endPos = {line: pos.line, ch: semiColonPos};
+                    } else {
+                        return null;
+                    }
+                } else {
+                    // edit the color value of a new css rule
+                    pos.ch = colonPos + 1;
+                    endPos = {line: pos.line, ch: cursorLine.length};
+                    colorValue = DEFAULT_COLOR;
+                }
+
+                marker = hostEditor._codeMirror.markText(pos, endPos);
+                hostEditor.setSelection(pos, endPos);
+
+                return {
+                    color: colorValue,
+                    marker: marker
+                };
+            }
         }
+
+        // Adjust pos to the beginning of the match so that the inline editor won't get
+        // dismissed while we're updating the color with the new values from user's inline editing.
+        pos.ch = start;
+        endPos = {line: pos.line, ch: end};
+
+        marker = hostEditor._codeMirror.markText(pos, endPos);
+        hostEditor.setSelection(pos, endPos);
+
+        return {
+            color: match[0],
+            marker: marker
+        };
     }
 
     /**
