@@ -91,7 +91,7 @@ define(function (require, exports, module) {
      * @private
      */
     var _inlineDocsProviders = [];
-    var _inlineProviders = [];
+
     /**
      * Registered jump-to-definition providers.
      * @see {@link #registerJumpToDefProvider}.
@@ -332,8 +332,6 @@ define(function (require, exports, module) {
                 priority: priority,
                 provider: provider
             };
-
-        _inlineProviders.push(provider);
 
         for (index = 0; index < array.length; index++) {
             if (array[index].priority < priority) {
@@ -781,19 +779,20 @@ define(function (require, exports, module) {
     }
 
     /**
-    * @param {Object} editor - function that is called to validate provider
-    * @return {String} id - name of the provider so we can return it to know which
-    * provider we have found
+    * @param {Object} editor - function that is called to validate providers
+    * for the current editor/cursor pos
+    * @return {Array.<Provider>}
     */
     function findProvider(editor) {
         var pos = editor.getCursorPos(),
             i, len,
-            type = true,
+            type = true, // used to tell the provider that we only want to know if a proviver exists and to not create one
             providerRet,
-            providersFound = [];
+            providersFound = [], // list of providers found
+            providers = _inlineEditProviders.concat(_inlineDocsProviders); // combine both so we only need one loop
 
-        for (i = 0, len = _inlineProviders.length; i < len; i++) {
-            var provider = _inlineProviders[i];
+        for (i = 0, len = providers.length; i < len; i++) {
+            var provider = providers[i].provider;
             providerRet = provider(editor, pos, type);
             if (providerRet) {
                 if (providerRet.hasOwnProperty("done")) {
@@ -801,6 +800,7 @@ define(function (require, exports, module) {
                 }
             }
         }
+
         return providersFound;
     }
 

@@ -119,39 +119,44 @@ define(function (require, exports, module) {
             }
         }
 
+        var result = new $.Deferred();
+
+        function _createInLineWidget (docs) {
+            docs = docs.PROPERTIES;
+            // Construct inline widget (if we have docs for this property)
+
+            var displayName, propDetails,
+                propName = _.find(propQueue, function (propName) { // find the first property where info is available
+                    return docs.hasOwnProperty(propName);
+                });
+
+            if (propName) {
+                // strip off all prefixes from the propName
+                var propPrefix = propName.substr(0, propName.lastIndexOf("/"));
+                propDetails = docs[propName];
+                displayName = propName.substr(propName.lastIndexOf("/") + 1);
+                if (propPrefix === "html/elements") {
+                    displayName = "<" + displayName + ">";
+                }
+            }
+            if (propDetails) {
+                var inlineWidget = new InlineDocsViewer(displayName, propDetails);
+                inlineWidget.load(hostEditor);
+                result.resolve(inlineWidget);
+            } else {
+                result.reject();
+            }
+        }
+
         // Are we on a supported property? (no matter if info is available for the property)
         if (propQueue.length) {
-            var result = new $.Deferred();
 
             // Load JSON file if not done yet
             getDocs(jsonFile)
                 .done(function (docs) {
                     // if we only want to check if a provider exists
                     if (!type) {
-                        docs = docs.PROPERTIES;
-                        // Construct inline widget (if we have docs for this property)
-
-                        var displayName, propDetails,
-                            propName = _.find(propQueue, function (propName) { // find the first property where info is available
-                                return docs.hasOwnProperty(propName);
-                            });
-
-                        if (propName) {
-                            // strip off all prefixes from the propName
-                            var propPrefix = propName.substr(0, propName.lastIndexOf("/"));
-                            propDetails = docs[propName];
-                            displayName = propName.substr(propName.lastIndexOf("/") + 1);
-                            if (propPrefix === "html/elements") {
-                                displayName = "<" + displayName + ">";
-                            }
-                        }
-                        if (propDetails) {
-                            var inlineWidget = new InlineDocsViewer(displayName, propDetails);
-                            inlineWidget.load(hostEditor);
-                            result.resolve(inlineWidget);
-                        } else {
-                            result.reject();
-                        }
+                        _createInLineWidget(docs);
                     }
                 })
                 .fail(function () {
@@ -164,6 +169,7 @@ define(function (require, exports, module) {
         } else {
             return null;
         }
+
     }
 
     // Register as inline docs provider

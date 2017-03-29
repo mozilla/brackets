@@ -213,7 +213,7 @@ define(function (require, exports, module) {
             return functionResult.reason || null;
         }
 
-        return _createInlineEditor(hostEditor, functionResult.functionName);
+        return _createInlineEditor(hostEditor, functionResult.functionName, type);
     }
 
     // init

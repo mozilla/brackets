@@ -93,11 +93,12 @@ define(function (require, exports, module) {
         if (!context) {
             return null;
         } else {
+            result = new $.Deferred();
             if (!type) {
                 inlineColorEditor = new InlineColorEditor(context.color, context.marker);
                 inlineColorEditor.load(hostEditor);
 
-                result = new $.Deferred();
+
                 result.resolve(inlineColorEditor);
             }
             return result.promise();
