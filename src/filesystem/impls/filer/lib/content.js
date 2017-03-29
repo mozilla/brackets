@@ -37,6 +37,14 @@ define(function (require, exports, module) {
             return id === "markdown";
         },
 
+        isArchive: function(ext) {
+            if (ext == "zip" || ext == "tar") {
+                return true;
+            } else {
+                return false;
+            }
+        },
+
         mimeFromExt: function(ext) {
             ext = ext.toLowerCase();
 

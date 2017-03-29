@@ -336,10 +336,11 @@ define(function (require, exports, module) {
          */
         function rejectImport(item) {
             var ext = Path.extname(item.name).replace(/^\./, "").toLowerCase();
+            
             if (item.size > archiveByteLimit) {
                 return new Error(Strings.DND_MAX_FILE_SIZE_EXCEEDED);
             } else if (item.size > byteLimit) {
-                if (ext !== "zip" && ext !== "tar") {
+                if(!Content.isArchive(ext)){
                     return new Error(Strings.DND_MAX_FILE_SIZE_EXCEEDED);
                 }
             }
