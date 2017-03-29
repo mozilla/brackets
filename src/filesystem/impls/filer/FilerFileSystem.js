@@ -46,7 +46,8 @@ define(function (require, exports, module) {
     function _mapError(err) {
         if (!err) {
             return null;
-        }
+         }
+
         // If we get a raw Brackets error string passed through,
         // we don't need to map anything, and can just use it directly.
         if (typeof err === "string") {
@@ -174,7 +175,7 @@ define(function (require, exports, module) {
             stat(path, callback);
         });
     }
-    
+
     function rename(oldPath, newPath, callback) {
         oldPath = decodePath(oldPath);
         newPath = decodePath(newPath);
@@ -183,7 +184,7 @@ define(function (require, exports, module) {
             if(err) {
                 return callback(_mapError(err));
             }
-            
+
             // If this was a rename on a file path, update the Blob cache too
             stat(newPath, function(err, stat) {
                 if(err) {
@@ -194,9 +195,9 @@ define(function (require, exports, module) {
                     BlobUtils.rename(oldPath, newPath);
                     BrambleEvents.triggerFileRenamed(oldPath, newPath);
                 }
-                
+
                 FileSystemCache.refresh(function(err){
-                    if(err){    
+                    if(err){
                       return callback(err);
                     }
                     LiveDevMultiBrowser.reload();
@@ -204,7 +205,7 @@ define(function (require, exports, module) {
                 });
             });
         }
-        
+
         fs.rename(oldPath, newPath, _wrap(updateBlobURL));
     }
 
