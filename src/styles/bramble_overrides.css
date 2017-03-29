@@ -83,3 +83,9 @@
 .CodeMirror-linenumber {
     padding: 0 15px 0 0;
 }
+
+.inline-widget .CodeMirror-foldgutter,
+.inline-widget .CodeMirror-linenumbers,
+.inline-widget .CodeMirror-gutters {
+    background: transparent !important;
+}
