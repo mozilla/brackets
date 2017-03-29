@@ -72,16 +72,12 @@
     background: rgba(0, 135, 207, .3) !important;
 }
 
-.CodeMirror .CodeMirror-gutters {
-    padding-left: 10px;
-}
-
 .CodeMirror .CodeMirror-gutters .CodeMirror-gutter:after {
     display: none;
 }
 
 .CodeMirror-linenumber {
-    padding: 0 15px 0 0;
+    padding: 0 10px;
 }
 
 .inline-widget .CodeMirror-foldgutter,
