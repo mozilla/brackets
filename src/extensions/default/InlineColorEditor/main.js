@@ -98,7 +98,6 @@ define(function (require, exports, module) {
                 inlineColorEditor = new InlineColorEditor(context.color, context.marker);
                 inlineColorEditor.load(hostEditor);
 
-
                 result.resolve(inlineColorEditor);
             }
             return result.promise();
