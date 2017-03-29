@@ -38,7 +38,7 @@ define(function (require, exports, module) {
         },
 
         isArchive: function(ext) {
-            if (ext == "zip" || ext == "tar") {
+            if (ext === "zip" || ext === "tar") {
                 return true;
             } else {
                 return false;
