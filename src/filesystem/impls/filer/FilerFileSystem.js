@@ -12,8 +12,10 @@ define(function (require, exports, module) {
         Handlers        = require("filesystem/impls/filer/lib/handlers"),
         Content         = require("filesystem/impls/filer/lib/content"),
         Async           = require("utils/Async"),
-        BrambleEvents   = require("bramble/BrambleEvents");
-
+        BrambleEvents   = require("bramble/BrambleEvents"),
+        FileSystemCache = require("filesystem/impls/filer/FileSystemCache"),
+        LiveDevMultiBrowser = require("LiveDevelopment/LiveDevMultiBrowser");
+          
     var fs              = BracketsFiler.fs(),
         Path            = BracketsFiler.Path,
         watchers        = {};
@@ -194,7 +196,13 @@ define(function (require, exports, module) {
                     BrambleEvents.triggerFileRenamed(oldPath, newPath);
                 }
 
-                callback();
+                FileSystemCache.refresh(function(err){
+                    if(err){
+                      return callback(err);
+                    }
+                    LiveDevMultiBrowser.reload();
+                    callback();
+                });
             });
         }
 
