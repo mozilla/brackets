@@ -90,6 +90,11 @@ define(function (require, exports, module) {
             PreferencesManager.set("wordWrap", wordWrap);
         }
 
+        var openSVGasXML = BrambleStartupState.ui("openSVGasXML");
+        if(typeof openSVGasXML === "boolean") {
+            PreferencesManager.set("openSVGasXML", openSVGasXML);
+        }
+
         var allowJavaScript = BrambleStartupState.ui("allowJavaScript");
         if(typeof allowJavaScript === "boolean") {
             PreferencesManager.set("allowJavaScript", allowJavaScript);

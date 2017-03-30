@@ -205,6 +205,7 @@ define([
         self.getRootDir = function() { return _root; };
         self.getWordWrap = function() { return _state.wordWrap; };
         self.getAllowJavaScript = function() { return _state.allowJavaScript; };
+        self.getOpenSVGasXML = function() { return _state.openSVGasXML; };
         self.getAutoUpdate = function() { return _state.autoUpdate; };
         self.getTutorialExists = function() { return _tutorialExists; };
         self.getTutorialVisible = function() { return _tutorialVisible; };
@@ -265,6 +266,7 @@ define([
                     _state.theme = data.theme;
                     _state.wordWrap = data.wordWrap;
                     _state.allowJavaScript = data.allowJavaScript;
+                    _state.openSVGasXML = data.openSVGasXML;
                     _state.autoUpdate = data.autoUpdate;
 
                     setReadyState(Bramble.READY);
@@ -301,6 +303,8 @@ define([
                         _state.sidebarVisible = data.visible;
                     } else if (eventName === "wordWrapChange") {
                         _state.wordWrap = data.wordWrap;
+                    } else if (eventName === "openSVGasXMLChange") {
+                        _state.openSVGasXML = data.openSVGasXML;
                     } else if (eventName === "allowJavaScriptChange") {
                         _state.allowJavaScript = data.allowJavaScript;
                     } else if (eventName === "tutorialVisibilityChange") {
@@ -421,6 +425,7 @@ define([
                                     secondPaneWidth: _state.secondPaneWidth,
                                     previewMode: _state.previewMode,
                                     wordWrap: _state.wordWrap,
+                                    openSVGasXML: _state.openSVGasXML,
                                     allowJavaScript: _state.allowJavaScript,
                                     autoUpdate: _state.autoUpdate
                                 }
@@ -902,6 +907,14 @@ define([
 
     BrambleProxy.prototype.disableJavaScript = function(callback) {
         this._executeRemoteCommand({commandCategory: "bramble", command: "BRAMBLE_DISABLE_SCRIPTS"}, callback);
+    };
+
+    BrambleProxy.prototype.openSVGasXML = function(callback) {
+        this._executeRemoteCommand({commandCategory: "bramble", command: "BRAMBLE_OPEN_SVG_AS_XML"}, callback);
+    };
+
+    BrambleProxy.prototype.openSVGasImage = function(callback) {
+        this._executeRemoteCommand({commandCategory: "bramble", command: "BRAMBLE_OPEN_SVG_AS_IMAGE"}, callback);
     };
 
     BrambleProxy.prototype.enableInspector = function(callback) {
