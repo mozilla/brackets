@@ -139,6 +139,10 @@ define(function() {
                 get: function()  { return getBool(storage, "allowJavaScript"); },
                 set: function(v) { storage.setItem(prefix("allowJavaScript"), v); }
             },
+            allowAutoCorrect: {
+                get: function()  { return getBool(storage, "allowAutoCorrect"); },
+                set: function(v) { storage.setItem(prefix("allowAutoCorrect"), v); }
+            },
             autoUpdate: {
                 get: function()  { return getBool(storage, "autoUpdate"); },
                 set: function(v) { storage.setItem(prefix("autoUpdate"), v); }
