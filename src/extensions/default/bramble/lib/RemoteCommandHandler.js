@@ -102,6 +102,15 @@ define(function (require, exports, module) {
         case "BRAMBLE_ENABLE_INSPECTOR":
             MouseManager.enableInspector();
             break;
+        case "STOP_AUTO_COMPLETE":
+            PreferencesManager.set("codehint.TagHints", true);
+            PreferencesManager.set("codehint.AttrHints", true);
+            break;
+        case "START_AUTO_COMPLETE":
+            PreferencesManager.set("codehint.TagHints", false);
+            PreferencesManager.set("codehint.AttrHints", false);
+            break;
+
         case "BRAMBLE_DISABLE_INSPECTOR":
             // Disable the inspector, and clear any marks in the preview/editor
             MouseManager.disableInspector(true);

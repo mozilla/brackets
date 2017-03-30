@@ -157,6 +157,22 @@ define(function (require, exports, module) {
             });
         });
 
+        // Listen for changes to allow TagHints
+        PreferencesManager.on("change", "codehint.TagHints", function () {
+            sendEvent({
+                type: "bramble:TagHintsChange",
+                value: PreferencesManager.get("codehint.TagHints")
+            });
+        });
+
+        // Listen for changes to AttrHints
+        PreferencesManager.on("change", "codehint.AttrHints", function () {
+            sendEvent({
+                type: "bramble:AttrHintsChange",
+                value: PreferencesManager.get("codehint.AttrHints")
+            });
+        });
+
         //Listen for changes to auto update
         PreferencesManager.on("change", "autoUpdate", function () {
             sendEvent({
