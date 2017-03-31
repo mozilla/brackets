@@ -3,7 +3,7 @@ define(function (require, exports, module) {
 
     var InlineWidget            = brackets.getModule("editor/InlineWidget").InlineWidget,
         ParameterEditor         = require("ParameterEditor").ParameterEditor,
-        Inline3dParametersUtils = brackets.getModule("Parameters3DUtils");
+        Inline3dParametersUtils = require("Parameters3DUtils");
 
     /** @type {number} Global var used to provide a unique ID for each parameter editor instance's _origin field. */
     var lastOriginId = 1;
@@ -13,7 +13,7 @@ define(function (require, exports, module) {
      * @param {!string} parameters  Initial Parameters
      * @param {!CodeMirror.TextMarker} marker
      */
-    function InlineParameterEditor(parameters, marker, tag) {
+    function Inline3DParameterEditor(parameters, marker, tag) {
         this._parameters = parameters;
         this._marker = marker;
         this._tag = tag;
@@ -26,28 +26,28 @@ define(function (require, exports, module) {
         InlineWidget.call(this);
     }
 
-    InlineParameterEditor.prototype = Object.create(InlineWidget.prototype);
-    InlineParameterEditor.prototype.constructor = InlineParameterEditor;
-    InlineParameterEditor.prototype.parentClass = InlineWidget.prototype;
+    Inline3DParameterEditor.prototype = Object.create(InlineWidget.prototype);
+    Inline3DParameterEditor.prototype.constructor = Inline3DParameterEditor;
+    Inline3DParameterEditor.prototype.parentClass = InlineWidget.prototype;
 
-    InlineParameterEditor.prototype.ParameterEditor = null;
+    Inline3DParameterEditor.prototype.ParameterEditor = null;
 
-    InlineParameterEditor.prototype._parameters = null;
+    Inline3DParameterEditor.prototype._parameters = null;
 
     /**
      * Range of code we're attached to; _marker.find() may by null if sync is lost.
      * @type {!CodeMirror.TextMarker}
      */
-    InlineParameterEditor.prototype._marker = null;
+    Inline3DParameterEditor.prototype._marker = null;
 
     /** @type {boolean} True while we're syncing a parameter picker change into the code editor */
-    InlineParameterEditor.prototype._isOwnChange = null;
+    Inline3DParameterEditor.prototype._isOwnChange = null;
 
     /** @type {boolean} True while we're syncing a code editor change into the parameter picker */
-    InlineParameterEditor.prototype._isHostChange = null;
+    Inline3DParameterEditor.prototype._isHostChange = null;
 
     /** @type {number} ID used to identify edits coming from this inline widget for undo batching */
-    InlineParameterEditor.prototype._origin = null;
+    Inline3DParameterEditor.prototype._origin = null;
 
 
     /**
@@ -55,7 +55,7 @@ define(function (require, exports, module) {
      * we've lost sync with what's in the code.
      * @return {?{start:{line:number, ch:number}, end:{line:number, ch:number}}}
      */
-    InlineParameterEditor.prototype.getCurrentRange = function () {
+    Inline3DParameterEditor.prototype.getCurrentRange = function () {
         var pos, start, end;
 
         pos = this._marker && this._marker.find();
@@ -99,7 +99,7 @@ define(function (require, exports, module) {
      * When the selected text changes, update text in code editor
      * @param {!string} parameterString
      */
-    InlineParameterEditor.prototype._handleParametersChange = function (parameterString) {
+    Inline3DParameterEditor.prototype._handleParametersChange = function (parameterString) {
         var self = this;
         if (parameterString !== this._parameters) {
             var range = this.getCurrentRange();
@@ -134,8 +134,8 @@ define(function (require, exports, module) {
      * @override
      * @param {!Editor} hostEditor
      */
-    InlineParameterEditor.prototype.load = function (hostEditor) {
-        InlineParameterEditor.prototype.parentClass.load.apply(this, arguments);
+    Inline3DParameterEditor.prototype.load = function (hostEditor) {
+        Inline3DParameterEditor.prototype.parentClass.load.apply(this, arguments);
         this.parameterEditor = new ParameterEditor(this.$htmlContent, this._handleParametersChange, this._tag, this._parameters);
     };
 
@@ -143,8 +143,8 @@ define(function (require, exports, module) {
      * @override
      * Perform sizing & focus once we've been added to Editor's DOM
      */
-    InlineParameterEditor.prototype.onAdded = function () {
-        InlineParameterEditor.prototype.parentClass.onAdded.apply(this, arguments);
+    Inline3DParameterEditor.prototype.onAdded = function () {
+        Inline3DParameterEditor.prototype.parentClass.onAdded.apply(this, arguments);
 
         var doc = this.hostEditor.document;
         doc.addRef();
@@ -159,8 +159,8 @@ define(function (require, exports, module) {
      * @override
      * Called whenever the inline widget is closed, whether automatically or explicitly
      */
-    InlineParameterEditor.prototype.onClosed = function () {
-        InlineParameterEditor.prototype.parentClass.onClosed.apply(this, arguments);
+    Inline3DParameterEditor.prototype.onClosed = function () {
+        Inline3DParameterEditor.prototype.parentClass.onClosed.apply(this, arguments);
 
         if (this._marker) {
             this._marker.clear();
@@ -171,7 +171,7 @@ define(function (require, exports, module) {
         doc.releaseRef();
     };
 
-    InlineParameterEditor.prototype._handleHostDocumentChange = function () {
+    Inline3DParameterEditor.prototype._handleHostDocumentChange = function () {
         if (this._isOwnChange) {
             return;
         }
@@ -192,5 +192,5 @@ define(function (require, exports, module) {
         }
     };
 
-    exports.InlineParameterEditor = InlineParameterEditor;
+    exports.Inline3DParameterEditor = Inline3DParameterEditor;
 });

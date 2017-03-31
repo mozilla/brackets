@@ -3,12 +3,12 @@ define(function (require, exports, module) {
 
     var EditorManager           = brackets.getModule("editor/EditorManager"),
         ExtensionUtils          = brackets.getModule("utils/ExtensionUtils"),
-        Inline3dParametersUtils = brackets.getModule("Parameters3DUtils"),
-        HTMLUtils               = brackets.getModule("language/HTMLUtils");
-        InlineParameterEditor   = require("InlineParameterEditor").InlineParameterEditor,
+        HTMLUtils               = brackets.getModule("language/HTMLUtils"),
+        Inline3dParametersUtils = require("Parameters3DUtils"),
+        Inline3DParameterEditor = require("Inline3DParameterEditor").Inline3DParameterEditor;
 
     /**
-     * Prepare hostEditor for an InlineParameterEditor at pos if possible. Return
+     * Prepare hostEditor for an Inline3DParameterEditor at pos if possible. Return
      * editor context if so; otherwise null.
      *
      * @param {Editor} hostEditor
@@ -66,17 +66,17 @@ define(function (require, exports, module) {
      */
     function inline3DParametersEditor(hostEditor, pos) {
         var context = prepareParametersForProvider(hostEditor, pos),
-            inlineParameterEditor,
+            inline3DParameterEditor,
             result;
 
         if (!context) {
             return null;
         }
-        inlineParameterEditor = new InlineParameterEditor(context.parameters, context.marker, context.tag);
-        inlineParameterEditor.load(hostEditor);
+        inline3DParameterEditor = new Inline3DParameterEditor(context.parameters, context.marker, context.tag);
+        inline3DParameterEditor.load(hostEditor);
 
         result = new $.Deferred();
-        result.resolve(inlineParameterEditor);
+        result.resolve(inline3DParameterEditor);
         return result.promise();
     }
 

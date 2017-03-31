@@ -2,8 +2,8 @@ define(function (require, exports, module) {
     "use strict";
 
     var Strings                 = brackets.getModule("strings"),
-        Inline3dParametersUtils = brackets.getModule("Parameters3DUtils"),
-        Mustache                = brackets.getModule("thirdparty/mustache/mustache");
+        Mustache                = brackets.getModule("thirdparty/mustache/mustache"),
+        Inline3dParametersUtils = require("Parameters3DUtils");
 
     /** Mustache template that forms the bare DOM structure of the UI */
     var Template = require("text!ParameterEditorTemplate.html");
