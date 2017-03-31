@@ -335,7 +335,7 @@ define(function (require, exports, module) {
          * or not a mime type we care about, reject it.
          */
         function rejectImport(item) {
-            var ext = Path.extname(item.name).replace(/^\./, "").toLowerCase();
+            var ext = Content.FilerUtils.normalizeExtension(Path.extname(item.name), true);
             
             if (item.size > archiveByteLimit) {
                 return new Error(Strings.DND_MAX_FILE_SIZE_EXCEEDED);
@@ -408,7 +408,7 @@ define(function (require, exports, module) {
 
                 var filename = Path.join(StartupState.project("root"), item.name);
                 var file = FileSystem.getFileForPath(filename);
-                var ext = Path.extname(filename).toLowerCase();
+                var ext = Path.extname(filename);
 
                 // Create a Filer Buffer, and determine the proper encoding. We
                 // use the extension, and also the OS provided mime type for clues.
