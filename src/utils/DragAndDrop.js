@@ -339,7 +339,7 @@ define(function (require, exports, module) {
             var ext = FilerUtils.normalizeExtension(Path.extname(item.name), true);
             
             if (item.size > archiveByteLimit) {
-                return new Error(Strings.DND_MAX_FILE_SIZE_EXCEEDED);
+                return new Error(Strings.DND_MAX_ARCHIVE_SIZE_EXCEEDED);
             } else if (item.size > byteLimit) {
                 if(!Content.isArchive(ext)){
                     return new Error(Strings.DND_MAX_FILE_SIZE_EXCEEDED);
