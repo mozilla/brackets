@@ -432,6 +432,7 @@ define([
                                     previewMode: _state.previewMode,
                                     wordWrap: _state.wordWrap,
                                     allowJavaScript: _state.allowJavaScript,
+                                    allowAutoCorrect: _state.allowAutoCorrect,
                                     autoCloseTags: _state.autoCloseTags,
                                     autoUpdate: _state.autoUpdate
                                 }
