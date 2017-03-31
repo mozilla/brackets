@@ -53,6 +53,10 @@ var destLocalizedStrings = {};
 var locales;
 var destLocales;
 
+templates.addFilter('escapeQuotes', function(str){
+    return str.replace(/"/g, "&quot;");
+});
+
 function getDestLocaleDir(locale) {
     "use strict";
 
