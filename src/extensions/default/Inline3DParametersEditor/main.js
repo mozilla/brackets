@@ -4,7 +4,7 @@ define(function (require, exports, module) {
     var EditorManager           = brackets.getModule("editor/EditorManager"),
         ExtensionUtils          = brackets.getModule("utils/ExtensionUtils"),
         InlineParameterEditor   = require("InlineParameterEditor").InlineParameterEditor,
-        Inline3dParametersUtils = brackets.getModule("utils/Parameters3DUtils"),
+        Inline3dParametersUtils = brackets.getModule("Parameters3DUtils"),
         HTMLUtils               = brackets.getModule("language/HTMLUtils");
 
     /**

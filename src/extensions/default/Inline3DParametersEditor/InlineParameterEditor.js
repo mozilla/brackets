@@ -3,7 +3,7 @@ define(function (require, exports, module) {
 
     var InlineWidget            = brackets.getModule("editor/InlineWidget").InlineWidget,
         ParameterEditor         = require("ParameterEditor").ParameterEditor,
-        Inline3dParametersUtils = brackets.getModule("utils/Parameters3DUtils");
+        Inline3dParametersUtils = brackets.getModule("Parameters3DUtils");
 
     /** @type {number} Global var used to provide a unique ID for each parameter editor instance's _origin field. */
     var lastOriginId = 1;

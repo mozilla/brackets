@@ -2,7 +2,7 @@ define(function (require, exports, module) {
     "use strict";
 
     var Strings                 = brackets.getModule("strings"),
-        Inline3dParametersUtils = brackets.getModule("utils/Parameters3DUtils"),
+        Inline3dParametersUtils = brackets.getModule("Parameters3DUtils"),
         Mustache                = brackets.getModule("thirdparty/mustache/mustache");
 
     /** Mustache template that forms the bare DOM structure of the UI */
