@@ -24,7 +24,7 @@ define(function (require, exports, module) {
         if(MODIFIERS.hasOwnProperty(tag)) {
             return MODIFIERS[tag];
         }
-        return MODIFIER[tag];
+        return 25;
     }
 
     // Define public API

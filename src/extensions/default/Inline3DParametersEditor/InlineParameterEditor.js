@@ -171,22 +171,6 @@ define(function (require, exports, module) {
         doc.releaseRef();
     };
 
-    /**
-     * @override
-     * Called whenever the inline widget is closed, whether automatically or explicitly
-     */
-    InlineParameterEditor.prototype.onClosed = function () {
-        InlineParameterEditor.prototype.parentClass.onClosed.apply(this, arguments);
-
-        if (this._marker) {
-            this._marker.clear();
-        }
-
-        var doc = this.hostEditor.document;
-        doc.off("change", this._handleHostDocumentChange);
-        doc.releaseRef();
-    };
-
     InlineParameterEditor.prototype._handleHostDocumentChange = function () {
         if (this._isOwnChange) {
             return;
