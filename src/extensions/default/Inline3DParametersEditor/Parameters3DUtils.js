@@ -6,23 +6,24 @@ define(function (require, exports, module) {
     "use strict";
 
     var PARAMETERS_3D_REGEX = /( )*(((-)?\d+(\.\d+)?)( )+)*((-)?\d+(\.\d+)?( )*)/g;
-    var TRANSLATE_STRING = "position";
-    var ROTATE_STRING = "rotation";
-    var SCALE_STRING = "scale";
-    var RADIUS_STRING = "radius";
-    var MODIFIER = [];
-    MODIFIER[TRANSLATE_STRING] = 50;
-    MODIFIER[SCALE_STRING] = 30;
-    MODIFIER[ROTATE_STRING] = 5;
-    MODIFIER[RADIUS_STRING] = 50;
+
+    var MODIFIERS = {
+        postion: 50,
+        scale: 30,
+        rotation: 5,
+        radius: 50
+    }
 
     /*
-     * Adds a color swatch to code hints where this is supported.
+     * Returns the scroll modifier corresponding to a parameter.
      * @param {?string} tag : tag corresponding to which modifier
      * is required
      * @return Modifier value
      */
     function getModifier(tag) {
+        if(MODIFIERS.hasOwnProperty(tag)) {
+            return MODIFIERS[tag];
+        }
         return MODIFIER[tag];
     }
 
