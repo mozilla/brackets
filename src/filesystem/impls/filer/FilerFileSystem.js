@@ -13,9 +13,8 @@ define(function (require, exports, module) {
         Content         = require("filesystem/impls/filer/lib/content"),
         Async           = require("utils/Async"),
         BrambleEvents   = require("bramble/BrambleEvents"),
-        FileSystemCache = require("filesystem/impls/filer/FileSystemCache"),
-        LiveDevMultiBrowser = require("LiveDevelopment/LiveDevMultiBrowser");
-          
+        FileSystemCache = require("filesystem/impls/filer/FileSystemCache");
+
     var fs              = BracketsFiler.fs(),
         Path            = BracketsFiler.Path,
         watchers        = {};
@@ -194,13 +193,14 @@ define(function (require, exports, module) {
                 if(stat.isFile) {
                     BlobUtils.rename(oldPath, newPath);
                     BrambleEvents.triggerFileRenamed(oldPath, newPath);
+                    return callback();
                 }
 
+                // This is a dir, refresh our cache for child paths to get updated.
                 FileSystemCache.refresh(function(err){
                     if(err){
                       return callback(err);
                     }
-                    LiveDevMultiBrowser.reload();
                     callback();
                 });
             });
