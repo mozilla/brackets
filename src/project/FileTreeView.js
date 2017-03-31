@@ -511,7 +511,6 @@ define(function (require, exports, module) {
               default:
                 filtType = "default";
                 break;
-
             }
 
             var insClassName = "jstree-icon-" + filtType;
