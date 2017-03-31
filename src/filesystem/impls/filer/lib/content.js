@@ -44,7 +44,7 @@ define(function (require, exports, module) {
         },
 
         mimeFromExt: function(ext) {
-            ext = FilerUtils.normalizeExtension(false);
+            ext = FilerUtils.normalizeExtension(ext, false);
 
             switch(ext) {
             case '.html':
