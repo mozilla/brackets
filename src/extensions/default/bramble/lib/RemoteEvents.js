@@ -157,7 +157,7 @@ define(function (require, exports, module) {
             });
         });
 
-        // Listen for changes to allow TagHints
+        // Listen for changes to TagHints
         PreferencesManager.on("change", "codehint.TagHints", function () {
             sendEvent({
                 type: "bramble:TagHintsChange",

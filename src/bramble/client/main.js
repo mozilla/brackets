@@ -204,7 +204,7 @@ define([
         self.getSidebarVisible = function() { return _state.sidebarVisible; };
         self.getRootDir = function() { return _root; };
         self.getWordWrap = function() { return _state.wordWrap; };
-        self.getAutoCorrect = function() { return _state.allowAutoCorrect; };
+        self.getAutoComplete = function() { return _state.allowAutoComplete; };
         self.getAutoCloseTags = function() { return _state.autoCloseTags; };
         self.getAllowJavaScript = function() { return _state.allowJavaScript; };
         self.getAutoUpdate = function() { return _state.autoUpdate; };
@@ -268,7 +268,7 @@ define([
                     _state.wordWrap = data.wordWrap;
                     _state.autoCloseTags = data.autoCloseTags;
                     _state.allowJavaScript = data.allowJavaScript;
-                    _state.autoCorrect = data.autoCorrect;
+                    _state.autoComplete = data.autoComplete;
                     _state.autoUpdate = data.autoUpdate;
 
                     setReadyState(Bramble.READY);
@@ -312,9 +312,9 @@ define([
                     } else if (eventName === "tutorialVisibilityChange") {
                         _tutorialVisible = data.visible;
                     } else if (eventName === "TagHintsChange") {
-                        _state.allowAutoCorrect = data.value;
+                        _state.allowAutoComplete = data.value;
                     } else if (eventName === "AttrHintsChange") {
-                        _state.allowAutoCorrect = data.value;
+                        _state.allowAutoComplete = data.value;
                     } else if (eventName === "autoUpdateChange") {
                         _state.autoUpdate = data.autoUpdate;
                     }
@@ -432,7 +432,7 @@ define([
                                     previewMode: _state.previewMode,
                                     wordWrap: _state.wordWrap,
                                     allowJavaScript: _state.allowJavaScript,
-                                    allowAutoCorrect: _state.allowAutoCorrect,
+                                    allowAutoComplete: _state.allowAutoComplete,
                                     autoCloseTags: _state.autoCloseTags,
                                     autoUpdate: _state.autoUpdate
                                 }
