@@ -69,8 +69,7 @@ define(function (require, exports, module) {
     };
 
     ParameterEditor.prototype._setSpaces = function (parameters) {
-        this._spaces = [];
-        this._spaces.push(parameters.search(/\S/));
+        this._spaces = [parameters.search(/\S/)];
         if(this._spaces[0] === -1) {
             this._spaces[0] = 0;
         }
@@ -92,7 +91,7 @@ define(function (require, exports, module) {
     };
 
     ParameterEditor.prototype._hideInputs = function() {
-        if(this._numberOfParameters<=2) {
+        if(this._numberOfParameters <= 2) {
             this.$element.find("#_z").css("display", "none");
             this.$element.find("#input-z").css("display", "none");
         }
@@ -113,7 +112,7 @@ define(function (require, exports, module) {
         this._hideInputs();
 
         this._values = [];
-        for(var i = 0; i<this._numberOfParameters; i++) {
+        for(var i = 0; i < this._numberOfParameters; i++) {
             this._values.push(parseFloat(this.$sliders[i].val()));
         }
 

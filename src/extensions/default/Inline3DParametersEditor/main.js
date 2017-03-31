@@ -3,9 +3,9 @@ define(function (require, exports, module) {
 
     var EditorManager           = brackets.getModule("editor/EditorManager"),
         ExtensionUtils          = brackets.getModule("utils/ExtensionUtils"),
-        InlineParameterEditor   = require("InlineParameterEditor").InlineParameterEditor,
         Inline3dParametersUtils = brackets.getModule("Parameters3DUtils"),
         HTMLUtils               = brackets.getModule("language/HTMLUtils");
+        InlineParameterEditor   = require("InlineParameterEditor").InlineParameterEditor,
 
     /**
      * Prepare hostEditor for an InlineParameterEditor at pos if possible. Return
@@ -71,14 +71,13 @@ define(function (require, exports, module) {
 
         if (!context) {
             return null;
-        } else {
-            inlineParameterEditor = new InlineParameterEditor(context.parameters, context.marker, context.tag);
-            inlineParameterEditor.load(hostEditor);
-
-            result = new $.Deferred();
-            result.resolve(inlineParameterEditor);
-            return result.promise();
         }
+        inlineParameterEditor = new InlineParameterEditor(context.parameters, context.marker, context.tag);
+        inlineParameterEditor.load(hostEditor);
+
+        result = new $.Deferred();
+        result.resolve(inlineParameterEditor);
+        return result.promise();
     }
 
     ExtensionUtils.loadStyleSheet(module, "css/main.css");
