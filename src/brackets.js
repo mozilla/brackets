@@ -113,7 +113,6 @@ define(function (require, exports, module) {
     require("utils/Resizer");
     require("LiveDevelopment/main");
     require("utils/ColorUtils");
-    require("utils/Parameters3DUtils");
     require("view/ThemeManager");
     require("thirdparty/lodash");
     require("language/XMLUtils");
