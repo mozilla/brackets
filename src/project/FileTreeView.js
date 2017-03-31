@@ -479,7 +479,41 @@ define(function (require, exports, module) {
             var fullname = this.props.name,
                 extension = LanguageManager.getCompoundFileExtension(fullname),
                 name = _getName(fullname, extension),
-                insClassName = "jstree-icon-" + extension.toLowerCase();
+                filtType = "default";
+
+            switch (extension.toLowerCase()) {
+              case 'htmls':
+              case 'htm':
+              case 'htx':
+              case 'md':
+              case 'markdown':
+              case 'html':
+                filtType = "html";
+                break;
+              case 'ico':
+              case 'bmp':
+              case 'svg':
+              case 'png':
+              case 'ico':
+              case 'jpg':
+              case 'jpe':
+              case 'jpeg':
+              case 'gif':
+                filtType = "image";
+                break;
+              case 'css':
+              case 'less':
+                filtType = "css";
+                break;
+              case 'js':
+                filtType = "js";
+                break;
+              default:
+                filtType = "default";
+                break;
+            }
+
+            var insClassName = "jstree-icon-" + filtType;
 
             if (extension) {
                 extension = DOM.span({

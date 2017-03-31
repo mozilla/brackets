@@ -97,7 +97,7 @@ li.jstree-closed > ul { display:none; }
 }
 
 // Add new icons here
-@extensionName: gif, html, svg;
+@extensionName: css, html, image, js, default;
 
 .for(@extensionName, {
     ins.jstree-icon-@{value} {
@@ -111,7 +111,7 @@ li.jstree-closed > ul { display:none; }
     & {
         .loop(@i:1) when (@i =< length(@list)) {
             @value: extract(@list, @i);
-            @bg: url("images/icons/@{value}.gif") center center no-repeat !important;
+            @bg: url("images/icons/@{value}.svg") center center no-repeat !important;
             @code();
             .loop (@i + 1);
         }
