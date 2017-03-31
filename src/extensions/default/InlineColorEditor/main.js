@@ -37,6 +37,21 @@ define(function (require, exports, module) {
 
     var DEFAULT_COLOR = "white";
 
+    /*
+    This function takes a line number, string and the colon position, and writes
+    the default color value at 2 places after the colon position
+     */
+    function setLine(lineNo, newContent, hostEditor, colonPos) {
+        var fileContent = [];
+        var content = hostEditor._codeMirror['doc']['children'][0]['lines'];
+        var lineContent = content[lineNo]['text'];
+        lineContent = [lineContent.slice(0, colonPos + 2), newContent, lineContent.slice(colonPos + 2)].join('');
+        content[lineNo]['text'] = lineContent;
+        for (var i = 0; i < content.length; i++) {
+            fileContent.push(content[i]['text']);
+        }
+        hostEditor._codeMirror.setValue(fileContent.join("\n"));
+    }
 
     /**
      * Prepare hostEditor for an InlineColorEditor at pos if possible. Return
@@ -88,13 +103,19 @@ define(function (require, exports, module) {
                         firstCharacterPos = cursorLineSubstring.search(/\S/);
                         pos.ch = colonPos + 1 + firstCharacterPos;
                         endPos = {line: pos.line, ch: semiColonPos};
+                    } else if (!colorValue) {
+                        setLine(pos.line, DEFAULT_COLOR, hostEditor, colonPos);
+                        pos.ch = colonPos + 2;
+                        endPos = {line: pos.line, ch: semiColonPos + DEFAULT_COLOR.length};
+                        colorValue = DEFAULT_COLOR;
                     } else {
                         return null;
                     }
                 } else {
                     // edit the color value of a new css rule
-                    pos.ch = colonPos + 1;
-                    endPos = {line: pos.line, ch: cursorLine.length};
+                    setLine(pos.line, DEFAULT_COLOR, hostEditor, colonPos);
+                    pos.ch = colonPos + 2;
+                    endPos = {line: pos.line, ch: pos.ch + DEFAULT_COLOR.length};
                     colorValue = DEFAULT_COLOR;
                 }
 
