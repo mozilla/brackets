@@ -38,11 +38,13 @@
         /**
          * Sends a message over the transport.
          * @param {string} msgStr The message to send.
+         * @param {string} data The data object to be shown in console
          */
-        send: function (msgStr) {
+        send: function (msgStr, data) {
             parent.postMessage(JSON.stringify({
                 type: "message",
-                message: msgStr
+                message: msgStr,
+                data: data
             }), "*");
         },
 

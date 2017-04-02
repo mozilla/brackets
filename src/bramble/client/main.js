@@ -204,6 +204,7 @@ define([
         self.getSidebarVisible = function() { return _state.sidebarVisible; };
         self.getRootDir = function() { return _root; };
         self.getWordWrap = function() { return _state.wordWrap; };
+        self.getAutoCloseTags = function() { return _state.autoCloseTags; };
         self.getAllowJavaScript = function() { return _state.allowJavaScript; };
         self.getAllowWhiteSpace = function() { return _state.allowWhiteSpace; };
         self.getAutoUpdate = function() { return _state.autoUpdate; };
@@ -265,6 +266,7 @@ define([
                     _state.previewMode = data.previewMode;
                     _state.theme = data.theme;
                     _state.wordWrap = data.wordWrap;
+                    _state.autoCloseTags = data.autoCloseTags;
                     _state.allowJavaScript = data.allowJavaScript;
                     _state.allowWhiteSpace = data.allowWhiteSpace;
                     _state.autoUpdate = data.autoUpdate;
@@ -303,6 +305,8 @@ define([
                         _state.sidebarVisible = data.visible;
                     } else if (eventName === "wordWrapChange") {
                         _state.wordWrap = data.wordWrap;
+                    } else if (eventName === "autoCloseTagsChange") {
+                        _state.autoCloseTags = data.autoCloseTags;
                     } else if (eventName === "allowJavaScriptChange") {
                         _state.allowJavaScript = data.allowJavaScript;
                     } else if (eventName === "allowWhiteSpaceChange") {
@@ -427,6 +431,7 @@ define([
                                     wordWrap: _state.wordWrap,
                                     allowJavaScript: _state.allowJavaScript,
                                     allowWhiteSpace: _state.allowWhiteSpace,
+                                    autoCloseTags: _state.autoCloseTags,
                                     autoUpdate: _state.autoUpdate
                                 }
                             };
@@ -933,6 +938,10 @@ define([
         this._executeRemoteCommand({commandCategory: "bramble", command: "BRAMBLE_DISABLE_WORD_WRAP"}, callback);
     };
 
+    BrambleProxy.prototype.configureAutoCloseTags = function(options, callback) {
+        this._executeRemoteCommand({commandCategory: "bramble", command: "BRAMBLE_CONFIGURE_AUTO_CLOSE_TAGS", args: [ options ]}, callback);
+    };
+
     BrambleProxy.prototype.showTutorial = function(callback) {
         this._executeRemoteCommand({commandCategory: "bramble", command: "BRAMBLE_SHOW_TUTORIAL"}, callback);
     };
@@ -966,7 +975,7 @@ define([
     BrambleProxy.prototype.export = function(callback) {
         this._executeRemoteCommand({commandCategory: "bramble", command: "BRAMBLE_EXPORT"}, callback);
     };
-	
+
     BrambleProxy.prototype.addCodeSnippet = function(options, callback) {
         this._executeRemoteCommand({
             commandCategory: "bramble",

@@ -51,6 +51,35 @@ define(function() {
         return str|0;
     }
 
+    function getObject(storage, property) {
+        var objStr = getString(storage, property);
+        var obj = {};
+
+        try {
+            obj = JSON.parse(objStr);
+        } catch(e) {
+            console.error("Failed to parse object from localStorage item " + prefix(property) + " with: ", e);
+        }
+
+        return obj;
+    }
+
+    function setObject(storage, property, obj) {
+        if(!obj) {
+          return;
+        }
+
+        var objStr;
+        property = prefix(property);
+
+        try {
+            objStr = JSON.stringify(obj);
+            storage.setItem(property, objStr);
+        } catch(e) {
+            console.error("Failed to stringify object to write to localStorage for item " + property + " with: ", e);
+        }
+    }
+
     function StateManager(disableStorage) {
         var storage;
         if(disableStorage) {
@@ -101,6 +130,10 @@ define(function() {
             wordWrap: {
                 get: function()  { return getBool(storage, "wordWrap"); },
                 set: function(v) { storage.setItem(prefix("wordWrap"), v); }
+            },
+            autoCloseTags: {
+                get: function()  { return getObject(storage, "closeTags"); },
+                set: function(v) { setObject(storage, "closeTags", v); }
             },
             allowJavaScript: {
                 get: function()  { return getBool(storage, "allowJavaScript"); },

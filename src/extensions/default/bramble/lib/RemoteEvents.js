@@ -140,7 +140,15 @@ define(function (require, exports, module) {
                 wordWrap: PreferencesManager.get("wordWrap")
             });
         });
-        
+
+        // Listen for changes to close tags
+        PreferencesManager.on("change", "closeTags", function () {
+            sendEvent({
+                type: "bramble:autoCloseTagsChange",
+                autoCloseTags: PreferencesManager.get("closeTags")
+            });
+        });
+
         // Listen for changes to allow javascript
         PreferencesManager.on("change", "allowJavaScript", function () {
             sendEvent({
@@ -197,6 +205,7 @@ define(function (require, exports, module) {
             wordWrap: PreferencesManager.get("wordWrap"),
             allowJavaScript: PreferencesManager.get("allowJavaScript"),
             allowWhiteSpace: PreferencesManager.get("allowWhiteSpace"),
+            autoCloseTags: PreferencesManager.get("closeTags"),
             autoUpdate: PreferencesManager.get("autoUpdate")
         });
     }

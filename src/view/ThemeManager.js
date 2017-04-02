@@ -237,6 +237,7 @@ define(function (require, exports, module) {
                     return result.content;
                 })
                 .then(function (cssContent) {
+                    $("body").toggleClass("dark", theme.dark);
                     styleNode.text(cssContent);
                     $("body").attr('data-theme',theme.name);
                     pending.resolve(theme);
