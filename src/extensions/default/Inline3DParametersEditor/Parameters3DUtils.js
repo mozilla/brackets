@@ -12,7 +12,7 @@ define(function (require, exports, module) {
         scale: 30,
         rotation: 5,
         radius: 50
-    }
+    };
 
     /*
      * Returns the scroll modifier corresponding to a parameter.
