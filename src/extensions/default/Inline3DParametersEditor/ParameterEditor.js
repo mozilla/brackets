@@ -56,7 +56,7 @@
 
     ParameterEditor.prototype._addListeners = function () {
         var self = this;
-        for(var i = 0; i<this._numberOfParameters; i++) {
+        for(var i = 0; i < this._numberOfParameters; i++) {
             this.$sliders[i].bind("mousedown", {"index" : i, "self" : this}, this._mouseDownCallback);
             this._registerDragHandler(this.$sliders[i], this._handleSliderDrag, i);
         }
@@ -98,7 +98,7 @@
         }
 
         parameters = parameters.substr(this._spaces[0]);
-        for (var i = 0; i<this._numberOfParameters - 1 ; i++) {
+        for (var i = 0; i < this._numberOfParameters - 1 ; i++) {
             parameters = parameters.substr(parameters.indexOf(" "));
             this._spaces.push(parameters.search(/\S/));
             parameters = parameters.substr(this._spaces[i+1]);
@@ -142,7 +142,7 @@
         var parametersArray = parameters.trim().match(/\S+/g);
         this._setSpaces(parameters);
 
-        for(var i = 0; i<this._numberOfParameters; i++) {
+        for(var i = 0; i < this._numberOfParameters; i++) {
             this.$sliders[i].val(parametersArray[i]);
         }
     };
@@ -168,7 +168,7 @@
 
     ParameterEditor.prototype._getWhiteSpaces = function(number) {
         var spaces = "";
-        for(var i = 0 ; i<number; i++) {
+        for(var i = 0 ; i < number; i++) {
             spaces += " ";
         }
         return spaces;
@@ -176,7 +176,7 @@
 
     ParameterEditor.prototype._getParameters = function() {
         var parameters = this._getWhiteSpaces(this._spaces[0]);
-        for(var i = 0; i<this._numberOfParameters; i++) {
+        for(var i = 0; i < this._numberOfParameters; i++) {
             parameters += this.$sliders[i].val();
             parameters += this._getWhiteSpaces(this._spaces[i+1]);
         }
