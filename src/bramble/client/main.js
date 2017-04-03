@@ -751,7 +751,7 @@ define([
                         // trigger the event, and call the callback
                         if(err.code === "ENOTDIR") {
                             return shell.rm(path, genericFileEventFn("fileDelete", path, function(err) {
-                                wrappedCallback = callback;
+                                var wrappedCallback = callback;
                                 if(!err && path === self.tutorialPath) {
                                     wrappedCallback = genericFileEventFn("tutorialRemoved", path, wrappedCallback);
                                     _tutorialExists = false;
