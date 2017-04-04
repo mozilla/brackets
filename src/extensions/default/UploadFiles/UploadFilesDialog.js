@@ -177,7 +177,7 @@ define(function (require, exports, module) {
         if(_uploadDialog) {
            return _uploadDialog.deferred.promise();
         }
- 
+
         _uploadDialog = new FileUploadDialog();
         return _uploadDialog.show();
     }
