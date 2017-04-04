@@ -105,10 +105,14 @@ define(function (require, exports, module) {
         case "STOP_AUTO_COMPLETE":
             PreferencesManager.set("codehint.TagHints", true);
             PreferencesManager.set("codehint.AttrHints", true);
+            PreferencesManager.set("codehint.JSHints", true);
+            PreferencesManager.set("codehint.CssPropHints", true);
             break;
         case "START_AUTO_COMPLETE":
             PreferencesManager.set("codehint.TagHints", false);
             PreferencesManager.set("codehint.AttrHints", false);
+            PreferencesManager.set("codehint.JSHints", false);
+            PreferencesManager.set("codehint.CssPropHints", false);
             break;
 
         case "BRAMBLE_DISABLE_INSPECTOR":

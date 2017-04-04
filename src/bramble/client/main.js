@@ -315,6 +315,10 @@ define([
                         _state.allowAutoComplete = data.value;
                     } else if (eventName === "AttrHintsChange") {
                         _state.allowAutoComplete = data.value;
+                    } else if (eventName === "JSHintsChange") {
+                        _state.allowAutoComplete = data.value;
+                    } else if (eventName === "CssPropHintsChange") {
+                        _state.allowAutoComplete = data.value;
                     } else if (eventName === "autoUpdateChange") {
                         _state.autoUpdate = data.autoUpdate;
                     }

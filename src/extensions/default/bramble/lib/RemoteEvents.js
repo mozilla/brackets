@@ -173,6 +173,24 @@ define(function (require, exports, module) {
             });
         });
 
+
+        // Listen for changes to JSHints
+        PreferencesManager.on("change", "codehint.JSHints", function () {
+            sendEvent({
+                type: "bramble:JSHintsChange",
+                value: PreferencesManager.get("codehint.JSHints")
+            });
+        });
+
+
+        // Listen for changes to CssPropHints
+        PreferencesManager.on("change", "codehint.CssPropHints", function () {
+            sendEvent({
+                type: "bramble:CssPropHintsChange",
+                value: PreferencesManager.get("codehint.CssPropHints")
+            });
+        });
+
         //Listen for changes to auto update
         PreferencesManager.on("change", "autoUpdate", function () {
             sendEvent({

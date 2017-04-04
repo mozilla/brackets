@@ -102,6 +102,8 @@ define(function (require, exports, module) {
         if(typeof allowAutoComplete === "boolean") {
             PreferencesManager.set("codehint.AttrHints", allowAutoComplete);
             PreferencesManager.set("codehint.TagHints", allowAutoComplete);
+            PreferencesManager.set("codehint.JSHints", allowAutoComplete);
+            PreferencesManager.set("codehint.CssPropHints", allowAutoComplete);
         }
 
         var autoUpdate = BrambleStartupState.ui("autoUpdate");
