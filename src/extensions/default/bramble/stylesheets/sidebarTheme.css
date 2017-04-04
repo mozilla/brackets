@@ -23,9 +23,12 @@ div.working-set-option-btn[style] {
     text-shadow: none;
 }
 
+#project-files-header {
+    display: none;
+}
 
 #project-files-container {
-    padding-left: 0;
+    padding: 12px 0 0 0;
     font-weight: 400;
     font-family: "Open Sans", "Helvetica Neue", sans-serif;
 }
@@ -36,6 +39,10 @@ div.working-set-option-btn[style] {
 
 
 /* File tree basic styles */
+
+li.jstree-leaf {
+    min-height: 37px;
+}
 
 li.jstree-leaf a span,
 li.jstree-leaf span.extension {
@@ -72,8 +79,21 @@ body[data-theme='light-theme'] li.jstree-open > a span {
 li.jstree-open a,
 li.jstree-closed a,
 li.jstree-leaf a {
-    padding: 10px 10px 10px 30px;
+    padding: 10px 10px 10px 40px;
     cursor: pointer !important;
+}
+
+
+/* Hides the 'spacing indenter' that the filetree adds into
+   into items in folders */
+
+li.jstree-leaf a > div,
+li.jstree-open a > div,
+li.jstree-closed a > div,
+li.jstree-leaf div,
+li.jstree-open div,
+li.jstree-closed div {
+    display: none !important;
 }
 
 
@@ -184,14 +204,16 @@ body[data-theme='light-theme'] li.jstree-leaf a.selected-node:hover {
 .jstree-brackets li.jstree-open > .jstree-icon {
     transition: transform .15s ease-out !important;
     top: 9px;
-    left: 7px !important;
-    margin: 0;
+    left: 14px !important;
+    margin: 0 !important;
     background-image: url(../images/folder-arrow.svg);
+    background-color: transparent;
     background-position: center;
     background-size: 7px;
     background-repeat: no-repeat;
     cursor: pointer;
     opacity: .8;
+    filter: none;
 }
 
 
@@ -212,13 +234,7 @@ body[data-theme='light-theme'] li.jstree-leaf a.selected-node:hover {
 /* Indents files within a folder */
 
 .jstree-open > ul {
-    margin-left: 15px;
-    border-left: solid 2px rgba(255,255,255,.1);
-}
-
-
-[data-theme='light-theme'] .jstree-open > ul {
-    border-left: solid 2px rgba(0,0,0,.1);
+    margin-left: 26px;
 }
 
 /* Hides selected (and right-clicked) file overlay, not needed */
@@ -238,17 +254,19 @@ body[data-theme='light-theme'] li.jstree-leaf a.selected-node:hover {
 /* File renaming UI */
 
 #project-files-container .jstree-brackets .jstree-rename-input {
-    padding: 18px 5px 19px 5px;
+    padding: 17px 4px 18px 4px;
     font-size: 15px;
     line-height: 15px;
-    margin-left: 22px;
     background: white;
+    top: 0 !important;
+    display: block;
+    margin: 0 0 0 40px !important;
     font-family: inherit;
     color: black;
     border-radius: 0;
-    position: static;
+    position: relative;
     border: none;
-    width: calc(100% - 40px) !important;
+    width: calc(100% - 60px) !important;
     box-sizing: border-box;
 }
 
