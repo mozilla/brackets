@@ -37,6 +37,7 @@ define(function (require, exports, module) {
         EditorManager       = require("editor/EditorManager"),
         FileSystem          = require("filesystem/FileSystem"),
         FileSystemError     = require("filesystem/FileSystemError"),
+        ArchiveUtils        = require("filesystem/impls/filer/ArchiveUtils"),
         FileUtils           = require("file/FileUtils"),
         FileViewController  = require("project/FileViewController"),
         InMemoryFile        = require("document/InMemoryFile"),
@@ -1598,6 +1599,12 @@ define(function (require, exports, module) {
         ProjectManager.showInTree(MainViewManager.getCurrentlyViewedFile(MainViewManager.ACTIVE_PANE));
     }
 
+    /** Download selected file or folder structure **/
+    function handleFileDownload() {
+        var entry = ProjectManager.getSelectedItem();
+        ArchiveUtils.archiveWithPath(entry._path,function(){});
+    }
+
     /** Delete file command handler  **/
     function handleFileDelete() {
         var entry = ProjectManager.getSelectedItem();
@@ -1818,6 +1825,7 @@ define(function (require, exports, module) {
     CommandManager.register(Strings.CMD_FILE_SAVE_AS,                Commands.FILE_SAVE_AS,                   handleFileSaveAs);
     CommandManager.register(Strings.CMD_FILE_RENAME,                 Commands.FILE_RENAME,                    handleFileRename);
     CommandManager.register(Strings.CMD_FILE_DELETE,                 Commands.FILE_DELETE,                    handleFileDelete);
+    CommandManager.register(Strings.CMD_FILE_DOWNLOAD,               Commands.FILE_DOWNLOAD,                  handleFileDownload);
 
     // Close Commands
     CommandManager.register(Strings.CMD_FILE_CLOSE,                  Commands.FILE_CLOSE,                     handleFileClose);

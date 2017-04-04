@@ -141,9 +141,15 @@ define(function (require, exports, module) {
             _unzip(zipfile);
         }
     }
-
+    
     // Zip the entire project, starting at the project root.
     function archive(callback) {
+        var root = StartupState.project("root");
+        archiveWithPath(root, callback);
+    }
+
+    // Zip specific file or folder structure
+    function archiveWithPath(path, callback) {
         var root = StartupState.project("root");
         var rootRegex = new RegExp("^" + root + "\/?");
 
@@ -194,7 +200,7 @@ define(function (require, exports, module) {
             });
         }
 
-        add(root, function(err) {
+        add(path, function(err) {
             if(err) {
                 return callback(err);
             }
@@ -263,6 +269,7 @@ define(function (require, exports, module) {
     }
 
     exports.archive = archive;
+    exports.archiveWithPath = archiveWithPath;
     exports.unzip = unzip;
     exports.untar = untar;
 });
