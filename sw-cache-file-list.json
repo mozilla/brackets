@@ -92,33 +92,7 @@
 
         "dist/extensions/default/Autosave/main.js",
 
-        "dist/extensions/default/bramble/main.js",
-        "dist/extensions/default/bramble/lib/iframe-browser.js",
-        "dist/extensions/default/bramble/lib/UI.js",
-        "dist/extensions/default/bramble/lib/launcher.js",
-        "dist/extensions/default/bramble/nohost/main.js",
-        "dist/extensions/default/bramble/lib/PostMessageTransport.js",
-        "dist/extensions/default/bramble/lib/xhr/XHRHandler.js",
-        "dist/extensions/default/bramble/lib/xhr/XHRShim.js",
-        "dist/extensions/default/bramble/lib/Theme.js",
-        "dist/extensions/default/bramble/lib/RemoteCommandHandler.js",
-        "dist/extensions/default/bramble/lib/RemoteEvents.js",
-        "dist/extensions/default/bramble/nohost/HTMLServer.js",
-        "dist/extensions/default/bramble/nohost/StaticServer.js",
-        "dist/extensions/default/bramble/lib/compatibility.js",
-        "dist/extensions/default/bramble/lib/Tutorial.js",
-        "dist/extensions/default/bramble/lib/MouseManager.js",
-        "dist/extensions/default/bramble/lib/LinkManager.js",
-        "dist/extensions/default/bramble/lib/PostMessageTransportRemote.js",
-        "dist/extensions/default/bramble/lib/Mobile.html",
-        "dist/extensions/default/bramble/lib/MouseManagerRemote.js",
-        "dist/extensions/default/bramble/lib/LinkManagerRemote.js",
-        "dist/extensions/default/bramble/lib/BrambleCodeSnippets.js",
-        "dist/extensions/default/bramble/stylesheets/style.css",
-        "dist/extensions/default/bramble/stylesheets/sidebarTheme.css",
-        "dist/extensions/default/bramble/stylesheets/lightTheme.css",
-        "dist/extensions/default/bramble/stylesheets/darkTheme.css",
-        "dist/extensions/default/bramble/**/*.svg",
+        "dist/extensions/default/bramble/**/{*.js,*.css,*.html,*.svg}",
 
         "dist/extensions/default/brackets-paste-and-indent/main.js",
 
@@ -151,6 +125,8 @@
         "dist/extensions/default/bramble-move-file/styles/style.css",
         "dist/extensions/default/bramble-move-file/images/*.svg",
 
-        "dist/extensions/extra/bramble-watch-index.html/main.js"
+        "dist/extensions/extra/bramble-watch-index.html/main.js",
+
+        "dist/extensions/extra/brackets-show-whitespace/main.js"
     ]
 }

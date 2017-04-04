@@ -197,14 +197,12 @@ define(function (require, exports, module) {
     /**
      * Returns the script that should be injected into the browser to handle the other end of the transport.
      * Includes a base tag to handle external protocol-less, linked files.
+     * @param {string} path (Optional) a path being served, or the current LiveDoc's path if missing.
      * @return {string}
      */
-    function getRemoteScript() {
+    function getRemoteScript(path) {
         var currentDoc = LiveDevMultiBrowser._getCurrentLiveDoc();
-        var currentPath;
-        if(currentDoc) {
-            currentPath = currentDoc.doc.file.fullPath;
-        }
+        var currentPath = path || (currentDoc && currentDoc.doc.file.fullPath);
 
         return '<base href="' + window.location.href + '">\n' +
             "<script>\n" + PostMessageTransportRemote + "</script>\n" +

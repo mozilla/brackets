@@ -875,9 +875,6 @@ define(function (require, exports, module) {
         } else {
             result.resolve(file);
         }
-        result.always(function () {
-            MainViewManager.focusActivePane();
-        });
         return result.promise();
     }
 
