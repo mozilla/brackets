@@ -36,7 +36,6 @@ define(function (require, exports, module) {
         if(_tutorialOverride) {
             _forceReload = true;
             UI.showDesktopView(true);  // Always show in desktop mode
-            PostMessageTransport.reload();
         } else {
 
             if(_shouldRestoreMobileView) {
