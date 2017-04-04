@@ -61,7 +61,6 @@ define(function (require, exports, module) {
      * @private
      */
     var _curDocChangedDueToMe = false;
-    var WORKING_SET_VIEW = "WorkingSetView";
     var PROJECT_MANAGER = "ProjectManager";
 
     /**
@@ -70,14 +69,6 @@ define(function (require, exports, module) {
      */
     var _fileSelectionFocus = PROJECT_MANAGER;
 
-    // Due to circular dependencies, not safe to call on() directly
-    /**
-     * Change the doc selection to the working set when ever a new file is added to the working set
-     */
-    EventDispatcher.on_duringInit(MainViewManager, "workingSetAdd", function (event, addedFile) {
-        _fileSelectionFocus = WORKING_SET_VIEW;
-        exports.trigger("documentSelectionFocusChange");
-    });
 
     /**
      * Update the file selection focus whenever the contents of the editor area change
@@ -87,11 +78,7 @@ define(function (require, exports, module) {
         if (!_curDocChangedDueToMe) {
             // The the cause of the doc change was not openAndSelectDocument, so pick the best fileSelectionFocus
             perfTimerName = PerfUtils.markStart("FileViewController._oncurrentFileChange():\t" + (file ? (file.fullPath) : "(no open file)"));
-            if (file && MainViewManager.findInWorkingSet(paneId,  file.fullPath) !== -1) {
-                _fileSelectionFocus = WORKING_SET_VIEW;
-            } else {
-                _fileSelectionFocus = PROJECT_MANAGER;
-            }
+            _fileSelectionFocus = PROJECT_MANAGER;
         }
 
         exports.trigger("documentSelectionFocusChange");
@@ -120,14 +107,9 @@ define(function (require, exports, module) {
     /**
      * Modifies the selection focus in the project side bar. A file can either be selected
      * in the working set (the open files) or in the file tree, but not both.
-     * @param {String} fileSelectionFocus - either PROJECT_MANAGER or WORKING_SET_VIEW
+     * @param {String} fileSelectionFocus - PROJECT_MANAGER
      */
     function setFileViewFocus(fileSelectionFocus) {
-        if (fileSelectionFocus !== PROJECT_MANAGER && fileSelectionFocus !== WORKING_SET_VIEW) {
-            console.error("Bad parameter passed to FileViewController.setFileViewFocus");
-            return;
-        }
-
         if (_fileSelectionFocus !== fileSelectionFocus) {
             _fileSelectionFocus = fileSelectionFocus;
             exports.trigger("fileViewFocusChange");
@@ -138,7 +120,7 @@ define(function (require, exports, module) {
      * Opens a document if it's not open and selects the file in the UI corresponding to
      * fileSelectionFocus
      * @param {!fullPath} fullPath - full path of the document to open
-     * @param {string} fileSelectionFocus - (WORKING_SET_VIEW || PROJECT_MANAGER)
+     * @param {string} fileSelectionFocus - (PROJECT_MANAGER)
      * @param {string} paneId - pane in which to open the document
      * @return {$.Promise}
      */
@@ -157,11 +139,6 @@ define(function (require, exports, module) {
             }
 
             return window.event && (_secondPaneContext() || _firstPaneContext());
-        }
-
-        if (fileSelectionFocus !== PROJECT_MANAGER && fileSelectionFocus !== WORKING_SET_VIEW) {
-            console.error("Bad parameter passed to FileViewController.openAndSelectDocument");
-            return;
         }
 
         // Opening files are asynchronous and we want to know when this function caused a file
@@ -210,12 +187,11 @@ define(function (require, exports, module) {
         // is already the current one. In that case we will want to notify with
         // documentSelectionFocusChange so the views change their selection
         promise.done(function (file) {
-            // CMD_ADD_TO_WORKINGSET_AND_OPEN command sets the current document. Update the
-            // selection focus only if doc is not null. When double-clicking on an
+            // Update the selection focus only if doc is not null. When double-clicking on an
             // image file, we get a null doc here but we still want to keep _fileSelectionFocus
             // as PROJECT_MANAGER. Regardless of doc is null or not, call _activatePane
             // to trigger documentSelectionFocusChange event.
-            _fileSelectionFocus = WORKING_SET_VIEW;
+            _fileSelectionFocus = PROJECT_MANAGER;
             _activatePane(paneId);
 
             result.resolve(file);
@@ -255,7 +231,7 @@ define(function (require, exports, module) {
 
 
     /**
-     * returns either WORKING_SET_VIEW or PROJECT_MANAGER
+     * returns either PROJECT_MANAGER
      * @return {!String}
      */
     function getFileSelectionFocus() {
@@ -273,6 +249,5 @@ define(function (require, exports, module) {
     exports.openAndSelectDocument = openAndSelectDocument;
     exports.openFileAndAddToWorkingSet = openFileAndAddToWorkingSet;
     exports.setFileViewFocus = setFileViewFocus;
-    exports.WORKING_SET_VIEW = WORKING_SET_VIEW;
     exports.PROJECT_MANAGER = PROJECT_MANAGER;
 });
