@@ -151,7 +151,7 @@ define(function (require, exports, module) {
         this._naturalHeight = e.currentTarget.naturalHeight;
 
         var extension = FileUtils.getFileExtension(this.file.fullPath);
-        var dimensionString = this._naturalWidth + " (width) &times; " + this._naturalHeight + " (height) " + Strings.UNIT_PIXELS;
+        var dimensionString = this._naturalWidth + " (" + Strings.IMAGE_WIDTH + ") &times; " + this._naturalHeight + " (" + Strings.IMAGE_HEIGHT + ") " + Strings.UNIT_PIXELS;
 
         if (extension === "ico") {
             dimensionString += " (" + Strings.IMAGE_VIEWER_LARGEST_ICON + ")";
