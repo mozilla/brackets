@@ -506,6 +506,8 @@ define(function (require, exports, module) {
                 fileType = "css";
                 break;
               case 'js':
+              case 'jsx':
+              case 'json':
                 fileType = "js";
                 break;
               default:
