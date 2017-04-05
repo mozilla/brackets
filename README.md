@@ -145,6 +145,15 @@ mode, the filesystem (i.e., IndexedDB) will be inaccessible, and an error
 will be sent via the `error` event (i.e., `err.code === "EFILESYSTEMERROR"`).  This
 is the same error that occurs when the filesystem is corrupt (see `autoRecoverFileSystem` below).
 
+## Bramble Offline Support
+
+The Bramble code is offline capable, and will indicate, via events, when it is ready to be used offline, as well as
+when there are updates available for existing offline cached resources. These events are triggered on `Bramble` vs.
+the `bramble` instance.  The offline related events include:
+
+* `"offlineReady"` - triggered when Bramble has been fully cached for offline use.  Users can safely work without network.
+* `"updatesAvailable"` - triggered when new or updated Bramble resources have been cached and are available for use. You might use this to indicate to the user that they should refresh the page to begin using the updates.
+
 ## Bramble.getFileSystem()
 
 The FileSystem is owned by the hosting application, and can be obtained at any time by calling:

@@ -114,6 +114,14 @@
             console.log("Bramble readyStateChange", previous, current);
         });
 
+        Bramble.on("offlineReady", function() {
+            console.log("Bramble available for offline use.");
+        });
+
+        Bramble.on("updatesAvailable", function() {
+            console.log("Bramble offline content updated, please refresh to use.");
+        });
+
         // Setup the filesystem while Bramble is loading
         ensureFiles(Bramble, function() {
             // Now that fs is setup, tell Bramble which root dir to mount

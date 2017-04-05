@@ -233,7 +233,18 @@ define([
             addEventListener("message", function(e) {
                 var data = parseEventData(e.data);
 
-                // When Bramble is ready for the filesystem to be mounted, it will let us know
+                // Deal with messages from the service worker regarding cache. We trigger these
+                // events on Bramble vs. the bramble instance.
+                if(data.type === "Bramble:updatesAvailable") {
+                    Bramble.trigger("updatesAvailable");
+                    return;
+                }
+                if(data.type === "Bramble:offlineReady") {
+                    Bramble.trigger("offlineReady");
+                    return;
+                }
+
+                // When bramble instance is ready for the filesystem to be mounted, it will let us know
                 if (data.type === "bramble:readyToMount") {
                     debug("bramble:readyToMount");
                     setReadyState(Bramble.MOUNTABLE);

@@ -78,6 +78,20 @@ if ('serviceWorker' in window.navigator) {
     window.navigator.serviceWorker.register('bramble-sw.js').then(function(reg) {
         "use strict";
 
+        function sendMessage(data) {
+            parent.postMessage(JSON.stringify(data), "*");
+        }
+
+        // Let the parent frame know that we have updates in the SW cache.
+        function updatesAvailable() {
+            sendMessage({ type: 'Bramble:updatesAvailable' });
+        }
+
+        // Let the parent frame know that we've cached content for offline loading.
+        function offlineReady() {
+            sendMessage({ type: 'Bramble:offlineReady' });
+        }
+
         reg.onupdatefound = function() {
             var installingWorker = reg.installing;
 
@@ -85,15 +99,9 @@ if ('serviceWorker' in window.navigator) {
                 switch (installingWorker.state) {
                 case 'installed':
                     if (window.navigator.serviceWorker.controller) {
-                        // At this point, the old content will have been purged and the fresh content will
-                        // have been added to the cache.
-                        // It's the perfect time to display a "New content is available; please refresh."
-                        // message in the page's interface.
-                        console.log('[Bramble] New or updated content is available.');
+                        updatesAvailable();
                     } else {
-                        // At this point, everything has been precached.
-                        // It's the perfect time to display a "Content is cached for offline use." message.
-                        console.log('[Bramble] Content is now available offline!');
+                        offlineReady();
                     }
                     break;
                 case 'redundant':
