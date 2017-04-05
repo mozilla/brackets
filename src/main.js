@@ -35,7 +35,11 @@ require.config({
 
         // The file system implementation. Change this value to use different
         // implementations (e.g. cloud-based storage).
-        "fileSystemImpl"    : "filesystem/impls/filer/FilerFileSystem"
+        "fileSystemImpl"    : "filesystem/impls/filer/FilerFileSystem",
+
+        // In various places in the code, it's useful to know if this is a dev vs. prod env.
+        // See Gruntfile for prod override of this to config.prod.js.
+        "envConfig"         : "bramble/config/config.dev"
     },
     map: {
         "*": {
