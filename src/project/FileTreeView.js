@@ -488,6 +488,8 @@ define(function (require, exports, module) {
               case 'md':
               case 'markdown':
               case 'html':
+              case 'xml':
+              case 'xhtml':
                 fileType = "html";
                 break;
               case 'ico':
