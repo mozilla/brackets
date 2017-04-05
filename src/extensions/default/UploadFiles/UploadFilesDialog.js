@@ -27,8 +27,10 @@ define(function (require, exports, module) {
     }(window.navigator));
 
     function FileInput() {
-        $(document.body)
-            .append($('<input class="upload-files-input-elem" type="file" multiple />'));
+        if (!$(".upload-files-input-elem")[0]){
+            $(document.body)
+                .append($('<input class="upload-files-input-elem" type="file" multiple />'));
+        }
     }
     FileInput.prototype.getFiles = function() {
         return this.getElem$()[0].files;
@@ -141,6 +143,7 @@ define(function (require, exports, module) {
         var deferred = self.deferred;
 
         self.hide();
+        _uploadDialog = null;
 
         function _processFiles(e) {
             var files = self.fileInput.getFiles();
