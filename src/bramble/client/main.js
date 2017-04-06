@@ -204,6 +204,7 @@ define([
         self.getSidebarVisible = function() { return _state.sidebarVisible; };
         self.getRootDir = function() { return _root; };
         self.getWordWrap = function() { return _state.wordWrap; };
+        self.getAutocomplete = function() { return _state.allowAutocomplete; };
         self.getAutoCloseTags = function() { return _state.autoCloseTags; };
         self.getAllowJavaScript = function() { return _state.allowJavaScript; };
         self.getAutoUpdate = function() { return _state.autoUpdate; };
@@ -267,6 +268,7 @@ define([
                     _state.wordWrap = data.wordWrap;
                     _state.autoCloseTags = data.autoCloseTags;
                     _state.allowJavaScript = data.allowJavaScript;
+                    _state.autocomplete = data.autocomplete;
                     _state.autoUpdate = data.autoUpdate;
 
                     setReadyState(Bramble.READY);
@@ -309,6 +311,8 @@ define([
                         _state.allowJavaScript = data.allowJavaScript;
                     } else if (eventName === "tutorialVisibilityChange") {
                         _tutorialVisible = data.visible;
+                    } else if (eventName === "autocompleteChange") {
+                        _state.allowAutocomplete = data.value;
                     } else if (eventName === "autoUpdateChange") {
                         _state.autoUpdate = data.autoUpdate;
                     }
@@ -426,6 +430,7 @@ define([
                                     previewMode: _state.previewMode,
                                     wordWrap: _state.wordWrap,
                                     allowJavaScript: _state.allowJavaScript,
+                                    allowAutocomplete: _state.allowAutocomplete,
                                     autoCloseTags: _state.autoCloseTags,
                                     autoUpdate: _state.autoUpdate
                                 }
@@ -750,7 +755,14 @@ define([
                         // If the path was a file, immediately unlink
                         // trigger the event, and call the callback
                         if(err.code === "ENOTDIR") {
-                            return shell.rm(path, genericFileEventFn("fileDelete", path, callback));
+                            return shell.rm(path, genericFileEventFn("fileDelete", path, function(err) {
+                            	var wrappedCallback = callback;
+                            	if(!err && path === self.tutorialPath) {
+                            	   wrappedCallback = genericFileEventFn("tutorialRemoved", path, wrappedCallback);
+                            	   _tutorialExists = false;
+                            	}
+                            	wrappedCallback(err);
+                            }));
                         }
 
                         return callback(err);
@@ -907,6 +919,14 @@ define([
 
     BrambleProxy.prototype.disableJavaScript = function(callback) {
         this._executeRemoteCommand({commandCategory: "bramble", command: "BRAMBLE_DISABLE_SCRIPTS"}, callback);
+    };
+
+    BrambleProxy.prototype.enableAutocomplete = function(callback) {
+        this._executeRemoteCommand({commandCategory: "bramble", command: "BRAMBLE_ENABLE_AUTOCOMPLETE"}, callback);
+    };
+
+    BrambleProxy.prototype.disableAutocomplete = function(callback) {
+        this._executeRemoteCommand({commandCategory: "bramble", command: "BRAMBLE_DISABLE_AUTOCOMPLETE"}, callback);
     };
 
     BrambleProxy.prototype.enableInspector = function(callback) {
