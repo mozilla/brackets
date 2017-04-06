@@ -310,6 +310,7 @@ a number of read-only getters are available in order to access state information
 * `getTheme()` - returns the name of the current theme.
 * `getFontSize()` - returns the current font size as a string (e.g., `"12px"`).
 * `getWordWrap()` - returns the current word wrap setting as a `Boolean` (i.e., enabled or disabled).
+* `getAutocomplete()` - returns the current autocomplete settings as a `Boolean` (i.e., enabled or disabled).
 * `getAutoCloseTags()` - returns the current close tags setting as an `Object` with three properties: `whenOpening` a boolean that determines whether opening tags are closed upon typing ">", `whenClosing` a boolean that determines whether closing tags are closed upon typing "/", and an array of tags `indentTags`, that when opened, has a blank line. These values default to, respectively: `true`, `true`, and an empty array.
 * `getTutorialExists()` - returns `true` or `false` depending on whether or not there is a tutorial in the project (i.e., if `tutorial.html` is present)
 * `getTutorialVisible()` - returns `true` or `false` depending on whether or not the preview browser is showing a tutorial or not.
