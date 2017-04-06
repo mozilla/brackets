@@ -12,7 +12,7 @@ define(function (require, exports, module) {
     var JSZip           = require("thirdparty/jszip/dist/jszip.min");
     var FileSystemCache = require("filesystem/impls/filer/FileSystemCache");
     var Filer           = require("filesystem/impls/filer/BracketsFiler");
-    var BlobUtils       = require("filesystem/impls/filer/BlobUtils")
+    var BlobUtils       = require("filesystem/impls/filer/BlobUtils");
     var saveAs          = require("thirdparty/FileSaver");
     var Buffer          = Filer.Buffer;
     var Path            = Filer.Path;
