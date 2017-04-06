@@ -1602,7 +1602,7 @@ define(function (require, exports, module) {
     /** Download selected file or folder structure **/
     function handleFileDownload() {
         var entry = ProjectManager.getSelectedItem();
-        ArchiveUtils.archiveWithPath(entry._path,function(){});
+        ArchiveUtils.archive(entry._path);
     }
 
     /** Delete file command handler  **/
