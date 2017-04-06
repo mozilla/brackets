@@ -326,11 +326,12 @@ define(function (require, exports, module) {
      * @param {number} priority
      * @param {function(...)} provider
      */
-    function _insertProviderSorted(array, provider, priority) {
+    function _insertProviderSorted(array, provider, priority, queryProvider) {
         var index,
             prioritizedProvider = {
                 priority: priority,
-                provider: provider
+                provider: provider,
+                queryProvider: queryProvider
             };
 
         for (index = 0; index < array.length; index++) {
@@ -397,11 +398,11 @@ define(function (require, exports, module) {
      * The provider returns a promise that will be resolved with an InlineWidget, or returns a string
      * indicating why the provider cannot respond to this case (or returns null to indicate no reason).
      */
-    function registerInlineEditProvider(provider, priority) {
+    function registerInlineEditProvider(provider, priority, queryProvider) {
         if (priority === undefined) {
             priority = 0;
         }
-        _insertProviderSorted(_inlineEditProviders, provider, priority);
+        _insertProviderSorted(_inlineEditProviders, provider, priority, queryProvider);
     }
 
     /**
@@ -415,11 +416,11 @@ define(function (require, exports, module) {
      * The provider returns a promise that will be resolved with an InlineWidget, or returns a string
      * indicating why the provider cannot respond to this case (or returns null to indicate no reason).
      */
-    function registerInlineDocsProvider(provider, priority) {
+    function registerInlineDocsProvider(provider, priority, queryProvider) {
         if (priority === undefined) {
             priority = 0;
         }
-        _insertProviderSorted(_inlineDocsProviders, provider, priority);
+        _insertProviderSorted(_inlineDocsProviders, provider, priority, queryProvider);
     }
 
     /**
@@ -778,29 +779,22 @@ define(function (require, exports, module) {
         }
     }
 
-    /**
-    * @param {Object} editor - function that is called to validate providers
-    * for the current editor/cursor pos
-    * @return {Array.<Provider>}
-    */
-    function findProvider(editor) {
-        var pos = editor.getCursorPos(),
-            i, len,
-            type = true, // used to tell the provider that we only want to know if a proviver exists and to not create one
+    function providerAvailableForPos(hostEditor) {
+        var providersFound = [],
+            pos = hostEditor.getCursorPos(),
             providerRet,
-            providersFound = [], // list of providers found
-            providers = _inlineEditProviders.concat(_inlineDocsProviders); // combine both so we only need one loop
+            i, len,
+            providers = _inlineEditProviders.concat(_inlineDocsProviders);
 
-        for (i = 0, len = providers.length; i < len; i++) {
-            var provider = providers[i].provider;
-            providerRet = provider(editor, pos, type);
-            if (providerRet) {
-                if (providerRet.hasOwnProperty("done")) {
+        for (i =0, len = providers.length; i < len ; i++) {
+            var provider = providers[i].queryProvider;
+            if (provider) {
+                providerRet = provider(hostEditor, pos);
+                if (providerRet) {
                     providersFound.push(provider);
                 }
             }
         }
-
         return providersFound;
     }
 
@@ -845,7 +839,7 @@ define(function (require, exports, module) {
     exports.closeInlineWidget             = closeInlineWidget;
     exports.openDocument                  = openDocument;
     exports.canOpenPath                   = canOpenPath;
-    exports.findProvider                  = findProvider;
+    exports.providerAvailableForPos       = providerAvailableForPos;
 
     // Convenience Methods
     exports.getActiveEditor               = getActiveEditor;

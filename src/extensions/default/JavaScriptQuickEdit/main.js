@@ -111,7 +111,7 @@ define(function (require, exports, module) {
      *         {string} if js other than function is detected at pos, or
      *         null if we're not ready to provide anything.
      */
-    function _createInlineEditor(hostEditor, functionName, type) {
+    function _createInlineEditor(hostEditor, functionName) {
         // Use Tern jump-to-definition helper, if it's available, to find InlineEditor target.
         var helper = brackets._jsCodeHintsHelper;
         if (helper === null) {
@@ -134,13 +134,11 @@ define(function (require, exports, module) {
                     JSUtils.findMatchingFunctions(functionName, fileInfos, true)
                         .done(function (functions) {
                             if (functions && functions.length > 0) {
-                                if (!type) {
-                                    var jsInlineEditor = new MultiRangeInlineEditor(functions);
-                                    jsInlineEditor.load(hostEditor);
+                                var jsInlineEditor = new MultiRangeInlineEditor(functions);
+                                jsInlineEditor.load(hostEditor);
 
-                                    PerfUtils.addMeasurement(PerfUtils.JAVASCRIPT_INLINE_CREATE);
-                                    result.resolve(jsInlineEditor);
-                                }
+                                PerfUtils.addMeasurement(PerfUtils.JAVASCRIPT_INLINE_CREATE);
+                                result.resolve(jsInlineEditor);
                             } else {
                                 // No matching functions were found
                                 PerfUtils.addMeasurement(PerfUtils.JAVASCRIPT_INLINE_CREATE);
@@ -156,13 +154,11 @@ define(function (require, exports, module) {
 
                     _findInProject(functionName).done(function (functions) {
                         if (functions && functions.length > 0) {
-                            if (!type) {
-                                var jsInlineEditor = new MultiRangeInlineEditor(functions);
-                                jsInlineEditor.load(hostEditor);
+                            var jsInlineEditor = new MultiRangeInlineEditor(functions);
+                            jsInlineEditor.load(hostEditor);
 
-                                PerfUtils.addMeasurement(PerfUtils.JAVASCRIPT_INLINE_CREATE);
-                                result.resolve(jsInlineEditor);
-                            }
+                            PerfUtils.addMeasurement(PerfUtils.JAVASCRIPT_INLINE_CREATE);
+                            result.resolve(jsInlineEditor);
                         } else {
                             // No matching functions were found
                             PerfUtils.addMeasurement(PerfUtils.JAVASCRIPT_INLINE_CREATE);
@@ -184,6 +180,29 @@ define(function (require, exports, module) {
         return result.promise();
     }
 
+
+    function queryJavaScriptFunctionProvider(hostEditor, pos) {
+        // Only provide a JavaScript editor when cursor is in JavaScript content
+        if (hostEditor.getModeForSelection() !== "javascript") {
+             return null;
+         }
+
+         // Only provide JavaScript editor if the selection is within a single line
+         var sel = hostEditor.getSelection();
+         if (sel.start.line !== sel.end.line) {
+             return null;
+         }
+
+         // Always use the selection start for determining the function name. The pos
+         // parameter is usually the selection end.
+         var functionResult = _getFunctionName(hostEditor, sel.start);
+         if (!functionResult.functionName) {
+            return functionResult.reason || null;
+         }
+
+        return functionResult;
+    }
+
     /**
      * This function is registered with EditorManager as an inline editor provider. It creates an inline editor
      * when the cursor is on a JavaScript function name, finds all functions that match the name
@@ -194,30 +213,18 @@ define(function (require, exports, module) {
      * @return {$.Promise} a promise that will be resolved with an InlineWidget
      *      or null if we're not ready to provide anything.
      */
-    function javaScriptFunctionProvider(hostEditor, pos, type) {
-        // Only provide a JavaScript editor when cursor is in JavaScript content
-        if (hostEditor.getModeForSelection() !== "javascript") {
+    function javaScriptFunctionProvider(hostEditor, pos) {
+        var functionResult = queryJavaScriptFunctionProvider(hostEditor, pos);
+
+        if (!functionResult) {
             return null;
         }
 
-        // Only provide JavaScript editor if the selection is within a single line
-        var sel = hostEditor.getSelection();
-        if (sel.start.line !== sel.end.line) {
-            return null;
-        }
-
-        // Always use the selection start for determining the function name. The pos
-        // parameter is usually the selection end.
-        var functionResult = _getFunctionName(hostEditor, sel.start);
-        if (!functionResult.functionName) {
-            return functionResult.reason || null;
-        }
-
-        return _createInlineEditor(hostEditor, functionResult.functionName, type);
+        return _createInlineEditor(hostEditor, functionResult.functionName);
     }
 
     // init
-    EditorManager.registerInlineEditProvider(javaScriptFunctionProvider);
+    EditorManager.registerInlineEditProvider(javaScriptFunctionProvider, undefined, queryJavaScriptFunctionProvider);
     PerfUtils.createPerfMeasurement("JAVASCRIPT_INLINE_CREATE", "JavaScript Inline Editor Creation");
     PerfUtils.createPerfMeasurement("JAVASCRIPT_FIND_FUNCTION", "JavaScript Find Function");
 

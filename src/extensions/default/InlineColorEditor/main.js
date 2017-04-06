@@ -76,6 +76,16 @@ define(function (require, exports, module) {
         };
     }
 
+    function queryInlineColorEditorProvider(hostEditor, pos) {
+        var context = prepareEditorForProvider(hostEditor, pos);
+
+        if (!context) {
+            return null;
+        }
+
+        return context;
+     }
+
     /**
      * Registered as an inline editor provider: creates an InlineEditorColor when the cursor
      * is on a color value (in any flavor of code).
@@ -85,21 +95,20 @@ define(function (require, exports, module) {
      * @return {?$.Promise} synchronously resolved with an InlineWidget, or null if there's
      *      no color at pos.
      */
-    function inlineColorEditorProvider(hostEditor, pos, type) {
-        var context = prepareEditorForProvider(hostEditor, pos),
-            inlineColorEditor,
-            result;
+    function inlineColorEditorProvider(hostEditor, pos) {
+        var context = queryInlineColorEditorProvider(hostEditor, pos);
 
         if (!context) {
             return null;
         } else {
-            result = new $.Deferred();
-            if (!type) {
-                inlineColorEditor = new InlineColorEditor(context.color, context.marker);
-                inlineColorEditor.load(hostEditor);
+            var inlineColorEditor,
+                result;
 
-                result.resolve(inlineColorEditor);
-            }
+            inlineColorEditor = new InlineColorEditor(context.color, context.marker);
+            inlineColorEditor.load(hostEditor);
+
+            result = new $.Deferred();
+            result.resolve(inlineColorEditor);
             return result.promise();
         }
     }
@@ -110,7 +119,7 @@ define(function (require, exports, module) {
     // XXXBramble: use css vs less
     ExtensionUtils.loadStyleSheet(module, "css/main.css");
 
-    EditorManager.registerInlineEditProvider(inlineColorEditorProvider);
+    EditorManager.registerInlineEditProvider(inlineColorEditorProvider, undefined, queryInlineColorEditorProvider);
 
     // for use by other InlineColorEditors
     exports.prepareEditorForProvider = prepareEditorForProvider;

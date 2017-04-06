@@ -1684,8 +1684,8 @@ define(function (require, exports, module) {
         return result;
     }
 
-    function _findProvider(editor){
-        return EditorManager.findProvider(editor);
+    function _providerAvailableForPos(editor){
+        return EditorManager.providerAvailableForPos(editor);
     }
 
     /**
@@ -1723,7 +1723,7 @@ define(function (require, exports, module) {
     exports._closeAll                     = _closeAll;
     exports._closeList                    = _closeList;
     exports._getPaneIdForPath             = _getPaneIdForPath;
-    exports._findProvider                 = _findProvider;
+    exports._providerAvailableForPos      = _providerAvailableForPos;
 
     // WorkingSet Management
     exports.addToWorkingSet               = addToWorkingSet;

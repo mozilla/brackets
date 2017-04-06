@@ -151,19 +151,7 @@ define(function (require, exports, module) {
         return html;
     }
 
-    /**
-     * This function is registered with EditManager as an inline editor provider. It creates a CSSInlineEditor
-     * when cursor is on an HTML tag name, class attribute, or id attribute, find associated
-     * CSS rules and show (one/all of them) in an inline editor.
-     *
-     * @param {!Editor} editor
-     * @param {!{line:Number, ch:Number}} pos
-     * @return {?$.Promise} synchronously resolved with an InlineWidget; or error
-     *         {string} if pos is in tag but not in tag name, class attr, or id attr; or null if the
-     *         selection isn't even close to a context where we could provide anything.
-     */
-    function htmlToCSSProvider(hostEditor, pos, type) {
-
+    function queryHtmlToCSSProvider(hostEditor, pos) {
         // Only provide a CSS editor when cursor is in HTML content
         if (hostEditor.getLanguageForSelection().getId() !== "html") {
             return null;
@@ -180,6 +168,27 @@ define(function (require, exports, module) {
         var selectorResult = _getSelectorName(hostEditor, sel.start);
         if (selectorResult.selectorName === "") {
             return selectorResult.reason || null;
+        }
+
+        return selectorResult;
+    }
+
+    /**
+     * This function is registered with EditManager as an inline editor provider. It creates a CSSInlineEditor
+     * when cursor is on an HTML tag name, class attribute, or id attribute, find associated
+     * CSS rules and show (one/all of them) in an inline editor.
+     *
+     * @param {!Editor} editor
+     * @param {!{line:Number, ch:Number}} pos
+     * @return {?$.Promise} synchronously resolved with an InlineWidget; or error
+     *         {string} if pos is in tag but not in tag name, class attr, or id attr; or null if the
+     *         selection isn't even close to a context where we could provide anything.
+     */
+    function htmlToCSSProvider(hostEditor, pos) {
+        var selectorResult = queryHtmlToCSSProvider(hostEditor, pos);
+
+        if (!selectorResult) {
+            return null;
         }
 
         var selectorName = selectorResult.selectorName;
@@ -290,77 +299,70 @@ define(function (require, exports, module) {
             newRuleButton.closeDropdown();
         }
 
-        function _createInLineWidget(rules) {
-            var inlineEditorDeferred = new $.Deferred();
-            cssInlineEditor = new MultiRangeInlineEditor.MultiRangeInlineEditor(CSSUtils.consolidateRules(rules),
-                                                                                _getNoRulesMsg, CSSUtils.getRangeSelectors,
-                                                                                _fileComparator);
-            cssInlineEditor.load(hostEditor);
-            cssInlineEditor.$htmlContent
-                .on("focusin", _updateCommands)
-                .on("focusout", _updateCommands);
-            cssInlineEditor.on("add", function () {
-                inlineEditorDeferred.resolve();
-            });
-            cssInlineEditor.on("close", function () {
-                newRuleButton.closeDropdown();
-                hostEditor.off("scroll", _onHostEditorScroll);
-            });
-
-            var $header = $(".inline-editor-header", cssInlineEditor.$htmlContent);
-            newRuleButton = new DropdownButton(Strings.BUTTON_NEW_RULE, [], _stylesheetListRenderer); // actual item list populated later, below
-            newRuleButton.$button.addClass("disabled");  // disabled until list is known
-            newRuleButton.$button.addClass("btn-mini stylesheet-button");
-            $header.append(newRuleButton.$button);
-            _newRuleHandlers.push({inlineEditor: cssInlineEditor, handler: _handleNewRuleClick});
-
-            hostEditor.on("scroll", _onHostEditorScroll);
-
-            result.resolve(cssInlineEditor);
-
-
-            // Now that dialog has been built, collect list of stylesheets
-            var stylesheetsPromise = _getCSSFilesInProject();
-
-            // After both the stylesheets are loaded and the inline editor has been added to the DOM,
-            // update the UI accordingly. (Those can happen in either order, so we need to wait for both.)
-            // Note that the stylesheetsPromise needs to be passed first in order for the fileInfos to be
-            // properly passed to the handler, since $.when() passes the results in order of the argument
-            // list.
-            $.when(stylesheetsPromise, inlineEditorDeferred.promise())
-                .done(function (fileInfos) {
-                    cssFileInfos = _prepFileList(fileInfos);
-
-                    // "New Rule" button is disabled by default and gets enabled
-                    // here if there are any stylesheets in project
-                    if (cssFileInfos.length > 0) {
-                        newRuleButton.$button.removeClass("disabled");
-                        if (!rules.length) {
-                            // Force focus to the button so the user can create a new rule from the keyboard.
-                            newRuleButton.$button.focus();
-                        }
-
-                        if (cssFileInfos.length === 1) {
-                            // Make it look & feel like a plain button in this case
-                            newRuleButton.$button.removeClass("btn-dropdown");
-                            newRuleButton.$button.on("click", _handleNewRuleClick);
-                        } else {
-                            // Fill out remaining dropdown attributes otherwise
-                            newRuleButton.items = cssFileInfos;
-                            newRuleButton.on("select", _onDropdownSelect);
-                        }
-                    }
-
-                    _updateCommands();
-                });
-        }
-
         CSSUtils.findMatchingRules(selectorName, hostEditor.document)
             .done(function (rules) {
-                // if we only want to check if a provider exists
-                if (!type) {
-                    _createInLineWidget(rules);
-                }
+                var inlineEditorDeferred = new $.Deferred();
+                cssInlineEditor = new MultiRangeInlineEditor.MultiRangeInlineEditor(CSSUtils.consolidateRules(rules),
+                                                                                    _getNoRulesMsg, CSSUtils.getRangeSelectors,
+                                                                                    _fileComparator);
+                cssInlineEditor.load(hostEditor);
+                cssInlineEditor.$htmlContent
+                    .on("focusin", _updateCommands)
+                    .on("focusout", _updateCommands);
+                cssInlineEditor.on("add", function () {
+                    inlineEditorDeferred.resolve();
+                });
+                cssInlineEditor.on("close", function () {
+                    newRuleButton.closeDropdown();
+                    hostEditor.off("scroll", _onHostEditorScroll);
+                });
+
+                var $header = $(".inline-editor-header", cssInlineEditor.$htmlContent);
+                newRuleButton = new DropdownButton(Strings.BUTTON_NEW_RULE, [], _stylesheetListRenderer); // actual item list populated later, below
+                newRuleButton.$button.addClass("disabled");  // disabled until list is known
+                newRuleButton.$button.addClass("btn-mini stylesheet-button");
+                $header.append(newRuleButton.$button);
+                _newRuleHandlers.push({inlineEditor: cssInlineEditor, handler: _handleNewRuleClick});
+
+                hostEditor.on("scroll", _onHostEditorScroll);
+
+                result.resolve(cssInlineEditor);
+
+
+                // Now that dialog has been built, collect list of stylesheets
+                var stylesheetsPromise = _getCSSFilesInProject();
+
+                // After both the stylesheets are loaded and the inline editor has been added to the DOM,
+                // update the UI accordingly. (Those can happen in either order, so we need to wait for both.)
+                // Note that the stylesheetsPromise needs to be passed first in order for the fileInfos to be
+                // properly passed to the handler, since $.when() passes the results in order of the argument
+                // list.
+                $.when(stylesheetsPromise, inlineEditorDeferred.promise())
+                    .done(function (fileInfos) {
+                        cssFileInfos = _prepFileList(fileInfos);
+
+                        // "New Rule" button is disabled by default and gets enabled
+                        // here if there are any stylesheets in project
+                        if (cssFileInfos.length > 0) {
+                            newRuleButton.$button.removeClass("disabled");
+                            if (!rules.length) {
+                                // Force focus to the button so the user can create a new rule from the keyboard.
+                                newRuleButton.$button.focus();
+                            }
+
+                            if (cssFileInfos.length === 1) {
+                                // Make it look & feel like a plain button in this case
+                                newRuleButton.$button.removeClass("btn-dropdown");
+                                newRuleButton.$button.on("click", _handleNewRuleClick);
+                            } else {
+                                // Fill out remaining dropdown attributes otherwise
+                                newRuleButton.items = cssFileInfos;
+                                newRuleButton.on("select", _onDropdownSelect);
+                            }
+                        }
+
+                        _updateCommands();
+                    });
             })
             .fail(function (error) {
                 console.warn("Error in findMatchingRules()", error);
@@ -370,7 +372,7 @@ define(function (require, exports, module) {
         return result.promise();
     }
 
-    EditorManager.registerInlineEditProvider(htmlToCSSProvider);
+    EditorManager.registerInlineEditProvider(htmlToCSSProvider, undefined, queryHtmlToCSSProvider);
 
     _newRuleCmd = CommandManager.register(Strings.CMD_CSS_QUICK_EDIT_NEW_RULE, Commands.CSS_QUICK_EDIT_NEW_RULE, _handleNewRule);
     _newRuleCmd.setEnabled(false);
