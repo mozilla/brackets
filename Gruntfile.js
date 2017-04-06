@@ -82,7 +82,8 @@ module.exports = function (grunt) {
                         'extensions/default/*/**/*.js',
                         '!extensions/extra/*/unittests.js',
                         'extensions/extra/*/**/*.js',
-                        '!extensions/**/node_modules/**/*.js',
+                      //'!extensions/**/node_modules/**/*.js',		// I don't want anything going into node_modules!
+			'!extensions/**/node_modules/**',		// eliminate everything from node_modules (MY CODE)
                         '!extensions/**/test/**/*.js',
                         '!**/unittest-files/**',
                         'thirdparty/i18n/*.js',
@@ -130,6 +131,7 @@ module.exports = function (grunt) {
                         src: [
                             'extensions/default/**/*',
                             'extensions/extra/**/*',
+	                    '!**/node_modules/**',						// (MY CODE) prevents anything from node_modules.
                             '!extensibility/node/spec/**',
                             '!extensibility/node/node_modules/**/{test,tst}/**/*',
                             '!extensibility/node/node_modules/**/examples/**/*',
@@ -304,7 +306,8 @@ module.exports = function (grunt) {
         },
         meta : {
             src   : [
-                'src/**/*.js',
+                '!src/**/node_modules/**',
+		'src/**/*.js',
                 '!src/thirdparty/**',
                 '!src/widgets/bootstrap-*.js',
                 '!src/extensions/default/brackets-show-whitespace/**',
@@ -330,7 +333,8 @@ module.exports = function (grunt) {
                 '!test/smokes/**',
                 '!test/temp/**',
                 '!test/thirdparty/**',
-                '!test/**/node_modules/**/*.js'
+              //'!test/**/node_modules/**/*.js'
+		'!test/**/node_modules/**'			// be more specific with node_modules (MY CODE)
             ],
             grunt: [
                 'Gruntfile.js',
@@ -354,7 +358,7 @@ module.exports = function (grunt) {
                 tasks: ['eslint:grunt']
             },
             src : {
-                files: ['<%= meta.src %>', 'src/**/*'],
+                files: ['<%= meta.src %>', '!src/**/node_modules/**', 'src/**/*'],	// added the !src/**/node_modules/** part... (MY CODE)
                 tasks: ['eslint:src']
             },
             test : {
@@ -403,7 +407,19 @@ module.exports = function (grunt) {
         },
         eslint: {
             grunt:  '<%= meta.grunt %>',
-            src:    '<%= meta.src %>',
+            src: [
+	            '<%= meta.src %>',
+		    'src/extensions/default/Autosave',
+		    'src/extensions/default/BrambleUrlCodeHints',
+		    'src/extensions/default/UploadFiles',
+		    'src/extensions/default/bramble-move-file',
+		    'src/extensions/default/bramble',
+		    'src/extensions/extra/SVGasXML',
+		    'src/extensions/extra/HTMLHinter',
+		    '!src/extensions/extra/MDNDocs/**/node_modules/**',
+		    'src/extensions/extra/MDNDocs/**/scrape-mdn',
+		    'src/extensions/extra/bramble-watch-index.html'	     
+	    ],
             test:   '<%= meta.test %>',
             options: {
                 quiet: true
@@ -416,7 +432,7 @@ module.exports = function (grunt) {
                 },
                 expand: true,
                 cwd: 'dist/',
-                src: ['**/*'],
+                src: ['**/*'],		// more changes
                 dest: 'dist/'
             }
         },
