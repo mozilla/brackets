@@ -72,53 +72,11 @@ should host Bramble's iframe, see `src/hosted.js`.
 
 **NOTE 3:** To use Bramble in a production setting locally, you can run `npm run production` and access Bramble at [http://localhost:8000/dist](http://localhost:8000/dist)
 
-# Optional Extension Loading
+# Extension Loading
 
-Bramble supports enabling and disabling various extensions via the URL and query params.
-A standard set of default extensions are always turned on:
-
-* CSSCodeHints
-* HTMLCodeHints
-* JavaScriptCodeHints
-* InlineColorEditor
-* JavaScriptQuickEdit
-* QuickOpenCSS
-* QuickOpenHTML
-* QuickOpenJavaScript
-* QuickView
-* UrlCodeHints
-* brackets-paste-and-indent
-* BrambleUrlCodeHints
-* Autosave
-* UploadFiles
-* WebPlatformDocs
-* CodeFolding
-* bramble-move-file
-
-You could disable QuickView and CSSCodeHints by loading Bramble with `?disableExtensions=QuickView,CSSCodeHints`
-on the URL.
-
-In addition, you can enable other extra extensions:
-
-* SVGCodeHints
-* HtmlEntityCodeHints
-* LESSSupport
-* CloseOthers
-* InlineTimingFunctionEditor
-* JSLint
-* QuickOpenCSS
-* RecentProjects
-* brackets-cdn-suggestions
-* HTMLHinter
-* MdnDocs
-* SVGasXML
-
-You could enable JSLint and LESSSupport by loading Bramble with `?enableExtensions=JSLint,LESSSupport`
-on the URL
-
-NOTE: you can combine `disableExtensions` and `enableExtensions` to mix loading/disabling extensions.
-You should check src/utils/BrambleExtensionLoader.js for the most up-to-date version of these
-extension lists.
+Bramble loads a set of extensions defined in `src/extensions/bramble-extensions.json`. You can
+add remove from this list.  You can also temporarily disable extensions by using `?disableExtensions`.
+For example, to disable QuickView and CSSCodeHints load Bramble with `?disableExtensions=QuickView,CSSCodeHints` on the URL.
 
 --------------
 
