@@ -311,13 +311,7 @@ define([
                         _state.allowJavaScript = data.allowJavaScript;
                     } else if (eventName === "tutorialVisibilityChange") {
                         _tutorialVisible = data.visible;
-                    } else if (eventName === "TagHintsChange") {
-                        _state.allowAutocomplete = data.value;
-                    } else if (eventName === "AttrHintsChange") {
-                        _state.allowAutocomplete = data.value;
-                    } else if (eventName === "JSHintsChange") {
-                        _state.allowAutocomplete = data.value;
-                    } else if (eventName === "CssPropHintsChange") {
+                    } else if (eventName === "autocompleteChange") {
                         _state.allowAutocomplete = data.value;
                     } else if (eventName === "autoUpdateChange") {
                         _state.autoUpdate = data.autoUpdate;

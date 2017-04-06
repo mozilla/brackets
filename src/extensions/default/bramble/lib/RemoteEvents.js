@@ -160,7 +160,7 @@ define(function (require, exports, module) {
         // Listen for changes to TagHints
         PreferencesManager.on("change", "codehint.TagHints", function () {
             sendEvent({
-                type: "bramble:TagHintsChange",
+                type: "bramble:autocompleteChange",
                 value: PreferencesManager.get("codehint.TagHints")
             });
         });
@@ -168,7 +168,7 @@ define(function (require, exports, module) {
         // Listen for changes to AttrHints
         PreferencesManager.on("change", "codehint.AttrHints", function () {
             sendEvent({
-                type: "bramble:AttrHintsChange",
+                type: "bramble:autocompleteChange",
                 value: PreferencesManager.get("codehint.AttrHints")
             });
         });
@@ -177,7 +177,7 @@ define(function (require, exports, module) {
         // Listen for changes to JSHints
         PreferencesManager.on("change", "codehint.JSHints", function () {
             sendEvent({
-                type: "bramble:JSHintsChange",
+                type: "bramble:autocompleteChange",
                 value: PreferencesManager.get("codehint.JSHints")
             });
         });
@@ -186,7 +186,7 @@ define(function (require, exports, module) {
         // Listen for changes to CssPropHints
         PreferencesManager.on("change", "codehint.CssPropHints", function () {
             sendEvent({
-                type: "bramble:CssPropHintsChange",
+                type: "bramble:autocompleteChange",
                 value: PreferencesManager.get("codehint.CssPropHints")
             });
         });
