@@ -98,12 +98,12 @@ define(function (require, exports, module) {
             PreferencesManager.set("allowJavaScript", allowJavaScript);
         }
 
-        var allowAutoComplete = BrambleStartupState.ui("allowAutoComplete");
-        if(typeof allowAutoComplete === "boolean") {
-            PreferencesManager.set("codehint.AttrHints", allowAutoComplete);
-            PreferencesManager.set("codehint.TagHints", allowAutoComplete);
-            PreferencesManager.set("codehint.JSHints", allowAutoComplete);
-            PreferencesManager.set("codehint.CssPropHints", allowAutoComplete);
+        var allowAutocomplete = BrambleStartupState.ui("allowAutocomplete");
+        if(typeof allowAutocomplete === "boolean") {
+            PreferencesManager.set("codehint.AttrHints", allowAutocomplete);
+            PreferencesManager.set("codehint.TagHints", allowAutocomplete);
+            PreferencesManager.set("codehint.JSHints", allowAutocomplete);
+            PreferencesManager.set("codehint.CssPropHints", allowAutocomplete);
         }
 
         var autoUpdate = BrambleStartupState.ui("autoUpdate");

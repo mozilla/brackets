@@ -139,9 +139,9 @@ define(function() {
                 get: function()  { return getBool(storage, "allowJavaScript"); },
                 set: function(v) { storage.setItem(prefix("allowJavaScript"), v); }
             },
-            allowAutoComplete: {
-                get: function()  { return getBool(storage, "allowAutoComplete"); },
-                set: function(v) { storage.setItem(prefix("allowAutoComplete"), v); }
+            allowAutocomplete: {
+                get: function()  { return getBool(storage, "allowAutocomplete"); },
+                set: function(v) { storage.setItem(prefix("allowAutocomplete"), v); }
             },
             autoUpdate: {
                 get: function()  { return getBool(storage, "autoUpdate"); },

@@ -204,7 +204,7 @@ define([
         self.getSidebarVisible = function() { return _state.sidebarVisible; };
         self.getRootDir = function() { return _root; };
         self.getWordWrap = function() { return _state.wordWrap; };
-        self.getAutoComplete = function() { return _state.allowAutoComplete; };
+        self.getAutocomplete = function() { return _state.allowAutocomplete; };
         self.getAutoCloseTags = function() { return _state.autoCloseTags; };
         self.getAllowJavaScript = function() { return _state.allowJavaScript; };
         self.getAutoUpdate = function() { return _state.autoUpdate; };
@@ -268,7 +268,7 @@ define([
                     _state.wordWrap = data.wordWrap;
                     _state.autoCloseTags = data.autoCloseTags;
                     _state.allowJavaScript = data.allowJavaScript;
-                    _state.autoComplete = data.autoComplete;
+                    _state.autocomplete = data.autocomplete;
                     _state.autoUpdate = data.autoUpdate;
 
                     setReadyState(Bramble.READY);
@@ -312,13 +312,13 @@ define([
                     } else if (eventName === "tutorialVisibilityChange") {
                         _tutorialVisible = data.visible;
                     } else if (eventName === "TagHintsChange") {
-                        _state.allowAutoComplete = data.value;
+                        _state.allowAutocomplete = data.value;
                     } else if (eventName === "AttrHintsChange") {
-                        _state.allowAutoComplete = data.value;
+                        _state.allowAutocomplete = data.value;
                     } else if (eventName === "JSHintsChange") {
-                        _state.allowAutoComplete = data.value;
+                        _state.allowAutocomplete = data.value;
                     } else if (eventName === "CssPropHintsChange") {
-                        _state.allowAutoComplete = data.value;
+                        _state.allowAutocomplete = data.value;
                     } else if (eventName === "autoUpdateChange") {
                         _state.autoUpdate = data.autoUpdate;
                     }
@@ -436,7 +436,7 @@ define([
                                     previewMode: _state.previewMode,
                                     wordWrap: _state.wordWrap,
                                     allowJavaScript: _state.allowJavaScript,
-                                    allowAutoComplete: _state.allowAutoComplete,
+                                    allowAutocomplete: _state.allowAutocomplete,
                                     autoCloseTags: _state.autoCloseTags,
                                     autoUpdate: _state.autoUpdate
                                 }
@@ -920,11 +920,11 @@ define([
         this._executeRemoteCommand({commandCategory: "bramble", command: "BRAMBLE_DISABLE_SCRIPTS"}, callback);
     };
 
-    BrambleProxy.prototype.startAutoComplete = function(callback) {
+    BrambleProxy.prototype.enableAutocomplete = function(callback) {
         this._executeRemoteCommand({commandCategory: "bramble", command: "START_AUTO_COMPLETE"}, callback);
     };
 
-    BrambleProxy.prototype.stopAutoComplete = function(callback) {
+    BrambleProxy.prototype.disableAutocomplete = function(callback) {
         this._executeRemoteCommand({commandCategory: "bramble", command: "STOP_AUTO_COMPLETE"}, callback);
     };
 

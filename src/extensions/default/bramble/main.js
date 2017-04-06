@@ -190,7 +190,7 @@ define(function (require, exports, module) {
             previewMode: data.state.previewMode,
             wordWrap: data.state.wordWrap,
             allowJavaScript: data.state.allowJavaScript,
-            allowAutoComplete: data.state.allowAutoComplete,
+            allowAutocomplete: data.state.allowAutocomplete,
             autoCloseTags: data.state.autoCloseTags,
             autoUpdate: data.state.autoUpdate
         });
