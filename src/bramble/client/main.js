@@ -753,8 +753,8 @@ define([
                             return shell.rm(path, genericFileEventFn("fileDelete", path, function(err) {
                             	var wrappedCallback = callback;
                             	if(!err && path === self.tutorialPath) {
-                            		wrappedCallback = genericFileEventFn("tutorialRemoved", path, wrappedCallback);
-                            		_tutorialExists = false;
+                            	   wrappedCallback = genericFileEventFn("tutorialRemoved", path, wrappedCallback);
+                            	   _tutorialExists = false;
                             	}
                             	wrappedCallback(err);
                             }));
