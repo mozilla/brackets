@@ -36,7 +36,8 @@ define(function (require, exports, module) {
         "brackets-show-whitespace",
         "BrambleUrlCodeHints",
         "UploadFiles",
-        "bramble-move-file"
+        "bramble-move-file",
+        "Brackets-InteractiveLinter"
     ];
 
     /**

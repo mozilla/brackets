@@ -1,0 +1,23 @@
+{
+    "undef": true,
+    "unused": true,
+    "curly": true,
+    "indent": 4,
+    "devel": true,
+    "globals": {
+        "brackets": true,
+        "window": true,
+        "document": true,
+        "importScripts": true,
+        "postMessage": true,
+        "onmessage": true,
+        "requirejs": true,
+        "require": true,
+        "define": true,
+        "$": true,
+        "Mustache": true,
+        "clearTimeout": true,
+        "setTimeout": true,
+        "Worker": true
+    }
+}

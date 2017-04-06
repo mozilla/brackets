@@ -312,6 +312,7 @@ module.exports = function (grunt) {
                 '!src/extensions/**/thirdparty/**/*.js',
                 '!src/extensions/dev/**',
                 '!src/extensions/extra/brackets-cdn-suggestions/**',
+                '!src/extensions/default/Brackets-InteractiveLinter/**',
                 '!src/extensions/extra/HTMLHinter/**',
                 '!src/extensions/extra/MDNDocs/**',
                 '!src/bramble/thirdparty/EventEmitter/**',
