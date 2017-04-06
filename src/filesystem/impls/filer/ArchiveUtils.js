@@ -12,7 +12,6 @@ define(function (require, exports, module) {
     var JSZip           = require("thirdparty/jszip/dist/jszip.min");
     var FileSystemCache = require("filesystem/impls/filer/FileSystemCache");
     var Filer           = require("filesystem/impls/filer/BracketsFiler");
-    var BlobUtils       = require("filesystem/impls/filer/BlobUtils");
     var saveAs          = require("thirdparty/FileSaver");
     var Buffer          = Filer.Buffer;
     var Path            = Filer.Path;
@@ -147,9 +146,7 @@ define(function (require, exports, module) {
     function archive(path, callback) {
         var root = StartupState.project("root");
         var rootRegex = new RegExp("^" + root + "\/?");
-        if (callback === undefined) {
-            callback = function(){};
-        }
+        callback = callback || function() {};
         // TODO: we should try to move this to a worker
         var jszip = new JSZip();
 
@@ -196,33 +193,16 @@ define(function (require, exports, module) {
                 }
             });
         }
-
-        // Check if path is a directory or not
-        fs.stat(path, function(err, stats) {
-            if (stats.type === "DIRECTORY") {
-                add(path, function(err) {
-                    if(err) {
-                        return callback(err);
-                    }
-                    // Prepare folder for download
-                    var compressed = jszip.generate({type: 'arraybuffer'});
-                    var blob = new Blob([compressed], {type: "application/zip"});
-                    saveAs(blob, "project.zip");
-                    callback();
-                });
-            } else {
-                // Prepare file for download
-                fs.readFile(path, {encoding: null}, function(err, data){
-                    if (err) {
-                       return callback(err);
-                    }
-                    
-                    var blob = new Blob([data], {type: "text/plain"});
-                    var filename = path.substring(path.lastIndexOf("/") + 1, path.length);
-                    saveAs(blob, filename);
-                    callback();
-                });
+        
+        add(path, function(err) {
+            if(err) {
+                return callback(err);
             }
+            // Prepare folder for download
+            var compressed = jszip.generate({type: 'arraybuffer'});
+            var blob = new Blob([compressed], {type: "application/zip"});
+            saveAs(blob, "project.zip");
+            callback();
         });
     }
 

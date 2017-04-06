@@ -60,8 +60,11 @@ define(function (require, exports, module) {
 
     // XXXBramble specific
     var BracketsFiler      = require("filesystem/impls/filer/BracketsFiler");
-    var Path               = BracketsFiler.Path;
+    var Content            = require("filesystem/impls/filer/lib/content");
+    var saveAs             = require("thirdparty/FileSaver");
     var StartupState       = require("bramble/StartupState");
+    var Path               = BracketsFiler.Path;
+    var fs                 = BracketsFiler.fs();
 
     /**
      * Handlers for commands related to document handling (opening, saving, etc.)
@@ -1601,8 +1604,30 @@ define(function (require, exports, module) {
 
     /** Download selected file or folder structure **/
     function handleFileDownload() {
-        var entry = ProjectManager.getSelectedItem();
-        ArchiveUtils.archive(entry._path);
+        var selectedItem = ProjectManager.getSelectedItem();
+        var path = selectedItem._path;
+        try {
+            fs.stat(path, function(err, stats) {
+                if (stats.type === "DIRECTORY") {
+                    ArchiveUtils.archive(path);
+                } else {
+                    // Prepare file for download
+                    fs.readFile(path, {encoding: null}, function(err, data){
+                        if (err) {
+                            console.error(err);
+                            return;
+                        }
+                        
+                        var filename = Path.basename(path);
+                        var mimetype = Content.mimeFromExt(Path.extname(path));
+                        var blob = new Blob([data], {type: mimetype});
+                        saveAs(blob, filename);
+                    });
+                }
+            });
+        } catch (error){
+            console.error(error);
+        }
     }
 
     /** Delete file command handler  **/
