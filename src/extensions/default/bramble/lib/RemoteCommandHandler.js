@@ -102,13 +102,13 @@ define(function (require, exports, module) {
         case "BRAMBLE_ENABLE_INSPECTOR":
             MouseManager.enableInspector();
             break;
-        case "STOP_AUTO_COMPLETE":
+        case "BRAMBLE_ENABLE_AUTOCOMPLETE":
             PreferencesManager.set("codehint.TagHints", true);
             PreferencesManager.set("codehint.AttrHints", true);
             PreferencesManager.set("codehint.JSHints", true);
             PreferencesManager.set("codehint.CssPropHints", true);
             break;
-        case "START_AUTO_COMPLETE":
+        case "BRAMBLE_DISABLE_AUTOCOMPLETE":
             PreferencesManager.set("codehint.TagHints", false);
             PreferencesManager.set("codehint.AttrHints", false);
             PreferencesManager.set("codehint.JSHints", false);

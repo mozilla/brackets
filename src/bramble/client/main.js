@@ -915,11 +915,11 @@ define([
     };
 
     BrambleProxy.prototype.enableAutocomplete = function(callback) {
-        this._executeRemoteCommand({commandCategory: "bramble", command: "START_AUTO_COMPLETE"}, callback);
+        this._executeRemoteCommand({commandCategory: "bramble", command: "BRAMBLE_ENABLE_AUTOCOMPLETE"}, callback);
     };
 
     BrambleProxy.prototype.disableAutocomplete = function(callback) {
-        this._executeRemoteCommand({commandCategory: "bramble", command: "STOP_AUTO_COMPLETE"}, callback);
+        this._executeRemoteCommand({commandCategory: "bramble", command: "BRAMBLE_DISABLE_AUTOCOMPLETE"}, callback);
     };
 
     BrambleProxy.prototype.enableInspector = function(callback) {
