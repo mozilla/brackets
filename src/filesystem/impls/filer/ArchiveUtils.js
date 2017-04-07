@@ -85,12 +85,19 @@ define(function (require, exports, module) {
                 }
 
                 var isDir = file.options.dir;
+                var filename = removeProjectFolder(file.name);
                 filenames.push({
-                    absPath: Path.join(destination, file.name),
+                    absPath: Path.join(destination, filename),
                     isDirectory: isDir,
                     data: isDir ? null : new Buffer(file.asArrayBuffer())
                 });
             });
+
+            function removeProjectFolder(path){
+                // Nuke root folder thimble-project/ if exists
+                var regex = /^thimble\-project\//g;
+                return path.replace(regex, "");
+            }
 
             function decompress(path, callback) {
                 var basedir = Path.dirname(path.absPath);
@@ -152,7 +159,7 @@ define(function (require, exports, module) {
 
         function toRelProjectPath(path) {
             // Make path relative within the zip, rooted in a `project/` dir
-            return path.replace(rootRegex, "project/");
+            return path.replace(rootRegex, "thimble-project/");
         }
 
         function addFile(path, callback) {
