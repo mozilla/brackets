@@ -157,6 +157,15 @@ define(function (require, exports, module) {
             });
         });
 
+        // Listen for changes to allow whitespace
+        //PreferencesManager.on("change", "allowWhiteSpace", function () {
+        PreferencesManager.getExtensionPrefs("allowWhiteSpace").on("change", function () {
+            sendEvent({
+                type: "bramble:allowWhiteSpaceChange",
+                allowWhiteSpace: PreferencesManager.getExtensionPrefs("allowWhiteSpace").get("enabled")
+            });
+        });
+
         //Listen for changes to auto update
         PreferencesManager.on("change", "autoUpdate", function () {
             sendEvent({
@@ -197,6 +206,7 @@ define(function (require, exports, module) {
             theme: Theme.getTheme(),
             wordWrap: PreferencesManager.get("wordWrap"),
             allowJavaScript: PreferencesManager.get("allowJavaScript"),
+            allowWhiteSpace: PreferencesManager.get("allowWhiteSpace"),
             autoCloseTags: PreferencesManager.get("closeTags"),
             autoUpdate: PreferencesManager.get("autoUpdate")
         });
