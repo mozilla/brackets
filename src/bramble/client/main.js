@@ -207,6 +207,7 @@ define([
         self.getAutocomplete = function() { return _state.allowAutocomplete; };
         self.getAutoCloseTags = function() { return _state.autoCloseTags; };
         self.getAllowJavaScript = function() { return _state.allowJavaScript; };
+        self.getAllowWhiteSpace = function() { return _state.allowWhiteSpace; };
         self.getAutoUpdate = function() { return _state.autoUpdate; };
         self.getTutorialExists = function() { return _tutorialExists; };
         self.getTutorialVisible = function() { return _tutorialVisible; };
@@ -269,6 +270,7 @@ define([
                     _state.autoCloseTags = data.autoCloseTags;
                     _state.allowJavaScript = data.allowJavaScript;
                     _state.autocomplete = data.autocomplete;
+                    _state.allowWhiteSpace = data.allowWhiteSpace;
                     _state.autoUpdate = data.autoUpdate;
 
                     setReadyState(Bramble.READY);
@@ -309,6 +311,8 @@ define([
                         _state.autoCloseTags = data.autoCloseTags;
                     } else if (eventName === "allowJavaScriptChange") {
                         _state.allowJavaScript = data.allowJavaScript;
+                    } else if (eventName === "allowWhiteSpaceChange") {
+                        _state.allowWhiteSpace = data.allowWhiteSpace;
                     } else if (eventName === "tutorialVisibilityChange") {
                         _tutorialVisible = data.visible;
                     } else if (eventName === "autocompleteChange") {
@@ -431,6 +435,7 @@ define([
                                     wordWrap: _state.wordWrap,
                                     allowJavaScript: _state.allowJavaScript,
                                     allowAutocomplete: _state.allowAutocomplete,
+                                    allowWhiteSpace: _state.allowWhiteSpace,
                                     autoCloseTags: _state.autoCloseTags,
                                     autoUpdate: _state.autoUpdate
                                 }
@@ -927,6 +932,14 @@ define([
 
     BrambleProxy.prototype.disableAutocomplete = function(callback) {
         this._executeRemoteCommand({commandCategory: "bramble", command: "BRAMBLE_DISABLE_AUTOCOMPLETE"}, callback);
+    };
+
+    BrambleProxy.prototype.enableWhiteSpace = function(callback) {
+        this._executeRemoteCommand({commandCategory: "bramble", command: "BRAMBLE_ENABLE_WHITESPACE"}, callback);
+    };
+
+    BrambleProxy.prototype.disableWhiteSpace = function(callback) {
+        this._executeRemoteCommand({commandCategory: "bramble", command: "BRAMBLE_DISABLE_WHITESPACE"}, callback);
     };
 
     BrambleProxy.prototype.enableInspector = function(callback) {

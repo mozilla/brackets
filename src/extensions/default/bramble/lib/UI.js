@@ -105,6 +105,11 @@ define(function (require, exports, module) {
             PreferencesManager.set("codehint.JSHints", allowAutocomplete);
             PreferencesManager.set("codehint.CssPropHints", allowAutocomplete);
         }
+        
+        var allowWhiteSpace = BrambleStartupState.ui("allowWhiteSpace");
+        if(typeof allowWhiteSpace === "boolean") {
+            PreferencesManager.set("allowWhiteSpace", allowWhiteSpace);
+        }
 
         var autoUpdate = BrambleStartupState.ui("autoUpdate");
         if(typeof autoUpdate === "boolean") {

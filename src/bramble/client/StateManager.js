@@ -139,9 +139,15 @@ define(function() {
                 get: function()  { return getBool(storage, "allowJavaScript"); },
                 set: function(v) { storage.setItem(prefix("allowJavaScript"), v); }
             },
+<<<<<<< HEAD
             allowAutocomplete: {
                 get: function()  { return getBool(storage, "allowAutocomplete"); },
                 set: function(v) { storage.setItem(prefix("allowAutocomplete"), v); }
+=======
+            allowWhiteSpace: {
+                get: function()  { return getBool(storage, "allowWhiteSpace"); },
+                set: function(v) { storage.setItem(prefix("allowWhiteSpace"), v); }
+>>>>>>> modified the files for Whitespace Indicator
             },
             autoUpdate: {
                 get: function()  { return getBool(storage, "autoUpdate"); },

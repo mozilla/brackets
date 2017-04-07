@@ -190,7 +190,11 @@ define(function (require, exports, module) {
             previewMode: data.state.previewMode,
             wordWrap: data.state.wordWrap,
             allowJavaScript: data.state.allowJavaScript,
+<<<<<<< HEAD
             allowAutocomplete: data.state.allowAutocomplete,
+=======
+            allowWhiteSpace: data.state.allowWhiteSpace,
+>>>>>>> modified the files for Whitespace Indicator
             autoCloseTags: data.state.autoCloseTags,
             autoUpdate: data.state.autoUpdate
         });
