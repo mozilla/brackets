@@ -172,9 +172,7 @@ define(function (require, exports, module) {
                 }
                 var dimensionAndSize = dimensionString + sizeString;
                 self.$imageData.html(dimensionAndSize)
-                        .attr("title", dimensionAndSize
-                                    .replace("&times;", "x")
-                                    .replace("&mdash;", "-"));
+                .attr("title", dimensionAndSize.replace("&mdash;", "-"));
             }
         });
 
