@@ -72,53 +72,11 @@ should host Bramble's iframe, see `src/hosted.js`.
 
 **NOTE 3:** To use Bramble in a production setting locally, you can run `npm run production` and access Bramble at [http://localhost:8000/dist](http://localhost:8000/dist)
 
-# Optional Extension Loading
+# Extension Loading
 
-Bramble supports enabling and disabling various extensions via the URL and query params.
-A standard set of default extensions are always turned on:
-
-* CSSCodeHints
-* HTMLCodeHints
-* JavaScriptCodeHints
-* InlineColorEditor
-* JavaScriptQuickEdit
-* QuickOpenCSS
-* QuickOpenHTML
-* QuickOpenJavaScript
-* QuickView
-* UrlCodeHints
-* brackets-paste-and-indent
-* BrambleUrlCodeHints
-* Autosave
-* UploadFiles
-* WebPlatformDocs
-* CodeFolding
-* bramble-move-file
-
-You could disable QuickView and CSSCodeHints by loading Bramble with `?disableExtensions=QuickView,CSSCodeHints`
-on the URL.
-
-In addition, you can enable other extra extensions:
-
-* SVGCodeHints
-* HtmlEntityCodeHints
-* LESSSupport
-* CloseOthers
-* InlineTimingFunctionEditor
-* JSLint
-* QuickOpenCSS
-* RecentProjects
-* brackets-cdn-suggestions
-* HTMLHinter
-* MdnDocs
-* SVGasXML
-
-You could enable JSLint and LESSSupport by loading Bramble with `?enableExtensions=JSLint,LESSSupport`
-on the URL
-
-NOTE: you can combine `disableExtensions` and `enableExtensions` to mix loading/disabling extensions.
-You should check src/utils/BrambleExtensionLoader.js for the most up-to-date version of these
-extension lists.
+Bramble loads a set of extensions defined in `src/extensions/bramble-extensions.json`. You can
+add remove from this list.  You can also temporarily disable extensions by using `?disableExtensions`.
+For example, to disable QuickView and CSSCodeHints load Bramble with `?disableExtensions=QuickView,CSSCodeHints` on the URL.
 
 --------------
 
@@ -310,6 +268,8 @@ a number of read-only getters are available in order to access state information
 * `getTheme()` - returns the name of the current theme.
 * `getFontSize()` - returns the current font size as a string (e.g., `"12px"`).
 * `getWordWrap()` - returns the current word wrap setting as a `Boolean` (i.e., enabled or disabled).
+* `getAutocomplete()` - returns the current autocomplete settings as a `Boolean` (i.e., enabled or disabled).
+* `getAutoCloseTags()` - returns the current close tags setting as an `Object` with three properties: `whenOpening` a boolean that determines whether opening tags are closed upon typing ">", `whenClosing` a boolean that determines whether closing tags are closed upon typing "/", and an array of tags `indentTags`, that when opened, has a blank line. These values default to, respectively: `true`, `true`, and an empty array.
 * `getTutorialExists()` - returns `true` or `false` depending on whether or not there is a tutorial in the project (i.e., if `tutorial.html` is present)
 * `getTutorialVisible()` - returns `true` or `false` depending on whether or not the preview browser is showing a tutorial or not.
 * `getAutoUpdate()` - returns `true` or `false` depending on whether or not the auto update preference is enabled or not.
@@ -339,7 +299,7 @@ to be notified when the action completes:
 * `useLightTheme([callback])` - sets the editor to use the light theme (default)
 * `useDarkTheme([callback])` - sets the editor to use the dark theme
 * `showSidebar([callback])` - opens the file tree sidebar
-`* `hideSidebar([callback])` - hides the file tree sidebar
+* `hideSidebar([callback])` - hides the file tree sidebar
 * `showStatusbar([callback])` - enables and shows the statusbar
 * `hideStatusbar([callback])` - disables and hides the statusbar
 * `refreshPreview([callback])` - reloads the preview with the latest content in the editor and filesystem
@@ -348,13 +308,14 @@ to be notified when the action completes:
 * `enableFullscreenPreview([callback])` - shows a fullscreen preview of the current file
 * `disableFullscreenPreview([callback])` - turns off the fullscreen preview of the curent file
 * `enableAutoUpdate([callback])` - turns on auto-update for the preview (default)
-`* `disableAutoUpdate([callback])` - turns off auto-update for the preview (manual reloads still work)
+* `disableAutoUpdate([callback])` - turns off auto-update for the preview (manual reloads still work)
 * `enableJavaScript([callback])` - turns on JavaScript execution for the preview (default)
 * `disableJavaScript([callback])` - turns off JavaScript execution for the preview
 * `enableInspector([callback])` - turns on the preview inspector (shows code for hovered/clicked element)
 * `disableInspector([callback])` - turns off the preview inspector (default)
 * `enableWordWrap([callback])` - turns on word wrap for the editor (default)
 * `disableWordWrap([callback])` - turns off word wrap for the editor
+* `configureAutoCloseTags(options, [callback])` - enables/disables close tags for the editor using the provided options which consists of an `Object` that includes three properties: `whenOpening` a boolean, `whenClosing` a boolean, and an array `indentTags`.
 * `showTutorial([callback])` - shows tutorial (i.e., tutorial.html) vs editor contents in preview
 * `hideTutorial([callback])` - stops showing tutorial (i.e., tutorial.html) and uses editor contents in preview
 * `showUploadFilesDialog([callback])` - shows the Upload Files dialog, allowing users to drag-and-drop, upload a file, or take a selfie.
@@ -375,11 +336,14 @@ the following events:
 * `"themeChange"` - triggered whenever the theme changes. It inclues an `Object` with a `theme` property that indicates the new theme
 * `"fontSizeChange"` - triggered whenever the font size changes. It includes an `Object` with a `fontSize` property that indicates the new size (e.g., `"12px"`).
 * `"wordWrapChange"` - triggered whenever the word wrap value changes. It includes an `Object` with a `wordWrap` property that indicates the new value (e.g., `true` or `false`).
+* `"autoCloseTagsChange"` - triggered whenever the close tag value changes. It includes an `Object` with a `autoCloseTags` property that indicates the new value
 * `"tutorialAdded"` - triggered when a new tutorial is added to the project
 * `"tutorialRemoved"` - triggered when an existing tutorial for the project is removed
 * `"tutorialVisibilityChange"` - triggered when the tutorial preview is turned on or off. It includes an `Object` with a `visibility` property that indicates whether the tutorial is visible.
 * `"inspectorChange"` - triggered whenever the inspector changes from enabled to disabled, or vice versa. It includes an `Object` with an `enabled` property set to `true` or `false`.
 * `"autoUpdateChange"` - triggered whenever the auto update preference changes from enabled to disabled, or vice versa. It includes an `Object` with a `autoUpdate` property set to `true` or `false`
+* `"projectDirty"` - triggered when one of the files in the project has been edited and those changes haven't been saved yet. It includes an `Object` with the `path` to the current file.
+* `"projectSaved"` - triggered whenever the changes are saved to the filesystem in the browser are completed.
 
 There are also high-level events for changes to files:
 

@@ -14,6 +14,7 @@ define(function (require, exports, module) {
 
     var Compatibility           = require("lib/compatibility"),
         MouseManager            = require("lib/MouseManager"),
+        PostMessageTransport    = require("lib/PostMessageTransport"),
         LinkManager             = require("lib/LinkManager");
 
     var fs = Filer.fs(),
@@ -39,9 +40,14 @@ define(function (require, exports, module) {
     HTMLServer.prototype.pathToUrl = function(path) {
         return BlobUtils.getUrl(path);
     };
-    //Returns a path based on blob url
+    //Returns a path based on blob url or filepath.  Returns null for any other URL.  
     HTMLServer.prototype.urlToPath = function(url) {
-        return BlobUtils.getFilename(url);
+        if(Content.isBlobURL(url) || Content.isRelativeURL(url)) {
+            return BlobUtils.getFilename(url);
+        }
+
+        // Any other URL (http://...) so skip it, since we don't serve it.
+        return null;
     };
 
     HTMLServer.prototype.readyToServe = function () {
@@ -158,9 +164,9 @@ define(function (require, exports, module) {
                 }
 
                 if (_isHTML(path)) {
-                    // Since we're not instrumenting this doc fully for some reason,
-                    // at least inject the scroll manager so we can track scroll position.
-                    var scripts = MouseManager.getRemoteScript(path) + LinkManager.getRemoteScript();
+                    // Since we don't have a LiveDoc (yet) and aren't instrumenting fully,
+                    // at least inject the necessary remote scripts so preview APIs work.
+                    var scripts = PostMessageTransport.getRemoteScript(path);
                     var scriptsWithEndTag = scripts + "$&";
                     var headRegex = new RegExp(/<\/\s*head>/);
                     var htmlRegex = new RegExp(/<\/\s*html>/);

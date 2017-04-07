@@ -57,12 +57,6 @@ define(function (require, exports, module) {
     require("thirdparty/CodeMirror/addon/selection/mark-selection");
     require("thirdparty/CodeMirror/keymap/sublime");
 
-    // XXXBramble: because we include code folding by default, bundle those addons
-    // so they get bundled with our dist/thirdparty.js file.
-    // See src/extensions/default/CodeFolding/main.js
-    require("thirdparty/CodeMirror/addon/fold/brace-fold");
-    require("thirdparty/CodeMirror/addon/fold/comment-fold");
-    require("thirdparty/CodeMirror/addon/fold/markdown-fold");
     // XXXBramble: also preload the modes we'll need later, and have them get bundled.
     // See src/language/LanguageManager.js and src/language/languages.json
     require("thirdparty/CodeMirror/mode/meta");

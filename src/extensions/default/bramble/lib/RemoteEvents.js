@@ -65,6 +65,21 @@ define(function (require, exports, module) {
             });
         });
 
+        // Listen for user changing file content
+        BrambleEvents.on("bramble:projectDirty", function(e, path) {
+            sendEvent({
+                type: "bramble:projectDirty",
+                path: path
+            });
+        });
+        
+        // Listen for files being saved for the whole project
+        BrambleEvents.on("bramble:projectSaved", function(e) {
+            sendEvent({
+                type: "bramble:projectSaved"
+            });
+        });
+
         // Listen for the user changing what file is being viewed
         var lastKnownEditorFilePath;
         MainViewManager.on("currentFileChange", function(e, file) {
@@ -125,12 +140,54 @@ define(function (require, exports, module) {
                 wordWrap: PreferencesManager.get("wordWrap")
             });
         });
-        
+
+        // Listen for changes to close tags
+        PreferencesManager.on("change", "closeTags", function () {
+            sendEvent({
+                type: "bramble:autoCloseTagsChange",
+                autoCloseTags: PreferencesManager.get("closeTags")
+            });
+        });
+
         // Listen for changes to allow javascript
         PreferencesManager.on("change", "allowJavaScript", function () {
             sendEvent({
                 type: "bramble:allowJavaScriptChange",
                 allowJavaScript: PreferencesManager.get("allowJavaScript")
+            });
+        });
+
+        // Listen for changes to TagHints
+        PreferencesManager.on("change", "codehint.TagHints", function () {
+            sendEvent({
+                type: "bramble:autocompleteChange",
+                value: PreferencesManager.get("codehint.TagHints")
+            });
+        });
+
+        // Listen for changes to AttrHints
+        PreferencesManager.on("change", "codehint.AttrHints", function () {
+            sendEvent({
+                type: "bramble:autocompleteChange",
+                value: PreferencesManager.get("codehint.AttrHints")
+            });
+        });
+
+
+        // Listen for changes to JSHints
+        PreferencesManager.on("change", "codehint.JSHints", function () {
+            sendEvent({
+                type: "bramble:autocompleteChange",
+                value: PreferencesManager.get("codehint.JSHints")
+            });
+        });
+
+
+        // Listen for changes to CssPropHints
+        PreferencesManager.on("change", "codehint.CssPropHints", function () {
+            sendEvent({
+                type: "bramble:autocompleteChange",
+                value: PreferencesManager.get("codehint.CssPropHints")
             });
         });
 
@@ -174,6 +231,7 @@ define(function (require, exports, module) {
             theme: Theme.getTheme(),
             wordWrap: PreferencesManager.get("wordWrap"),
             allowJavaScript: PreferencesManager.get("allowJavaScript"),
+            autoCloseTags: PreferencesManager.get("closeTags"),
             autoUpdate: PreferencesManager.get("autoUpdate")
         });
     }

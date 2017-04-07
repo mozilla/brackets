@@ -63,7 +63,8 @@ define(function HTMLDocumentModule(require, exports, module) {
 
         this.editor = editor;
         this._instrumentationEnabled = false;
-
+        // XXXBramble: we force debug false to skip various console.log()s below.
+        this._debug = false;
         this._onActiveEditorChange = this._onActiveEditorChange.bind(this);
         EditorManager.on("activeEditorChange", this._onActiveEditorChange);
 
@@ -258,13 +259,14 @@ define(function HTMLDocumentModule(require, exports, module) {
 
                 return true;
             });
+            if(this._debug){
+                if (edits.length > 0) {
+                    console.warn("Browser DOM does not match after change: " + JSON.stringify(change));
 
-            if (edits.length > 0) {
-                console.warn("Browser DOM does not match after change: " + JSON.stringify(change));
-
-                edits.forEach(function (delta) {
-                    console.log(delta);
-                });
+                    edits.forEach(function (delta) {
+                       console.log(delta);
+                    });
+                }
             }
         });
     };
