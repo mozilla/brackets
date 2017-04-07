@@ -40,6 +40,12 @@
         ]
     },
     {
+        "path": "extensions/default/Inline3DParametersEditor",
+        "copy": [
+            "extensions/default/Inline3DParametersEditor/css/main.css"
+        ]
+    },
+    {
         "path": "extensions/default/JavaScriptQuickEdit"
     },
     {
