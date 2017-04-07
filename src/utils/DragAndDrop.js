@@ -48,7 +48,7 @@ define(function (require, exports, module) {
         LanguageManager = require("language/LanguageManager"),
         StartupState    = require("bramble/StartupState"),
         ArchiveUtils    = require("filesystem/impls/filer/ArchiveUtils"),
-        FilerUtils = require('filesystem/impls/filer/FilerUtils');
+        FilerUtils      = require('filesystem/impls/filer/FilerUtils');
 
     // 3MB size limit for imported files. If you change this, also change the
     // error message we generate in rejectImport() below!
@@ -337,12 +337,13 @@ define(function (require, exports, module) {
          */
         function rejectImport(item) {
             var ext = FilerUtils.normalizeExtension(Path.extname(item.name), true);
-            
+
             if (item.size > archiveByteLimit) {
-                return new Error(Strings.DND_MAX_ARCHIVE_SIZE_EXCEEDED);
+                return new Error(StringUtils.format(Strings.DND_MAX_SIZE_EXCEEDED, "5"));
+
             } else if (item.size > byteLimit) {
                 if(!Content.isArchive(ext)){
-                    return new Error(Strings.DND_MAX_FILE_SIZE_EXCEEDED);
+                    return new Error(StringUtils.format(Strings.DND_MAX_SIZE_EXCEEDED, "3"));
                 }
             }
 
