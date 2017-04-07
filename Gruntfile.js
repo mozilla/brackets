@@ -71,27 +71,9 @@ module.exports = function (grunt) {
             dist: {
                 files: [{
                     expand: true,
-                    cwd: 'src/',
-                    src: [
-                        /* static files */
-                        'xorigin.js',
-                        'dependencies.js',
-
-                        /* extensions and CodeMirror modes */
-                        '!extensions/**/*',
-                        '!**/unittest-files/**',
-                        'thirdparty/i18n/*.js',
-                        'thirdparty/text/*.js'
-                    ],
+                    cwd: 'dist/',
+                    src: '**/*.js',
                     dest: 'dist/'
-                }]
-            },
-            nls: {
-                files: [{
-                    expand: true,
-                    cwd: 'dist/nls',
-                    src: [ '**/*.js' ],
-                    dest: 'dist/nls'
                 }]
             }
         },
