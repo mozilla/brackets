@@ -62,6 +62,7 @@ define(function (require, exports, module) {
      */
     var _curDocChangedDueToMe = false;
     var PROJECT_MANAGER = "ProjectManager";
+    var WORKING_SET_VIEW = "WorkingSetView";
 
     /**
      * @private
@@ -69,7 +70,11 @@ define(function (require, exports, module) {
      */
     var _fileSelectionFocus = PROJECT_MANAGER;
 
-
+    EventDispatcher.on_duringInit(MainViewManager, "workingSetAdd", function (event, addedFile) {
+        // XXXBramble: always keep focus on the Project Manager vs. Working Set View
+        _fileSelectionFocus = WORKING_SET_VIEW;
+        exports.trigger("documentSelectionFocusChange");
+    });
     /**
      * Update the file selection focus whenever the contents of the editor area change
      */
@@ -78,6 +83,8 @@ define(function (require, exports, module) {
         if (!_curDocChangedDueToMe) {
             // The the cause of the doc change was not openAndSelectDocument, so pick the best fileSelectionFocus
             perfTimerName = PerfUtils.markStart("FileViewController._oncurrentFileChange():\t" + (file ? (file.fullPath) : "(no open file)"));
+            
+            // XXXBramble: always keep focus on the Project Manager vs. Working Set View
             _fileSelectionFocus = PROJECT_MANAGER;
         }
 
@@ -110,6 +117,13 @@ define(function (require, exports, module) {
      * @param {String} fileSelectionFocus - PROJECT_MANAGER
      */
     function setFileViewFocus(fileSelectionFocus) {
+        if (fileSelectionFocus !== PROJECT_MANAGER && fileSelectionFocus !== WORKING_SET_VIEW) {
+            console.error("Bad parameter passed to FileViewController.setFileViewFocus");
+            return;
+        }
+        // XXXBramble: always keep focus on the Project Manager vs. Working Set View
+        fileSelectionFocus = PROJECT_MANAGER;
+
         if (_fileSelectionFocus !== fileSelectionFocus) {
             _fileSelectionFocus = fileSelectionFocus;
             exports.trigger("fileViewFocusChange");
@@ -139,6 +153,11 @@ define(function (require, exports, module) {
             }
 
             return window.event && (_secondPaneContext() || _firstPaneContext());
+        }
+
+        if (fileSelectionFocus !== PROJECT_MANAGER && fileSelectionFocus !== WORKING_SET_VIEW) {
+            console.error("Bad parameter passed to FileViewController.openAndSelectDocument");
+            return;
         }
 
         // Opening files are asynchronous and we want to know when this function caused a file
@@ -191,6 +210,7 @@ define(function (require, exports, module) {
             // image file, we get a null doc here but we still want to keep _fileSelectionFocus
             // as PROJECT_MANAGER. Regardless of doc is null or not, call _activatePane
             // to trigger documentSelectionFocusChange event.
+            // XXXBramble: always keep focus on the Project Manager vs. Working Set View
             _fileSelectionFocus = PROJECT_MANAGER;
             _activatePane(paneId);
 
@@ -250,4 +270,5 @@ define(function (require, exports, module) {
     exports.openFileAndAddToWorkingSet = openFileAndAddToWorkingSet;
     exports.setFileViewFocus = setFileViewFocus;
     exports.PROJECT_MANAGER = PROJECT_MANAGER;
+    exports.WORKING_SET_VIEW = WORKING_SET_VIEW;
 });
