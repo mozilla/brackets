@@ -479,7 +479,7 @@ define(function (require, exports, module) {
             var fullname = this.props.name,
                 extension = LanguageManager.getCompoundFileExtension(fullname),
                 name = _getName(fullname, extension),
-                filtType = "default";
+                fileType = "default";
 
             switch (extension.toLowerCase()) {
               case 'htmls':
@@ -488,7 +488,9 @@ define(function (require, exports, module) {
               case 'md':
               case 'markdown':
               case 'html':
-                filtType = "html";
+              case 'xml':
+              case 'xhtml':
+                fileType = "html";
                 break;
               case 'ico':
               case 'bmp':
@@ -499,21 +501,23 @@ define(function (require, exports, module) {
               case 'jpe':
               case 'jpeg':
               case 'gif':
-                filtType = "image";
+                fileType = "image";
                 break;
               case 'css':
               case 'less':
-                filtType = "css";
+                fileType = "css";
                 break;
               case 'js':
-                filtType = "js";
+              case 'jsx':
+              case 'json':
+                fileType = "js";
                 break;
               default:
-                filtType = "default";
+                fileType = "default";
                 break;
             }
 
-            var insClassName = "jstree-icon-" + filtType;
+            var insClassName = "jstree-icon-" + fileType;
 
             if (extension) {
                 extension = DOM.span({
