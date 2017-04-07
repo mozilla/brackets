@@ -75,8 +75,9 @@ should host Bramble's iframe, see `src/hosted.js`.
 # Extension Loading
 
 Bramble loads a set of extensions defined in `src/extensions/bramble-extensions.json`. You can
-add remove from this list.  You can also temporarily disable extensions by using `?disableExtensions`.
-For example, to disable QuickView and CSSCodeHints load Bramble with `?disableExtensions=QuickView,CSSCodeHints` on the URL.
+alter which extensions Bramble loads by adding or removing items from this list.  You can also
+temporarily disable extensions by using `?disableExtensions`. For example: to disable QuickView
+and CSSCodeHints, load Bramble with `?disableExtensions=QuickView,CSSCodeHints` on the URL.
 
 --------------
 

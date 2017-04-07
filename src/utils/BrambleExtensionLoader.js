@@ -18,27 +18,28 @@ define(function (require, exports, module) {
 
     // Disable any extensions we found on the query string's ?disableExtensions= param
     function _processDefaults(disableExtensions) {
-        var brambleExtensions = extensionInfo.map(function(info) {
-            return info.path;
-        });
+        disableExtensions = disableExtensions ? disableExtensions.trim().split(/\s*,\s*/) : [];
 
-        if(disableExtensions) {
-            disableExtensions.split(",").forEach(function (ext) {
-                ext = ext.trim();
-                var idx = brambleExtensions.indexOf(ext);
-                if (idx > -1) {
-                    console.log('[Brackets] Disabling default extension `' + ext + '`');
-                    brambleExtensions.splice(idx, 1);
-                }
+        var brambleExtensions = [];
+        extensionInfo.forEach(function(info) {
+            var extPath = info.path;
+            var extBasename = Path.basename(extPath);
+
+            // Skip this extension if we've been instructed to disable via URL.
+            // Support both 'extensions/default/Autosave' and 'Autosave' forms.
+            if(disableExtensions.indexOf(extBasename) > -1 ||
+               disableExtensions.indexOf(extPath) > -1           ) {
+                console.log("[Bramble] Skipping loading of extension " + extBasename + " at " + extPath);
+                return;
+            }
+
+            brambleExtensions.push({
+                name: extPath,
+                path: Path.join(basePath, extPath)
             });
-        }
-
-        return brambleExtensions.map(function (ext) {
-            return {
-                name: ext,
-                path: Path.join(basePath, ext)
-            };
         });
+
+        return brambleExtensions;
     }
 
     exports.getExtensionList = function(params) {

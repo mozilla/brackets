@@ -399,6 +399,16 @@ module.exports = function (grunt) {
                 cwd: 'dist/',
                 src: ['**/*'],
                 dest: 'dist/'
+            },
+            // We need to compress the bramble-sw.js service worker file after compressing dist/
+            sw: {
+                options: {
+                    mode: "gzip"
+                },
+                expand: true,
+                cwd: 'dist/',
+                src: 'bramble-sw.js',
+                dest: 'dist'
             }
         },
 
@@ -471,14 +481,22 @@ module.exports = function (grunt) {
     grunt.registerMultiTask('swPrecache', function() {
         var done = this.async();
         var rootDir = this.data.rootDir;
-        var files =  (function() {
-            return (require('./sw-cache-file-list.json')).files;
-        }());
 
         var config = {
             cacheId: 'bramble',
             logger: grunt.log.writeln,
-            staticFileGlobs: files,
+            staticFileGlobs: [
+                // Avoid caching dist/nls/**/*, but take everything else in dist/
+                'dist/{extensions,styles,thirdparty}/**/*',
+                'dist/*.*'
+            ],
+            runtimeCaching: [{
+                urlPattern: /^https:\/\/fonts\.googleapis\.com\/css/,
+                handler: 'fastest'
+            }, {
+                urlPattern: /\/dist\/nls\//,
+                handler: 'fastest'
+            }],
             stripPrefix: 'dist/',
             ignoreUrlParametersMatching: [/./]
         };
@@ -530,15 +548,16 @@ module.exports = function (grunt) {
         'build',
         'requirejs:iframe',
         'exec:localize-dist',
-        'uglify',
-        'build-extensions'
+        'build-extensions',
+        'uglify'
     ]);
 
     // task: build dist/ for browser, pre-compressed with gzip and SW precache
     grunt.registerTask('build-browser-compressed', [
         'build-browser',
-        'compress',
-        'swPrecache'
+        'compress:dist',
+        'swPrecache',
+        'compress:sw'
     ]);
 
     // task: undo changes to the src/nls directory
