@@ -191,10 +191,14 @@ define(function (require, exports, module) {
             wordWrap: data.state.wordWrap,
             allowJavaScript: data.state.allowJavaScript,
 <<<<<<< HEAD
+<<<<<<< HEAD
             allowAutocomplete: data.state.allowAutocomplete,
 =======
             allowWhiteSpace: data.state.allowWhiteSpace,
 >>>>>>> modified the files for Whitespace Indicator
+=======
+            allowWhiteSpace: data.state.allowWhiteSpace,
+>>>>>>> d2423578999f1a7d783a28f1758493271f8ab46f
             autoCloseTags: data.state.autoCloseTags,
             autoUpdate: data.state.autoUpdate
         });
