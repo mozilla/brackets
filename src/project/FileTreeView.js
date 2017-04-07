@@ -513,7 +513,12 @@ define(function (require, exports, module) {
                 fileType = "js";
                 break;
               default:
+              var isBinary = LanguageManager.getLanguageForPath(fullname).isBinary();
+              if (isBinary){
+                fileType = "binary";
+              }else{
                 fileType = "default";
+              }
                 break;
             }
 
