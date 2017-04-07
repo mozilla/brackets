@@ -95,23 +95,22 @@ define(function (require, exports, module) {
             if (properties[cssPropertyName].type === "color") {
                 colonPos = cursorLine.indexOf(":");
                 semiColonPos = cursorLine.indexOf(";");
-                if (semiColonPos !== -1) {
-                    // edit the color value of an existing css rule
-                    cursorLineSubstring = cursorLine.substring(colonPos + 1, semiColonPos);
-                    colorValue = cursorLineSubstring.trim();
+                cursorLineSubstring = cursorLine.substring(colonPos + 1, cursorLine.length);
+                colorValue = cursorLineSubstring.replace(/ /g,"").replace(";", "");
+                if (colorValue) {
                     if (colorRegEx.test(colorValue)) {
+                        // edit the color value of an existing css rule
                         firstCharacterPos = cursorLineSubstring.search(/\S/);
-                        pos.ch = colonPos + 1 + firstCharacterPos;
-                        endPos = {line: pos.line, ch: semiColonPos};
-                    } else if (!colorValue) {
-                        setLine(pos.line, DEFAULT_COLOR, hostEditor, colonPos);
-                        pos.ch = colonPos + 2;
-                        endPos = {line: pos.line, ch: semiColonPos + DEFAULT_COLOR.length};
-                        colorValue = DEFAULT_COLOR;
+                        pos.ch = colonPos + 1 + Math.min(firstCharacterPos,1);
+                        if (semiColonPos !== -1) {
+                            endPos = {line: pos.line, ch: semiColonPos};
+                        } else {
+                            endPos = {line: pos.line, ch: cursorLine.length};
+                        }
                     } else {
-                        return null;
+                         return null;
                     }
-                } else {
+                } else if (!colorValue) {
                     // edit the color value of a new css rule
                     setLine(pos.line, DEFAULT_COLOR, hostEditor, colonPos);
                     pos.ch = colonPos + 2;
