@@ -693,6 +693,9 @@ define(function (require, exports, module) {
         this.performRename();
 
         this._viewModel.moveMarker("selected", oldProjectPath, pathInProject);
+    
+        //debugger;
+
         if (this._selections.context) {
             this._viewModel.moveMarker("context", this.makeProjectRelativeIfPossible(this._selections.context), null);
             delete this._selections.context;
