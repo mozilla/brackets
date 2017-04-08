@@ -55,7 +55,13 @@ The easiest way to run Bramble is to simply use:
 $ npm start
 ```
 
-This starts an `http-server` session on port 8000 for you to work with.
+This runs the `localize` script that will merge Thimble's localized string with Brackets and starts an `http-server` session on port 8000 for you to work with. Ending the `http-server` with `CTRL-C` will run the `unlocalize` script to clean up changes the `localize` script made.
+
+If you just want to start the server quickly without the localized strings from Thimble, you can use:
+
+```
+$ npm run start-unlocalized
+```
 
 However, if you wish to run your own static server, there are several options available:
 * [Apache Webserver](http://www.apache.org/)

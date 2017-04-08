@@ -67,7 +67,9 @@
         "production": "npm start",
         "unlocalize": "grunt unlocalize",
         "test": "grunt test && grunt build-browser-compressed",
-        "start": "npm run localize && http-server -p 8000 --cors && npm run unlocalize"
+        "server": "http-server -p 8000 --cors",
+        "start": "npm run localize && npm run server && npm run unlocalize",
+        "start-unlocalized": "npm run server"
     },
     "license": "MIT"
 }
