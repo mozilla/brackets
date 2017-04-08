@@ -295,13 +295,11 @@ define(function (require, exports, module) {
 
         if (currentEditor) {
             var curPos = currentEditor.getCursorPos();
-            var focusedWidget = currentEditor.getFocusedInlineWidget();
-            var inlineWidget = focusedWidget || currentEditor.getWidget(curPos.line);
-
+            var inlineWidget = currentEditor.getFocusedInlineWidget() || currentEditor.getWidget(curPos.line);
+            
             if (inlineWidget) {
                 // an inline widget's editor has focus, so close it
                 PerfUtils.markStart(PerfUtils.INLINE_WIDGET_CLOSE);
-                currentEditor.removeInlineWidget(inlineWidget);
                 inlineWidget.close().done(function () {
                     PerfUtils.addMeasurement(PerfUtils.INLINE_WIDGET_CLOSE);
                     // return a resolved promise to CommandManager
