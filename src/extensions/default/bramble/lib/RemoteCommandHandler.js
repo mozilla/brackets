@@ -102,6 +102,19 @@ define(function (require, exports, module) {
         case "BRAMBLE_ENABLE_INSPECTOR":
             MouseManager.enableInspector();
             break;
+        case "BRAMBLE_ENABLE_AUTOCOMPLETE":
+            PreferencesManager.set("codehint.TagHints", true);
+            PreferencesManager.set("codehint.AttrHints", true);
+            PreferencesManager.set("codehint.JSHints", true);
+            PreferencesManager.set("codehint.CssPropHints", true);
+            break;
+        case "BRAMBLE_DISABLE_AUTOCOMPLETE":
+            PreferencesManager.set("codehint.TagHints", false);
+            PreferencesManager.set("codehint.AttrHints", false);
+            PreferencesManager.set("codehint.JSHints", false);
+            PreferencesManager.set("codehint.CssPropHints", false);
+            break;
+
         case "BRAMBLE_DISABLE_INSPECTOR":
             // Disable the inspector, and clear any marks in the preview/editor
             MouseManager.disableInspector(true);
@@ -129,6 +142,9 @@ define(function (require, exports, module) {
             break;
         case "BRAMBLE_DISABLE_WORD_WRAP":
             PreferencesManager.set("wordWrap", false);
+            break;
+        case "BRAMBLE_CONFIGURE_AUTO_CLOSE_TAGS":
+            PreferencesManager.set("closeTags", args[0]);
             break;
         case "BRAMBLE_SHOW_TUTORIAL":
             Tutorial.setOverride(true);

@@ -28,6 +28,10 @@ define(function (require, exports, module) {
             return id === "css";
         },
 
+        needsRewriting: function(ext) {
+            return this.isHTML(ext) || this.isCSS(ext);
+        },
+
         isMarkdown: function(ext) {
             var id = _getLanguageId(ext);
             return id === "markdown";
@@ -124,6 +128,15 @@ define(function (require, exports, module) {
             }
 
             return !(/\:?\/\//.test(url) || /\s*data\:/.test(url));
+        },
+
+        // Test for a Blob URL, eg: blob:http://localhost:8000/bf64f1e0-044d-4673-ba7d-156251db09f8
+        isBlobURL: function(url) {
+            if(!url) {
+                return false;
+            }
+
+            return /^blob\:/.test(url);
         }
     };
 });

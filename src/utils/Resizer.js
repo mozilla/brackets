@@ -365,6 +365,8 @@ define(function (require, exports, module) {
 
 
         $resizer.on("mousedown.resizer", function (e) {
+            $resizer.addClass("active");
+
             var $resizeShield   = $("<div class='resizing-container " + direction + "-resizing' />"),
                 startPosition   = e[directionProperty],
                 startSize       = $element.is(":visible") ? elementSizeFunction.apply($element) : 0,
@@ -492,6 +494,7 @@ define(function (require, exports, module) {
                         $resizeShield.off("mousedown");
                         $resizeShield.remove();
                         animationRequest = null;
+                        $resizer.removeClass("active");
                     }, 300);
                 }
             }
