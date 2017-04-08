@@ -320,9 +320,9 @@ define(function (require, exports, module) {
     }
 
     function _addQueryProvider(provider){
-        provider()
+        provider();
         if(provider.queryProvider instanceof Function) {
-            return provider.queryProvider
+            return provider.queryProvider;
         } else {
             return (function() { return false;});
         }
