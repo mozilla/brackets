@@ -8,7 +8,7 @@ define(function (require, exports, module) {
     var PARAMETERS_3D_REGEX = /( )*(((-)?\d+(\.\d+)?)( )+)*((-)?\d+(\.\d+)?( )*)/g;
 
     var MODIFIERS = {
-        postion: 50,
+        position: 50,
         scale: 30,
         rotation: 5,
         radius: 50

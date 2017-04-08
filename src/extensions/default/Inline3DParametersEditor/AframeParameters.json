@@ -1,0 +1,6 @@
+{     
+    "position":         { "labels": ["x", "y", "z"] },
+    "scale":            { "labels": ["x", "y", "z"] },
+    "rotation":         { "labels": ["x", "y", "z"] },
+    "radius":           { "labels": ["r"] }
+}

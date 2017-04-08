@@ -26,7 +26,8 @@
 
     var Strings                 = brackets.getModule("strings"),
         Mustache                = brackets.getModule("thirdparty/mustache/mustache"),
-        Inline3dParametersUtils = require("Parameters3DUtils");
+        Inline3dParametersUtils = require("Parameters3DUtils"),
+        AframeParameters        = require("text!AframeParameters.json");
 
     /** Mustache template that forms the bare DOM structure of the UI */
     var Template = require("text!ParameterEditorTemplate.html");
@@ -36,7 +37,8 @@
         this.$element = $(Mustache.render(Template, Strings));
         $parent.append(this.$element);
         this._callback = callback;
-        this._modifier = Inline3dParametersUtils.getModifier(tag) || 10;
+        this._tag = tag;
+        this._modifier = Inline3dParametersUtils.getModifier(this._tag) || 10;
 
         this._handleSliderDrag = this._handleSliderDrag.bind(this);
 
@@ -116,11 +118,11 @@
     ParameterEditor.prototype._hideInputs = function() {
         if(this._numberOfParameters <= 2) {
             this.$element.find("#_z").css("display", "none");
-            this.$element.find("#input-z").css("display", "none");
+            this.$element.find("#input-3").css("display", "none");
         }
         if(this._numberOfParameters === 1) {
             this.$element.find("#_y").css("display", "none");
-            this.$element.find("#input-y").css("display", "none");
+            this.$element.find("#input-2").css("display", "none");
         }
     };
 
@@ -132,6 +134,7 @@
 
         this._numberOfParameters = this._getNumberOfProperties(parameters);
 
+        this._setLabels();
         this._hideInputs();
 
         this._values = [];
@@ -144,6 +147,20 @@
 
         for(var i = 0; i < this._numberOfParameters; i++) {
             this.$sliders[i].val(parametersArray[i]);
+        }
+    };
+
+    ParameterEditor.prototype._setLabels = function() {
+        var parameter = JSON.parse(AframeParameters)[this._tag];
+        if(!parameter) {
+            return;
+        }
+        var labels = parameter.labels;
+        if(!labels) {
+            return;
+        }
+        for(var i = 0; i < labels.length; i++) {
+            this.$element.find("#input-"+(i+1)).html(labels[i]);
         }
     };
 
