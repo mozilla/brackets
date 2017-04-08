@@ -76,6 +76,14 @@ define(function (require, exports, module) {
         };
     }
 
+    inlineColorEditorProvider.queryProvider = function(hostEditor, pos){
+        var context = prepareEditorForProvider(hostEditor, pos);
+        if (!context) {
+            return null;
+        }
+        return context;
+    }
+
     /**
      * Registered as an inline editor provider: creates an InlineEditorColor when the cursor
      * is on a color value (in any flavor of code).
@@ -86,19 +94,7 @@ define(function (require, exports, module) {
      *      no color at pos.
      */
     function inlineColorEditorProvider(hostEditor, pos) {
-
-        function queryProvider(hostEditor, pos) {
-            var context = prepareEditorForProvider(hostEditor, pos);
-            if (!context) {
-                return null;
-            }
-            return context;
-         }
-         // so we can see this function outside
-        inlineColorEditorProvider.queryProvider = queryProvider;
-
-        // if were only in here to register the provider
-        var context = (hostEditor) ? queryProvider(hostEditor, pos) : null;
+        var context = queryProvider(hostEditor, pos);
 
         if (!context) {
             return null;

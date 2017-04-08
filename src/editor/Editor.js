@@ -433,13 +433,8 @@ define(function (require, exports, module) {
 
         this.on("cursorActivity", function (event, editor) {
             self._handleCursorActivity(event);
-            var providersFound = MainViewManager._providerAvailableForPos(editor);
-            if (providersFound.length) {
-                var len, i;
-                for (i = 0, len = providersFound.length; i < len ; i++) {
-                    console.log(providersFound[i].name + " ProviderFound");
-                }
-            }
+            self.trigger("providerFound");
+            console.log(MainViewManager._providerAvailableForPos(editor));
         });
         this.on("keypress", function (event, editor, domEvent) {
             self._handleKeypressEvents(domEvent);

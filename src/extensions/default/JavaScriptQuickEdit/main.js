@@ -180,6 +180,28 @@ define(function (require, exports, module) {
         return result.promise();
     }
 
+    javaScriptFunctionProvider.queryProvider = function(hostEditor, pos) {
+       // Only provide a JavaScript editor when cursor is in JavaScript content
+       if (hostEditor.getModeForSelection() !== "javascript") {
+            return null;
+        }
+
+        // Only provide JavaScript editor if the selection is within a single line
+        var sel = hostEditor.getSelection();
+        if (sel.start.line !== sel.end.line) {
+            return null;
+        }
+
+        // Always use the selection start for determining the function name. The pos
+        // parameter is usually the selection end.
+        var functionResult = _getFunctionName(hostEditor, sel.start);
+        if (!functionResult.functionName) {
+           return functionResult.reason || null;
+        }
+
+       return functionResult;
+    }
+
     /**
      * This function is registered with EditorManager as an inline editor provider. It creates an inline editor
      * when the cursor is on a JavaScript function name, finds all functions that match the name
@@ -191,33 +213,7 @@ define(function (require, exports, module) {
      *      or null if we're not ready to provide anything.
      */
     function javaScriptFunctionProvider(hostEditor, pos) {
-
-        function queryProvider(hostEditor, pos) {
-           // Only provide a JavaScript editor when cursor is in JavaScript content
-           if (hostEditor.getModeForSelection() !== "javascript") {
-                return null;
-            }
-
-            // Only provide JavaScript editor if the selection is within a single line
-            var sel = hostEditor.getSelection();
-            if (sel.start.line !== sel.end.line) {
-                return null;
-            }
-
-            // Always use the selection start for determining the function name. The pos
-            // parameter is usually the selection end.
-            var functionResult = _getFunctionName(hostEditor, sel.start);
-            if (!functionResult.functionName) {
-               return functionResult.reason || null;
-            }
-
-           return functionResult;
-        }
-        // so we can see this function outside
-        javaScriptFunctionProvider.queryProvider = queryProvider;
-
-        // if were only in here to register the provider
-        var functionResult = (hostEditor) ? queryProvider(hostEditor, pos) : null;
+        var functionResult = queryProvider(hostEditor, pos);
 
         if (!functionResult) {
             return null;

@@ -319,16 +319,6 @@ define(function (require, exports, module) {
         return result.promise();
     }
 
-    function _addQueryProvider(provider){
-        provider();
-        if(provider.queryProvider instanceof Function) {
-            return provider.queryProvider;
-        } else {
-            return (function() { return false;});
-        }
-
-    }
-
     /**
      * Inserts a prioritized provider object into the array in sorted (descending) order.
      * @private
@@ -338,11 +328,9 @@ define(function (require, exports, module) {
      */
     function _insertProviderSorted(array, provider, priority) {
         var index,
-            queryProvider = _addQueryProvider(provider),
             prioritizedProvider = {
                 priority: priority,
-                provider: provider,
-                queryProvider: queryProvider
+                provider: provider
             };
 
         for (index = 0; index < array.length; index++) {
@@ -413,6 +401,7 @@ define(function (require, exports, module) {
         if (priority === undefined) {
             priority = 0;
         }
+
         _insertProviderSorted(_inlineEditProviders, provider, priority);
     }
 
@@ -791,20 +780,26 @@ define(function (require, exports, module) {
     }
 
     function providerAvailableForPos(hostEditor) {
-        var providersFound = [],
-            pos = hostEditor.getCursorPos(),
-            providerRet,
-            i, len,
-            providers = _inlineEditProviders.concat(_inlineDocsProviders);
+        var pos = hostEditor.getCursorPos(),
+            i, len;
 
-        for (i =0, len = providers.length; i < len ; i++) {
-            var provider = providers[i].queryProvider;
-
-            if (provider(hostEditor, pos)) {
-                providersFound.push(providers[i].provider);
+        for(i=0, len=_inlineEditProviders.length; i<len; i++) {
+            if(_inlineEditProviders[i].provider.queryProvider instanceof Function){
+                if (_inlineEditProviders[i].provider.queryProvider(hostEditor, pos)) {
+                    return true;
+                }
             }
         }
-        return providersFound;
+
+        for(i=0, len=_inlineDocsProviders.length; i<len; i++) {
+            if(_inlineDocsProviders[i].provider instanceof Function){
+                if (_inlineDocsProviders[i].provider.queryProvider(hostEditor, pos)) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 
     // Set up event dispatching

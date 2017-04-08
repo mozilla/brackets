@@ -69,6 +69,55 @@ define(function (require, exports, module) {
         return promiseCache[fileName];
     }
 
+    inlineProvider.queryProvider = function(hostEditor, pos) {
+        var jsonFile, propInfo,
+            propQueue = [], // priority queue of propNames to try
+            langId = hostEditor.getLanguageForSelection().getId(),
+            supportedLangs = ["css", "scss", "less", "html"],
+            langIndex = langId ? supportedLangs.indexOf(langId) : -1; // fail if langId is falsy
+
+        // Only provide docs when cursor is in supported language
+        if (langIndex < 0) {
+            return null;
+        }
+
+        // Only provide docs if the selection is within a single line
+        var sel = hostEditor.getSelection();
+        if (sel.start.line !== sel.end.line) {
+            return null;
+        }
+
+        if (langIndex <= 2) { // CSS-like language
+            jsonFile = "css.json";
+            propInfo = CSSUtils.getInfoAtPos(hostEditor, sel.start);
+            if (propInfo.name) {
+                propQueue.push("css/properties/" + propInfo.name);
+                // remove possible vendor prefixes
+                propQueue.push("css/properties/" + propInfo.name.replace(/^-(?:webkit|moz|ms|o)-/, ""));
+            }
+        } else { // HTML
+            jsonFile = "html.json";
+            propInfo = HTMLUtils.getTagInfo(hostEditor, sel.start);
+            if (propInfo.position.tokenType === HTMLUtils.ATTR_NAME && propInfo.attr && propInfo.attr.name) {
+                // we're on an HTML attribute (and not on its value)
+                propQueue.push("html/attributes/" + propInfo.attr.name.toLowerCase());
+            }
+            if (propInfo.tagName) { // we're somehow on an HTML tag (no matter where exactly)
+                propInfo = propInfo.tagName.toLowerCase();
+                if (/^h[1-6]$/.test(propInfo)) { // h1..h6 are expressed as "hn" in Web Platform Docs
+                    propInfo = "hn";
+                }
+                propQueue.push("html/elements/" + propInfo);
+            }
+        }
+        if (propQueue.length) {
+            // creation of widget requires the jsonFile as well as the propQueue
+            return {propQueue : propQueue, jsonFile : jsonFile};
+        } else {
+            return null;
+        }
+    }
+
     /**
      * Inline docs provider.
      *
@@ -77,60 +126,7 @@ define(function (require, exports, module) {
      * @return {?$.Promise} resolved with an InlineWidget; null if we're not going to provide anything
      */
     function inlineProvider(hostEditor, pos) {
-
-        function queryProvider(hostEditor, pos) {
-            var jsonFile, propInfo,
-                propQueue = [], // priority queue of propNames to try
-                langId = hostEditor.getLanguageForSelection().getId(),
-                supportedLangs = ["css", "scss", "less", "html"],
-                langIndex = langId ? supportedLangs.indexOf(langId) : -1; // fail if langId is falsy
-
-            // Only provide docs when cursor is in supported language
-            if (langIndex < 0) {
-                return null;
-            }
-
-            // Only provide docs if the selection is within a single line
-            var sel = hostEditor.getSelection();
-            if (sel.start.line !== sel.end.line) {
-                return null;
-            }
-
-            if (langIndex <= 2) { // CSS-like language
-                jsonFile = "css.json";
-                propInfo = CSSUtils.getInfoAtPos(hostEditor, sel.start);
-                if (propInfo.name) {
-                    propQueue.push("css/properties/" + propInfo.name);
-                    // remove possible vendor prefixes
-                    propQueue.push("css/properties/" + propInfo.name.replace(/^-(?:webkit|moz|ms|o)-/, ""));
-                }
-            } else { // HTML
-                jsonFile = "html.json";
-                propInfo = HTMLUtils.getTagInfo(hostEditor, sel.start);
-                if (propInfo.position.tokenType === HTMLUtils.ATTR_NAME && propInfo.attr && propInfo.attr.name) {
-                    // we're on an HTML attribute (and not on its value)
-                    propQueue.push("html/attributes/" + propInfo.attr.name.toLowerCase());
-                }
-                if (propInfo.tagName) { // we're somehow on an HTML tag (no matter where exactly)
-                    propInfo = propInfo.tagName.toLowerCase();
-                    if (/^h[1-6]$/.test(propInfo)) { // h1..h6 are expressed as "hn" in Web Platform Docs
-                        propInfo = "hn";
-                    }
-                    propQueue.push("html/elements/" + propInfo);
-                }
-            }
-            if (propQueue.length) {
-                // creation of widget requires the jsonFile as well as the propQueue
-                return {propQueue : propQueue, jsonFile : jsonFile};
-            } else {
-                return null;
-            }
-        }
-        // so we can see this function outside
-        inlineProvider.queryProvider = queryProvider;
-
-        // if were only in here to register the provider
-        var providerFound = (hostEditor) ? queryProvider(hostEditor, pos) : null;
+        var providerFound = queryProvider(hostEditor, pos);
 
         // Are we on a supported property? (no matter if info is available for the property)
         if (providerFound) {

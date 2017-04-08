@@ -151,6 +151,27 @@ define(function (require, exports, module) {
         return html;
     }
 
+    htmlToCSSProvider.queryProvider = function(hostEditor, pos) {
+         // Only provide a CSS editor when cursor is in HTML content
+         if (hostEditor.getLanguageForSelection().getId() !== "html") {
+             return null;
+         }
+
+         // Only provide CSS editor if the selection is within a single line
+         var sel = hostEditor.getSelection();
+         if (sel.start.line !== sel.end.line) {
+             return null;
+         }
+
+         // Always use the selection start for determining selector name. The pos
+         // parameter is usually the selection end.
+         var selectorResult = _getSelectorName(hostEditor, sel.start);
+         if (selectorResult.selectorName === "") {
+             return selectorResult.reason || null;
+         }
+         return selectorResult;
+     }
+
     /**
      * This function is registered with EditManager as an inline editor provider. It creates a CSSInlineEditor
      * when cursor is on an HTML tag name, class attribute, or id attribute, find associated
@@ -163,33 +184,7 @@ define(function (require, exports, module) {
      *         selection isn't even close to a context where we could provide anything.
      */
     function htmlToCSSProvider(hostEditor, pos) {
-
-        function queryProvider(hostEditor, pos) {
-             // Only provide a CSS editor when cursor is in HTML content
-             if (hostEditor.getLanguageForSelection().getId() !== "html") {
-                 return null;
-             }
-
-             // Only provide CSS editor if the selection is within a single line
-             var sel = hostEditor.getSelection();
-             if (sel.start.line !== sel.end.line) {
-                 return null;
-             }
-
-             // Always use the selection start for determining selector name. The pos
-             // parameter is usually the selection end.
-             var selectorResult = _getSelectorName(hostEditor, sel.start);
-             if (selectorResult.selectorName === "") {
-                 return selectorResult.reason || null;
-             }
-             return selectorResult;
-         }
-        // so we can see this function outside
-        htmlToCSSProvider.queryProvider = queryProvider;
-
-        // if were only in here to register the provider
-        var selectorResult = (hostEditor) ? queryProvider(hostEditor, pos) :
-                             null;
+        var selectorResult = queryProvider(hostEditor, pos);
 
         if (!selectorResult) {
             return null;
