@@ -693,7 +693,10 @@ define(function (require, exports, module) {
         this.performRename();
 
         this._viewModel.moveMarker("selected", oldProjectPath, pathInProject);
+<<<<<<< HEAD
 
+=======
+>>>>>>> parent of 5478f40... Restored some changes, added request comments again
         if (this._selections.context) {
             this._viewModel.moveMarker("context", this.makeProjectRelativeIfPossible(this._selections.context), null);
             delete this._selections.context;
