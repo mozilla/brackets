@@ -319,6 +319,16 @@ define(function (require, exports, module) {
         return result.promise();
     }
 
+    function _addQueryProvider(provider){
+        provider()
+        if(provider.queryProvider instanceof Function) {
+            return provider.queryProvider
+        } else {
+            return (function() { return false;});
+        }
+
+    }
+
     /**
      * Inserts a prioritized provider object into the array in sorted (descending) order.
      * @private
@@ -326,8 +336,9 @@ define(function (require, exports, module) {
      * @param {number} priority
      * @param {function(...)} provider
      */
-    function _insertProviderSorted(array, provider, priority, queryProvider) {
+    function _insertProviderSorted(array, provider, priority) {
         var index,
+            queryProvider = _addQueryProvider(provider),
             prioritizedProvider = {
                 priority: priority,
                 provider: provider,
@@ -398,11 +409,11 @@ define(function (require, exports, module) {
      * The provider returns a promise that will be resolved with an InlineWidget, or returns a string
      * indicating why the provider cannot respond to this case (or returns null to indicate no reason).
      */
-    function registerInlineEditProvider(provider, priority, queryProvider) {
+    function registerInlineEditProvider(provider, priority) {
         if (priority === undefined) {
             priority = 0;
         }
-        _insertProviderSorted(_inlineEditProviders, provider, priority, queryProvider);
+        _insertProviderSorted(_inlineEditProviders, provider, priority);
     }
 
     /**
@@ -416,11 +427,11 @@ define(function (require, exports, module) {
      * The provider returns a promise that will be resolved with an InlineWidget, or returns a string
      * indicating why the provider cannot respond to this case (or returns null to indicate no reason).
      */
-    function registerInlineDocsProvider(provider, priority, queryProvider) {
+    function registerInlineDocsProvider(provider, priority) {
         if (priority === undefined) {
             priority = 0;
         }
-        _insertProviderSorted(_inlineDocsProviders, provider, priority, queryProvider);
+        _insertProviderSorted(_inlineDocsProviders, provider, priority);
     }
 
     /**
@@ -788,11 +799,9 @@ define(function (require, exports, module) {
 
         for (i =0, len = providers.length; i < len ; i++) {
             var provider = providers[i].queryProvider;
-            if (provider) {
-                providerRet = provider(hostEditor, pos);
-                if (providerRet) {
-                    providersFound.push(provider);
-                }
+
+            if (provider(hostEditor, pos)) {
+                providersFound.push(providers[i].provider);
             }
         }
         return providersFound;

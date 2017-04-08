@@ -76,16 +76,6 @@ define(function (require, exports, module) {
         };
     }
 
-    function queryInlineColorEditorProvider(hostEditor, pos) {
-        var context = prepareEditorForProvider(hostEditor, pos);
-
-        if (!context) {
-            return null;
-        }
-
-        return context;
-     }
-
     /**
      * Registered as an inline editor provider: creates an InlineEditorColor when the cursor
      * is on a color value (in any flavor of code).
@@ -96,7 +86,19 @@ define(function (require, exports, module) {
      *      no color at pos.
      */
     function inlineColorEditorProvider(hostEditor, pos) {
-        var context = queryInlineColorEditorProvider(hostEditor, pos);
+
+        function queryProvider(hostEditor, pos) {
+            var context = prepareEditorForProvider(hostEditor, pos);
+            if (!context) {
+                return null;
+            }
+            return context;
+         }
+         // so we can see this function outside
+        inlineColorEditorProvider.queryProvider = queryProvider;
+
+        // if were only in here to register the provider
+        var context = (hostEditor) ? queryProvider(hostEditor, pos) : null;
 
         if (!context) {
             return null;
@@ -119,7 +121,7 @@ define(function (require, exports, module) {
     // XXXBramble: use css vs less
     ExtensionUtils.loadStyleSheet(module, "css/main.css");
 
-    EditorManager.registerInlineEditProvider(inlineColorEditorProvider, undefined, queryInlineColorEditorProvider);
+    EditorManager.registerInlineEditProvider(inlineColorEditorProvider);
 
     // for use by other InlineColorEditors
     exports.prepareEditorForProvider = prepareEditorForProvider;
