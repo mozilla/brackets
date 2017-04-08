@@ -14,13 +14,20 @@ define(function (require, exports, module) {
     var decodePath = require("filesystem/impls/filer/FilerUtils").decodePath;
 
     // Walk the project root dir and make sure we have Blob URLs generated for
-    // all file paths.
+    // all file paths.  Skip CSS and HTML files, since we need to rewrite them
+    // before they are useful (e.g., for linked files within them).
     exports.refresh = function(callback) {
         var fs = BracketsFiler.fs();
 
         function _getUrlAsync(filename, callback) {
             var decodedFilename = decodePath(filename);
             var cachedUrl = BlobUtils.getUrl(filename);
+
+            // Skip HTML and CSS files, since we need to run a rewriter over them
+            // before we can serve a Blob URL.
+            if(Content.needsRewriting(Path.extname(decodedFilename))) {
+                return callback(null);
+            }
 
             // If we get a Blob URL (i.e., not the filename back) and get it
             // synchronously, run the callback and yield to main thread.

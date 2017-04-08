@@ -130,27 +130,3 @@ div.CodeMirror-selected {
 .CodeMirror .cm-dk-whitespace-trailing-tab::before {
   background-color: #75715E !important;
 }
-/**
- * Code Folding (https://github.com/thehogfather/brackets-code-folding)
- * --------------------------------------------------------------------
- */
-.CodeMirror-foldgutter,
-.CodeMirror-foldgutter,
-.CodeMirror-foldgutter-blank,
-.CodeMirror-foldgutter-folded,
-.CodeMirror-foldgutter-open {
-  color: #75715E;
-}
-.CodeMirror-foldgutter-open::after {
-  content: "\25bc";
-}
-.CodeMirror-foldmarker {
-  background-color: #333;
-  border-color: #555;
-  color: #555;
-  padding: 0 10px;
-}
-.inline-widget .CodeMirror-gutter.CodeMirror-linenumbers,
-.inline-widget .CodeMirror-gutter.CodeMirror-foldgutter {
-  background-color: #1b1b1b !important;
-}

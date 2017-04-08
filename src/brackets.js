@@ -57,6 +57,16 @@ define(function (require, exports, module) {
     require("thirdparty/CodeMirror/addon/selection/mark-selection");
     require("thirdparty/CodeMirror/keymap/sublime");
 
+    // XXXBramble: also preload the modes we'll need later, and have them get bundled.
+    // See src/language/LanguageManager.js and src/language/languages.json
+    require("thirdparty/CodeMirror/mode/meta");
+    require("thirdparty/CodeMirror/mode/css/css");
+    require("thirdparty/CodeMirror/mode/htmlmixed/htmlmixed");
+    require("thirdparty/CodeMirror/mode/javascript/javascript");
+    require("thirdparty/CodeMirror/mode/jsx/jsx");
+    require("thirdparty/CodeMirror/mode/xml/xml");
+    require("thirdparty/CodeMirror/mode/markdown/markdown");
+
     // Load dependent modules
     var AppInit             = require("utils/AppInit"),
         LanguageManager     = require("language/LanguageManager"),

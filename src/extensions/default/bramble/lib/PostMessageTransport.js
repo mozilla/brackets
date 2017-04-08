@@ -24,6 +24,7 @@ define(function (require, exports, module) {
     var Tutorial = require("lib/Tutorial");
     var MouseManager = require("lib/MouseManager");
     var LinkManager = require("lib/LinkManager");
+    var ConsoleManager = require("lib/ConsoleManager");
 
     // An XHR shim will be injected as well to allow XHR to the file system
     var XHRShim = require("text!lib/xhr/XHRShim.js");
@@ -91,7 +92,12 @@ define(function (require, exports, module) {
                 msgObj.message = resolveLinks(msgObj.message);
             }
 
-            //trigger message event
+            if(ConsoleManager.isConsoleRequest(msgObj.message)) {
+                ConsoleManager.handleConsoleRequest(msgObj.data);
+                return;
+            }
+            
+            // Trigger message event 
             module.exports.trigger("message", [connId, msgObj.message]);
         } else if (msgObj.type === "connect") {
             Browser.setListener();
@@ -191,20 +197,19 @@ define(function (require, exports, module) {
     /**
      * Returns the script that should be injected into the browser to handle the other end of the transport.
      * Includes a base tag to handle external protocol-less, linked files.
+     * @param {string} path (Optional) a path being served, or the current LiveDoc's path if missing.
      * @return {string}
      */
-    function getRemoteScript() {
+    function getRemoteScript(path) {
         var currentDoc = LiveDevMultiBrowser._getCurrentLiveDoc();
-        var currentPath;
-        if(currentDoc) {
-            currentPath = currentDoc.doc.file.fullPath;
-        }
+        var currentPath = path || (currentDoc && currentDoc.doc.file.fullPath);
 
         return '<base href="' + window.location.href + '">\n' +
             "<script>\n" + PostMessageTransportRemote + "</script>\n" +
             "<script>\n" + XHRShim + "</script>\n" +
             MouseManager.getRemoteScript(currentPath) +
-            LinkManager.getRemoteScript();
+            LinkManager.getRemoteScript() +
+            ConsoleManager.getRemoteScript();
     }
 
     // URL of document being rewritten/launched (if any)

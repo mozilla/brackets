@@ -139,7 +139,6 @@
          * Evaluate an expresion and return its result.
          */
         evaluate: function (msg) {
-            console.log("Runtime.evaluate");
             var result = eval(msg.params.expression);
             MessageBroker.respond(msg, {
                 result: JSON.stringify(result) // TODO: in original protocol this is an object handle

@@ -57,7 +57,8 @@ define(function (require, exports, module) {
             stylesheets: {},
             scripts: {}
         };
-
+        // XXXBramble: we force debug false to skip various console.log()s below.
+        this._debug = false;
         this._onChange = this._onChange.bind(this);
         this.doc.on("change", this._onChange);
 
@@ -204,7 +205,7 @@ define(function (require, exports, module) {
             result              = HTMLInstrumentation.getUnappliedEditList(this.editor, change),
             applyEditsPromise,
             reloadPromise;
-        
+
         if (result.reload) {
             reloadPromise = this.protocol.reload();
             reloadPromise.always(function () {
