@@ -121,7 +121,7 @@ define(function (require, exports, module) {
             console.error("Bad parameter passed to FileViewController.setFileViewFocus");
             return;
         }
-        // XXXBramble: always keep focus on the Project Manager vs. Working Set View
+        // XXXBramble: always keep focus on the Project Manager vs. Working Set View 
         fileSelectionFocus = PROJECT_MANAGER;
 
         if (_fileSelectionFocus !== fileSelectionFocus) {
