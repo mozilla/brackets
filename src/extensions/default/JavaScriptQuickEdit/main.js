@@ -200,8 +200,7 @@ define(function (require, exports, module) {
         }
 
        return functionResult;
-    }
-
+    };
     /**
      * This function is registered with EditorManager as an inline editor provider. It creates an inline editor
      * when the cursor is on a JavaScript function name, finds all functions that match the name
@@ -213,7 +212,7 @@ define(function (require, exports, module) {
      *      or null if we're not ready to provide anything.
      */
     function javaScriptFunctionProvider(hostEditor, pos) {
-        var functionResult = queryProvider(hostEditor, pos);
+        var functionResult = javaScriptFunctionProvider.queryProvider(hostEditor, pos);
 
         if (!functionResult) {
             return null;

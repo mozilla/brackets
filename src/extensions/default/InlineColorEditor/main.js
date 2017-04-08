@@ -82,7 +82,7 @@ define(function (require, exports, module) {
             return null;
         }
         return context;
-    }
+    };
 
     /**
      * Registered as an inline editor provider: creates an InlineEditorColor when the cursor
@@ -94,7 +94,7 @@ define(function (require, exports, module) {
      *      no color at pos.
      */
     function inlineColorEditorProvider(hostEditor, pos) {
-        var context = queryProvider(hostEditor, pos);
+        var context = inlineColorEditorProvider.queryProvider(hostEditor, pos);
 
         if (!context) {
             return null;

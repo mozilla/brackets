@@ -116,7 +116,7 @@ define(function (require, exports, module) {
         } else {
             return null;
         }
-    }
+    };
 
     /**
      * Inline docs provider.
@@ -126,7 +126,7 @@ define(function (require, exports, module) {
      * @return {?$.Promise} resolved with an InlineWidget; null if we're not going to provide anything
      */
     function inlineProvider(hostEditor, pos) {
-        var providerFound = queryProvider(hostEditor, pos);
+        var providerFound = inlineProvider.queryProvider(hostEditor, pos);
 
         // Are we on a supported property? (no matter if info is available for the property)
         if (providerFound) {

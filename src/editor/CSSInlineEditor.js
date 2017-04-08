@@ -170,7 +170,7 @@ define(function (require, exports, module) {
              return selectorResult.reason || null;
          }
          return selectorResult;
-     }
+     };
 
     /**
      * This function is registered with EditManager as an inline editor provider. It creates a CSSInlineEditor
@@ -184,7 +184,7 @@ define(function (require, exports, module) {
      *         selection isn't even close to a context where we could provide anything.
      */
     function htmlToCSSProvider(hostEditor, pos) {
-        var selectorResult = queryProvider(hostEditor, pos);
+        var selectorResult = htmlToCSSProvider.queryProvider(hostEditor, pos);
 
         if (!selectorResult) {
             return null;
