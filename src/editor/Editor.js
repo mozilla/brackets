@@ -808,7 +808,7 @@ define(function (require, exports, module) {
                 return w.info;
             });
         return (widgetInfo ? this._inlineWidgets[allWidgetInfos.indexOf(widgetInfo[0])] : null);
-    }
+    };
 
     /**
      * Determine the mode to use from the document's language
