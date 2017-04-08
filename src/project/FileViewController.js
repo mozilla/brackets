@@ -70,6 +70,10 @@ define(function (require, exports, module) {
      */
     var _fileSelectionFocus = PROJECT_MANAGER;
 
+    // Due to circular dependencies, not safe to call on() directly
+    /**
+     * Change the doc selection to the working set when ever a new file is added to the working set
+     */
     EventDispatcher.on_duringInit(MainViewManager, "workingSetAdd", function (event, addedFile) {
         // XXXBramble: always keep focus on the Project Manager vs. Working Set View
         _fileSelectionFocus = WORKING_SET_VIEW;
