@@ -161,7 +161,7 @@ define(function (require, exports, module) {
         PreferencesManager.on("change", "allowWhiteSpace", function () {
             sendEvent({
                 type: "bramble:allowWhiteSpaceChange",
-                allowWhiteSpace: PreferencesManager.getExtensionPrefs("denniskehrig.ShowWhitespace").get("enabled")
+                allowWhiteSpace: PreferencesManager.get("allowWhiteSpace")
             });
         });
         // PreferencesManager.getExtensionPrefs("denniskehrig").on("change", "ShowWhitespace", function () {

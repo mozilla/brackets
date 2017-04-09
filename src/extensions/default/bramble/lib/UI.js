@@ -105,7 +105,8 @@ define(function (require, exports, module) {
 
         var allowWhiteSpace = BrambleStartupState.ui("allowWhiteSpace");
         if(typeof allowWhiteSpace === "boolean") {
-            allowWhiteSpace: PreferencesManager.getExtensionPrefs("denniskehrig.ShowWhitespace").set("enabled", allowWhiteSpace);
+            //PreferencesManager.getExtensionPrefs("denniskehrig.ShowWhitespace").set("enabled", allowWhiteSpace);
+            PreferencesManager.set("allowWhiteSpace", allowWhiteSpace);
         }
 
         var allowAutocomplete = BrambleStartupState.ui("allowAutocomplete");
