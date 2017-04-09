@@ -161,9 +161,15 @@ define(function (require, exports, module) {
         PreferencesManager.on("change", "allowWhiteSpace", function () {
             sendEvent({
                 type: "bramble:allowWhiteSpaceChange",
-                allowWhiteSpace: PreferencesManager.get("allowWhiteSpace")
+                allowWhiteSpace: PreferencesManager.getExtensionPrefs("denniskehrig.ShowWhitespace").get("enabled")
             });
         });
+        // PreferencesManager.getExtensionPrefs("denniskehrig").on("change", "ShowWhitespace", function () {
+        //     sendEvent({
+        //         type: "bramble:allowWhiteSpaceChange",
+        //         allowWhiteSpace: PreferencesManager.getExtensionPrefs("denniskehrig.ShowWhitespace").get("enabled")
+        //     });
+        // });
 
         // Listen for changes to TagHints
         PreferencesManager.on("change", "codehint.TagHints", function () {
