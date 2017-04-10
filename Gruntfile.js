@@ -121,7 +121,7 @@ module.exports = function (grunt) {
                         expand: true,
                         dest: 'dist/styles',
                         cwd: 'src/styles',
-                        src: ['jsTreeTheme.css', 'images/*', 'brackets.min.css*', 'bramble_overrides.css']
+                        src: ['jsTreeTheme.css', 'images/**/*', 'brackets.min.css*', 'bramble_overrides.css']
                     }
                 ]
             },
