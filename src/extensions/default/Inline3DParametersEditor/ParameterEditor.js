@@ -102,8 +102,10 @@
             this.$element.find("#input-3").css("display", "none");
         }
         if(this._numberOfParameters === 1) {
+
             this.$element.find("#_y").css("display", "none");
             this.$element.find("#input-2").css("display", "none");
+            this.$element.find("#input-1").css("display", "none");
         }
     };
 
