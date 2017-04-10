@@ -151,7 +151,9 @@ define(function (require, exports, module) {
         this._naturalHeight = e.currentTarget.naturalHeight;
 
         var extension = FileUtils.getFileExtension(this.file.fullPath);
-        var dimensionString = this._naturalWidth + " (width) &times; " + this._naturalHeight + " (height) " + Strings.UNIT_PIXELS;
+
+        var stringFormat = Strings.IMAGE_DIMENSIONS;
+        var dimensionString = StringUtils.format(stringFormat, this._naturalWidth, this._naturalHeight);
 
         if (extension === "ico") {
             dimensionString += " (" + Strings.IMAGE_VIEWER_LARGEST_ICON + ")";
@@ -170,9 +172,7 @@ define(function (require, exports, module) {
                 }
                 var dimensionAndSize = dimensionString + sizeString;
                 self.$imageData.html(dimensionAndSize)
-                        .attr("title", dimensionAndSize
-                                    .replace("&times;", "x")
-                                    .replace("&mdash;", "-"));
+                .attr("title", dimensionAndSize.replace("&mdash;", "-"));
             }
         });
 
