@@ -114,7 +114,6 @@ define(function (require, exports, module) {
 
         this.$image = this.$el.find(".image");
         this.$imageScale = this.$el.find(".image-scale");
-        this.$imagePath.text(this.relPath).attr("title", this.relPath);
         this.$imagePreview.on("load", _.bind(this._onImageLoaded, this));
 
         _viewers[file.fullPath] = this;
@@ -136,7 +135,6 @@ define(function (require, exports, module) {
          */
         if (this.file.fullPath === newPath) {
             this.relPath = ProjectManager.makeProjectRelativeIfPossible(newPath);
-            this.$imagePath.text(this.relPath).attr("title", this.relPath);
         }
     };
 
@@ -153,7 +151,9 @@ define(function (require, exports, module) {
         this._naturalHeight = e.currentTarget.naturalHeight;
 
         var extension = FileUtils.getFileExtension(this.file.fullPath);
-        var dimensionString = this._naturalWidth + " &times; " + this._naturalHeight + " " + Strings.UNIT_PIXELS;
+
+        var stringFormat = Strings.IMAGE_DIMENSIONS;
+        var dimensionString = StringUtils.format(stringFormat, this._naturalWidth, this._naturalHeight);
 
         if (extension === "ico") {
             dimensionString += " (" + Strings.IMAGE_VIEWER_LARGEST_ICON + ")";
@@ -172,9 +172,7 @@ define(function (require, exports, module) {
                 }
                 var dimensionAndSize = dimensionString + sizeString;
                 self.$imageData.html(dimensionAndSize)
-                        .attr("title", dimensionAndSize
-                                    .replace("&times;", "x")
-                                    .replace("&mdash;", "-"));
+                .attr("title", dimensionAndSize.replace("&mdash;", "-"));
             }
         });
 
@@ -317,7 +315,7 @@ define(function (require, exports, module) {
      * Refreshes the image preview with what's on disk
      */
     ImageView.prototype.refresh = function () {
-        // Update the DOM node with the src URL 
+        // Update the DOM node with the src URL
         this.$imagePreview.attr("src", _getImageUrl(this.file));
     };
 

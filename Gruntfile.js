@@ -49,7 +49,7 @@ module.exports = function (grunt) {
     grunt.loadTasks('tasks');
 
     // Project configuration.
-    grunt.initConfig({
+    var config = {
         pkg  : grunt.file.readJSON("package.json"),
         clean: {
             dist: {
@@ -71,32 +71,9 @@ module.exports = function (grunt) {
             dist: {
                 files: [{
                     expand: true,
-                    cwd: 'src/',
-                    src: [
-                        /* static files */
-                        'xorigin.js',
-                        'dependencies.js',
-
-                        /* extensions and CodeMirror modes */
-                        '!extensions/default/*/unittests.js',
-                        'extensions/default/*/**/*.js',
-                        '!extensions/extra/*/unittests.js',
-                        'extensions/extra/*/**/*.js',
-                        '!extensions/**/node_modules/**/*.js',
-                        '!extensions/**/test/**/*.js',
-                        '!**/unittest-files/**',
-                        'thirdparty/i18n/*.js',
-                        'thirdparty/text/*.js'
-                    ],
+                    cwd: 'dist/',
+                    src: '**/*.js',
                     dest: 'dist/'
-                }]
-            },
-            nls: {
-                files: [{
-                    expand: true,
-                    cwd: 'dist/nls',
-                    src: [ '**/*.js' ],
-                    dest: 'dist/nls'
                 }]
             }
         },
@@ -128,37 +105,23 @@ module.exports = function (grunt) {
                         dest: 'dist/',
                         cwd: 'src/',
                         src: [
-                            'extensions/default/**/*',
-                            'extensions/extra/**/*',
                             '!extensibility/node/spec/**',
                             '!extensibility/node/node_modules/**/{test,tst}/**/*',
                             '!extensibility/node/node_modules/**/examples/**/*',
                             '!filesystem/impls/appshell/**/*',
-                            '!extensions/default/*/unittest-files/**/*',
-                            '!extensions/default/*/unittests.js',
-                            '!extensions/default/{*/thirdparty,**/node_modules}/**/test/**/*',
-                            '!extensions/default/{*/thirdparty,**/node_modules}/**/doc/**/*',
-                            '!extensions/default/{*/thirdparty,**/node_modules}/**/examples/**/*',
-                            '!extensions/default/*/thirdparty/**/*.htm{,l}',
-                            '!extensions/extra/*/unittest-files/**/*',
-                            '!extensions/extra/*/unittests.js',
-                            '!extensions/extra/{*/thirdparty,**/node_modules}/**/test/**/*',
-                            '!extensions/extra/{*/thirdparty,**/node_modules}/**/doc/**/*',
-                            '!extensions/extra/{*/thirdparty,**/node_modules}/**/examples/**/*',
-                            '!extensions/extra/*/thirdparty/**/*.htm{,l}',
-                            '!extensions/dev/*',
-                            '!extensions/samples/**/*',
+                            // We deal with extensions dynamically below in build-extensions
+                            '!extensions/**/*',
                             'thirdparty/CodeMirror/lib/codemirror.css',
                             'thirdparty/i18n/*.js',
                             'thirdparty/text/*.js'
                         ]
                     },
-                    /* styles, fonts and images */
+                    /* styles, fonts and images - XXXBramble: we skip the fonts */
                     {
                         expand: true,
                         dest: 'dist/styles',
                         cwd: 'src/styles',
-                        src: ['jsTreeTheme.css', 'fonts/{,*/}*.*', 'images/*', 'brackets.min.css*', 'bramble_overrides.css']
+                        src: ['jsTreeTheme.css', 'images/**/*', 'brackets.min.css*', 'bramble_overrides.css']
                     }
                 ]
             },
@@ -418,6 +381,16 @@ module.exports = function (grunt) {
                 cwd: 'dist/',
                 src: ['**/*'],
                 dest: 'dist/'
+            },
+            // We need to compress the bramble-sw.js service worker file after compressing dist/
+            sw: {
+                options: {
+                    mode: "gzip"
+                },
+                expand: true,
+                cwd: 'dist/',
+                src: 'bramble-sw.js',
+                dest: 'dist'
             }
         },
 
@@ -432,19 +405,80 @@ module.exports = function (grunt) {
                 rootDir: 'dist'
             }
         }
-    });
+    };
+
+    // Dynamically add requirejs and copy configs for all extensions
+    function configureExtensions(config) {
+        var extensions = grunt.file.readJSON("src/extensions/bramble-extensions.json");
+
+        // Write a requirejs config for each included extension
+        extensions.forEach(function(extension) {
+            config.requirejs[extension.path] = {
+                options: {
+                    name: 'main',
+                    baseUrl: 'src/' + extension.path,
+                    paths: {
+                        'text' : '../../../thirdparty/text/text',
+                        'i18n' : '../../../thirdparty/i18n/i18n'
+                    },
+                    optimize: 'uglify2',
+                    preserveLicenseComments: false,
+                    useStrict: true,
+                    uglify2: {},
+                    out: 'dist/' + extension.path + '/main.js'
+                }
+            };
+        });
+
+        // Also copy each extension's files across to dist/
+        var extensionGlobs = [];
+        extensions.forEach(function(extension) {
+            // First, copy the dir itself.  The main.js will get built below.
+            extensionGlobs.push(extension.path.replace(/\/?$/, "/"));
+
+            // If there are any globs defined for extra paths to copy, add those too.
+            if(extension.copy) {
+                extensionGlobs = extensionGlobs.concat(extension.copy);
+            }
+        });
+
+        config.copy.dist.files.push({
+            expand: true,
+            dest: 'dist/',
+            cwd: 'src/',
+            src: extensionGlobs
+        });
+
+        // Add a task for building all requirejs bundles for each extension
+        var tasks = extensions.map(function(extension) {
+            return 'requirejs:' + extension.path;
+        });
+        grunt.registerTask('build-extensions', tasks);
+
+        return config;
+    }
+
+    grunt.initConfig(configureExtensions(config));
 
     grunt.registerMultiTask('swPrecache', function() {
         var done = this.async();
         var rootDir = this.data.rootDir;
-        var files =  (function() {
-            return (require('./sw-cache-file-list.json')).files;
-        }());
 
         var config = {
             cacheId: 'bramble',
             logger: grunt.log.writeln,
-            staticFileGlobs: files,
+            staticFileGlobs: [
+                // Avoid caching dist/nls/**/*, but take everything else in dist/
+                'dist/{extensions,styles,thirdparty}/**/*',
+                'dist/*.*'
+            ],
+            runtimeCaching: [{
+                urlPattern: /^https:\/\/fonts\.googleapis\.com\/css/,
+                handler: 'fastest'
+            }, {
+                urlPattern: /\/dist\/nls\//,
+                handler: 'fastest'
+            }],
             stripPrefix: 'dist/',
             ignoreUrlParametersMatching: [/./]
         };
@@ -496,14 +530,16 @@ module.exports = function (grunt) {
         'build',
         'requirejs:iframe',
         'exec:localize-dist',
+        'build-extensions',
         'uglify'
     ]);
 
     // task: build dist/ for browser, pre-compressed with gzip and SW precache
     grunt.registerTask('build-browser-compressed', [
         'build-browser',
-        'compress',
-        'swPrecache'
+        'compress:dist',
+        'swPrecache',
+        'compress:sw'
     ]);
 
     // task: undo changes to the src/nls directory

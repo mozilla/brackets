@@ -72,53 +72,12 @@ should host Bramble's iframe, see `src/hosted.js`.
 
 **NOTE 3:** To use Bramble in a production setting locally, you can run `npm run production` and access Bramble at [http://localhost:8000/dist](http://localhost:8000/dist)
 
-# Optional Extension Loading
+# Extension Loading
 
-Bramble supports enabling and disabling various extensions via the URL and query params.
-A standard set of default extensions are always turned on:
-
-* CSSCodeHints
-* HTMLCodeHints
-* JavaScriptCodeHints
-* InlineColorEditor
-* JavaScriptQuickEdit
-* QuickOpenCSS
-* QuickOpenHTML
-* QuickOpenJavaScript
-* QuickView
-* UrlCodeHints
-* brackets-paste-and-indent
-* BrambleUrlCodeHints
-* Autosave
-* UploadFiles
-* WebPlatformDocs
-* CodeFolding
-* bramble-move-file
-
-You could disable QuickView and CSSCodeHints by loading Bramble with `?disableExtensions=QuickView,CSSCodeHints`
-on the URL.
-
-In addition, you can enable other extra extensions:
-
-* SVGCodeHints
-* HtmlEntityCodeHints
-* LESSSupport
-* CloseOthers
-* InlineTimingFunctionEditor
-* JSLint
-* QuickOpenCSS
-* RecentProjects
-* brackets-cdn-suggestions
-* HTMLHinter
-* MdnDocs
-* SVGasXML
-
-You could enable JSLint and LESSSupport by loading Bramble with `?enableExtensions=JSLint,LESSSupport`
-on the URL
-
-NOTE: you can combine `disableExtensions` and `enableExtensions` to mix loading/disabling extensions.
-You should check src/utils/BrambleExtensionLoader.js for the most up-to-date version of these
-extension lists.
+Bramble loads a set of extensions defined in `src/extensions/bramble-extensions.json`. You can
+alter which extensions Bramble loads by adding or removing items from this list.  You can also
+temporarily disable extensions by using `?disableExtensions`. For example: to disable QuickView
+and CSSCodeHints, load Bramble with `?disableExtensions=QuickView,CSSCodeHints` on the URL.
 
 --------------
 
@@ -128,7 +87,7 @@ After you have everything setup, you can now run the server you chose in the roo
 
 # Bramble IFrame API
 
-Bramble is desinged to be run in an iframe, and the hosting web app to communicate with it
+Bramble is designed to be run in an iframe, and the hosting web app to communicate with it
 via `postMessage` and `MessageChannel`.  In order to simplify this, a convenience API exists
 for creating and managing the iframe, as well as providing JavaScript functions for interacting
 with the editor, preview, etc.
@@ -310,6 +269,8 @@ a number of read-only getters are available in order to access state information
 * `getTheme()` - returns the name of the current theme.
 * `getFontSize()` - returns the current font size as a string (e.g., `"12px"`).
 * `getWordWrap()` - returns the current word wrap setting as a `Boolean` (i.e., enabled or disabled).
+* `getAllowJavaScript()` - returns the current allow javascript setting as a `Boolean` (i.e., enabled or disabled).
+* `getAutocomplete()` - returns the current autocomplete settings as a `Boolean` (i.e., enabled or disabled).
 * `getAutoCloseTags()` - returns the current close tags setting as an `Object` with three properties: `whenOpening` a boolean that determines whether opening tags are closed upon typing ">", `whenClosing` a boolean that determines whether closing tags are closed upon typing "/", and an array of tags `indentTags`, that when opened, has a blank line. These values default to, respectively: `true`, `true`, and an empty array.
 * `getTutorialExists()` - returns `true` or `false` depending on whether or not there is a tutorial in the project (i.e., if `tutorial.html` is present)
 * `getTutorialVisible()` - returns `true` or `false` depending on whether or not the preview browser is showing a tutorial or not.
@@ -327,7 +288,7 @@ to be notified when the action completes:
 * `undo([callback])` - undo the last operation in the editor (waits for focus)
 * `redo([callback])` - redo the last operation that was undone in the editor (waits for focus)
 * `increaseFontSize([callback])` - increases the editor's font size
-* `decreaseFontSize([callback])` - decreases the edtior's font size
+* `decreaseFontSize([callback])` - decreases the editor's font size
 * `restoreFontSize([callback])` - restores the editor's font size to normal
 * `save([callback])` - saves the current document
 * `saveAll([callback])` - saves all "dirty" documents
@@ -347,7 +308,7 @@ to be notified when the action completes:
 * `useMobilePreview([callback])` - uses a Mobile view in the preview, as it would look on a smartphone
 * `useDesktopPreview([callback])` - uses a Desktop view in the preview, as it would look on a desktop computer (default)
 * `enableFullscreenPreview([callback])` - shows a fullscreen preview of the current file
-* `disableFullscreenPreview([callback])` - turns off the fullscreen preview of the curent file
+* `disableFullscreenPreview([callback])` - turns off the fullscreen preview of the current file
 * `enableAutoUpdate([callback])` - turns on auto-update for the preview (default)
 * `disableAutoUpdate([callback])` - turns off auto-update for the preview (manual reloads still work)
 * `enableJavaScript([callback])` - turns on JavaScript execution for the preview (default)
@@ -370,13 +331,14 @@ to be notified when the action completes:
 The Bramble instance is also an [`EventEmitter`](https://github.com/Wolfy87/EventEmitter/) and raises
 the following events:
 
-* `"layout"` - triggered whenever the sidebar, editor, or preview panes are changed. It includes an `Object` that returns the same infor as the `getLayout()` getter: : `sidebarWidth`, `firstPaneWidth`, `secondPathWidth`
+* `"layout"` - triggered whenever the sidebar, editor, or preview panes are changed. It includes an `Object` that returns the same information as the `getLayout()` getter: : `sidebarWidth`, `firstPaneWidth`, `secondPathWidth`
 * `"activeEditorChange"` - triggered whenever the editor changes from one file to another. It includes an `Object` with the current file's `fullPath` and `filename`.
 * `"previewModeChange"` - triggered whenever the preview mode is changed. It includes an `Object` with the new `mode`
 * `"sidebarChange"` - triggered whenever the sidebar is hidden or shown. It includes an `Object` with a `visible` property set to `true` or `false`
-* `"themeChange"` - triggered whenever the theme changes. It inclues an `Object` with a `theme` property that indicates the new theme
+* `"themeChange"` - triggered whenever the theme changes. It includes an `Object` with a `theme` property that indicates the new theme
 * `"fontSizeChange"` - triggered whenever the font size changes. It includes an `Object` with a `fontSize` property that indicates the new size (e.g., `"12px"`).
 * `"wordWrapChange"` - triggered whenever the word wrap value changes. It includes an `Object` with a `wordWrap` property that indicates the new value (e.g., `true` or `false`).
+* `"allowJavaScriptChange"` - triggered whenever the allow javascript value changes. It includes an `Object` with a `allowJavaScript` property that indicates the new value (e.g., `true` or `false`).
 * `"autoCloseTagsChange"` - triggered whenever the close tag value changes. It includes an `Object` with a `autoCloseTags` property that indicates the new value
 * `"tutorialAdded"` - triggered when a new tutorial is added to the project
 * `"tutorialRemoved"` - triggered when an existing tutorial for the project is removed
