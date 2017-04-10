@@ -8,7 +8,7 @@
     var Strings                 = brackets.getModule("strings"),
         Mustache                = brackets.getModule("thirdparty/mustache/mustache"),
         Inline3dParametersUtils = require("Parameters3DUtils"),
-        Parameters        = require("text!Parameters.json");
+        Parameters              = require("text!Parameters.json");
 
     /** Mustache template that forms the bare DOM structure of the UI */
     var Template = require("text!ParameterEditorTemplate.html");
