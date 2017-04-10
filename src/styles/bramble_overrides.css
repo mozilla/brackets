@@ -10,12 +10,6 @@
     }
 }
 
-/* Reduce the size of the code-folding gutter markers  with our larger font size */
-.CodeMirror-foldgutter-open:after,
-.CodeMirror-foldgutter-folded:after {
-    font-size: .7em !important;
-}
-
 .image-view-swatches {
     margin-top: 10px;
     overflow: auto;
@@ -59,7 +53,6 @@
     height: auto !important;
 }
 
-
 .fullscreen-preview #first-pane {
     width: 0 !important;
 }
@@ -96,7 +89,8 @@ span.dialog-button {
 
 .CodeMirror-lines {
     padding-left: 10px;
-  
+}
+
 .CodeMirror .CodeMirror-gutters .CodeMirror-gutter:after {
     display: none;
 }
@@ -114,30 +108,30 @@ span.dialog-button {
 /* Makes the resize handles wider, and visile on hover & drag */
 
 #sidebar {
-  position: relative;
+    position: relative;
 }
 
 .CodeMirror-foldgutter:after {
     display: none;
 }
-  
+
 .horz-resizer {
-  transition: opacity .15s ease-out;
-  background: rgba(0,0,0,.08);
-  width: 12px;
+    transition: opacity .15s ease-out;
+    background: rgba(0,0,0,.08);
+    width: 12px;
 }
 
 #sidebar .horz-resizer {
-  right: -12px !important;
-  left: auto !important;
+    right: -12px !important;
+    left: auto !important;
 }
 
 .dark .main-view > .horz-resizer,
 .dark #sidebar .horz-resizer {
-  background: rgba(255,255,255,.1);
+    background: rgba(255,255,255,.1);
 }
 
 .horz-resizer.active,
 .horz-resizer:hover {
-  opacity: 1;
+    opacity: 1;
 }
