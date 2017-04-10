@@ -20,10 +20,16 @@ define(function (require, exports, module) {
      * @return {?{parameter:String, marker:TextMarker}}
      */
     function prepareParametersForProvider(hostEditor, pos) {
-        var ParameterRegex, cursorLine, match, sel, start, end, endPos, marker, tagInfo;
+        var ParameterRegex, tagRegex, cursorLine, match, sel, start, end, endPos, marker, tagInfo;
 
         sel = hostEditor.getSelection();
         if (sel.start.line !== sel.end.line) {
+            return null;
+        }
+        var tagInfo = HTMLUtils.getTagInfo(hostEditor, sel.start);
+        var tag = tagInfo.tagName;
+        var tagRegex = new RegExp(Inline3dParametersUtils.TAG_REGEX);
+        if(!tagRegex.test(tag)) {
             return null;
         }
 

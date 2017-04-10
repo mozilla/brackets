@@ -6,6 +6,7 @@ define(function (require, exports, module) {
     "use strict";
 
     var PARAMETERS_3D_REGEX = /( )*(((-)?\d+(\.\d+)?)( )+)*((-)?\d+(\.\d+)?( )*)/g;
+    var TAG_REGEX = /^a-/g;
 
     var MODIFIERS = {
         position: 50,
