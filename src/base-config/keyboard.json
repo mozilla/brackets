@@ -34,15 +34,6 @@
             "platform": "mac"
         }
     ],
-    "edit.cut": [
-        "Ctrl-X"
-    ],
-    "edit.copy": [
-        "Ctrl-C"
-    ],
-    "edit.paste": [
-        "Ctrl-V"
-    ],
     "edit.selectAll":  [
         "Ctrl-A"
     ],
