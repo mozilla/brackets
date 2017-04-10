@@ -8,7 +8,7 @@
     var Strings                 = brackets.getModule("strings"),
         Mustache                = brackets.getModule("thirdparty/mustache/mustache"),
         Inline3dParametersUtils = require("Parameters3DUtils"),
-        AframeParameters        = require("text!AframeParameters.json");
+        Parameters        = require("text!Parameters.json");
 
     /** Mustache template that forms the bare DOM structure of the UI */
     var Template = require("text!ParameterEditorTemplate.html");
@@ -132,7 +132,7 @@
     };
 
     ParameterEditor.prototype._setLabels = function() {
-        var parameter = JSON.parse(AframeParameters)[this._tag];
+        var parameter = JSON.parse(Parameters)[this._tag];
         if(!parameter) {
             return;
         }
