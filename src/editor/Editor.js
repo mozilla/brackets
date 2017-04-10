@@ -100,6 +100,7 @@ define(function (require, exports, module) {
         ALLOW_JAVASCRIPT    = "allowJavaScript",
         AUTO_UPDATE         = "autoUpdate";
 
+
     var cmOptions         = {};
 
     /**
@@ -212,6 +213,7 @@ define(function (require, exports, module) {
     PreferencesManager.definePreference(WORD_WRAP,          "boolean", true, {
         description: Strings.DESCRIPTION_WORD_WRAP
     });
+
     PreferencesManager.definePreference(INDENT_LINE_COMMENT,  "boolean", false, {
         description: Strings.DESCRIPTION_INDENT_LINE_COMMENT
     });
@@ -1022,6 +1024,7 @@ define(function (require, exports, module) {
         this._codeMirror.on("focus", function () {
             self._focused = true;
             self.trigger("focus", self);
+
         });
 
         this._codeMirror.on("blur", function () {
@@ -2551,6 +2554,7 @@ define(function (require, exports, module) {
 
     /**
      * Sets lineCommentIndent option.
+     *
      * @param {boolean} value
      * @param {string=} fullPath Path to file to get preference for
      * @return {boolean} true if value was valid

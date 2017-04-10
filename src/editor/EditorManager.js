@@ -290,6 +290,7 @@ define(function (require, exports, module) {
      */
     function _toggleInlineWidget(providers, errorMsg) {
         var result = new $.Deferred();
+
         var currentEditor = getCurrentFullEditor();
 
         if (currentEditor) {
@@ -401,7 +402,6 @@ define(function (require, exports, module) {
         if (priority === undefined) {
             priority = 0;
         }
-
         _insertProviderSorted(_inlineEditProviders, provider, priority);
     }
 
