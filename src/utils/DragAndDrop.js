@@ -47,6 +47,7 @@ define(function (require, exports, module) {
     // this is the path they want to use as a parent dir root.
     var _dropPathHint;
 
+
     /**
      * Returns true if the drag and drop items contains valid drop objects.
      * @param {Array.<DataTransferItem>} items Array of items being dragged
