@@ -478,7 +478,46 @@ define(function (require, exports, module) {
         render: function () {
             var fullname = this.props.name,
                 extension = LanguageManager.getCompoundFileExtension(fullname),
-                name = _getName(fullname, extension);
+                name = _getName(fullname, extension),
+                fileType = "default";
+
+            switch (extension.toLowerCase()) {
+                case "htmls":
+                case "htm":
+                case "htx":
+                case "md":
+                case "markdown":
+                case "html":
+                case "xml":
+                case "xhtml":
+                    fileType = "html";
+                    break;
+                case "ico":
+                case "bmp":
+                case "svg":
+                case "png":
+                case "ico":
+                case "jpg":
+                case "jpe":
+                case "jpeg":
+                case "gif":
+                    fileType = "image";
+                    break;
+                case "css":
+                case "less":
+                    fileType = "css";
+                    break;
+                case "js":
+                case "jsx":
+                case "json":
+                    fileType = "js";
+                    break;
+                default:
+                    fileType = LanguageManager.getLanguageForPath(fullname).isBinary() ? "binary" : "default";
+                    break;
+            }
+
+            var insClassName = "jstree-icon-" + fileType;
 
             if (extension) {
                 extension = DOM.span({
@@ -502,7 +541,7 @@ define(function (require, exports, module) {
                     onDoubleClick: this.handleDoubleClick
                 },
                 DOM.ins({
-                    className: "jstree-icon"
+                    className: insClassName
                 }),
             ];
 
