@@ -191,6 +191,8 @@ define(function (require, exports, module) {
             wordWrap: data.state.wordWrap,
             allowJavaScript: data.state.allowJavaScript,
             allowAutocomplete: data.state.allowAutocomplete,
+            allowWhiteSpace: data.state.allowWhiteSpace,
+            allowWhiteSpace: data.state.allowWhiteSpace,
             autoCloseTags: data.state.autoCloseTags,
             autoUpdate: data.state.autoUpdate
         });

@@ -139,10 +139,17 @@ define(function() {
                 get: function()  { return getBool(storage, "allowJavaScript"); },
                 set: function(v) { storage.setItem(prefix("allowJavaScript"), v); }
             },
+
             allowAutocomplete: {
                 get: function()  { return getBool(storage, "allowAutocomplete"); },
                 set: function(v) { storage.setItem(prefix("allowAutocomplete"), v); }
             },
+
+            allowWhiteSpace: {
+                get: function()  { return getBool(storage, "allowWhiteSpace"); },
+                set: function(v) { storage.setItem(prefix("allowWhiteSpace"), v); }
+            },
+
             autoUpdate: {
                 get: function()  { return getBool(storage, "autoUpdate"); },
                 set: function(v) { storage.setItem(prefix("autoUpdate"), v); }
