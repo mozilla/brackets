@@ -339,6 +339,7 @@ define([
                     } else if (eventName === "allowJavaScriptChange") {
                         _state.allowJavaScript = data.allowJavaScript;
                     } else if (eventName === "allowWhiteSpaceChange") {
+                        console.log("receive allow whitespacechange event", data.allowWhiteSpace);
                         _state.allowWhiteSpace = data.allowWhiteSpace;
                     } else if (eventName === "tutorialVisibilityChange") {
                         _tutorialVisible = data.visible;

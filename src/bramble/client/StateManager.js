@@ -140,8 +140,8 @@ define(function() {
                 set: function(v) { storage.setItem(prefix("allowJavaScript"), v); }
             },
             allowWhiteSpace: {
-                get: function()  { return getBool(storage, "allowWhiteSpace"); },
-                set: function(v) { storage.setItem(prefix("allowWhiteSpace"), v); }
+                get: function()  { return getBool(storage, "denniskehrig.ShowWhitespace"); },
+                set: function(v) { storage.setItem(prefix("denniskehrig.ShowWhitespace"), v); }
             },
             allowAutocomplete: {
                 get: function()  { return getBool(storage, "allowAutocomplete"); },

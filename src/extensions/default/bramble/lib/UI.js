@@ -103,10 +103,9 @@ define(function (require, exports, module) {
             PreferencesManager.set("allowJavaScript", allowJavaScript);
         }
 
-        var allowWhiteSpace = BrambleStartupState.ui("allowWhiteSpace");
+        var allowWhiteSpace = BrambleStartupState.ui("denniskehrig.ShowWhitespace");
         if(typeof allowWhiteSpace === "boolean") {
-            //PreferencesManager.getExtensionPrefs("denniskehrig.ShowWhitespace").set("enabled", allowWhiteSpace);
-            PreferencesManager.set("allowWhiteSpace", allowWhiteSpace);
+            PreferencesManager.getExtensionPrefs("denniskehrig.ShowWhitespace").set("enabled", allowWhiteSpace);
         }
 
         var allowAutocomplete = BrambleStartupState.ui("allowAutocomplete");

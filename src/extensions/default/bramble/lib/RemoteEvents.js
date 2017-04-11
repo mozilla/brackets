@@ -158,18 +158,13 @@ define(function (require, exports, module) {
         });
 
         // Listen for changes to allow whitespace
-        PreferencesManager.on("change", "allowWhiteSpace", function () {
+        PreferencesManager.getExtensionPrefs("denniskehrig").on("change", "ShowWhitespace", function () {
+            console.log("sending allowwhitespacechange", PreferencesManager.getExtensionPrefs("denniskehrig.ShowWhitespace").get("enabled"));
             sendEvent({
                 type: "bramble:allowWhiteSpaceChange",
-                allowWhiteSpace: PreferencesManager.get("allowWhiteSpace")
+                allowWhiteSpace: PreferencesManager.getExtensionPrefs("denniskehrig.ShowWhitespace").get("enabled")
             });
         });
-        // PreferencesManager.getExtensionPrefs("denniskehrig").on("change", "ShowWhitespace", function () {
-        //     sendEvent({
-        //         type: "bramble:allowWhiteSpaceChange",
-        //         allowWhiteSpace: PreferencesManager.getExtensionPrefs("denniskehrig.ShowWhitespace").get("enabled")
-        //     });
-        // });
 
         // Listen for changes to TagHints
         PreferencesManager.on("change", "codehint.TagHints", function () {
@@ -251,12 +246,12 @@ define(function (require, exports, module) {
             previewMode: UI.getPreviewMode(),
             fontSize: ViewCommandHandlers.getFontSize(),
             theme: Theme.getTheme(),
-            wordWrap: PreferencesManager.get("wordWrap"),
+            wordWrap: PreferencesManager.get("wordWrap"),            
             autoCloseTags: PreferencesManager.get("closeTags"),
             autoUpdate: PreferencesManager.get("autoUpdate"),
             openSVGasXML: PreferencesManager.get("openSVGasXML"),
             allowJavaScript: PreferencesManager.get("allowJavaScript"),
-            allowWhiteSpace: PreferencesManager.get("allowWhiteSpace")
+            allowWhiteSpace: PreferencesManager.getExtensionPrefs("denniskehrig.ShowWhitespace").get("enabled")
         });
     }
 
