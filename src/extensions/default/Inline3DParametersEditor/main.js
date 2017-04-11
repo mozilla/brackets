@@ -28,7 +28,7 @@ define(function (require, exports, module) {
         }
         var tagInfo = HTMLUtils.getTagInfo(hostEditor, sel.start);
         var tag = tagInfo.tagName;
-        var tagRegex = new RegExp(Inline3dParametersUtils.TAG_REGEX);
+        var tagRegex =Inline3dParametersUtils.TAG_REGEX;
         if(!tagRegex.test(tag)) {
             return null;
         }

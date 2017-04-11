@@ -30,5 +30,6 @@ define(function (require, exports, module) {
 
     // Define public API
     exports.PARAMETERS_3D_REGEX     = PARAMETERS_3D_REGEX;
+    exports.TAG_REGEX = TAG_REGEX;
     exports.getModifier = getModifier;
 });
