@@ -41,7 +41,6 @@
  * - open a file from places other than the WorkingSetView or ProjectManager >
  *       select file in WorkignSetView if its in the working set, otherwise select in ProjectManager
  */
-
 define(function (require, exports, module) {
     "use strict";
 
