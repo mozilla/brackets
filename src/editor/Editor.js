@@ -350,7 +350,7 @@ define(function (require, exports, module) {
 
         // To track which pane the editor is being attached to if it's a full editor
         this._paneId = null;
-
+        
         // To track the parent editor ( host editor at that time of creation) of an inline editor
         this._hostEditor = null;
 
@@ -2554,7 +2554,7 @@ define(function (require, exports, module) {
 
     /**
      * Sets lineCommentIndent option.
-     *
+     * 
      * @param {boolean} value
      * @param {string=} fullPath Path to file to get preference for
      * @return {boolean} true if value was valid
