@@ -60,6 +60,7 @@ define(function (require, exports, module) {
      * @see #openAndSelectDocument
      * @private
      */
+    
     var _curDocChangedDueToMe = false;
     var PROJECT_MANAGER = "ProjectManager";
     var WORKING_SET_VIEW = "WorkingSetView";
