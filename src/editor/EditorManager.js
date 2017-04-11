@@ -211,7 +211,7 @@ define(function (require, exports, module) {
      * @private
      * Finds an inline widget provider from the given list that can offer a widget for the current cursor
      * position, and once the widget has been created inserts it into the editor.
-     * 
+     *
      * @param {!Editor} editor The host editor
      * @param {Array.<{priority:number, provider:function(...)}>} providers
      *      prioritized list of providers
