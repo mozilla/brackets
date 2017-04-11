@@ -213,7 +213,7 @@ define(function (require, exports, module) {
     PreferencesManager.definePreference(WORD_WRAP,          "boolean", true, {
         description: Strings.DESCRIPTION_WORD_WRAP
     });
-
+    
     PreferencesManager.definePreference(INDENT_LINE_COMMENT,  "boolean", false, {
         description: Strings.DESCRIPTION_INDENT_LINE_COMMENT
     });
@@ -1024,7 +1024,7 @@ define(function (require, exports, module) {
         this._codeMirror.on("focus", function () {
             self._focused = true;
             self.trigger("focus", self);
-
+            
         });
 
         this._codeMirror.on("blur", function () {
@@ -2572,7 +2572,7 @@ define(function (require, exports, module) {
     Editor.getIndentLineComment = function (fullPath) {
         return PreferencesManager.get(INDENT_LINE_COMMENT, _buildPreferencesContext(fullPath));
     };
-
+    
     Editor.setAllowJavaScript = function (value, fullPath) {
         var options = fullPath && {context: fullPath};
         return PreferencesManager.set(ALLOW_JAVASCRIPT, value, options);
