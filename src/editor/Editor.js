@@ -2563,7 +2563,7 @@ define(function (require, exports, module) {
         var options = fullPath && {context: fullPath};
         return PreferencesManager.set(INDENT_LINE_COMMENT, value, options);
     };
-
+    
     /**
      * Returns true if word wrap is enabled for the specified or current file
      * @param {string=} fullPath Path to file to get preference for

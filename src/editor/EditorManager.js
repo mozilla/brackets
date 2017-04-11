@@ -219,26 +219,26 @@ define(function (require, exports, module) {
      * @return {$.Promise} a promise that will be resolved when an InlineWidget
      *      is created or rejected if no inline providers have offered one.
      */
-     function _openInlineWidget(editor, providers, defaultErrorMsg) {
-         PerfUtils.markStart(PerfUtils.INLINE_WIDGET_OPEN);
+    function _openInlineWidget(editor, providers, defaultErrorMsg) {
+        PerfUtils.markStart(PerfUtils.INLINE_WIDGET_OPEN);
 
-         // Run through inline-editor providers until one responds
-         var pos = editor.getCursorPos(),
-             inlinePromise,
-             i,
-             result = new $.Deferred(),
-             errorMsg,
-             providerRet;
+        // Run through inline-editor providers until one responds
+        var pos = editor.getCursorPos(),
+            inlinePromise,
+            i,
+            result = new $.Deferred(),
+            errorMsg,
+            providerRet;
 
-         // Query each provider in priority order. Provider may return:
-         // 1. `null` to indicate it does not apply to current cursor position
-         // 2. promise that should resolve to an InlineWidget
-         // 3. string which indicates provider does apply to current cursor position,
-         //    but reason it could not create InlineWidget
-         //
-         // Keep looping until a provider is found. If a provider is not found,
-         // display highest priority error message that was found, otherwise display
-         // default error message
+        // Query each provider in priority order. Provider may return:
+        // 1. `null` to indicate it does not apply to current cursor position
+        // 2. promise that should resolve to an InlineWidget
+        // 3. string which indicates provider does apply to current cursor position,
+        //    but reason it could not create InlineWidget
+        //
+        // Keep looping until a provider is found. If a provider is not found,
+        // display highest priority error message that was found, otherwise display
+        // default error message
         for (i = 0; i < providers.length && !inlinePromise; i++) {
             var provider = providers[i].provider;
             providerRet = provider(editor, pos);
