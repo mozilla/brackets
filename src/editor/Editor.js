@@ -99,7 +99,7 @@ define(function (require, exports, module) {
         INDENT_LINE_COMMENT = "indentLineComment",
         ALLOW_JAVASCRIPT    = "allowJavaScript",
         AUTO_UPDATE         = "autoUpdate";
-
+    
 
     var cmOptions         = {};
 
