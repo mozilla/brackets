@@ -98,25 +98,22 @@
 
     ParameterEditor.prototype._hideInputs = function() {
         if(this._numberOfParameters <= 2) {
-            this.$element.find("#_z").css("display", "none");
             this.$element.find("#input-3").css("display", "none");
+            this.$element.find("#label-3").css("display", "none");
         }
         if(this._numberOfParameters === 1) {
-
-            this.$element.find("#_y").css("display", "none");
             this.$element.find("#input-2").css("display", "none");
-            this.$element.find("#input-1").css("display", "none");
+            this.$element.find("#label-2").css("display", "none");
+            this.$element.find("#label-1").css("display", "none");
         }
     };
 
     ParameterEditor.prototype.setSliderProperties = function (parameters) {
         this.$sliders = [];
-        this.$sliders.push(this.$element.find("#_x"));
-        this.$sliders.push(this.$element.find("#_y"));
-        this.$sliders.push(this.$element.find("#_z"));
 
         this._numberOfParameters = this._getNumberOfProperties(parameters);
 
+        this._addSliders();
         this._setLabels();
         this._hideInputs();
 
@@ -133,6 +130,16 @@
         }
     };
 
+    ParameterEditor.prototype._addSliders = function() {
+        for(var i = 0; i < this._numberOfParameters; i++) {
+            var span = $('<span />').attr('id', 'label-'+(i+1));
+            var input = $('<input />').attr('id', 'input-'+(i+1)).attr('class', 'input-box').attr('type', 'text');
+            this.$element.find("#vec3").append(span);
+            this.$element.find("#vec3").append(input);
+            this.$sliders.push(this.$element.find("#input-"+(i+1)));
+        }
+    };
+
     ParameterEditor.prototype._setLabels = function() {
         var parameter = JSON.parse(Parameters)[this._tag];
         if(!parameter) {
@@ -143,7 +150,7 @@
             return;
         }
         for(var i = 0; i < labels.length; i++) {
-            this.$element.find("#input-"+(i+1)).html(labels[i]);
+            this.$element.find("#label-"+(i+1)).html(labels[i] + " : ");
         }
     };
 

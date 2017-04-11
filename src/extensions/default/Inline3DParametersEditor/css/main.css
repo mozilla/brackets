@@ -1,8 +1,8 @@
-div.vec3 {
+#vec3 {
     display: inline;
 }
 
-#_x, #_y, #_z{
+body .input-box {
     width: 46px;
     transition: 0.1s background-color ease-in-out, 0.1s border-color ease-in-out, 0.1s color ease-in-out;
     min-height: 14px;
