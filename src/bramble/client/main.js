@@ -208,6 +208,7 @@ define([
         self.getAutoCloseTags = function() { return _state.autoCloseTags; };
         self.getAllowJavaScript = function() { return _state.allowJavaScript; };
         self.getAutoUpdate = function() { return _state.autoUpdate; };
+        self.getOpenSVGasXML = function() { return _state.openSVGasXML; };
         self.getTutorialExists = function() { return _tutorialExists; };
         self.getTutorialVisible = function() { return _tutorialVisible; };
         self.getLayout = function() {
@@ -270,6 +271,7 @@ define([
                     _state.allowJavaScript = data.allowJavaScript;
                     _state.autocomplete = data.autocomplete;
                     _state.autoUpdate = data.autoUpdate;
+                    _state.openSVGasXML = data.openSVGasXML;
 
                     setReadyState(Bramble.READY);
                 }
@@ -307,6 +309,8 @@ define([
                         _state.wordWrap = data.wordWrap;
                     } else if (eventName === "autoCloseTagsChange") {
                         _state.autoCloseTags = data.autoCloseTags;
+                    } else if (eventName === "openSVGasXMLChange") {
+                        _state.openSVGasXML = data.openSVGasXML;
                     } else if (eventName === "allowJavaScriptChange") {
                         _state.allowJavaScript = data.allowJavaScript;
                     } else if (eventName === "tutorialVisibilityChange") {
@@ -429,10 +433,11 @@ define([
                                     secondPaneWidth: _state.secondPaneWidth,
                                     previewMode: _state.previewMode,
                                     wordWrap: _state.wordWrap,
-                                    allowJavaScript: _state.allowJavaScript,
                                     allowAutocomplete: _state.allowAutocomplete,
                                     autoCloseTags: _state.autoCloseTags,
-                                    autoUpdate: _state.autoUpdate
+                                    autoUpdate: _state.autoUpdate,
+                                    openSVGasXML: _state.openSVGasXML,
+                                    allowJavaScript: _state.allowJavaScript
                                 }
                             };
                             _brambleWindow.postMessage(JSON.stringify(initMessage), _iframe.src);
@@ -927,6 +932,14 @@ define([
 
     BrambleProxy.prototype.disableAutocomplete = function(callback) {
         this._executeRemoteCommand({commandCategory: "bramble", command: "BRAMBLE_DISABLE_AUTOCOMPLETE"}, callback);
+    };
+
+    BrambleProxy.prototype.openSVGasXML = function(callback) {
+        this._executeRemoteCommand({commandCategory: "bramble", command: "BRAMBLE_OPEN_SVG_AS_XML"}, callback);
+    };
+
+    BrambleProxy.prototype.openSVGasImage = function(callback) {
+        this._executeRemoteCommand({commandCategory: "bramble", command: "BRAMBLE_OPEN_SVG_AS_IMAGE"}, callback);
     };
 
     BrambleProxy.prototype.enableInspector = function(callback) {

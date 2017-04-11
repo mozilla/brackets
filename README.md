@@ -325,6 +325,8 @@ to be notified when the action completes:
 * `addNewFolder([callback])` - adds a new folder.
 * `export([callback])` - creates an archive `.zip` file of the entire project's filesystem, and downloads it to the browser.
 * `addCodeSnippet(snippet, [callback])` - adds a new code `snippet` to the editor (if it is in focus) at the current cursor position. One required parameter (`snippet`) needs to be passed in which needs to be a `String`.
+* `openSVGasXML([callback])` - treats `.svg` files as XML and shows them in the text editor.
+* `openSVGasImage([callback])` - treats `.svg` files as Images and shows them in image viewer.
 
 ## Bramble Instance Events
 
