@@ -216,6 +216,7 @@ define([
         self.getAutocomplete = function() { return _state.allowAutocomplete; };
         self.getAutoCloseTags = function() { return _state.autoCloseTags; };
         self.getAllowJavaScript = function() { return _state.allowJavaScript; };
+        self.getAllowWhiteSpace = function() { return _state.allowWhiteSpace; };
         self.getAutoUpdate = function() { return _state.autoUpdate; };
         self.getOpenSVGasXML = function() { return _state.openSVGasXML; };
         self.getTutorialExists = function() { return _tutorialExists; };
@@ -292,6 +293,7 @@ define([
                     _state.wordWrap = data.wordWrap;
                     _state.autoCloseTags = data.autoCloseTags;
                     _state.allowJavaScript = data.allowJavaScript;
+                    _state.allowWhiteSpace = data.allowWhiteSpace;
                     _state.autocomplete = data.autocomplete;
                     _state.autoUpdate = data.autoUpdate;
                     _state.openSVGasXML = data.openSVGasXML;
@@ -336,6 +338,8 @@ define([
                         _state.openSVGasXML = data.openSVGasXML;
                     } else if (eventName === "allowJavaScriptChange") {
                         _state.allowJavaScript = data.allowJavaScript;
+                    } else if (eventName === "allowWhiteSpaceChange") {
+                        _state.allowWhiteSpace = data.allowWhiteSpace;
                     } else if (eventName === "tutorialVisibilityChange") {
                         _tutorialVisible = data.visible;
                     } else if (eventName === "autocompleteChange") {
@@ -460,7 +464,8 @@ define([
                                     autoCloseTags: _state.autoCloseTags,
                                     autoUpdate: _state.autoUpdate,
                                     openSVGasXML: _state.openSVGasXML,
-                                    allowJavaScript: _state.allowJavaScript
+                                    allowJavaScript: _state.allowJavaScript,
+                                    allowWhiteSpace: _state.allowWhiteSpace
                                 }
                             };
                             _brambleWindow.postMessage(JSON.stringify(initMessage), _iframe.src);
@@ -948,6 +953,14 @@ define([
 
     BrambleProxy.prototype.disableJavaScript = function(callback) {
         this._executeRemoteCommand({commandCategory: "bramble", command: "BRAMBLE_DISABLE_SCRIPTS"}, callback);
+    };
+
+    BrambleProxy.prototype.enableWhiteSpace = function(callback) {
+        this._executeRemoteCommand({commandCategory: "bramble", command: "BRAMBLE_ENABLE_WHITESPACE"}, callback);
+    };
+
+    BrambleProxy.prototype.disableWhiteSpace = function(callback) {
+        this._executeRemoteCommand({commandCategory: "bramble", command: "BRAMBLE_DISABLE_WHITESPACE"}, callback);
     };
 
     BrambleProxy.prototype.enableAutocomplete = function(callback) {
