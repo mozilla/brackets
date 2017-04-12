@@ -1620,10 +1620,9 @@ define(function (require, exports, module) {
                 id        : Dialogs.DIALOG_BTN_OK,
                 text      : Strings.OK
             }]
-        ).done(function (id) {
-            console.error(err);
-            callback();
-        });
+        )
+        console.error(err);
+        callback();
     }
 
     /** Download selected file or folder structure **/
