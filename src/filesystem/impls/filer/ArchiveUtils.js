@@ -193,7 +193,7 @@ define(function (require, exports, module) {
                 }
             });
         }
-        
+
         add(path, function(err) {
             if(err) {
                 return callback(err);

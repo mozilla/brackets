@@ -1602,32 +1602,54 @@ define(function (require, exports, module) {
         ProjectManager.showInTree(MainViewManager.getCurrentlyViewedFile(MainViewManager.ACTIVE_PANE));
     }
 
+    /** 
+     * Show error dialog
+     * @param {string} err Error message to be displayed to the user
+     * @param {callback} callback
+     */
+    function showErrorDialog(err, callback){
+        callback = callback || function () {};
+        Dialogs.showModalDialog(
+            DefaultDialogs.DIALOG_ID_ERROR,
+            Strings.ERROR_DIALOG_HEADER,
+            StringUtils.format(
+                Strings.UNEXPECTED_ERROR,
+                err),
+            [{
+                className : Dialogs.DIALOG_BTN_CLASS_PRIMARY,
+                id        : Dialogs.DIALOG_BTN_OK,
+                text      : Strings.OK
+            }]
+        ).done(function (id) {
+            console.error(err);
+            callback();
+        });
+    }
+
     /** Download selected file or folder structure **/
     function handleFileDownload() {
         var selectedItem = ProjectManager.getSelectedItem();
         var path = selectedItem._path;
-        try {
-            fs.stat(path, function(err, stats) {
-                if (stats.type === "DIRECTORY") {
-                    ArchiveUtils.archive(path);
-                } else {
-                    // Prepare file for download
-                    fs.readFile(path, {encoding: null}, function(err, data){
-                        if (err) {
-                            console.error(err);
-                            return;
-                        }
-                        
-                        var filename = Path.basename(path);
-                        var mimetype = Content.mimeFromExt(Path.extname(path));
-                        var blob = new Blob([data], {type: mimetype});
-                        saveAs(blob, filename);
-                    });
+        fs.stat(path, function(err, stats) {
+            if (err) {
+                showErrorDialog(err);
+                return;
+            }
+            if (stats.type === "DIRECTORY") {
+                return ArchiveUtils.archive(path);
+            }
+            // Prepare file for download
+            fs.readFile(path, {encoding: null}, function(err, data){
+                if (err) {
+                    showErrorDialog(err);
+                    return;
                 }
+                var filename = Path.basename(path);
+                var mimetype = Content.mimeFromExt(Path.extname(path));
+                var blob = new Blob([data], {type: mimetype});
+                saveAs(blob, filename);
             });
-        } catch (error){
-            console.error(error);
-        }
+        });
     }
 
     /** Delete file command handler  **/
