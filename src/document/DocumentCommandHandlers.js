@@ -1620,7 +1620,7 @@ define(function (require, exports, module) {
                 id        : Dialogs.DIALOG_BTN_OK,
                 text      : Strings.OK
             }]
-        )
+        );
         console.error(err);
         callback();
     }
