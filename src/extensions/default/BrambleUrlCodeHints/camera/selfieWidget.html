@@ -11,5 +11,47 @@
             <img id="selfie-photo" />
         </div>
     </div>
+    <div id="filter-list">
+      <select name="filters" id="filters-select" onchange="updateFilter()">
+          <option value="none">No Filter</option>
+          <option value="_1977">1997</option>
+          <option value="aden">Aden</option>
+          <option value="brannan">Brannan</option>
+          <option value="brooklyn">Brooklyn</option>
+          <option value="clarendon">Clarendon</option>
+          <option value="earlybird">Earlybird</option>
+          <option value="gingham">Gingham</option>
+          <option value="hudson">Hudson</option>
+          <option value="hudson">Inkwell</option>
+          <option value="kelvin">Kelvin</option>
+          <option value="lark">Lark</option>
+          <option value="lofi">Lo-Fi</option>
+          <option value="maven">Maven</option>
+          <option value="mayfair">Mayfair</option>
+          <option value="moon">Moon</option>
+          <option value="nashville">Nashville</option>
+          <option value="perpetua">Perpetua</option>
+          <option value="reyes">Reyes</option>
+          <option value="rise">Rise</option>
+          <option value="slumber">Slumber</option>
+          <option value="stinson">Stinson</option>
+          <option value="toaster">Toaster</option>
+          <option value="valencia">Valencia</option>
+          <option value="walden">Walden</option>
+          <option value="willow">Willow</option>
+          <option value="xpro2">X-pro II</option>
+      </select>
+    </div>
+    <script>
+    function updateFilter(){
+      var select = document.getElementById("filters-select");
+      if(select.options[select.selectedIndex].value != "none"){
+        //alert(select.options[select.selectedIndex].value + " filter applied");
+        document.getElementById("selfie-photo").className = "polaroid " + select.options[select.selectedIndex].value;
+      }else{
+        document.getElementById("selfie-photo").className = "polaroid";
+      }
+    }
+    </script>
 </div>
 <canvas id="selfie-canvas"></canvas>

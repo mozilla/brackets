@@ -28,6 +28,8 @@ define(function (require, exports, module) {
         this.video = camera.video;
         this.photo = camera.photo;
         this.canvas = this.photo.canvas;
+        //added to try and make the selfie-photo part of the interface
+        this.gallery = this.photo.canvas2;
     }
 
     // Initialize all interfaces needed for the selfie taker
@@ -41,6 +43,8 @@ define(function (require, exports, module) {
         this.video.interface = document.getElementById("selfie-video");
         this.photo.interface = document.getElementById("selfie-photo");
         this.canvas.interface = document.getElementById("selfie-canvas");
+        //I want to try and capture the selfie-photo as part of the interface
+        this.gallery.interface = document.getElementById("selfie-photo");
 
         // Camera buttons
         this.snapButton = document.getElementById("selfie-snap");
@@ -85,10 +89,14 @@ define(function (require, exports, module) {
 
         function persistPhoto() {
             var data = self.photo.data;
+            var data2 = self.photo.data2;
             if(!data) {
+              alert("no data to save");
                 return self.camera.fail();
+            }else if(!data2){  //added as a placeholder for different savePhoto
+              alert("no data in data2");
             }
-
+            alert("persist call");
             var binaryDataStr = /^data:image\/png;base64,(.+)/.exec(data)[1];
             self.camera.savePhoto(base64ToBuffer(binaryDataStr));
         }
@@ -100,6 +108,10 @@ define(function (require, exports, module) {
 
         // Update the photo component with the snapped photo
         this.photo.update();
+        //this function tries to update the ...2 parameters of photo, but
+        //when testing somehow erases photo.data so the photo can't save
+        //which means I don't know if the function works regardless
+        //this.photo.updateWithFilter();
 
         this.saveButton.removeEventListener("click", persistPhoto);
         this.saveButton.addEventListener("click", persistPhoto);
