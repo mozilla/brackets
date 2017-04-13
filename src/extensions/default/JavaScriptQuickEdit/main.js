@@ -180,6 +180,27 @@ define(function (require, exports, module) {
         return result.promise();
     }
 
+    /**
+     * This function is registered with EditorManager as an inline editor provider. It creates an inline editor
+     * when the cursor is on a JavaScript function name, finds all functions that match the name
+     * and shows (one/all of them) in an inline editor.
+     *
+     * @param {!Editor} editor
+     * @param {!{line:number, ch:number}} pos
+     * @return {$.Promise} a promise that will be resolved with an InlineWidget
+     *      or null if we're not ready to provide anything.
+     */
+    function javaScriptFunctionProvider(hostEditor, pos) {
+        var functionResult = javaScriptFunctionProvider.queryProvider(hostEditor, pos);
+
+        if (!functionResult) {
+            return null;
+        }
+
+        return _createInlineEditor(hostEditor, functionResult.functionName);
+    }
+
+    // XXXBramble: we extend providers so that we can see if one exists without invoking.
     javaScriptFunctionProvider.queryProvider = function(hostEditor, pos) {
        // Only provide a JavaScript editor when cursor is in JavaScript content
        if (hostEditor.getModeForSelection() !== "javascript") {
@@ -201,25 +222,6 @@ define(function (require, exports, module) {
 
        return functionResult;
     };
-    /**
-     * This function is registered with EditorManager as an inline editor provider. It creates an inline editor
-     * when the cursor is on a JavaScript function name, finds all functions that match the name
-     * and shows (one/all of them) in an inline editor.
-     *
-     * @param {!Editor} editor
-     * @param {!{line:number, ch:number}} pos
-     * @return {$.Promise} a promise that will be resolved with an InlineWidget
-     *      or null if we're not ready to provide anything.
-     */
-    function javaScriptFunctionProvider(hostEditor, pos) {
-        var functionResult = javaScriptFunctionProvider.queryProvider(hostEditor, pos);
-
-        if (!functionResult) {
-            return null;
-        }
-
-        return _createInlineEditor(hostEditor, functionResult.functionName);
-    }
 
     // init
     EditorManager.registerInlineEditProvider(javaScriptFunctionProvider);

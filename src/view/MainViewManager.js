@@ -1684,10 +1684,6 @@ define(function (require, exports, module) {
         return result;
     }
 
-    function _providerAvailableForPos(editor){
-        return EditorManager.providerAvailableForPos(editor);
-    }
-
     /**
      * Setup a ready event to initialize ourself
      */
@@ -1723,7 +1719,6 @@ define(function (require, exports, module) {
     exports._closeAll                     = _closeAll;
     exports._closeList                    = _closeList;
     exports._getPaneIdForPath             = _getPaneIdForPath;
-    exports._providerAvailableForPos      = _providerAvailableForPos;
 
     // WorkingSet Management
     exports.addToWorkingSet               = addToWorkingSet;

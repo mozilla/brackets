@@ -76,14 +76,6 @@ define(function (require, exports, module) {
         };
     }
 
-    inlineColorEditorProvider.queryProvider = function(hostEditor, pos){
-        var context = prepareEditorForProvider(hostEditor, pos);
-        if (!context) {
-            return null;
-        }
-        return context;
-    };
-
     /**
      * Registered as an inline editor provider: creates an InlineEditorColor when the cursor
      * is on a color value (in any flavor of code).
@@ -98,19 +90,27 @@ define(function (require, exports, module) {
 
         if (!context) {
             return null;
-        } else {
-            var inlineColorEditor,
-                result;
-
-            inlineColorEditor = new InlineColorEditor(context.color, context.marker);
-            inlineColorEditor.load(hostEditor);
-
-            result = new $.Deferred();
-            result.resolve(inlineColorEditor);
-            return result.promise();
         }
+        var inlineColorEditor,
+            result;
+
+        inlineColorEditor = new InlineColorEditor(context.color, context.marker);
+        inlineColorEditor.load(hostEditor);
+
+        result = new $.Deferred();
+        result.resolve(inlineColorEditor);
+
+        return result.promise();
     }
 
+    // XXXBramble: we extend providers so that we can see if one exists without invoking.
+    inlineColorEditorProvider.queryProvider = function(hostEditor, pos){
+        var context = prepareEditorForProvider(hostEditor, pos);
+        if (!context) {
+            return null;
+        }
+        return context;
+    };
 
     // Initialize extension
 

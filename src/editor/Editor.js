@@ -77,6 +77,7 @@ define(function (require, exports, module) {
         ValidationUtils    = require("utils/ValidationUtils"),
         ViewUtils          = require("utils/ViewUtils"),
         MainViewManager    = require("view/MainViewManager"),
+        EditorManager      = require("editor/EditorManager"),
         _                  = require("thirdparty/lodash");
 
     /** Editor preferences */
@@ -435,8 +436,10 @@ define(function (require, exports, module) {
 
         this.on("cursorActivity", function (event, editor) {
             self._handleCursorActivity(event);
-            self.trigger("providerFound");
-            console.log(MainViewManager._providerAvailableForPos(editor));
+            if(EditorManager.providerAvailableForPos(editor)) {
+                self.trigger("providerFound");
+                console.log("provider found");
+            }
         });
         this.on("keypress", function (event, editor, domEvent) {
             self._handleKeypressEvents(domEvent);
