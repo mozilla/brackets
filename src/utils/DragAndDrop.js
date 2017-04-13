@@ -337,15 +337,12 @@ define(function (require, exports, module) {
          */
         function rejectImport(item) {
             var ext = FilerUtils.normalizeExtension(Path.extname(item.name), true);
+            var sizeLimit = Content.isArchive(ext) ? archiveByteLimit : byteLimit;
+            var sizeLimitMb = (sizeLimit / (1024 * 1024)).toString();
 
-            if (item.size > archiveByteLimit) {
-                return new Error(StringUtils.format(Strings.DND_MAX_SIZE_EXCEEDED, "5"));
-
-            } else if (item.size > byteLimit) {
-                if(!Content.isArchive(ext)){
-                    return new Error(StringUtils.format(Strings.DND_MAX_SIZE_EXCEEDED, "3"));
-                }
-            }
+            if (item.size > sizeLimit) {
+                return new Error(StringUtils.format(Strings.DND_MAX_SIZE_EXCEEDED, sizeLimitMb));
+            } 
 
             // If we don't know about this language type, or the OS doesn't think
             // it's text, reject it.
