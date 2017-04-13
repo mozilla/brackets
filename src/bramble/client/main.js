@@ -29,8 +29,9 @@ define([
     "bramble/ChannelUtils",
     "bramble/thirdparty/EventEmitter/EventEmitter.min",
     "bramble/client/StateManager",
+    "bramble/client/ProjectStats",
     "bramble/thirdparty/MessageChannel/message_channel"
-], function(Filer, ChannelUtils, EventEmitter, StateManager) {
+], function(Filer, ChannelUtils, EventEmitter, StateManager, ProjectStats) {
     "use strict";
 
     // PROD URL for Bramble, which can be changed below
@@ -110,13 +111,15 @@ define([
 
     // Expose Filer for Path, Buffer, providers, etc.
     Bramble.Filer = Filer;
-    var _fs = new Filer.FileSystem();
+    // We wrap the filesystem, and add metrics to keep track of project stats
+    var _fs = ProjectStats.getFileSystem();
     Bramble.getFileSystem = function() {
         return _fs;
     };
+    
     // NOTE: THIS WILL DESTROY DATA! For error cases only, or to wipe the disk.
     Bramble.formatFileSystem = function(callback) {
-        _fs = new Filer.FileSystem({flags: ["FORMAT"]}, callback);
+        _fs = ProjectStats.formatFileSystem({flags: ["FORMAT"]}, callback);
     };
 
     // Start loading Bramble's resources, setup communication with iframe
@@ -147,7 +150,14 @@ define([
             return;
         }
 
-        _instance.mount(root, filename);
+        ProjectStats.init(root, function(err){
+            if(err) {
+                setReadyState(Bramble.ERROR, new Error("Unable to access filesystem: ", err));
+                return;
+            }
+            _instance.mount(root, filename);
+        });
+
     };
 
     /**
@@ -211,6 +221,9 @@ define([
         self.getOpenSVGasXML = function() { return _state.openSVGasXML; };
         self.getTutorialExists = function() { return _tutorialExists; };
         self.getTutorialVisible = function() { return _tutorialVisible; };
+        self.getTotalProjectSize = function() { return ProjectStats.getTotalProjectSize(); };
+        self.hasIndexFile =  function() { return ProjectStats.hasIndexFile(); };
+        self.getFileCount = function() { return ProjectStats.getFileCount(); };
         self.getLayout = function() {
             return {
                 sidebarWidth: _state.sidebarWidth,
