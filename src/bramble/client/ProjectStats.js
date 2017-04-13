@@ -28,7 +28,7 @@ define([
     ProjectStats.init = function(root, callback){
         function addSize(path, next){
             // ignore directories and do nothing
-            if (path.endsWith("/")){
+            if (/\/$/.test(path)){
                 return next();
             }
 

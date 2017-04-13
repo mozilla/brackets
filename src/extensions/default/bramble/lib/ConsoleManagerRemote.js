@@ -17,13 +17,13 @@
      "time",
      "timeEnd"].forEach(function(type) {
         console[type] = function() {
-            var args = Array.from(arguments).slice();
+            var args = Array.prototype.slice.call(arguments);
             transportSend(type, args);
         };
     });
     
     console.assert = function() {
-        var args = Array.from(arguments).slice();
+        var args = Array.prototype.slice.call(arguments);
         var expr = args.shift();
         if (!expr) {
             args[0] = "Assertion Failed: " + args[0];
