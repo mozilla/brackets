@@ -217,10 +217,10 @@ define(function (require, exports, module) {
         // parameter is usually the selection end.
         var functionResult = _getFunctionName(hostEditor, sel.start);
         if (!functionResult.functionName) {
-           return functionResult.reason || null;
+            return functionResult.reason || null;
         }
 
-       return functionResult;
+        return functionResult;
     };
 
     // init
