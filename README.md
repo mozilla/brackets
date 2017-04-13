@@ -284,9 +284,6 @@ a number of read-only getters are available in order to access state information
 * `getTutorialExists()` - returns `true` or `false` depending on whether or not there is a tutorial in the project (i.e., if `tutorial.html` is present)
 * `getTutorialVisible()` - returns `true` or `false` depending on whether or not the preview browser is showing a tutorial or not.
 * `getAutoUpdate()` - returns `true` or `false` depending on whether or not the auto update preference is enabled or not.
-* `getTotalProjectSize()` - returns the current project size in bytes.
-* `hasIndexFile()` - returns `true` or `false` depending on whether or not there is an `"index.html"` file.
-* `getFileCount()` - returns total file count.
 
 **NOTE**: calling these getters before the `ready()` callback on the bramble instance
 won't do what you want.
