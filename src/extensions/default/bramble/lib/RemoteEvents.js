@@ -249,7 +249,7 @@ define(function (require, exports, module) {
             previewMode: UI.getPreviewMode(),
             fontSize: ViewCommandHandlers.getFontSize(),
             theme: Theme.getTheme(),
-            wordWrap: PreferencesManager.get("wordWrap"),      
+            wordWrap: PreferencesManager.get("wordWrap"),
             autoCloseTags: PreferencesManager.get("closeTags"),
             autoUpdate: PreferencesManager.get("autoUpdate"),
             openSVGasXML: PreferencesManager.get("openSVGasXML"),
