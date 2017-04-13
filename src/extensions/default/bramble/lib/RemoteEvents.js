@@ -158,11 +158,14 @@ define(function (require, exports, module) {
         });
 
         // Listen for changes to allow whitespace
-        PreferencesManager.getExtensionPrefs("denniskehrig").on("change", "ShowWhitespace", function () {
-            console.log("sending allowwhitespacechange", PreferencesManager.getExtensionPrefs("denniskehrig.ShowWhitespace").get("enabled"));
+        var whitespacePrefs = PreferencesManager.getExtensionPrefs("denniskehrig.ShowWhitespace");
+        whitespacePrefs.on("change", function (e, data) {
+            if(data.ids.indexOf("enabled") === -1) {
+                return;
+            }
             sendEvent({
                 type: "bramble:allowWhiteSpaceChange",
-                allowWhiteSpace: PreferencesManager.getExtensionPrefs("denniskehrig.ShowWhitespace").get("enabled")
+                allowWhiteSpace: whitespacePrefs.get("enabled")
             });
         });
 
