@@ -50,7 +50,7 @@
     "devDependencies": {
         "bluebird": "^3.4.7",
         "gunzip-maybe": "^1.3.1",
-        "http-server": "^0.9.0",
+        "http-server": "mozilla/http-server#gzip",
         "mkdirp": "0.5.1",
         "nunjucks": "^2.4.3",
         "properties-parser": "0.3.1",
@@ -64,7 +64,7 @@
         "postinstall": "grunt install",
         "build": "grunt build-browser",
         "preproduction": "grunt build-browser-compressed && grunt unlocalize",
-        "production": "npm start",
+        "production": "npm start -- --gzip",
         "unlocalize": "grunt unlocalize",
         "test": "grunt test && grunt build-browser-compressed",
         "start": "http-server -p 8000 --cors"
