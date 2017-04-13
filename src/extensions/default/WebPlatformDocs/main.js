@@ -69,6 +69,7 @@ define(function (require, exports, module) {
         return promiseCache[fileName];
     }
 
+
     /**
      * Inline docs provider.
      *
