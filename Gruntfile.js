@@ -413,7 +413,6 @@ module.exports = function (grunt) {
                 rootDir: 'dist'
             }
         },
-
         githooks: {
             all: {
                 startMarker: 'Starting prettier auto-format task',
