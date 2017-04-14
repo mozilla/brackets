@@ -405,7 +405,8 @@ module.exports = function (grunt) {
         exec: {
             localize: 'node scripts/properties2js',
             'localize-dist': 'node scripts/properties2js dist',
-            'clean-nls': 'rm -fr src/nls && git checkout -- src/nls'
+            'clean-nls': 'rm -fr src/nls && git checkout -- src/nls',
+            'add-src': 'git add "src/*"'
         },
 
         swPrecache: {
@@ -416,7 +417,7 @@ module.exports = function (grunt) {
         githooks: {
             all: {
                 startMarker: 'Starting prettier auto-format task',
-                'pre-commit': 'eslint:src-fix',
+                'pre-commit': 'eslint:src-fix exec:add-src',
                 endMarker: 'Prettier auto-formatting finished',
             }
         }
@@ -535,7 +536,8 @@ module.exports = function (grunt) {
          'npm-install', */
         'cleanempty',
         'exec:clean-nls',
-        'usemin'
+        'usemin',
+        'githooks'
         /* XXXBramble: we skip this, since we don't bother with its info, and copy it in copy:dist
         'build-config' */
     ]);
