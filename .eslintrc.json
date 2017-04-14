@@ -54,7 +54,12 @@
         "no-trailing-spaces": 0,
         "eol-last": 0,
         "max-len": [1, 120],
-        "prettier/prettier": "error"
+        "prettier/prettier": [
+            "error", 
+            {
+                "tabWidth": 4
+            }
+        ]
     },
     "globals": {
         "brackets": false,

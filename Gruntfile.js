@@ -271,6 +271,7 @@ module.exports = function (grunt) {
                 '!src/thirdparty/**',
                 '!src/widgets/bootstrap-*.js',
                 '!src/extensions/default/brackets-show-whitespace/**',
+                '!src/extensions/default/brackets-paste-and-indent/**',
                 '!src/extensions/**/unittest-files/**/*.js',
                 '!src/extensions/**/thirdparty/**/*.js',
                 '!src/extensions/dev/**',
@@ -368,8 +369,14 @@ module.exports = function (grunt) {
             grunt:  '<%= meta.grunt %>',
             src:    '<%= meta.src %>',
             test:   '<%= meta.test %>',
+            'src-fix': {
+                src: '<%= meta.src %>',
+                options: {
+                    fix: true,
+                    quiet: true
+                }
+            },
             options: {
-                fix: true,
                 quiet: true
             }
         },
@@ -405,7 +412,15 @@ module.exports = function (grunt) {
             dist: {
                 rootDir: 'dist'
             }
-        }
+        },
+
+        // githooks: {
+        //     all: {
+        //         startMarker: 'Starting prettier auto-format task',
+        //         'pre commit': 'eslint:src-fix',
+        //         endMarker: 'Prettier auto-formatting finished',
+        //     }
+        // }
     };
 
     // Dynamically add requirejs and copy configs for all extensions
