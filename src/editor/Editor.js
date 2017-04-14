@@ -2424,7 +2424,7 @@ define(function (require, exports, module) {
         icon.className = "interactive-gutter-messages";
 
         var variable = this._codeMirror.setGutterMarker(pos.line,"interactive-gutter",icon);
-    }
+    };
 
     // Global settings that affect Editor instances that share the same preference locations
 
