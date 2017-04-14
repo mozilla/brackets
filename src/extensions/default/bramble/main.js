@@ -193,7 +193,7 @@ define(function (require, exports, module) {
             autoUpdate: data.state.autoUpdate,
             openSVGasXML: data.state.openSVGasXML,
             allowJavaScript: data.state.allowJavaScript,
-            allowWhiteSpace: data.state.allowWhiteSpace
+            "denniskehrig.ShowWhitespace": data.state.allowWhiteSpace
         });
 
         RemoteEvents.start();
