@@ -414,13 +414,13 @@ module.exports = function (grunt) {
             }
         },
 
-        // githooks: {
-        //     all: {
-        //         startMarker: 'Starting prettier auto-format task',
-        //         'pre commit': 'eslint:src-fix',
-        //         endMarker: 'Prettier auto-formatting finished',
-        //     }
-        // }
+        githooks: {
+            all: {
+                startMarker: 'Starting prettier auto-format task',
+                'pre commit': 'eslint:src-fix',
+                endMarker: 'Prettier auto-formatting finished',
+            }
+        }
     };
 
     // Dynamically add requirejs and copy configs for all extensions
