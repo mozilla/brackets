@@ -786,7 +786,7 @@ define(function (require, exports, module) {
         for(i=0, len=_inlineEditProviders.length; i<len; i++) {
             if(_inlineEditProviders[i].provider.queryProvider instanceof Function){
                 if (_inlineEditProviders[i].provider.queryProvider(hostEditor, pos)) {
-                    return true;
+                    return pos;
                 }
             }
         }
@@ -794,12 +794,12 @@ define(function (require, exports, module) {
         for(i=0, len=_inlineDocsProviders.length; i<len; i++) {
             if(_inlineDocsProviders[i].provider instanceof Function){
                 if (_inlineDocsProviders[i].provider.queryProvider(hostEditor, pos)) {
-                    return true;
+                    return pos;
                 }
             }
         }
 
-        return false;
+        return null;
     }
 
     // Set up event dispatching

@@ -78,6 +78,7 @@ define(function (require, exports, module) {
         ViewUtils          = require("utils/ViewUtils"),
         MainViewManager    = require("view/MainViewManager"),
         EditorManager      = require("editor/EditorManager"),
+        ExtensionUtils     = require("utils/ExtensionUtils"),
         _                  = require("thirdparty/lodash");
 
     /** Editor preferences */
@@ -131,6 +132,9 @@ define(function (require, exports, module) {
     cmOptions[USE_TAB_CHAR]       = "indentWithTabs";
     cmOptions[WORD_WRAP]          = "lineWrapping";
     cmOptions[ALLOW_JAVASCRIPT]   = "allowJavaScript";
+
+    // this is here for testing purposes
+    ExtensionUtils.loadStyleSheet(module, "style.less");
 
     PreferencesManager.definePreference(CLOSE_BRACKETS,     "boolean", true, {
         description: Strings.DESCRIPTION_CLOSE_BRACKETS
@@ -426,7 +430,13 @@ define(function (require, exports, module) {
             tabSize                     : currentOptions[TAB_SIZE],
             readOnly                    : isReadOnly
         });
-
+        
+        // create the gutter space for the editor
+        var gutters = this._codeMirror.getOption("gutters").slice(0);
+        if (gutters.indexOf("interactive-gutter") === -1) {
+            gutters.unshift("interactive-gutter");
+            this._codeMirror.setOption("gutters", gutters);
+        }
         // Can't get CodeMirror's focused state without searching for
         // CodeMirror-focused. Instead, track focus via onFocus and onBlur
         // options and track state with this._focused
@@ -436,9 +446,11 @@ define(function (require, exports, module) {
 
         this.on("cursorActivity", function (event, editor) {
             self._handleCursorActivity(event);
-            if(EditorManager.providerAvailableForPos(editor)) {
-                self.trigger("providerFound");
+            var pos = EditorManager.providerAvailableForPos(editor);
+            if (pos) {
+            //    self.trigger("providerFound");
                 console.log("provider found");
+                self._addGutterMarker(editor,pos);
             }
         });
         this.on("keypress", function (event, editor, domEvent) {
@@ -2406,6 +2418,13 @@ define(function (require, exports, module) {
         }
     };
 
+    Editor.prototype._addGutterMarker = function(editor, pos) {
+
+        var icon = document.createElement("div");
+        icon.className = "interactive-gutter-messages";
+
+        var variable = this._codeMirror.setGutterMarker(pos.line,"interactive-gutter",icon);
+    }
 
     // Global settings that affect Editor instances that share the same preference locations
 
