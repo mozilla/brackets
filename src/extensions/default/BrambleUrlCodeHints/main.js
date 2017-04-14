@@ -559,9 +559,6 @@ define(function (require, exports, module) {
         function insert(text) {
             var mode = that.editor.getModeForSelection();
 
-            // Encode the string just prior to inserting the hint into the editor
-            text = encodeURI(text);
-
             if (mode === "html") {
                 return that.insertHtmlHint(text);
             } else if (styleModes.indexOf(mode) > -1) {
