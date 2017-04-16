@@ -1,15 +1,66 @@
 <div id="selfie-widget">
     <div id="selfie-liveView">
-        <div id="selfie-video-bg"></div>
-        <video id="selfie-video"></video>
-        <div class="selfie-snap" id="selfie-snap">
-            <div id="icon" alt="Snap"></div>
-        </div>
+      <table>
+        <tr>
+          <td>
+            <div id="selfie-video-bg"></div>
+            <video id="selfie-video"></video>
+            <div class="selfie-snap" id="selfie-snap">
+                <div id="icon" alt="Snap"></div>
+            </div>
+          </td>
+          <td>
+            <div id="canvas-container">
+              <canvas id="canvas"></canvas>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <div id="filter-list">
+            <table>
+              <tr>
+                <th rowspan="2">
+                  Filters
+                </th>
+                <td>
+                  <button id="pinholebtn" value="pinhole" class="btn btn-primary">Pin Hole</button>
+                </td>
+                <td>
+                  <button id="sepiabtn" value="sepia" class="btn btn-primary">Sepia</button>
+                </td>
+                <td>
+                  <button id="contrastbtn" value="contrast" class="btn btn-primary">Contrast</button>
+                </td>
+                <td>
+                  <button id="vintagebtn" value="vintage" class="btn btn-primary">Vintage</button>
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <button id="sunrisebtn" value="sunrise" class="btn btn-primary">Sun Rise</button>
+                </td>
+                <td>
+                  <button id="embossbtn" value="emboss" class="btn btn-primary">Emboss</button>
+                </td>
+                <td>
+                  <button id="glowingsunbtn" value="glowingSun" class="btn btn-primary">Glow Sun</button>
+                </td>
+                <td>
+                  <button id="resetbtn" class="btn btn-success">Reset</button>
+                </td>
+              </tr>
+            </table>
+          </tr>
+        </table>
+      </div>
     </div>
-    <div id="selfie-gallery">
+</div>
+  <!--  <div id="selfie-gallery">
         <div class="polaroid">
             <img id="selfie-photo" />
         </div>
     </div>
-</div>
-<canvas id="selfie-canvas"></canvas>
+
+</div>-->
+<script type="text/javascript" src="/src/extensions/default/BrambleUrlCodeHints/thirdparty/caman/caman.full.min.js"></script>
+<!--<canvas id="selfie-canvas"></canvas>-->

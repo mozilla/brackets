@@ -10,7 +10,8 @@
 
 #selfie-widget {
     min-width: 580px;
-    overflow: hidden;
+    min-height: 500px;
+    overflow: auto;
 }
 
 .emphasis {
@@ -18,7 +19,7 @@
 }
 
 .modal-body {
-    max-height: 290px;
+    max-height: 400px;
     overflow-y: hidden;
 }
 
@@ -105,4 +106,34 @@
 
 #selfie-video-bg.on {
     opacity: 1;
+}
+
+#filter-list {
+    display: inline-block;
+    float: left;
+    margin-top: 10px;
+    margin-left: 10px;
+}
+
+#canvas{
+  width:240px;
+  height:160px;
+}
+
+#canvas-container{
+  display: inline-block;
+  float: left;
+  margin-left: 10px;
+}
+
+#filter-list table tr th{
+  padding: : 20px;
+  text-align: left;
+}
+
+#filter-list table tr td{
+  padding-left: 10px;
+  padding-right: 10px;
+  text-align: center;
+  vertical-align: middle;;
 }

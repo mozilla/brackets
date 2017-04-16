@@ -53,7 +53,7 @@ define(function (require, exports, module) {
 
             // Update the file tree to show the new file
             CommandManager.execute(Commands.FILE_REFRESH);
-
+            console.log("save path: " + self.savePath);  // remove before final release
             self.success(self.savePath);
         });
     };
