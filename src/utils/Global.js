@@ -32,7 +32,8 @@ define(function (require, exports, module) {
 
     var configJSON      = require("text!config.json"),
         UrlParams       = require("utils/UrlParams").UrlParams,
-        Compatibility   = require("utils/Compatibility");
+        Compatibility   = require("utils/Compatibility"),
+        envConfig       = require("envConfig");
 
     // Define core brackets namespace if it isn't already defined
     //
@@ -78,6 +79,9 @@ define(function (require, exports, module) {
     }
 
     global.brackets.inBrowser = !global.brackets.hasOwnProperty("fs");
+
+    // Specify whether this is a prod or dev environment for various runtime optimizations.
+    global.brackets.env = envConfig.env;
 
     // Are we in a desktop shell with a native menu bar?
     var hasNativeMenus = params.get("hasNativeMenus");

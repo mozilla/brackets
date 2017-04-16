@@ -39,14 +39,6 @@
 li.jstree-open > ul { display:block; }
 li.jstree-closed > ul { display:none; }
 
-.jstree-brackets li,
-.jstree-brackets ins { background-image:url("images/jsTreeSprites.svg"); background-repeat:no-repeat; background-color:transparent; }
-.jstree-brackets li { background-position:-90px 0; background-repeat:repeat-y; }
-.jstree-brackets li.jstree-last { background:transparent; }
-.jstree-brackets .jstree-open > ins { background-position:-72px 0; }
-.jstree-brackets .jstree-closed > ins { background-position:-54px 0; }
-.jstree-brackets .jstree-leaf > ins { background-position:-36px 0; }
-
 .jstree-brackets li a:hover {
     text-decoration: none;
 }
@@ -95,8 +87,37 @@ li.jstree-closed > ul { display:none; }
 .jstree ins {
     position: absolute;
 }
-ins.jstree-icon {
-    left: -@jstree-icon-backindent !important;
+
+// Add new icons here
+@extensionName: css, html, image, js, default, binary;
+
+ins[class*='jstree-icon'] {
+    left: @jstree-icon-backindent + 2px !important;
+    top: 7px;
+    border-radius: 1px;
+    background-color: white;
+}
+
+.dark ins[class*='jstree-icon'] {
+    background-color: black;
+}
+
+.for(@extensionName, {
+    ins.jstree-icon-@{value} {
+      background-image: @bg-image;
+    }
+});
+
+.for(@list, @code) {
+    & {
+        .loop(@i:1) when (@i =< length(@list)) {
+            @value: extract(@list, @i);
+            @bg-image: url("images/icons/@{value}.svg");
+            @code();
+            .loop (@i + 1);
+        }
+        .loop();
+    }
 }
 
 .jstree-brackets a .jstree-icon { background-position:-56px -19px; }
@@ -113,7 +134,6 @@ ins.jstree-icon {
 
 // These styles control the expand/collapse arrow icons. Most other styles in this file with background-position are unused.
 .jstree-brackets .jstree-no-dots li,
-.jstree-brackets .jstree-no-dots .jstree-leaf > ins { background:transparent; }
 .jstree-brackets .jstree-no-dots .jstree-open > ins { background-position:-18px 0; }
 .jstree-brackets .jstree-no-dots .jstree-closed > ins { background-position:0 0; }
 
@@ -142,7 +162,6 @@ ins.jstree-icon {
     background: #000;
     border: 1px solid #000;
     border-radius: 2px;
-    box-shadow: @bc-shadow-small;
     box-sizing: border-box;
     color: #fff;
     font-style: normal;

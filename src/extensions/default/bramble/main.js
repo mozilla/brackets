@@ -189,10 +189,11 @@ define(function (require, exports, module) {
             secondPaneWidth: data.state.secondPaneWidth,
             previewMode: data.state.previewMode,
             wordWrap: data.state.wordWrap,
-            allowJavaScript: data.state.allowJavaScript,
             allowAutocomplete: data.state.allowAutocomplete,
             autoCloseTags: data.state.autoCloseTags,
-            autoUpdate: data.state.autoUpdate
+            autoUpdate: data.state.autoUpdate,
+            openSVGasXML: data.state.openSVGasXML,
+            allowJavaScript: data.state.allowJavaScript
         });
 
         RemoteEvents.start();
