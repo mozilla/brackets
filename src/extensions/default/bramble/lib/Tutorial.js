@@ -35,7 +35,8 @@ define(function (require, exports, module) {
         
         if(_tutorialOverride) {
             _forceReload = true;
-            UI.showDesktopView(true);  // Always show in desktop mode
+            UI.showDesktopView(true);  // Always show in desktop mode 
+            PostMessageTransport.reload();
         } else {
 
             if(_shouldRestoreMobileView) {
@@ -43,7 +44,6 @@ define(function (require, exports, module) {
                 _shouldRestoreMobileView = false; 
                 UI.showMobileView(true);
             }
-
             
             // If we're turning off the override, we need to open the project's
             // "main" web file, and the easiest way is to close/re-open live dev.
