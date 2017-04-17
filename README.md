@@ -55,7 +55,7 @@ The easiest way to run Bramble is to simply use:
 $ npm start
 ```
 
-This will generate the strings needed for localization in your src/nls folder and allow you to access Bramble on localhost:8000. You can terminate the server with Ctrl+C which will also clean up the strings that were generated in your src/nls folder.
+This will generate the strings needed for localization in your `src/nls` folder and allow you to access Bramble on `localhost:8000`. You can terminate the server with `Ctrl+C` which will also clean up the strings that were generated in your `src/nls` folder.
 
 If you want to simply run the server without the localized strings, run:
 
