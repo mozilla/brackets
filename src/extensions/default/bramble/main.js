@@ -123,7 +123,7 @@ define(function (require, exports, module) {
         RemoteEvents.loaded();
 
         // Show Tutorial Pane by default if `tutorial.html` exists at project load
-        // Can only be done after Remote Events is finished loadind so that thimble and bramble can communicate
+        // Can only be done after Remote Events is finished loading so that thimble and bramble can communicate
         var filename = BrambleStartupState.project("filename");
         if(Path.basename(filename) === "tutorial.html") {
             BrambleEvents.triggerTutorialVisibilityChange(true);
