@@ -461,7 +461,7 @@ define(function (require, exports, module) {
             this._codeMirror.setOption("gutters", gutters);
         }
         this.on("gutterClicked",function(event, cm, lineIndex, gutterId){
-            self._gutterClick(cm, lineIndex, gutterId)
+            self._gutterClick(cm, lineIndex, gutterId);
         });
 
         this.on("cursorActivity", function (event, editor) {
@@ -2452,7 +2452,7 @@ define(function (require, exports, module) {
                 ch: providerInfo.position.ch
             },
             element: $("<div class='interactive-gutter-messages' title='Click for details'>&nbsp;</div>")
-        }
+        };
 
         var variable = this._codeMirror.setGutterMarker(providerInfo.position.line,"interactive-gutter"
                         ,mark.element[0]);
@@ -2481,7 +2481,7 @@ define(function (require, exports, module) {
 
     Editor.prototype.setStatus = function(status) {
         $statusBarIndicator.attr("status", status);
-    }
+    };
 
     // Global settings that affect Editor instances that share the same preference locations
 
