@@ -255,6 +255,30 @@ define(function (require, exports, module) {
         errorMsg = errorMsg || defaultErrorMsg;
 
         // If one of them will provide a widget, show it inline once ready
+        _manageInlineWidgetPromise(result,inlinePromise,editor, errorMsg, pos);
+        /*if (inlinePromise) {
+            inlinePromise.done(function (inlineWidget) {
+                editor.addInlineWidget(pos, inlineWidget).done(function () {
+                    PerfUtils.addMeasurement(PerfUtils.INLINE_WIDGET_OPEN);
+                    result.resolve();
+                });
+            }).fail(function () {
+                // terminate timer that was started above
+                PerfUtils.finalizeMeasurement(PerfUtils.INLINE_WIDGET_OPEN);
+                editor.displayErrorMessageAtCursor(errorMsg);
+                result.reject();
+            });
+        } else {
+            // terminate timer that was started above
+            PerfUtils.finalizeMeasurement(PerfUtils.INLINE_WIDGET_OPEN);
+            editor.displayErrorMessageAtCursor(errorMsg);
+            result.reject();
+        }*/
+
+        return result.promise();
+    }
+
+    function _manageInlineWidgetPromise(result, inlinePromise, editor, errorMsg, pos){
         if (inlinePromise) {
             inlinePromise.done(function (inlineWidget) {
                 editor.addInlineWidget(pos, inlineWidget).done(function () {
@@ -273,10 +297,19 @@ define(function (require, exports, module) {
             editor.displayErrorMessageAtCursor(errorMsg);
             result.reject();
         }
-
-        return result.promise();
     }
 
+
+    function _openInlineWidgetWithPos(pos, provider, editor){
+        PerfUtils.markStart(PerfUtils.INLINE_WIDGET_OPEN);
+        var result = new $.Deferred(),
+            inlinePromise;
+        if (provider) {
+            inlinePromise = provider(editor, pos);
+            _manageInlineWidgetPromise(result, inlinePromise, editor, "YO", pos);
+        }
+        return result.promise();
+    }
 
     /**
      * Closes any focused inline widget. Else, asynchronously asks providers to create one.
@@ -786,7 +819,7 @@ define(function (require, exports, module) {
         for(i=0, len=_inlineEditProviders.length; i<len; i++) {
             if(_inlineEditProviders[i].provider.queryProvider instanceof Function){
                 if (_inlineEditProviders[i].provider.queryProvider(hostEditor, pos)) {
-                    return pos;
+                    return {position: pos , provider:_inlineEditProviders[i].provider};
                 }
             }
         }
@@ -794,7 +827,7 @@ define(function (require, exports, module) {
         for(i=0, len=_inlineDocsProviders.length; i<len; i++) {
             if(_inlineDocsProviders[i].provider instanceof Function){
                 if (_inlineDocsProviders[i].provider.queryProvider(hostEditor, pos)) {
-                    return pos;
+                    return {position: pos , provider:_inlineEditProviders[i].provider};
                 }
             }
         }
@@ -844,6 +877,7 @@ define(function (require, exports, module) {
     exports.openDocument                  = openDocument;
     exports.canOpenPath                   = canOpenPath;
     exports.providerAvailableForPos       = providerAvailableForPos;
+    exports._openInlineWidgetWithPos     = _openInlineWidgetWithPos;
 
     // Convenience Methods
     exports.getActiveEditor               = getActiveEditor;
