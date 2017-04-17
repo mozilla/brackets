@@ -34,8 +34,7 @@ define(function (require, exports, module) {
         RemoteCommandHandler = require("lib/RemoteCommandHandler"),
         RemoteEvents         = require("lib/RemoteEvents");
 
-    ExtensionUtils.loadStyleSheet(module, "stylesheets/style.css");
-    ExtensionUtils.loadStyleSheet(module, "stylesheets/sidebarTheme.css");
+    ExtensionUtils.loadStyleSheet(module, "stylesheets/style.less");
 
     function parseData(data) {
         try {

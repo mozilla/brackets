@@ -96,6 +96,11 @@ define(function (require, exports, module) {
             options.name = options.name.toLocaleLowerCase().replace(/[\W]/g, '-');
         }
 
+        // XXXBramble: in dist/ builds we automatically build .css from .less
+        if(brackets.env === "production") {
+            file._path = file._path.replace(/\.less$/, ".css");
+        }
+
         this.file           = file;
         this.name           = options.name;
         this.displayName    = options.title || toDisplayName(fileName);

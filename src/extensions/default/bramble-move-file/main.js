@@ -17,5 +17,5 @@ define(function (require, exports, module) {
     var menu = Menus.getContextMenu(Menus.ContextMenuIds.PROJECT_MENU);
     menu.addMenuItem(MOVE_FILE, null, Menus.AFTER, Commands.FILE_RENAME);
 
-    ExtensionUtils.loadStyleSheet(module, "styles/style.css");
+    ExtensionUtils.loadStyleSheet(module, "styles/style.less");
 });
