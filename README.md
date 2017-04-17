@@ -55,7 +55,13 @@ The easiest way to run Bramble is to simply use:
 $ npm start
 ```
 
-This starts an `http-server` session on port 8000 for you to work with.
+This will generate the strings needed for localization in your `src/nls` folder and allow you to access Bramble on `localhost:8000`. You can terminate the server with `Ctrl+C` which will also clean up the strings that were generated in your `src/nls` folder.
+
+If you want to simply run the server without the localized strings, run:
+
+```
+$ npm run server
+```
 
 However, if you wish to run your own static server, there are several options available:
 * [Apache Webserver](http://www.apache.org/)
