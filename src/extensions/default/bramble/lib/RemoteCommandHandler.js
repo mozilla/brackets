@@ -22,6 +22,7 @@ define(function (require, exports, module) {
     var Tutorial = require("lib/Tutorial");
     var Theme = require("lib/Theme");
     var UI = require("lib/UI");
+    var Preview = require("lib/Preview");
 
     function _remoteCallbackFn(callback) {
         return function() {
@@ -131,6 +132,12 @@ define(function (require, exports, module) {
             break;
         case "BRAMBLE_HIDE_SIDEBAR":
             SidebarView.hide();
+            break;
+        case "BRAMBLE_SHOW_PREVIEW":
+            Preview.show();
+            break;
+        case "BRAMBLE_HIDE_PREVIEW":
+            Preview.hide();
             break;
         case "BRAMBLE_HIDE_STATUSBAR":
             StatusBar.disable();
