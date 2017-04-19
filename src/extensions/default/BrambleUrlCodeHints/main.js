@@ -156,34 +156,34 @@ define(function (require, exports, module) {
                     }
 
                     function getFilesRecursively(targetDir, callback) {
-                    var directory = FileSystem.getDirectoryForPath(targetDir);
-                    var unfiltered = [];
-                    
-                    directory.getContents(function (err, contents) {
-                        var currentDeferred, entryStr, syncResults;
-                        if(err) {
-                            callback(err);
-                        }
-                        contents.forEach(function (entry) {
-                            if (!ProjectManager.shouldShow(entry)) {
-                            callback();
-                            }
-                            if (entry._isDirectory) {
-                            var fPath = entry._path;
-                            getFilesRecursively(fPath, function (err, files) {
-                                if (err) {
+                        var directory = FileSystem.getDirectoryForPath(targetDir);
+                        var unfiltered = [];
+                        directory.getContents(function (err, contents) {
+                            var currentDeferred, entryStr, syncResults;
+                            if(err) {
                                 callback(err);
-                                return;
-                                }
-                                unfiltered.push(files);
-                            });
-                            } else {
-                            entryStr = entry._name;
-                            unfiltered.push(entryStr);
                             }
+                            contents.forEach(function (entry) {
+                                if (!ProjectManager.shouldShow(entry)) {
+                                    callback();
+                                }
+                                if (entry._isDirectory) {
+                                    var fPath = entry._path;
+                                    getFilesRecursively(fPath, function (err, files) {
+                                        if (err) {
+                                            callback(err);
+                                            return;
+                                        }
+                                        unfiltered.push(files);
+                                    });
+                                } 
+                                else {
+                                    entryStr = entry._name;
+                                    unfiltered.push(entryStr);
+                                }
+                            });
                         });
-                    });
-                    callback(null, unfiltered);
+                        callback(null, unfiltered);
                     }
                     // convert to doc relative path
                     entryStr = queryDir + entry._name;
