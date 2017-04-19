@@ -1,21 +1,30 @@
 [
     {
         "path": "extensions/default/CSSCodeHints",
-        "copy": [
-            "extensions/default/CSSCodeHints/styles/brackets-css-hints.css"
-        ]
+        "less": {
+            "dist/extensions/default/CSSCodeHints/styles/brackets-css-hints.css": [
+                "src/extensions/default/CSSCodeHints/styles/brackets-css-hints.css"
+            ]
+        }
     },
     {
         "path": "extensions/default/HTMLCodeHints"
     },
     {
         "path": "extensions/default/HtmlEntityCodeHints",
-        "copy": [
-            "extensions/default/HTMLEntityCodeHints/styles.css"
-        ]
+        "less": {
+            "dist/extensions/default/HTMLEntityCodeHints/styles.css": [
+                "src/extensions/default/HtmlEntityCodeHints/styles.css"
+            ]
+        }
     },
     {
         "path": "extensions/default/JavaScriptCodeHints",
+        "less": {
+            "dist/extensions/default/JavaScriptCodeHints/styles/brackets-js-hints.css": [
+                "src/extensions/default/JavaScriptCodeHints/styles/brackets-js-hints.css"
+            ]
+        },
         "copy": [
             "extensions/default/JavaScriptCodeHints/node_modules/tern/lib/tern.js",
             "extensions/default/JavaScriptCodeHints/node_modules/tern/lib/infer.js",
@@ -26,7 +35,6 @@
             "extensions/default/JavaScriptCodeHints/node_modules/acorn/dist/acorn.js",
             "extensions/default/JavaScriptCodeHints/node_modules/acorn/dist/acorn_loose.js",
             "extensions/default/JavaScriptCodeHints/node_modules/acorn/dist/walk.js",
-            "extensions/default/JavaScriptCodeHints/styles/brackets-js-hints.css",
             "extensions/default/JavaScriptCodeHints/tern-worker.js",
             "extensions/default/JavaScriptCodeHints/MessageIds.js",
             "extensions/default/JavaScriptCodeHints/HintUtils2.js"
@@ -34,8 +42,12 @@
     },
     {
         "path": "extensions/default/InlineColorEditor",
+        "less": {
+            "dist/extensions/default/InlineColorEditor/css/main.css": [
+                "src/extensions/default/InlineColorEditor/css/main.less"
+            ]
+        },
         "copy": [
-            "extensions/default/InlineColorEditor/css/main.css",
             "extensions/default/InlineColorEditor/img/*.png"
         ]
     },
@@ -44,15 +56,23 @@
     },
     {
         "path": "extensions/default/QuickView",
+        "less": {
+            "dist/extensions/default/QuickView/QuickView.css": [
+                "src/extensions/default/QuickView/QuickView.less"
+            ]
+        },
         "copy": [
-            "extensions/default/QuickView/QuickView.css",
             "extensions/default/QuickView/*.svg"
         ]
     },
     {
         "path": "extensions/default/WebPlatformDocs",
+        "less": {
+            "dist/extensions/default/WebPlatformDocs/WebPlatformDocs.css": [
+                "src/extensions/default/WebPlatformDocs/WebPlatformDocs.less"
+            ]
+        },
         "copy": [
-            "extensions/default/WebPlatformDocs/WebPlatformDocs.css",
             "extensions/default/WebPlatformDocs/html.json",
             "extensions/default/WebPlatformDocs/css.json",
             "extensions/default/WebPlatformDocs/logo.svg"
@@ -60,9 +80,19 @@
     },
     {
         "path": "extensions/default/bramble",
+        "less": {
+            "dist/extensions/default/bramble/stylesheets/style.css": [
+                "src/extensions/default/bramble/stylesheets/style.less"
+            ],
+            "dist/extensions/default/bramble/stylesheets/lightTheme.css": [
+                "src/extensions/default/bramble/stylesheets/lightTheme.less"
+            ],
+            "dist/extensions/default/bramble/stylesheets/darkTheme.css": [
+                "src/extensions/default/bramble/stylesheets/darkTheme.less"
+            ]
+        },
         "copy": [
-            "extensions/default/bramble/stylesheets/*.css",
-            "extensions/default/bramble/images/*"
+            "extensions/default/bramble/images/**/*"
         ]
     },
     {
@@ -73,8 +103,12 @@
     },
     {
         "path": "extensions/default/BrambleUrlCodeHints",
+        "less": {
+            "dist/extensions/default/BrambleUrlCodeHints/style.css": [
+                "src/extensions/default/BrambleUrlCodeHints/style.less"
+            ]
+        },
         "copy": [
-            "extensions/default/BrambleUrlCodeHints/style.css",
             "extensions/default/BrambleUrlCodeHints/camera/camera-shutter-click-08.mp3",
             "extensions/default/BrambleUrlCodeHints/glyphicons-12-camera.png",
             "extensions/default/BrambleUrlCodeHints/selfiePreview.png"
@@ -82,22 +116,32 @@
     },
     {
         "path": "extensions/default/UploadFiles",
+        "less": {
+            "dist/extensions/default/UploadFiles/styles.css": [
+                "src/extensions/default/UploadFiles/styles.less"
+            ]
+        },
         "copy": [
-            "extensions/default/UploadFiles/styles.css",
             "extensions/default/UploadFiles/images/*.svg"
         ]
     },
     {
         "path": "extensions/default/bramble-move-file",
+        "less": {
+            "dist/extensions/default/bramble-move-file/styles/style.css": [
+                "src/extensions/default/bramble-move-file/styles/style.less"
+            ]
+        },
         "copy": [
-            "extensions/default/bramble-move-file/styles/style.css",
             "extensions/default/bramble-move-file/images/*.svg"
         ]
     },
     {
         "path": "extensions/default/brackets-show-whitespace",
-        "copy": [
-            "extensions/default/brackets-show-whitespace/styles/main.css"
-        ]
+        "less": {
+            "dist/extensions/default/brackets-show-whitespace/styles/main.css": [
+                "src/extensions/default/brackets-show-whitespace/styles/main.css"
+            ]
+        }
     }
 ]

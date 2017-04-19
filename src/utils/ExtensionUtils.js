@@ -193,6 +193,12 @@ define(function (require, exports, module) {
         var result = new $.Deferred();
         var url;
 
+        // XXXBramble: in a dist/ build, don't bother loading any .less files,
+        // for extensions, since we build .css files with grunt.
+        if(brackets.env === "production") {
+            path = path.replace(/\.less$/, ".css");
+        }
+
         // XXXBramble: don't double-load a CSS file, just link it
         if(Path.extname(path) === ".css") {
             url = PathUtils.isAbsoluteUrl(path) ? path : getModuleUrl(module, path);

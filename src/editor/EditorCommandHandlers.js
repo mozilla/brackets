@@ -30,14 +30,23 @@ define(function (require, exports, module) {
     // Load dependent modules
     var Commands           = require("command/Commands"),
         Strings            = require("strings"),
-        Editor              = require("editor/Editor").Editor,
+        Editor             = require("editor/Editor").Editor,
         CommandManager     = require("command/CommandManager"),
         EditorManager      = require("editor/EditorManager"),
         StringUtils        = require("utils/StringUtils"),
         TokenUtils         = require("utils/TokenUtils"),
         CodeMirror         = require("thirdparty/CodeMirror/lib/codemirror"),
+        Dialogs            = require("widgets/Dialogs"),
+        dialogTemplate     = require("text!htmlContent/copy-paste-dialog.html"),
+        Mustache           = require("thirdparty/mustache/mustache"),
         _                  = require("thirdparty/lodash");
-
+	
+    var commandKey;
+    if(brackets.platform === "mac") {
+        commandKey = "&#8984";
+    } else {
+        commandKey = "Ctrl";
+    }
     /**
      * List of constants
      */
@@ -1137,6 +1146,45 @@ define(function (require, exports, module) {
         return result.promise();
     }
 
+    function _execCommand(cmd) {
+        window.document.execCommand(cmd);
+    }
+	
+    var _execCommandCut = (function() {
+        if(document.queryCommandSupported("cut")) {
+            return function() {
+                _execCommand("cut");
+            };
+        }
+        return function() {
+            Dialogs.showModalDialogUsingTemplate(Mustache.render(dialogTemplate, {key: commandKey}));
+            return ignoreCommand();
+        };
+    }());
+	
+    var _execCommandCopy = (function() {
+        if(document.queryCommandSupported("copy")) {
+            return function() {
+                _execCommand("copy");
+            };
+        }
+        return function() {
+            Dialogs.showModalDialogUsingTemplate(Mustache.render(dialogTemplate, {key: commandKey}));
+            return ignoreCommand();
+        };
+    }());
+	
+    /**
+    * Browser ignores value of document.queryCommandSupported("paste"). As browsers still doesn't
+    * allow it, due to security concerns.  
+    */
+    function _execCommandPaste(){
+        Dialogs.showModalDialogUsingTemplate(Mustache.render(dialogTemplate, {key: commandKey}));
+        return ignoreCommand();
+    }
+
+        
+
     // Register commands
     CommandManager.register(Strings.CMD_INDENT,                 Commands.EDIT_INDENT,                 indentText);
     CommandManager.register(Strings.CMD_UNINDENT,               Commands.EDIT_UNINDENT,               unindentText);
@@ -1155,8 +1203,8 @@ define(function (require, exports, module) {
 
     CommandManager.register(Strings.CMD_UNDO,                   Commands.EDIT_UNDO,                   handleUndo);
     CommandManager.register(Strings.CMD_REDO,                   Commands.EDIT_REDO,                   handleRedo);
-    CommandManager.register(Strings.CMD_CUT,                    Commands.EDIT_CUT,                    ignoreCommand);
-    CommandManager.register(Strings.CMD_COPY,                   Commands.EDIT_COPY,                   ignoreCommand);
-    CommandManager.register(Strings.CMD_PASTE,                  Commands.EDIT_PASTE,                  ignoreCommand);
+    CommandManager.register(Strings.CMD_CUT,                    Commands.EDIT_CUT,                    _execCommandCut);
+    CommandManager.register(Strings.CMD_COPY,                   Commands.EDIT_COPY,                   _execCommandCopy);
+    CommandManager.register(Strings.CMD_PASTE,                  Commands.EDIT_PASTE,                  _execCommandPaste);
     CommandManager.register(Strings.CMD_SELECT_ALL,             Commands.EDIT_SELECT_ALL,             _handleSelectAll);
 });

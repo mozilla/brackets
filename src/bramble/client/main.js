@@ -29,8 +29,9 @@ define([
     "bramble/ChannelUtils",
     "bramble/thirdparty/EventEmitter/EventEmitter.min",
     "bramble/client/StateManager",
+    "bramble/client/ProjectStats",
     "bramble/thirdparty/MessageChannel/message_channel"
-], function(Filer, ChannelUtils, EventEmitter, StateManager) {
+], function(Filer, ChannelUtils, EventEmitter, StateManager, ProjectStats) {
     "use strict";
 
     // PROD URL for Bramble, which can be changed below
@@ -110,13 +111,15 @@ define([
 
     // Expose Filer for Path, Buffer, providers, etc.
     Bramble.Filer = Filer;
-    var _fs = new Filer.FileSystem();
+    // We wrap the filesystem, and add metrics to keep track of project stats
+    var _fs = ProjectStats.getFileSystem();
     Bramble.getFileSystem = function() {
         return _fs;
     };
+    
     // NOTE: THIS WILL DESTROY DATA! For error cases only, or to wipe the disk.
     Bramble.formatFileSystem = function(callback) {
-        _fs = new Filer.FileSystem({flags: ["FORMAT"]}, callback);
+        _fs = ProjectStats.formatFileSystem({flags: ["FORMAT"]}, callback);
     };
 
     // Start loading Bramble's resources, setup communication with iframe
@@ -147,7 +150,14 @@ define([
             return;
         }
 
-        _instance.mount(root, filename);
+        ProjectStats.init(root, function(err){
+            if(err) {
+                setReadyState(Bramble.ERROR, new Error("Unable to access filesystem: ", err));
+                return;
+            }
+            _instance.mount(root, filename);
+        });
+
     };
 
     /**
@@ -208,8 +218,12 @@ define([
         self.getAutoCloseTags = function() { return _state.autoCloseTags; };
         self.getAllowJavaScript = function() { return _state.allowJavaScript; };
         self.getAutoUpdate = function() { return _state.autoUpdate; };
+        self.getOpenSVGasXML = function() { return _state.openSVGasXML; };
         self.getTutorialExists = function() { return _tutorialExists; };
         self.getTutorialVisible = function() { return _tutorialVisible; };
+        self.getTotalProjectSize = function() { return ProjectStats.getTotalProjectSize(); };
+        self.hasIndexFile =  function() { return ProjectStats.hasIndexFile(); };
+        self.getFileCount = function() { return ProjectStats.getFileCount(); };
         self.getLayout = function() {
             return {
                 sidebarWidth: _state.sidebarWidth,
@@ -232,7 +246,18 @@ define([
             addEventListener("message", function(e) {
                 var data = parseEventData(e.data);
 
-                // When Bramble is ready for the filesystem to be mounted, it will let us know
+                // Deal with messages from the service worker regarding cache. We trigger these
+                // events on Bramble vs. the bramble instance.
+                if(data.type === "Bramble:updatesAvailable") {
+                    Bramble.trigger("updatesAvailable");
+                    return;
+                }
+                if(data.type === "Bramble:offlineReady") {
+                    Bramble.trigger("offlineReady");
+                    return;
+                }
+
+                // When bramble instance is ready for the filesystem to be mounted, it will let us know
                 if (data.type === "bramble:readyToMount") {
                     debug("bramble:readyToMount");
                     setReadyState(Bramble.MOUNTABLE);
@@ -270,6 +295,7 @@ define([
                     _state.allowJavaScript = data.allowJavaScript;
                     _state.autocomplete = data.autocomplete;
                     _state.autoUpdate = data.autoUpdate;
+                    _state.openSVGasXML = data.openSVGasXML;
 
                     setReadyState(Bramble.READY);
                 }
@@ -307,6 +333,8 @@ define([
                         _state.wordWrap = data.wordWrap;
                     } else if (eventName === "autoCloseTagsChange") {
                         _state.autoCloseTags = data.autoCloseTags;
+                    } else if (eventName === "openSVGasXMLChange") {
+                        _state.openSVGasXML = data.openSVGasXML;
                     } else if (eventName === "allowJavaScriptChange") {
                         _state.allowJavaScript = data.allowJavaScript;
                     } else if (eventName === "tutorialVisibilityChange") {
@@ -429,10 +457,11 @@ define([
                                     secondPaneWidth: _state.secondPaneWidth,
                                     previewMode: _state.previewMode,
                                     wordWrap: _state.wordWrap,
-                                    allowJavaScript: _state.allowJavaScript,
                                     allowAutocomplete: _state.allowAutocomplete,
                                     autoCloseTags: _state.autoCloseTags,
-                                    autoUpdate: _state.autoUpdate
+                                    autoUpdate: _state.autoUpdate,
+                                    openSVGasXML: _state.openSVGasXML,
+                                    allowJavaScript: _state.allowJavaScript
                                 }
                             };
                             _brambleWindow.postMessage(JSON.stringify(initMessage), _iframe.src);
@@ -927,6 +956,14 @@ define([
 
     BrambleProxy.prototype.disableAutocomplete = function(callback) {
         this._executeRemoteCommand({commandCategory: "bramble", command: "BRAMBLE_DISABLE_AUTOCOMPLETE"}, callback);
+    };
+
+    BrambleProxy.prototype.openSVGasXML = function(callback) {
+        this._executeRemoteCommand({commandCategory: "bramble", command: "BRAMBLE_OPEN_SVG_AS_XML"}, callback);
+    };
+
+    BrambleProxy.prototype.openSVGasImage = function(callback) {
+        this._executeRemoteCommand({commandCategory: "bramble", command: "BRAMBLE_OPEN_SVG_AS_IMAGE"}, callback);
     };
 
     BrambleProxy.prototype.enableInspector = function(callback) {
