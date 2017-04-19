@@ -52,6 +52,7 @@
         "eslint-config-prettier": "^1.6.0",
         "eslint-plugin-prettier": "^2.0.1",
         "prettier": "^0.22.0",
+        "grunt-githooks": "^0.6.0",
         "gunzip-maybe": "^1.3.1",
         "http-server": "mozilla/http-server#gzip",
         "mkdirp": "0.5.1",
