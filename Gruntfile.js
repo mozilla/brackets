@@ -121,7 +121,7 @@ module.exports = function (grunt) {
                         expand: true,
                         dest: 'dist/styles',
                         cwd: 'src/styles',
-                        src: ['jsTreeTheme.css', 'images/**/*', 'brackets.min.css*', 'bramble_overrides.css']
+                        src: ['jsTreeTheme.css', 'images/**/*', 'brackets.min.css*']
                     }
                 ]
             },
@@ -168,8 +168,7 @@ module.exports = function (grunt) {
                     // XXXBramble: if you change this, change configureExtensions() below too.
                     "dist/styles/brackets.min.css": [
                         "src/thirdparty/CodeMirror/lib/codemirror.css",
-                        "src/styles/brackets.less",
-                        "src/styles/bramble_overrides.less"
+                        "src/styles/brackets.less"
                     ]
                 },
                 options: {
