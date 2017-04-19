@@ -78,7 +78,7 @@ define(function (require, exports, module) {
         if(error.type === MoveUtils.NEEDS_RENAME) {
             Dialogs.showModalDialog(DefaultDialogs.DIALOG_ID_ERROR,
                 Strings.ERROR_MOVING_FILE_DIALOG_HEADER,
-                StringUtils.format(Strings.ERROR_MOVING_FILE_SAME_NAME, from, to), false
+                StringUtils.format(Strings.ERROR_MOVING_FILE_SAME_NAME, from, to)
             );
             return;
         }
