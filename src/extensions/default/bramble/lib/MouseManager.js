@@ -11,23 +11,23 @@ define(function (require, exports, module) {
     var FileSystem = brackets.getModule("filesystem/FileSystem");
 
     var MouseManagerRemote = require("text!lib/MouseManagerRemote.js");
-    var IframeBrowser = require("lib/iframe-browser");
+    var Preview = require("lib/Preview");
 
     var _isInspectorEnabled = false;
     var _prevLineMarker;
     var _prevElemHighlightId;
 
     // Override the preview document's cursor property
-    function setIframeCursor(value) {
-        var iframe;
+    function setPreviewCursor(value) {
+        var preview;
         var doc;
 
-        iframe = IframeBrowser.getBrowserIframe();
-        if(!iframe) {
+        preview = Preview.getPreviewPane();
+        if(!preview) {
             return;
         }
 
-        doc = iframe.contentDocument || iframe.contentWindow.document;
+        doc = preview.contentDocument || preview.contentWindow.document;
         if(!doc) {
             return;
         }
@@ -38,9 +38,9 @@ define(function (require, exports, module) {
     // Depending on the state of the inspector, apply the appropriate cursor
     function ensurePreviewCursor() {
         if(_isInspectorEnabled) {
-            setIframeCursor("pointer");
+            setPreviewCursor("pointer");
         } else {
-            setIframeCursor("auto");
+            setPreviewCursor("auto");
         }
     }
 
@@ -108,7 +108,7 @@ define(function (require, exports, module) {
         clearMarks();
         clearElemHighlight();
         // Set the preview mouse cursor to a pointer
-        setIframeCursor("pointer");
+        setPreviewCursor("pointer");
         // Let clients know we've enabled the inspector
         BrambleEvents.triggerInspectorChange(true);
     }
@@ -116,7 +116,7 @@ define(function (require, exports, module) {
     function disableInspector(clear) {
         _isInspectorEnabled = false;
         // reset the preview mouse cursor
-        setIframeCursor("auto");
+        setPreviewCursor("auto");
         // Depending on how this is called (user request vs. our logic)
         // clear any highlights in the preview/editor.
         if(clear) {

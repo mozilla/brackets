@@ -6,11 +6,11 @@
 define(function (require, exports, module) {
     "use strict";
 
-    var _iframeRef,
+    var _previewRef,
         connId = 1;
 
     var Launcher = require("lib/launcher"),
-        Browser  = require("lib/iframe-browser");
+        Preview  = require("lib/Preview");
 
     var EventDispatcher     = brackets.getModule("utils/EventDispatcher"),
         LiveDevMultiBrowser = brackets.getModule("LiveDevelopment/LiveDevMultiBrowser"),
@@ -32,12 +32,12 @@ define(function (require, exports, module) {
     EventDispatcher.makeEventDispatcher(module.exports);
 
     /**
-     * Saves a reference of the iframe element to a local variable
-     * @param {DOM element reference to an iframe}
+     * Saves a reference of the preview element to a local variable
+     * @param {DOM element reference to a preview}
      */
-    function setIframe(iframeRef) {
-        if(iframeRef) {
-            _iframeRef = iframeRef;
+    function setPreviewPane(previewRef) {
+        if(previewRef) {
+            _previewRef = previewRef;
         }
     }
 
@@ -100,7 +100,7 @@ define(function (require, exports, module) {
             // Trigger message event 
             module.exports.trigger("message", [connId, msgObj.message]);
         } else if (msgObj.type === "connect") {
-            Browser.setListener();
+            Preview.setListener();
             // Make sure the correct mouse cursor is set, depending on inspector state.
             MouseManager.ensurePreviewCursor();
         }
@@ -164,10 +164,10 @@ define(function (require, exports, module) {
      * @param {string} msgStr The message to send as a JSON string.
      */
     function send(idOrArray, msgStr){
-        var win = _iframeRef.contentWindow;
+        var win = _previewRef.contentWindow;
         msgStr = resolvePaths(msgStr);
         var msg = JSON.parse(msgStr);
-        var detachedPreview = Browser.getDetachedPreview();
+        var detachedPreview = Preview.getDetachedPreview();
 
         // Because we need to deal with reloads on this side (i.e., editor) of the
         // transport, check message before sending to remote, and reload if necessary
@@ -262,7 +262,7 @@ define(function (require, exports, module) {
     // Exports
     module.exports.getRemoteScript = getRemoteScript;
     module.exports.setAutoUpdate   = setAutoUpdate;
-    module.exports.setIframe       = setIframe;
+    module.exports.setPreviewPane  = setPreviewPane;
     module.exports.start           = start;
     module.exports.send            = send;
     module.exports.close           = close;

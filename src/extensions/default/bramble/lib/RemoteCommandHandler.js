@@ -134,10 +134,10 @@ define(function (require, exports, module) {
             SidebarView.hide();
             break;
         case "BRAMBLE_SHOW_PREVIEW":
-            Preview.show();
+            Preview.showPreview();
             break;
         case "BRAMBLE_HIDE_PREVIEW":
-            Preview.hide();
+            Preview.hidePreview();
             break;
         case "BRAMBLE_HIDE_STATUSBAR":
             StatusBar.disable();
