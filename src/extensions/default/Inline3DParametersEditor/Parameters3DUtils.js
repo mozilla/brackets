@@ -6,7 +6,7 @@ define(function (require, exports, module) {
     "use strict";
 
     var PARAMETERS_3D_REGEX = /( )*(((-)?\d+(\.\d+)?)( )+)*((-)?\d+(\.\d+)?( )*)/g;
-    var TAG_REGEX = /^a-/g;
+    var TAG_START = "a-";
 
     var MODIFIERS = {
         position: 50,
@@ -30,6 +30,6 @@ define(function (require, exports, module) {
 
     // Define public API
     exports.PARAMETERS_3D_REGEX     = PARAMETERS_3D_REGEX;
-    exports.TAG_REGEX = TAG_REGEX;
+    exports.TAG_START = TAG_START;
     exports.getModifier = getModifier;
 });
