@@ -25,8 +25,8 @@ define(function (require, exports, module) {
 
     // Normalize '.html', 'html', '.HTML', 'HTML' all to '.html', unless exludePeriod is 'true'
     // then make it just 'html' without the period.
-    exports.normalizeExtension = function(ext, exludePeriod) {
-        var maybePeriod = exludePeriod ? "" : ".";
+    exports.normalizeExtension = function(ext, excludePeriod) {
+        var maybePeriod = excludePeriod ? "" : ".";
         return maybePeriod + ext.replace(/^\./, "").toLowerCase();
     };
 });

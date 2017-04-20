@@ -336,7 +336,7 @@ define(function (require, exports, module) {
          * or not a mime type we care about, reject it.
          */
         function rejectImport(item) {
-            var ext = FilerUtils.normalizeExtension(Path.extname(item.name), true);
+            var ext = Path.extname(item.name);
             var sizeLimit = Content.isArchive(ext) ? archiveByteLimit : byteLimit;
             var sizeLimitMb = (sizeLimit / (1024 * 1024)).toString();
 
