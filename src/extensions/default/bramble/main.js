@@ -19,7 +19,7 @@ define(function (require, exports, module) {
         CommandManager       = brackets.getModule("command/CommandManager"),
         Commands             = brackets.getModule("command/Commands"),
         FileSystem           = brackets.getModule("filesystem/FileSystem"),
-        Browser              = require("lib/iframe-browser"),
+        Preview              = require("lib/Preview"),
         UI                   = require("lib/UI"),
         Launcher             = require("lib/launcher"),
         NoHost               = require("nohost/main"),
@@ -46,7 +46,7 @@ define(function (require, exports, module) {
     }
 
     function handleMessage(message) {
-        var currentDocUrl = Browser.getBrowserIframe().src;
+        var currentDocUrl = Preview.getPreviewPane().src;
         var currentDocPath = BlobUtils.getFilename(currentDocUrl);
         var currentDir = currentDocPath !== currentDocUrl ? Path.dirname(currentDocPath) : currentDocPath;
         var requestedPath;
@@ -66,7 +66,7 @@ define(function (require, exports, module) {
 
     function startLiveDev() {
         // Turn preview iFrame On
-        Browser.init();
+        Preview.init();
 
         // Flip livedev.multibrowser to true
         var prefs = PreferencesManager.getExtensionPrefs("livedev");
@@ -76,12 +76,12 @@ define(function (require, exports, module) {
         NoHost.init();
 
         // Set up our transport and plug it into live-dev
-        PostMessageTransport.setIframe(Browser.getBrowserIframe());
+        PostMessageTransport.setPreviewPane(Preview.getPreviewPane());
         LiveDevelopment.setTransport(PostMessageTransport);
 
         // Set up our launcher in a similar manner
         LiveDevelopment.setLauncher(new Launcher({
-            browser: Browser,
+            browser: Preview,
             server: NoHost.getHTMLServer()
         }));
 
@@ -150,7 +150,7 @@ define(function (require, exports, module) {
                     // Signal that Brackets is loaded
                     AppInit._dispatchReady(AppInit.APP_READY);
 
-                    // Setup the iframe browser and Blob URL live dev servers and
+                    // Setup the Preview Pane and Blob URL live dev servers and
                     // load the initial document into the preview.
                     startLiveDev();
 
