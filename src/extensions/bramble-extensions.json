@@ -42,7 +42,7 @@
     {
         "path": "extensions/default/Inline3DParametersEditor",
         "copy": [
-            "extensions/default/Inline3DParametersEditor/css/main.css"
+            "extensions/default/Inline3DParametersEditor/css/main.less"
         ]
     },
     {

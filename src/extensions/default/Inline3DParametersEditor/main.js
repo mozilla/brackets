@@ -90,7 +90,7 @@ define(function (require, exports, module) {
         return result.promise();
     }
 
-    ExtensionUtils.loadStyleSheet(module, "css/main.css");
+    ExtensionUtils.loadStyleSheet(module, "css/main.less");
     EditorManager.registerInlineEditProvider(inline3DParametersEditor);
     exports.prepareParametersForProvider = prepareParametersForProvider;
 });
