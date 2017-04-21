@@ -108,6 +108,22 @@ if ('serviceWorker' in window.navigator) {
     });
 }
 
+window.setTimeout(function () {
+    
+     // XXXBramble: We host the filesystem in the hosting, parent window.  Make sure
+    // we're loaded within an iframe, and warn if not.
+    if (window.location === window.parent.location) {
+        str = "<h1>Bramble must be hosted</h1>" +
+        "<p>Oops! Bramble was loaded directly, outside of an iframe. For security it must be hosted in an iframe.</p>" +
+        "<p>For local development, you can run Bramble in an iframe by using <a href=\"hosted.html\">hosted.html</a> instead of <a href=\"index.html\">index.html</a>.</p>";
+    }
+
+    if (str) {              
+        window.document.write(str);
+    }
+
+}, 1000);
+
 define(function (require) {
     "use strict";
 
