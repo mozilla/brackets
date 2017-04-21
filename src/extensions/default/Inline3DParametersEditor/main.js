@@ -33,10 +33,10 @@ define(function (require, exports, module) {
             return null;
         }
 
-        ParameterRegex = new RegExp(Inline3dParametersUtils.PARAMETERS_3D_REGEX);
+        ParameterRegex = Inline3dParametersUtils.PARAMETERS_3D_REGEX;
+        ParameterRegex.lastIndex = 0;
         tagInfo = HTMLUtils.getTagInfo(hostEditor, pos),
         cursorLine = hostEditor.document.getLine(pos.line);
-
         // Loop through each match of ParameterRegex and stop when the one that contains pos is found.
         do {
             match = ParameterRegex.exec(cursorLine);
