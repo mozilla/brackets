@@ -122,7 +122,7 @@ if ('serviceWorker' in window.navigator) {
 
 window.setTimeout(function () {
     
-     // XXXBramble: We host the filesystem in the hosting, parent window.  Make sure
+    // XXXBramble: We host the filesystem in the hosting, parent window.  Make sure
     // we're loaded within an iframe, and warn if not.
     if (window.location === window.parent.location) {
 
