@@ -98,7 +98,7 @@ define(function (require, exports, module) {
         WORD_WRAP           = "wordWrap",
         INDENT_LINE_COMMENT = "indentLineComment",
         ALLOW_JAVASCRIPT    = "allowJavaScript",
-        ALLOW_WHITESPACE    = "denniskehrig.ShowWhitespace",
+        ALLOW_WHITESPACE    = "allowWhiteSpace",
         AUTO_UPDATE         = "autoUpdate";
     
 
@@ -131,7 +131,7 @@ define(function (require, exports, module) {
     cmOptions[USE_TAB_CHAR]       = "indentWithTabs";
     cmOptions[WORD_WRAP]          = "lineWrapping";
     cmOptions[ALLOW_JAVASCRIPT]   = "allowJavaScript";
-    cmOptions[ALLOW_WHITESPACE]   = "denniskehrig.ShowWhitespace";
+    cmOptions[ALLOW_WHITESPACE]   = "allowWhiteSpace";
 
     PreferencesManager.definePreference(CLOSE_BRACKETS,     "boolean", true, {
         description: Strings.DESCRIPTION_CLOSE_BRACKETS

@@ -103,7 +103,7 @@ define(function (require, exports, module) {
             PreferencesManager.set("allowJavaScript", allowJavaScript);
         }
 
-        var allowWhiteSpace = BrambleStartupState.ui("denniskehrig.ShowWhitespace");
+        var allowWhiteSpace = BrambleStartupState.ui("allowWhiteSpace");
         if(typeof allowWhiteSpace === "boolean") {
             PreferencesManager.getExtensionPrefs("denniskehrig.ShowWhitespace").set("enabled", allowWhiteSpace);
         }
