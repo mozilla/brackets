@@ -100,17 +100,13 @@
 
     <!-- NOTE: All scripts must be external for Chrome App support: http://developer.chrome.com/apps/app_csp.html -->
 
-    <link rel="stylesheet" type="text/css" href="thirdparty/CodeMirror/lib/codemirror.css">
-
     <!--(if target dev)><!-->
-    <link rel="stylesheet/less" type="text/css" href="styles/brackets.less">
+    <link rel="stylesheet" type="text/css" href="thirdparty/CodeMirror/lib/codemirror.css">
+    <link rel="stylesheet/less" type="text/css" href="styles/bramble.less">
     <!--<!(endif)-->
     <!--(if target dist)>
     <link rel="stylesheet" type="text/css" href="styles/brackets.min.css">
     <!--<!(endif)-->
-    
-    <!-- Bramble CSS overrides for cross-browser compatibility issues -->
-    <link rel="stylesheet" type="text/css" href="styles/bramble_overrides.css">
 </head>
 <body>
     <!-- We show a spinner on startup, which gets removed when loaded by

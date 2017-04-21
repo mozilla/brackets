@@ -814,8 +814,7 @@ define(function (require, exports, module) {
     $previewContent = $previewContainer.find(".preview-content");
 
     // Load our stylesheet
-    // XXXBramble: use CSS vs. LESS
-    ExtensionUtils.loadStyleSheet(module, "QuickView.css");
+    ExtensionUtils.loadStyleSheet(module, "QuickView.less");
 
     // Register command
     // Insert menu at specific pos since this may load before OR after code folding extension

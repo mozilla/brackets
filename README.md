@@ -55,7 +55,13 @@ The easiest way to run Bramble is to simply use:
 $ npm start
 ```
 
-This starts an `http-server` session on port 8000 for you to work with.
+This will generate the strings needed for localization in your `src/nls` folder and allow you to access Bramble on `localhost:8000`. You can terminate the server with `Ctrl+C` which will also clean up the strings that were generated in your `src/nls` folder.
+
+If you want to simply run the server without the localized strings, run:
+
+```
+$ npm run server
+```
 
 However, if you wish to run your own static server, there are several options available:
 * [Apache Webserver](http://www.apache.org/)
@@ -144,6 +150,15 @@ NOTE: in some browsers (e.g., Firefox) when the user is in "Private Browsing"
 mode, the filesystem (i.e., IndexedDB) will be inaccessible, and an error
 will be sent via the `error` event (i.e., `err.code === "EFILESYSTEMERROR"`).  This
 is the same error that occurs when the filesystem is corrupt (see `autoRecoverFileSystem` below).
+
+## Bramble Offline Support
+
+The Bramble code is offline capable, and will indicate, via events, when it is ready to be used offline, as well as
+when there are updates available for existing offline cached resources. These events are triggered on `Bramble` vs.
+the `bramble` instance.  The offline related events include:
+
+* `"offlineReady"` - triggered when Bramble has been fully cached for offline use.  Users can safely work without network.
+* `"updatesAvailable"` - triggered when new or updated Bramble resources have been cached and are available for use. You might use this to indicate to the user that they should refresh the page to begin using the updates.
 
 ## Bramble.getFileSystem()
 
@@ -275,6 +290,9 @@ a number of read-only getters are available in order to access state information
 * `getTutorialExists()` - returns `true` or `false` depending on whether or not there is a tutorial in the project (i.e., if `tutorial.html` is present)
 * `getTutorialVisible()` - returns `true` or `false` depending on whether or not the preview browser is showing a tutorial or not.
 * `getAutoUpdate()` - returns `true` or `false` depending on whether or not the auto update preference is enabled or not.
+* `getTotalProjectSize()` - returns the current project size in bytes.
+* `hasIndexFile()` - returns `true` or `false` depending on whether or not there is an `"index.html"` file.
+* `getFileCount()` - returns total file count.
 
 **NOTE**: calling these getters before the `ready()` callback on the bramble instance
 won't do what you want.
@@ -325,6 +343,8 @@ to be notified when the action completes:
 * `addNewFolder([callback])` - adds a new folder.
 * `export([callback])` - creates an archive `.zip` file of the entire project's filesystem, and downloads it to the browser.
 * `addCodeSnippet(snippet, [callback])` - adds a new code `snippet` to the editor (if it is in focus) at the current cursor position. One required parameter (`snippet`) needs to be passed in which needs to be a `String`.
+* `openSVGasXML([callback])` - treats `.svg` files as XML and shows them in the text editor.
+* `openSVGasImage([callback])` - treats `.svg` files as Images and shows them in image viewer.
 
 ## Bramble Instance Events
 

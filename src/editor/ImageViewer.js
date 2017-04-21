@@ -27,6 +27,7 @@ define(function (require, exports, module) {
     var DocumentManager     = require("document/DocumentManager"),
         ImageViewTemplate   = require("text!htmlContent/image-view.html"),
         ProjectManager      = require("project/ProjectManager"),
+        PreferencesManager  = require("preferences/PreferencesManager"),
         LanguageManager     = require("language/LanguageManager"),
         MainViewFactory     = require("view/MainViewFactory"),
         Strings             = require("strings"),
@@ -39,10 +40,6 @@ define(function (require, exports, module) {
 
     // Vibrant doesn't seem to play well with requirejs AMD loading, load it globally.
     require("thirdparty/Vibrant");
-
-    // XXXBramble specific bits to allow opening SVG as a regular image vs. XML doc
-    var PreferencesManager  = require("preferences/PreferencesManager");
-    PreferencesManager.definePreference("openSVGasXML", "boolean", false);
 
     var _viewers = {};
 

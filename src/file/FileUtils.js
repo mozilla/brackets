@@ -77,7 +77,7 @@ define(function (require, exports, module) {
         });
 
         // Read file
-        file.read(function (err, data, stat) {
+        file.read({encoding: "utf8"}, function (err, data, stat) {
             if (!err) {
                 result.resolve(data, stat.mtime);
             } else {
