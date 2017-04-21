@@ -6,7 +6,16 @@ define(function (require, exports, module) {
     "use strict";
 
     var PARAMETERS_3D_REGEX = /( )*(((-)?\d+(\.\d+)?)( )+)*((-)?\d+(\.\d+)?( )*)/g;
+
+    /*
+	 * String to match the beginning of a tag with
+	 * to restrict the widget to aframe tags
+	 */
     var TAG_START = "a-";
+	/*
+	 * Default value of modifier.
+	 */
+	var DEFAULT_MODIFIER = 25;
 
     var MODIFIERS = {
         position: 50,
@@ -25,7 +34,7 @@ define(function (require, exports, module) {
         if(MODIFIERS.hasOwnProperty(tag)) {
             return MODIFIERS[tag];
         }
-        return 25;
+        return DEFAULT_MODIFIER;
     }
 
     // Define public API
