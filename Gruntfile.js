@@ -109,7 +109,6 @@ module.exports = function (grunt) {
                             '!filesystem/impls/appshell/**/*',
                             // We deal with extensions dynamically below in build-extensions
                             '!extensions/**/*',
-                            'thirdparty/CodeMirror/lib/codemirror.css',
                             'thirdparty/i18n/*.js',
                             'thirdparty/text/*.js'
                         ]
@@ -119,7 +118,7 @@ module.exports = function (grunt) {
                         expand: true,
                         dest: 'dist/styles',
                         cwd: 'src/styles',
-                        src: ['jsTreeTheme.css', 'images/**/*', 'brackets.min.css*', 'bramble_overrides.css']
+                        src: ['jsTreeTheme.css', 'images/**/*']
                     }
                 ]
             },
@@ -158,8 +157,16 @@ module.exports = function (grunt) {
         },
         less: {
             dist: {
+                paths: [
+                    "src",
+                    "src/styles"
+                ],
                 files: {
-                    "src/styles/brackets.min.css": "src/styles/brackets.less"
+                    // XXXBramble: if you change this, change configureExtensions() below too.
+                    "dist/styles/brackets.min.css": [
+                        "src/thirdparty/CodeMirror/lib/codemirror.css",
+                        "src/styles/bramble.less"
+                    ]
                 },
                 options: {
                     compress: true,
@@ -188,11 +195,15 @@ module.exports = function (grunt) {
                     // `name` and `out` is set by grunt-usemin
                     baseUrl: 'src',
                     optimize: 'uglify2',
+                    paths: {
+                        // In various places in the code, it's useful to know if this is a dev vs. prod env.
+                        // See src/main.js default dev loading in src/ builds.
+                        "envConfig": "bramble/config/config.prod"
+                    },
                     // brackets.js should not be loaded until after polyfills defined in "utils/Compatibility"
                     // so explicitly include it in main.js
                     include: [
                         "utils/Compatibility",
-                        "bramble/thirdparty/MessageChannel/message_channel",
                         "brackets"
                     ],
                     // required to support SourceMaps
@@ -275,8 +286,7 @@ module.exports = function (grunt) {
                 '!src/extensions/extra/brackets-cdn-suggestions/**',
                 '!src/extensions/extra/HTMLHinter/**',
                 '!src/extensions/extra/MDNDocs/**',
-                '!src/bramble/thirdparty/EventEmitter/**',
-                '!src/bramble/thirdparty/MessageChannel/**',
+                '!src/bramble/thirdparty/**/*',
                 '!src/extensions/disabled/**',
                 '!**/node_modules/**/*.js',
                 '!src/**/*-min.js',
@@ -405,7 +415,7 @@ module.exports = function (grunt) {
         }
     };
 
-    // Dynamically add requirejs and copy configs for all extensions
+    // Dynamically add requirejs, less, and copy configs for all extensions
     function configureExtensions(config) {
         var extensions = grunt.file.readJSON("src/extensions/bramble-extensions.json");
 
@@ -426,6 +436,13 @@ module.exports = function (grunt) {
                     out: 'dist/' + extension.path + '/main.js'
                 }
             };
+        });
+
+        // Copy any LESS/CSS files from extensions to the less task file list.
+        extensions.forEach(function(extension) {
+            if(extension.less) {
+                config.less.dist.files = Object.assign(config.less.dist.files, extension.less);
+            }
         });
 
         // Also copy each extension's files across to dist/

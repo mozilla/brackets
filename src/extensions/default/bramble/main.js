@@ -34,8 +34,7 @@ define(function (require, exports, module) {
         RemoteCommandHandler = require("lib/RemoteCommandHandler"),
         RemoteEvents         = require("lib/RemoteEvents");
 
-    ExtensionUtils.loadStyleSheet(module, "stylesheets/style.css");
-    ExtensionUtils.loadStyleSheet(module, "stylesheets/sidebarTheme.css");
+    ExtensionUtils.loadStyleSheet(module, "stylesheets/style.less");
 
     function parseData(data) {
         try {
@@ -189,10 +188,11 @@ define(function (require, exports, module) {
             secondPaneWidth: data.state.secondPaneWidth,
             previewMode: data.state.previewMode,
             wordWrap: data.state.wordWrap,
-            allowJavaScript: data.state.allowJavaScript,
             allowAutocomplete: data.state.allowAutocomplete,
             autoCloseTags: data.state.autoCloseTags,
-            autoUpdate: data.state.autoUpdate
+            autoUpdate: data.state.autoUpdate,
+            openSVGasXML: data.state.openSVGasXML,
+            allowJavaScript: data.state.allowJavaScript
         });
 
         RemoteEvents.start();

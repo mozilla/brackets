@@ -35,7 +35,11 @@ require.config({
 
         // The file system implementation. Change this value to use different
         // implementations (e.g. cloud-based storage).
-        "fileSystemImpl"    : "filesystem/impls/filer/FilerFileSystem"
+        "fileSystemImpl"    : "filesystem/impls/filer/FilerFileSystem",
+
+        // In various places in the code, it's useful to know if this is a dev vs. prod env.
+        // See Gruntfile for prod override of this to config.prod.js.
+        "envConfig"         : "bramble/config/config.dev"
     },
     map: {
         "*": {
@@ -78,6 +82,20 @@ if ('serviceWorker' in window.navigator) {
     window.navigator.serviceWorker.register('bramble-sw.js').then(function(reg) {
         "use strict";
 
+        function sendMessage(data) {
+            parent.postMessage(JSON.stringify(data), "*");
+        }
+
+        // Let the parent frame know that we have updates in the SW cache.
+        function updatesAvailable() {
+            sendMessage({ type: 'Bramble:updatesAvailable' });
+        }
+
+        // Let the parent frame know that we've cached content for offline loading.
+        function offlineReady() {
+            sendMessage({ type: 'Bramble:offlineReady' });
+        }
+
         reg.onupdatefound = function() {
             var installingWorker = reg.installing;
 
@@ -85,15 +103,9 @@ if ('serviceWorker' in window.navigator) {
                 switch (installingWorker.state) {
                 case 'installed':
                     if (window.navigator.serviceWorker.controller) {
-                        // At this point, the old content will have been purged and the fresh content will
-                        // have been added to the cache.
-                        // It's the perfect time to display a "New content is available; please refresh."
-                        // message in the page's interface.
-                        console.log('[Bramble] New or updated content is available.');
+                        updatesAvailable();
                     } else {
-                        // At this point, everything has been precached.
-                        // It's the perfect time to display a "Content is cached for offline use." message.
-                        console.log('[Bramble] Content is now available offline!');
+                        offlineReady();
                     }
                     break;
                 case 'redundant':
@@ -127,20 +139,11 @@ window.setTimeout(function () {
 define(function (require) {
     "use strict";
 
-    // Load compatibility shims--these need to load early, be careful moving this
-    require([
-        "utils/Compatibility",
-        // XXXBramble: temporary MessageChannel shim for Firefox, see:
-        // https://bugzilla.mozilla.org/show_bug.cgi?id=952139
-        "bramble/thirdparty/MessageChannel/message_channel"
-    ],
-    function () {
-        // XXXBramble: get the filesystem loading ASAP for connection with parent window
-        require(["filesystem/impls/filer/RemoteFiler"], function(RemoteFiler) {
-            RemoteFiler.init();
-            // Load the brackets module. This is a self-running module that loads and
-            // runs the entire application.
-            require(["brackets"]);
-        });
+    // XXXBramble: get the filesystem loading ASAP for connection with parent window
+    require(["filesystem/impls/filer/RemoteFiler"], function(RemoteFiler) {
+        RemoteFiler.init();
+        // Load the brackets module. This is a self-running module that loads and
+        // runs the entire application.
+        require(["brackets"]);
     });
 });

@@ -521,7 +521,7 @@ define(function (require, exports, module) {
     }
 
     /**
-     * Opens the given file, makes it the current file, AND adds it to the workingset
+     * Opens the given file (if necessary) and makes it the current file, AND adds it to the workingset
      * @param {!PaneCommandData} commandData - record with the following properties:
      *   fullPath: File to open;
      *   index: optional index to position in workingset (defaults to last);
@@ -1191,6 +1191,7 @@ define(function (require, exports, module) {
         var file,
             promptOnly,
             _forceClose,
+            _closeOptions,
             _spawnedRequest,
             paneId = MainViewManager.ACTIVE_PANE;
 
@@ -1199,13 +1200,14 @@ define(function (require, exports, module) {
             promptOnly  = commandData.promptOnly;
             _forceClose = commandData._forceClose;
             paneId      = commandData.paneId || paneId;
+            _closeOptions = commandData._closeOptions; // OK if it's undefined, we'll pass that through.
             _spawnedRequest = commandData.spawnedRequest || false;
         }
 
         // utility function for handleFileClose: closes document & removes from workingset
         function doClose(file) {
             if (!promptOnly) {
-                MainViewManager._close(paneId, file);
+                MainViewManager._close(paneId, file, _closeOptions);
             }
         }
 

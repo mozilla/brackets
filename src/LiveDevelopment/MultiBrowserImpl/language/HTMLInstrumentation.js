@@ -151,7 +151,7 @@ define(function (require, exports, module) {
                     match = marks[marks.length - 2];
                 } else {
                     // We must be outside the root, so there's no containing tag.
-                    match = null;
+                    match.mark = null;
                 }
             }
         }
