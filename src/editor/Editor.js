@@ -78,8 +78,6 @@ define(function (require, exports, module) {
         ViewUtils          = require("utils/ViewUtils"),
         MainViewManager    = require("view/MainViewManager"),
         EditorManager      = require("editor/EditorManager"),
-        CommandManager     = require("command/CommandManager"),
-        Commands           = require("command/Commands"),
         ExtensionUtils     = require("utils/ExtensionUtils"),
         _                  = require("thirdparty/lodash");
 
@@ -122,7 +120,6 @@ define(function (require, exports, module) {
     var $statusBarIndicator = $("<div>&nbsp;</div>");
 
     var gutterMarks = [];
-    var markPosition = [];
 
     // Mappings from Brackets preferences to CodeMirror options
     cmOptions[CLOSE_BRACKETS]     = "autoCloseBrackets";
