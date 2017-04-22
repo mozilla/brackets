@@ -62,7 +62,7 @@
             if (!msg.method) {
                 // no message type, ignoring it
                 // TODO: should we trigger a generic event?
-                console.log("[Brackets LiveDev] Received message without method.");
+                //console.log("[Brackets LiveDev] Received message without method.");
                 return;
             }
             // get handlers for msg.method
@@ -76,15 +76,15 @@
                         handler(msg);
                         return;
                     } catch (e) {
-                        console.log("[Brackets LiveDev] Error executing a handler for " + msg.method);
-                        console.log(e.stack);
+                        //console.log("[Brackets LiveDev] Error executing a handler for " + msg.method);
+                        //console.log(e.stack);
                         return;
                     }
                 });
             } else {
                 // no subscribers, ignore it.
                 // TODO: any other default handling? (eg. specific respond, trigger as a generic event, etc.);
-                console.log("[Brackets LiveDev] No subscribers for message " + msg.method);
+                //console.log("[Brackets LiveDev] No subscribers for message " + msg.method);
                 return;
             }
         },
@@ -97,7 +97,7 @@
          */
         respond: function (orig, response) {
             if (!orig.id) {
-                console.log("[Brackets LiveDev] Trying to send a response for a message with no ID");
+                //console.log("[Brackets LiveDev] Trying to send a response for a message with no ID");
                 return;
             }
             response.id = orig.id;
