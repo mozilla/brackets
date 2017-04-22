@@ -2,20 +2,7 @@
 define(function (require, exports, module) {
     "use strict";
 
-    var UUID = require("bramble/thirdparty/MessageChannel/uuid.core");
-    var nativeMessageChannel = window.MessageChannel && !window.MessageChannel._shim;
-
-    // This papers over the differences between postMessage'ing the
-    // MessagePort with native MessageChannel vs. the shim (which uses
-    // window.postMessage behind the scene).
-    function postMsg(win, args) {
-        if(nativeMessageChannel) {
-            win.postMessage.apply(win, args);
-        } else {
-            args.unshift(win);
-            Window.postMessage.apply(Window, args);
-        }
-    }
+    var UUID = require("bramble/thirdparty/uuid.core");
 
     // We have to be careful trying to transfer ArrayBuffer in postMessage
     // in Blink (and also Safari, it seems):
@@ -50,6 +37,5 @@ define(function (require, exports, module) {
     }
 
     exports.checkArrayBufferTransfer = checkArrayBufferTransfer;
-    exports.postMessage = postMsg;
     exports.UUID = UUID;
 });

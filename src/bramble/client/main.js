@@ -29,8 +29,7 @@ define([
     "bramble/ChannelUtils",
     "bramble/thirdparty/EventEmitter/EventEmitter.min",
     "bramble/client/StateManager",
-    "bramble/client/ProjectStats",
-    "bramble/thirdparty/MessageChannel/message_channel"
+    "bramble/client/ProjectStats"
 ], function(Filer, ChannelUtils, EventEmitter, StateManager, ProjectStats) {
     "use strict";
 
@@ -485,10 +484,11 @@ define([
 
         function setupChannel(win) {
             var channel = new MessageChannel();
-            ChannelUtils.postMessage(win,
-                                     [JSON.stringify({type: "bramble:filer"}),
-                                     "*",
-                                     [channel.port2]]);
+            win.postMessage(
+                JSON.stringify({type: "bramble:filer"}),
+                "*",
+                [channel.port2]
+            );
             _port = channel.port1;
             _port.start();
 

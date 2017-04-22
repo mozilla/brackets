@@ -206,7 +206,6 @@ module.exports = function (grunt) {
                     // so explicitly include it in main.js
                     include: [
                         "utils/Compatibility",
-                        "bramble/thirdparty/MessageChannel/message_channel",
                         "brackets"
                     ],
                     // required to support SourceMaps
@@ -289,8 +288,7 @@ module.exports = function (grunt) {
                 '!src/extensions/extra/brackets-cdn-suggestions/**',
                 '!src/extensions/extra/HTMLHinter/**',
                 '!src/extensions/extra/MDNDocs/**',
-                '!src/bramble/thirdparty/EventEmitter/**',
-                '!src/bramble/thirdparty/MessageChannel/**',
+                '!src/bramble/thirdparty/**/*',
                 '!src/extensions/disabled/**',
                 '!**/node_modules/**/*.js',
                 '!src/**/*-min.js',
