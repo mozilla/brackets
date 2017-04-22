@@ -79,6 +79,7 @@ define(function (require, exports, module) {
         MainViewManager    = require("view/MainViewManager"),
         EditorManager      = require("editor/EditorManager"),
         CommandManager     = require("command/CommandManager"),
+        Commands           = require("command/Commands"),
         ExtensionUtils     = require("utils/ExtensionUtils"),
         _                  = require("thirdparty/lodash");
 
@@ -117,20 +118,11 @@ define(function (require, exports, module) {
         MAX_SPACE_UNITS         = 10,
         MAX_TAB_SIZE            = 10;
 
-    var INDICATOR_TOOLTIPS = {
-        EDIT_PROVIDER: "CTRL+E for edit provider or click on this icon",
-        DOCS_PROVIDER: "CTRL+K for docs provider or click on this icon"
-    };
-
-    var INDICATOR_STATUS = {
-        EDIT_PROVIDER: "Edit",
-        DOCS_PROVIDER: "Docs"
-    };
-    
+        
     var $statusBarIndicator = $("<div>&nbsp;</div>");
 
     var gutterMarks = [];
-
+    var markPosition = [];
 
     // Mappings from Brackets preferences to CodeMirror options
     cmOptions[CLOSE_BRACKETS]     = "autoCloseBrackets";
@@ -150,7 +142,7 @@ define(function (require, exports, module) {
     cmOptions[ALLOW_JAVASCRIPT]   = "allowJavaScript";
 
     // this is here for testing purposes
-    ExtensionUtils.loadStyleSheet(module, "style.less");
+//    ExtensionUtils.loadStyleSheet(module, "style.less");
 
     PreferencesManager.definePreference(CLOSE_BRACKETS,     "boolean", true, {
         description: Strings.DESCRIPTION_CLOSE_BRACKETS
@@ -257,7 +249,7 @@ define(function (require, exports, module) {
      * @type {boolean}
      */
     var _duringFocus = false;
-
+    var duringWidgetCreation = false;
     /**
      * Constant: ignore upper boundary when centering text
      * @type {number}
@@ -446,7 +438,7 @@ define(function (require, exports, module) {
             tabSize                     : currentOptions[TAB_SIZE],
             readOnly                    : isReadOnly
         });
-        
+
         // Can't get CodeMirror's focused state without searching for
         // CodeMirror-focused. Instead, track focus via onFocus and onBlur
         // options and track state with this._focused
@@ -460,16 +452,20 @@ define(function (require, exports, module) {
             gutters.unshift("interactive-gutter");
             this._codeMirror.setOption("gutters", gutters);
         }
-        this.on("gutterClicked",function(event, cm, lineIndex, gutterId){
+
+        this.on("gutterClicked",function(event, cm, lineIndex, gutterId) {
             self._gutterClick(cm, lineIndex, gutterId);
         });
 
         this.on("cursorActivity", function (event, editor) {
-            self._handleCursorActivity(event);
+            self._handleCursorActivity(event);  
             var providerInfo = EditorManager.providerAvailableForPos(editor);
+            var result = self._runGutterReport();
             if (providerInfo) {
                 console.log("provider found");
-                self._addGutterMarker(editor, providerInfo, self);
+                result.done(function(){
+                    self._addGutterMarker(editor, providerInfo, self);
+                ;});
             }
         });
         this.on("keypress", function (event, editor, domEvent) {
@@ -932,7 +928,8 @@ define(function (require, exports, module) {
      */
     Editor.prototype._handleEditorChange = function (changeList) {
         // we're currently syncing from the Document, so don't echo back TO the Document
-        if (this._duringSync) {
+        // If we are simply creating a widget duringWidgetCreation is true
+        if (this._duringSync || duringWidgetCreation) {
             return;
         }
 
@@ -978,7 +975,8 @@ define(function (require, exports, module) {
      */
     Editor.prototype._handleDocumentChange = function (event, doc, changeList) {
         // we're currently syncing to the Document, so don't echo back FROM the Document
-        if (this._duringSync) {
+        // If we are simply creating a widget duringWidgetCreation is true
+        if (this._duringSync || duringWidgetCreation) {
             return;
         }
 
@@ -1088,6 +1086,7 @@ define(function (require, exports, module) {
             elt.style.textIndent = "-" + off + "px";
             elt.style.paddingLeft = off + "px";
         });
+
         this._codeMirror.on("gutterClick",function(cm, lineIndex, gutterId){
             self.trigger("gutterClicked",cm, lineIndex, gutterId);
         });
@@ -1701,6 +1700,10 @@ define(function (require, exports, module) {
             inlineWidget.$htmlContent.height(0);
             AnimationUtils.animateUsingClass(inlineWidget.htmlContent, "animating")
                 .done(function () {
+                    // since this is called last set it to false after it displays due to the delayed event calls
+                    duringWidgetCreation = false;
+                    // if we decide to close it via gutter marker.
+                //gutterMarks[pos.line].widget = true;
                     deferred.resolve();
                 });
 
@@ -2451,7 +2454,7 @@ define(function (require, exports, module) {
                 line: providerInfo.position.line,
                 ch: providerInfo.position.ch
             },
-            element: $("<div class='interactive-gutter-messages' title='Click for details'>&nbsp;</div>")
+            element: $("<div class='interactive-gutter-messages title='Click for details'> &nbsp;</div>")
         };
 
         var variable = this._codeMirror.setGutterMarker(providerInfo.position.line,"interactive-gutter"
@@ -2461,21 +2464,55 @@ define(function (require, exports, module) {
     };
 
     Editor.prototype._gutterClick = function(cm, lineIndex, gutterId) {
+        var self = this;
         if (gutterId === "interactive-gutter") {
+            
             var editor = gutterMarks[lineIndex].editor,
                 pos = gutterMarks[lineIndex].pos;
-            // probably going to have to store the widget reference instead.
+            // we are creating a widget and dont want to append anything to the file.
             if (gutterMarks[lineIndex].widget) {
                 editor.removeAllInlineWidgetsForLine(pos.line).done(function(){
                     gutterMarks[lineIndex].widget = false;
                 });
 
-            } else {
-                EditorManager._openInlineWidgetWithPos(pos,gutterMarks[lineIndex].provider, editor).done(function(){
+            } else{
+                duringWidgetCreation = true;
+                EditorManager._openInlineWidgetWithPos(pos,gutterMarks[lineIndex].provider, self).done(function(){
                     gutterMarks[lineIndex].widget = true;
-                });      
+                }).fail(function(){
+                    gutterMarks[lineIndex].widget = false;
+                    // since the creation failed we dont need to worry about file change.
+                    duringWidgetCreation = false;
+                });   
             }
         }
+    };
+
+    Editor.prototype._runGutterReport = function() {
+        var self = this,
+            result = $.Deferred();
+        setTimeout(function () {
+            self._codeMirror.operation(function() {
+                var i, len;
+                    
+                self._codeMirror.clearGutter("interactive-gutter");
+                _.forEach(gutterMarks, function (gutterMark) {
+                    if (gutterMark) {  
+                        var providerInfo = EditorManager.providerAvailableForPos(gutterMark.editor, gutterMark.pos);
+                        if (!providerInfo) {
+                            
+                            delete gutterMarks[gutterMark.pos.line];
+                            gutterMarks[gutterMark.pos.line] = undefined;
+                        } else {
+                            self._codeMirror.setGutterMarker(gutterMark.pos.line,"interactive-gutter"
+                                            ,gutterMark.element[0]);
+                        }
+                    } 
+                });
+                result.resolve();
+            });
+        }, 0);
+        return result.promise();
     };
 
 

@@ -256,24 +256,6 @@ define(function (require, exports, module) {
 
         // If one of them will provide a widget, show it inline once ready
         _manageInlineWidgetPromise(result,inlinePromise,editor, errorMsg, pos);
-        /*if (inlinePromise) {
-            inlinePromise.done(function (inlineWidget) {
-                editor.addInlineWidget(pos, inlineWidget).done(function () {
-                    PerfUtils.addMeasurement(PerfUtils.INLINE_WIDGET_OPEN);
-                    result.resolve();
-                });
-            }).fail(function () {
-                // terminate timer that was started above
-                PerfUtils.finalizeMeasurement(PerfUtils.INLINE_WIDGET_OPEN);
-                editor.displayErrorMessageAtCursor(errorMsg);
-                result.reject();
-            });
-        } else {
-            // terminate timer that was started above
-            PerfUtils.finalizeMeasurement(PerfUtils.INLINE_WIDGET_OPEN);
-            editor.displayErrorMessageAtCursor(errorMsg);
-            result.reject();
-        }*/
 
         return result.promise();
     }
@@ -306,7 +288,7 @@ define(function (require, exports, module) {
             inlinePromise;
         if (provider) {
             inlinePromise = provider(editor, pos);
-            _manageInlineWidgetPromise(result, inlinePromise, editor, "YO", pos);
+            _manageInlineWidgetPromise(result, inlinePromise, editor, "An error has occured", pos);
         }
         return result.promise();
     }
@@ -812,20 +794,20 @@ define(function (require, exports, module) {
         }
     }
 
-    function providerAvailableForPos(hostEditor) {
-        var pos = hostEditor.getCursorPos(),
+    function providerAvailableForPos(hostEditor, position) {
+        var pos = (position) ? position : hostEditor.getCursorPos(),
             i, len;
 
-        for(i=0, len=_inlineEditProviders.length; i<len; i++) {
-            if(_inlineEditProviders[i].provider.queryProvider instanceof Function){
+        for (i=0, len=_inlineEditProviders.length; i<len; i++) {
+            if (_inlineEditProviders[i].provider.queryProvider instanceof Function) {
                 if (_inlineEditProviders[i].provider.queryProvider(hostEditor, pos)) {
                     return {position: pos , provider:_inlineEditProviders[i].provider};
                 }
             }
         }
 
-        for(i=0, len=_inlineDocsProviders.length; i<len; i++) {
-            if(_inlineDocsProviders[i].provider instanceof Function){
+        for (i=0, len=_inlineDocsProviders.length; i<len; i++) {
+            if (_inlineDocsProviders[i].provider instanceof Function) {
                 if (_inlineDocsProviders[i].provider.queryProvider(hostEditor, pos)) {
                     return {position: pos , provider:_inlineEditProviders[i].provider};
                 }

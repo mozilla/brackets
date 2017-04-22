@@ -366,6 +366,12 @@ define(function (require, exports, module) {
         // Always use the selection start for determining selector name. The pos
         // parameter is usually the selection end.
         var selectorResult = _getSelectorName(hostEditor, sel.start);
+        // this is here because if we we are to check the provider without having our cursor there then
+        // it would return an empty string.
+        if(selectorResult.selectorName === "") {
+            selectorResult =  _getSelectorName(hostEditor, pos);
+        }
+
         if (selectorResult.selectorName === "") {
             return selectorResult.reason || null;
         }
