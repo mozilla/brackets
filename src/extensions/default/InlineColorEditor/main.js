@@ -24,16 +24,11 @@
 define(function (require, exports, module) {
     "use strict";
 
-    try {
-        var EditorManager       = brackets.getModule("editor/EditorManager"),
-            ExtensionUtils      = brackets.getModule("utils/ExtensionUtils"),
-            InlineColorEditor   = require("InlineColorEditor").InlineColorEditor,
-            ColorUtils          = brackets.getModule("utils/ColorUtils"),
-            ColorProperties     = require("text!ColorProperties.json"),
-            properties          = JSON.parse(ColorProperties);        
-    } catch(err) {
-        throw err.message;
-    }
+    var EditorManager       = brackets.getModule("editor/EditorManager"),
+        ExtensionUtils      = brackets.getModule("utils/ExtensionUtils"),
+        InlineColorEditor   = require("InlineColorEditor").InlineColorEditor,
+        ColorUtils          = brackets.getModule("utils/ColorUtils"),
+        properties          = JSON.parse(require("text!ColorProperties.json"));
 
     var DEFAULT_COLOR = "white";
 
@@ -92,7 +87,7 @@ define(function (require, exports, module) {
                 return null;
             }
 
-            if (properties[cssPropertyName].type === "color") {
+            if (properties[cssPropertyName]) {
                 colonPos = cursorLine.indexOf(":");
                 semiColonPos = cursorLine.indexOf(";");
                 cursorLineSubstring = cursorLine.substring(colonPos + 1, cursorLine.length);
@@ -110,7 +105,7 @@ define(function (require, exports, module) {
                     } else {
                          return null;
                     }
-                } else if (!colorValue) {
+                } else {
                     // edit the color value of a new css rule
                     setLine(pos.line, DEFAULT_COLOR, hostEditor, colonPos);
                     pos.ch = colonPos + 2;
