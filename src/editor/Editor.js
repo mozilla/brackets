@@ -77,6 +77,9 @@ define(function (require, exports, module) {
         ValidationUtils    = require("utils/ValidationUtils"),
         ViewUtils          = require("utils/ViewUtils"),
         MainViewManager    = require("view/MainViewManager"),
+        EditorManager      = require("editor/EditorManager"),
+        CommandManager     = require("command/CommandManager"),
+        ExtensionUtils     = require("utils/ExtensionUtils"),
         _                  = require("thirdparty/lodash");
 
     /** Editor preferences */
@@ -114,6 +117,21 @@ define(function (require, exports, module) {
         MAX_SPACE_UNITS         = 10,
         MAX_TAB_SIZE            = 10;
 
+    var INDICATOR_TOOLTIPS = {
+        EDIT_PROVIDER: "CTRL+E for edit provider or click on this icon",
+        DOCS_PROVIDER: "CTRL+K for docs provider or click on this icon"
+    };
+
+    var INDICATOR_STATUS = {
+        EDIT_PROVIDER: "Edit",
+        DOCS_PROVIDER: "Docs"
+    };
+    
+    var $statusBarIndicator = $("<div>&nbsp;</div>");
+
+    var gutterMarks = [];
+
+
     // Mappings from Brackets preferences to CodeMirror options
     cmOptions[CLOSE_BRACKETS]     = "autoCloseBrackets";
     cmOptions[CLOSE_TAGS]         = "autoCloseTags";
@@ -130,6 +148,9 @@ define(function (require, exports, module) {
     cmOptions[USE_TAB_CHAR]       = "indentWithTabs";
     cmOptions[WORD_WRAP]          = "lineWrapping";
     cmOptions[ALLOW_JAVASCRIPT]   = "allowJavaScript";
+
+    // this is here for testing purposes
+    ExtensionUtils.loadStyleSheet(module, "style.less");
 
     PreferencesManager.definePreference(CLOSE_BRACKETS,     "boolean", true, {
         description: Strings.DESCRIPTION_CLOSE_BRACKETS
@@ -425,7 +446,7 @@ define(function (require, exports, module) {
             tabSize                     : currentOptions[TAB_SIZE],
             readOnly                    : isReadOnly
         });
-
+        
         // Can't get CodeMirror's focused state without searching for
         // CodeMirror-focused. Instead, track focus via onFocus and onBlur
         // options and track state with this._focused
@@ -433,8 +454,23 @@ define(function (require, exports, module) {
 
         this._installEditorListeners();
 
+        // create the gutter space for the editor
+        var gutters = this._codeMirror.getOption("gutters").slice(0);
+        if (gutters.indexOf("interactive-gutter") === -1) {
+            gutters.unshift("interactive-gutter");
+            this._codeMirror.setOption("gutters", gutters);
+        }
+        this.on("gutterClicked",function(event, cm, lineIndex, gutterId){
+            self._gutterClick(cm, lineIndex, gutterId);
+        });
+
         this.on("cursorActivity", function (event, editor) {
             self._handleCursorActivity(event);
+            var providerInfo = EditorManager.providerAvailableForPos(editor);
+            if (providerInfo) {
+                console.log("provider found");
+                self._addGutterMarker(editor, providerInfo, self);
+            }
         });
         this.on("keypress", function (event, editor, domEvent) {
             self._handleKeypressEvents(domEvent);
@@ -527,6 +563,7 @@ define(function (require, exports, module) {
         this.document.off("deleted", this._handleDocumentDeleted);
         this.document.off("languageChanged", this._handleDocumentLanguageChanged);
         this.document.off("_dirtyFlagChange", this._doWorkingSetSync);
+        this._codeMirror.off("gutterClick", this.gutterClick);
 
         if (this._visibleRange) {   // TextRange also refs the Document
             this._visibleRange.dispose();
@@ -1050,6 +1087,9 @@ define(function (require, exports, module) {
             var off = CodeMirror.countColumn(line.text, null, cm.getOption("tabSize")) * charWidth;
             elt.style.textIndent = "-" + off + "px";
             elt.style.paddingLeft = off + "px";
+        });
+        this._codeMirror.on("gutterClick",function(cm, lineIndex, gutterId){
+            self.trigger("gutterClicked",cm, lineIndex, gutterId);
         });
     };
 
@@ -2401,6 +2441,47 @@ define(function (require, exports, module) {
         }
     };
 
+    Editor.prototype._addGutterMarker = function(editor, providerInfo, currentEditor) {
+
+        var mark = {
+            provider: providerInfo.provider,
+            editor: currentEditor,
+            widget: false,
+            pos: {
+                line: providerInfo.position.line,
+                ch: providerInfo.position.ch
+            },
+            element: $("<div class='interactive-gutter-messages' title='Click for details'>&nbsp;</div>")
+        };
+
+        var variable = this._codeMirror.setGutterMarker(providerInfo.position.line,"interactive-gutter"
+                        ,mark.element[0]);
+
+        gutterMarks[providerInfo.position.line] = mark;
+    };
+
+    Editor.prototype._gutterClick = function(cm, lineIndex, gutterId) {
+        if (gutterId === "interactive-gutter") {
+            var editor = gutterMarks[lineIndex].editor,
+                pos = gutterMarks[lineIndex].pos;
+            // probably going to have to store the widget reference instead.
+            if (gutterMarks[lineIndex].widget) {
+                editor.removeAllInlineWidgetsForLine(pos.line).done(function(){
+                    gutterMarks[lineIndex].widget = false;
+                });
+
+            } else {
+                EditorManager._openInlineWidgetWithPos(pos,gutterMarks[lineIndex].provider, editor).done(function(){
+                    gutterMarks[lineIndex].widget = true;
+                });      
+            }
+        }
+    };
+
+
+    Editor.prototype.setStatus = function(status) {
+        $statusBarIndicator.attr("status", status);
+    };
 
     // Global settings that affect Editor instances that share the same preference locations
 

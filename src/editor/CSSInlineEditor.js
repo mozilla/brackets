@@ -163,23 +163,10 @@ define(function (require, exports, module) {
      *         selection isn't even close to a context where we could provide anything.
      */
     function htmlToCSSProvider(hostEditor, pos) {
+        var selectorResult = htmlToCSSProvider.queryProvider(hostEditor, pos);
 
-        // Only provide a CSS editor when cursor is in HTML content
-        if (hostEditor.getLanguageForSelection().getId() !== "html") {
+        if (!selectorResult) {
             return null;
-        }
-
-        // Only provide CSS editor if the selection is within a single line
-        var sel = hostEditor.getSelection();
-        if (sel.start.line !== sel.end.line) {
-            return null;
-        }
-
-        // Always use the selection start for determining selector name. The pos
-        // parameter is usually the selection end.
-        var selectorResult = _getSelectorName(hostEditor, sel.start);
-        if (selectorResult.selectorName === "") {
-            return selectorResult.reason || null;
         }
 
         var selectorName = selectorResult.selectorName;
@@ -362,6 +349,29 @@ define(function (require, exports, module) {
 
         return result.promise();
     }
+
+    // XXXBramble: we extend providers so that we can see if one exists without invoking.
+    htmlToCSSProvider.queryProvider = function(hostEditor, pos) {
+        // Only provide a CSS editor when cursor is in HTML content
+        if (hostEditor.getLanguageForSelection().getId() !== "html") {
+            return null;
+        }
+
+        // Only provide CSS editor if the selection is within a single line
+        var sel = hostEditor.getSelection();
+        if (sel.start.line !== sel.end.line) {
+            return null;
+        }
+
+        // Always use the selection start for determining selector name. The pos
+        // parameter is usually the selection end.
+        var selectorResult = _getSelectorName(hostEditor, sel.start);
+        if (selectorResult.selectorName === "") {
+            return selectorResult.reason || null;
+        }
+        return selectorResult;
+    };
+
 
     EditorManager.registerInlineEditProvider(htmlToCSSProvider);
 

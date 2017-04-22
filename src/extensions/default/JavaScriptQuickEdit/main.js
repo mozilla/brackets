@@ -191,8 +191,19 @@ define(function (require, exports, module) {
      *      or null if we're not ready to provide anything.
      */
     function javaScriptFunctionProvider(hostEditor, pos) {
-        // Only provide a JavaScript editor when cursor is in JavaScript content
-        if (hostEditor.getModeForSelection() !== "javascript") {
+        var functionResult = javaScriptFunctionProvider.queryProvider(hostEditor, pos);
+
+        if (!functionResult) {
+            return null;
+        }
+
+        return _createInlineEditor(hostEditor, functionResult.functionName);
+    }
+
+    // XXXBramble: we extend providers so that we can see if one exists without invoking.
+    javaScriptFunctionProvider.queryProvider = function(hostEditor, pos) {
+       // Only provide a JavaScript editor when cursor is in JavaScript content
+       if (hostEditor.getModeForSelection() !== "javascript") {
             return null;
         }
 
@@ -209,8 +220,8 @@ define(function (require, exports, module) {
             return functionResult.reason || null;
         }
 
-        return _createInlineEditor(hostEditor, functionResult.functionName);
-    }
+        return functionResult;
+    };
 
     // init
     EditorManager.registerInlineEditProvider(javaScriptFunctionProvider);

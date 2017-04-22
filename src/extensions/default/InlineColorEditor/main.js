@@ -86,22 +86,31 @@ define(function (require, exports, module) {
      *      no color at pos.
      */
     function inlineColorEditorProvider(hostEditor, pos) {
-        var context = prepareEditorForProvider(hostEditor, pos),
-            inlineColorEditor,
-            result;
+        var context = inlineColorEditorProvider.queryProvider(hostEditor, pos);
 
         if (!context) {
             return null;
-        } else {
-            inlineColorEditor = new InlineColorEditor(context.color, context.marker);
-            inlineColorEditor.load(hostEditor);
-
-            result = new $.Deferred();
-            result.resolve(inlineColorEditor);
-            return result.promise();
         }
+        var inlineColorEditor,
+            result;
+
+        inlineColorEditor = new InlineColorEditor(context.color, context.marker);
+        inlineColorEditor.load(hostEditor);
+
+        result = new $.Deferred();
+        result.resolve(inlineColorEditor);
+
+        return result.promise();
     }
 
+    // XXXBramble: we extend providers so that we can see if one exists without invoking.
+    inlineColorEditorProvider.queryProvider = function(hostEditor, pos){
+        var context = prepareEditorForProvider(hostEditor, pos);
+        if (!context) {
+            return null;
+        }
+        return context;
+    };
 
     // Initialize extension
     ExtensionUtils.loadStyleSheet(module, "css/main.less");

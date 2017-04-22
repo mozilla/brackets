@@ -78,6 +78,56 @@ define(function (require, exports, module) {
      * @return {?$.Promise} resolved with an InlineWidget; null if we're not going to provide anything
      */
     function inlineProvider(hostEditor, pos) {
+        var providerFound = inlineProvider.queryProvider(hostEditor, pos);
+
+        // Are we on a supported property? (no matter if info is available for the property)
+        if (providerFound) {
+            var propQueue = providerFound.propQueue,
+                jsonFile = providerFound.jsonFile;
+
+            if (propQueue.length) {
+                var result = new $.Deferred();
+
+                // Load JSON file if not done yet
+                getDocs(jsonFile)
+                    .done(function (docs) {
+                        docs = docs.PROPERTIES;
+                        // Construct inline widget (if we have docs for this property)
+
+                        var displayName, propDetails,
+                            propName = _.find(propQueue, function (propName) { // find the first property where info is available
+                                return docs.hasOwnProperty(propName);
+                            });
+
+                        if (propName) {
+                            // strip off all prefixes from the propName
+                            var propPrefix = propName.substr(0, propName.lastIndexOf("/"));
+                            propDetails = docs[propName];
+                            displayName = propName.substr(propName.lastIndexOf("/") + 1);
+                            if (propPrefix === "html/elements") {
+                                displayName = "<" + displayName + ">";
+                            }
+                        }
+                        if (propDetails) {
+                            var inlineWidget = new InlineDocsViewer(displayName, propDetails);
+                            inlineWidget.load(hostEditor);
+                            result.resolve(inlineWidget);
+                        } else {
+                            result.reject();
+                        }
+                    })
+                    .fail(function () {
+                        result.reject();
+                    });
+
+                return result.promise();
+            }
+        }
+        return null;
+    }
+
+    // XXXBramble: we extend providers so that we can see if one exists without invoking.
+    inlineProvider.queryProvider = function(hostEditor, pos) {
         var jsonFile, propInfo,
             propQueue = [], // priority queue of propNames to try
             langId = hostEditor.getLanguageForSelection().getId(),
@@ -118,49 +168,13 @@ define(function (require, exports, module) {
                 propQueue.push("html/elements/" + propInfo);
             }
         }
-
-        // Are we on a supported property? (no matter if info is available for the property)
         if (propQueue.length) {
-            var result = new $.Deferred();
-
-            // Load JSON file if not done yet
-            getDocs(jsonFile)
-                .done(function (docs) {
-                    docs = docs.PROPERTIES;
-                    // Construct inline widget (if we have docs for this property)
-
-                    var displayName, propDetails,
-                        propName = _.find(propQueue, function (propName) { // find the first property where info is available
-                            return docs.hasOwnProperty(propName);
-                        });
-
-                    if (propName) {
-                        // strip off all prefixes from the propName
-                        var propPrefix = propName.substr(0, propName.lastIndexOf("/"));
-                        propDetails = docs[propName];
-                        displayName = propName.substr(propName.lastIndexOf("/") + 1);
-                        if (propPrefix === "html/elements") {
-                            displayName = "<" + displayName + ">";
-                        }
-                    }
-                    if (propDetails) {
-                        var inlineWidget = new InlineDocsViewer(displayName, propDetails);
-                        inlineWidget.load(hostEditor);
-                        result.resolve(inlineWidget);
-                    } else {
-                        result.reject();
-                    }
-                })
-                .fail(function () {
-                    result.reject();
-                });
-
-            return result.promise();
-
-        } else {
-            return null;
+            // creation of widget requires the jsonFile as well as the propQueue
+            return {propQueue : propQueue, jsonFile : jsonFile};
         }
-    }
+
+        return null;
+    };
 
     // Register as inline docs provider
     EditorManager.registerInlineDocsProvider(inlineProvider);
