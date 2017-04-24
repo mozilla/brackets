@@ -208,7 +208,7 @@ define(function (require, exports, module) {
 
             var compressed = jszip.generate({type: 'arraybuffer'});
             var blob = new Blob([compressed], {type: "application/zip"});
-            saveAs(blob, "project.zip");
+            saveAs(blob, "thimble-project.zip");
             callback();
         });
     }
