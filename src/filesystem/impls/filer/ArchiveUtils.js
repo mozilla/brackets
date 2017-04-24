@@ -85,7 +85,7 @@ define(function (require, exports, module) {
                 }
 
                 var isDir = file.options.dir;
-                var filename = removeProjectFolder(file.name);
+                var filename = removeThimbleProjectFolder(file.name);
                 filenames.push({
                     absPath: Path.join(destination, filename),
                     isDirectory: isDir,
@@ -93,10 +93,10 @@ define(function (require, exports, module) {
                 });
             });
 
-            function removeProjectFolder(path){
-                // Nuke root folder thimble-project/ if exists
-                var regex = /^thimble\-project\//g;
-                return path.replace(regex, "");
+            function removeThimbleProjectFolder(path){
+                // Nuke root folder `thimble-project/` if exists so that project zip files
+                // can be re-imported without adding an unnecessary folder.
+                return path.replace(/^thimble\-project\//, "");
             }
 
             function decompress(path, callback) {
