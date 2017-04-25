@@ -8,14 +8,14 @@ define(function (require, exports, module) {
     var PARAMETERS_3D_REGEX = /( )*(((-)?\d+(\.\d+)?)( )+)*((-)?\d+(\.\d+)?( )*)/g;
 
     /*
-	 * String to match the beginning of a tag with
-	 * to restrict the widget to aframe tags
-	 */
+     * String to match the beginning of a tag with
+     * to restrict the widget to aframe tags
+     */
     var TAG_START = "a-";
-	/*
-	 * Default value of modifier.
-	 */
-	var DEFAULT_MODIFIER = 25;
+    /*
+     * Default value of modifier.
+     */
+    var DEFAULT_MODIFIER = 25;
 
     var MODIFIERS = {
         position: 50,
@@ -38,7 +38,7 @@ define(function (require, exports, module) {
     }
 
     // Define public API
-    exports.PARAMETERS_3D_REGEX     = PARAMETERS_3D_REGEX;
+    exports.PARAMETERS_3D_REGEX = PARAMETERS_3D_REGEX;
     exports.TAG_START = TAG_START;
     exports.getModifier = getModifier;
 });
