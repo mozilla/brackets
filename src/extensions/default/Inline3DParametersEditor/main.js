@@ -11,45 +11,47 @@ define(function (require, exports, module) {
         Inline3dParametersUtils = require("Parameters3DUtils"),
         Inline3DParameterEditor = require("Inline3DParameterEditor").Inline3DParameterEditor;
 
-    /**
-     * Prepare hostEditor for an Inline3DParameterEditor at pos if possible. Return
-     * editor context if so; otherwise null.
-     *
+    /*
+	 * Used for determining if the current tag is of type <a-*
+	 * Right now the inline Widget functionality if limited to
+	 * Aframe HTML tags.
+     * @param {tag} tag of the html line containing pos
+     * @return {boolean}
+	 */
+    function is3DParameter(tag) {
+        var tagStart =Inline3dParametersUtils.TAG_START;
+        if(!tag.substr(0, 2) === tagStart) {
+            return false;
+        }
+        return true;
+    }
+
+    /*
+	 * Check if a mathc exists for the PARAMETERS_3D_REGEX
+	 * that contains the position pos.
      * @param {Editor} hostEditor
      * @param {{line:Number, ch:Number}} pos
      * @return {?{parameter:String, marker:TextMarker}}
-     */
-    function prepareParametersForProvider(hostEditor, pos) {
-        var ParameterRegex, tagStart, cursorLine, match, sel, start, end, endPos, marker, tagInfo;
-
-        sel = hostEditor.getSelection();
-        if (sel.start.line !== sel.end.line) {
-            return null;
-        }
-        var tagInfo = HTMLUtils.getTagInfo(hostEditor, sel.start);
-        var tag = tagInfo.tagName;
-        tagStart =Inline3dParametersUtils.TAG_START;
-        if(!tag.substr(0, 2) === tagStart) {
-            return null;
-        }
-
+	 */
+    function getMatch(hostEditor, pos, tagInfo) {
+        var match, cursorLine, ParameterRegex, start, end, endPos, marker ;
         ParameterRegex = Inline3dParametersUtils.PARAMETERS_3D_REGEX;
         ParameterRegex.lastIndex = 0;
-        tagInfo = HTMLUtils.getTagInfo(hostEditor, pos),
         cursorLine = hostEditor.document.getLine(pos.line);
         // Loop through each match of ParameterRegex and stop when the one that contains pos is found.
         do {
+            //exec loops through each match of ParameterRegex in the line cursorLine
             match = ParameterRegex.exec(cursorLine);
+
             if (match) {
-                start = match.index;
-                end = start + match[0].length;
+                start = match.index; // start of the match found
+                end = start + match[0].length; // end of the match found
             }
         } while (match && (pos.ch < start || pos.ch > end));
 
-        if (!match) {
+        if(!match) {
             return null;
         }
-
         // Adjust pos to the beginning of the match so that the inline editor won't get
         // dismissed while we're updating the parameters with the new values from user's inline editing.
         pos.ch = start;
@@ -63,6 +65,29 @@ define(function (require, exports, module) {
             marker: marker,
             tag : tagInfo.attr.name
         };
+    }
+
+    /**
+     * Prepare hostEditor for an Inline3DParameterEditor at pos if possible. Return
+     * editor context if so; otherwise null.
+     *
+     * @param {Editor} hostEditor
+     * @param {{line:Number, ch:Number}} pos
+     * @return {?{parameter:String, marker:TextMarker}}
+     */
+    function prepareParametersForProvider(hostEditor, pos) {
+        var match, sel, tagInfo;
+
+        sel = hostEditor.getSelection();
+        if (sel.start.line !== sel.end.line) {
+            return null;
+        }
+        var tagInfo = HTMLUtils.getTagInfo(hostEditor, sel.start);
+        if(!is3DParameter(tagInfo.tagName)) {
+            return null;
+        }
+
+        return getMatch(hostEditor, pos, tagInfo);
     }
 
     /**
