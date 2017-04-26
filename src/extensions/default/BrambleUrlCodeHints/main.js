@@ -162,10 +162,12 @@ define(function (require, exports, module) {
                             var currentDeferred, entryStr, syncResults;
                             if(err) {
                                 callback(err);
+                                return;
                             }
                             contents.forEach(function (entry) {
                                 if (!ProjectManager.shouldShow(entry)) {
                                     callback();
+                                    return;
                                 }
                                 if (entry._isDirectory) {
                                     var fPath = entry._path;
@@ -185,6 +187,7 @@ define(function (require, exports, module) {
                         });
                         callback(null, unfiltered);
                     }
+                    
                     // convert to doc relative path
                     entryStr = queryDir + entry._name;
                     // walk of the files recursively
@@ -248,13 +251,7 @@ define(function (require, exports, module) {
         unfiltered.forEach(function (item) {
             if(isImage) {
                 if(Content.isImage(Path.extname(item))) {
-                    if(Array.isArray(item)){
-                        item.forEach(function(img){
-                            result.push(img);
-                        });
-                    }else{
-                    result.push(item);
-                    }
+                    result = result.concat(item);
                 }
             } else {
                 result.push(item);
