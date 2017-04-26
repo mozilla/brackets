@@ -5,7 +5,7 @@
 define(function (require, exports, module) {
     "use strict";
 
-    var PARAMETERS_3D_REGEX = /( )*(((-)?\d+(\.\d+)?)( )+)*((-)?\d+(\.\d+)?( )*)/g;
+    var PARAMETERS_3D_REGEX = /(-?\d+(\.\d+)?(\s)+)*(-?\d+(\.\d+)?)/g;
 
     /*
      * String to match the beginning of a tag with
