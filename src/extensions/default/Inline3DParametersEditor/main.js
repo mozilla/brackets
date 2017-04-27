@@ -42,7 +42,7 @@ define(function (require, exports, module) {
         match = ParameterRegex.exec(cursorLine);
         while(match) {
             start = match.index; // start of the match found
-			end = start + match[0].length; // end of the match found
+			end = start + match[0].trim().length; // end of the match found
 			if (pos.ch >= start && pos.ch <= end) {
 				break;
 			} // Break the loop if the match contains the cursor, continue looking otherwise.
@@ -61,7 +61,7 @@ define(function (require, exports, module) {
         hostEditor.setSelection(pos, endPos);
 
         return {
-            parameters: match[0],
+            parameters: match[0].trim(),
             marker: marker,
             tag : tagInfo.attr.name
         };
