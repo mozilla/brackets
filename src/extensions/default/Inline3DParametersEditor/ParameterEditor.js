@@ -75,24 +75,11 @@
     };
 
     ParameterEditor.prototype._setSpaces = function (parameters) {
-        this._spaces = [parameters.search(/\S/)];
-        if(this._spaces[0] === -1) {
-            this._spaces[0] = 0;
-        }
-
-        parameters = parameters.substr(this._spaces[0]);
+        this._spaces = [];
         for (var i = 0; i < this._numberOfParameters - 1 ; i++) {
             parameters = parameters.substr(parameters.indexOf(" "));
             this._spaces.push(parameters.search(/\S/));
-            parameters = parameters.substr(this._spaces[i+1]);
-        }
-
-        if(parameters.indexOf(" ") === -1) {
-            this._spaces.push(0);
-        } else {
-            parameters = parameters.substr(parameters.indexOf(" "));
-            parameters = parameters + "$";
-            this._spaces.push(parameters.search(/\S/));
+            parameters = parameters.substr(this._spaces[i]);
         }
     };
 
@@ -182,11 +169,12 @@
     };
 
     ParameterEditor.prototype._getParameters = function() {
-        var parameters = this._getWhiteSpaces(this._spaces[0]);
-        for(var i = 0; i < this._numberOfParameters; i++) {
+        var parameters = "";
+        for(var i = 0; i < this._numberOfParameters-1; i++) {
             parameters += this.$sliders[i].val();
-            parameters += this._getWhiteSpaces(this._spaces[i+1]);
+            parameters += this._getWhiteSpaces(this._spaces[i]);
         }
+        parameters += this.$sliders[i].val();
         return parameters;
     };
 

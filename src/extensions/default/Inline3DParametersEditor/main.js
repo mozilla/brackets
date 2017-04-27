@@ -61,7 +61,7 @@ define(function (require, exports, module) {
         hostEditor.setSelection(pos, endPos);
 
         return {
-            parameters: match[0].trim(),
+            parameters: match[0],
             marker: marker,
             tag : tagInfo.attr.name
         };

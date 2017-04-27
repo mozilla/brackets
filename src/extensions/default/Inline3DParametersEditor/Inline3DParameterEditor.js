@@ -87,6 +87,7 @@ define(function (require, exports, module) {
         // Note that end.ch is exclusive, so we don't need to add 1 before comparing to
         // the matched length here.
         if (matches && (end.ch === undefined || end.ch - start.ch < matches[0].length)) {
+            matches[0] = matches[0].trim();
             end.ch = start.ch + matches[0].length;
             this._marker.clear();
             this._marker = this.hostEditor._codeMirror.markText(start, end);
