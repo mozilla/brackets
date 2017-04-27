@@ -39,14 +39,15 @@ define(function (require, exports, module) {
         ParameterRegex.lastIndex = 0;
         cursorLine = hostEditor.document.getLine(pos.line);
         // ParameterRegex.exec command iterates over all the possible matches of ParameterRegex in cursorLine
-        do {
-            match = ParameterRegex.exec(cursorLine);
-
-            if (match) {
-                start = match.index; // start of the match found
-                end = start + match[0].length; // end of the match found
-            }
-        } while (match && (pos.ch < start || pos.ch > end)); // Break the loop if the match contains the cursor, continue looking otherwise.
+        match = ParameterRegex.exec(cursorLine);
+        while(match) {
+            start = match.index; // start of the match found
+			end = start + match[0].length; // end of the match found
+			if (pos.ch >= start && pos.ch <= end) {
+				break;
+			} // Break the loop if the match contains the cursor, continue looking otherwise.
+			match = ParameterRegex.exec(cursorLine); // look for the next match.
+        }
 
         if(!match) {
             return null;
