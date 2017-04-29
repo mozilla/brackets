@@ -37,6 +37,7 @@
         return this.$element;
     };
 
+    /**Registers event listeners for sliders*/
     ParameterEditor.prototype._addListeners = function () {
         var self = this;
         for(var i = 0; i < this._numberOfParameters; i++) {
@@ -74,6 +75,10 @@
         return ParameterRegex.test(parameters);
     };
 
+    /**
+     * Initialises the _spaces array to store number of spaces between parameters
+     * Eg: parameters = "2   3  2", this._spaces = [3, 2]
+     */
     ParameterEditor.prototype._setSpaces = function (parameters) {
         this._spaces = [];
         for (var i = 0; i < this._numberOfParameters - 1 ; i++) {
@@ -83,18 +88,9 @@
         }
     };
 
-    ParameterEditor.prototype._hideInputs = function() {
-        if(this._numberOfParameters <= 2) {
-            this.$element.find("#input-3").css("display", "none");
-            this.$element.find("#label-3").css("display", "none");
-        }
-        if(this._numberOfParameters === 1) {
-            this.$element.find("#input-2").css("display", "none");
-            this.$element.find("#label-2").css("display", "none");
-            this.$element.find("#label-1").css("display", "none");
-        }
-    };
-
+    /**
+     * Initialises sliders for the ParameterEditor object based on number of parameters
+     */
     ParameterEditor.prototype.setSliderProperties = function (parameters) {
         this.$sliders = [];
 
@@ -102,7 +98,6 @@
 
         this._addSliders();
         this._setLabels();
-        this._hideInputs();
 
         this._values = [];
         for(var i = 0; i < this._numberOfParameters; i++) {
@@ -117,6 +112,9 @@
         }
     };
 
+    /**
+     * Adds html elements based on the number of parameters in the HTML object.
+     */
     ParameterEditor.prototype._addSliders = function() {
         for(var i = 0; i < this._numberOfParameters; i++) {
             var span = $('<span />').attr('id', 'label-'+(i+1));
@@ -127,6 +125,9 @@
         }
     };
 
+    /**
+     * Initialises the _spaces array to store number of spaces between parameters
+     */
     ParameterEditor.prototype._setLabels = function() {
         var parameter = JSON.parse(Parameters)[this._tag];
         if(!parameter) {
@@ -141,6 +142,11 @@
         }
     };
 
+    /*
+     * Returns tje number of parameters based on the parameters string
+     * @param {parameters} string consisting of parameters
+     * @return {Number}
+     */
     ParameterEditor.prototype._getNumberOfProperties = function(parameters) {
         var parametersArray = parameters.trim().match(/\S+/g);
         return parametersArray.length;

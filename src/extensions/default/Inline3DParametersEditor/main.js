@@ -40,18 +40,22 @@ define(function (require, exports, module) {
         cursorLine = hostEditor.document.getLine(pos.line);
         // ParameterRegex.exec command iterates over all the possible matches of ParameterRegex in cursorLine
         match = ParameterRegex.exec(cursorLine);
+
+        // The loop returns the first match to the regex ParameterRegex
+        // Returns null in case no match is found
         while(match) {
-            start = match.index; // start of the match found
-			end = start + match[0].trim().length; // end of the match found
+            start = match.index;
+			end = start + match[0].trim().length;
 			if (pos.ch >= start && pos.ch <= end) {
 				break;
-			} // Break the loop if the match contains the cursor, continue looking otherwise.
+			}
 			match = ParameterRegex.exec(cursorLine); // look for the next match.
         }
 
         if(!match) {
             return null;
         }
+
         // Adjust pos to the beginning of the match so that the inline editor won't get
         // dismissed while we're updating the parameters with the new values from user's inline editing.
         pos.ch = start;
