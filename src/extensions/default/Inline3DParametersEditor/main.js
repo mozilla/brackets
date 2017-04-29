@@ -38,7 +38,6 @@ define(function (require, exports, module) {
         ParameterRegex = Inline3dParametersUtils.PARAMETERS_3D_REGEX;
         ParameterRegex.lastIndex = 0;
         cursorLine = hostEditor.document.getLine(pos.line);
-        // ParameterRegex.exec command iterates over all the possible matches of ParameterRegex in cursorLine
         match = ParameterRegex.exec(cursorLine);
 
         // The loop returns the first match to the regex ParameterRegex
@@ -49,7 +48,8 @@ define(function (require, exports, module) {
             if (pos.ch >= start && pos.ch <= end) {
                 break;
             }
-            match = ParameterRegex.exec(cursorLine); // look for the next match.
+            // look for the next match since a match containing the cursor is not found yet
+            match = ParameterRegex.exec(cursorLine);
         }
 
         if(!match) {
