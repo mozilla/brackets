@@ -12,12 +12,12 @@ define(function (require, exports, module) {
         Inline3DParameterEditor = require("Inline3DParameterEditor").Inline3DParameterEditor;
 
     /*
-	 * Used for determining if the current tag is of type <a-*
-	 * Right now the inline Widget functionality if limited to
-	 * Aframe HTML tags.
+     * Used for determining if the current tag is of type <a-*
+     * Right now the inline Widget functionality if limited to
+     * Aframe HTML tags.
      * @param {tag} tag of the html line containing pos
      * @return {boolean}
-	 */
+     */
     function is3DParameter(tag) {
         var tagStart =Inline3dParametersUtils.TAG_START;
         if(!tag.substr(0, 2) === tagStart) {
@@ -27,12 +27,12 @@ define(function (require, exports, module) {
     }
 
     /*
-	 * Check if a mathc exists for the PARAMETERS_3D_REGEX
-	 * that contains the position pos.
+     * Check if a mathc exists for the PARAMETERS_3D_REGEX
+     * that contains the position pos.
      * @param {Editor} hostEditor
      * @param {{line:Number, ch:Number}} pos
      * @return {?{parameter:String, marker:TextMarker}}
-	 */
+     */
     function getMatch(hostEditor, pos, tagInfo) {
         var match, cursorLine, ParameterRegex, start, end, endPos, marker ;
         ParameterRegex = Inline3dParametersUtils.PARAMETERS_3D_REGEX;
@@ -45,11 +45,11 @@ define(function (require, exports, module) {
         // Returns null in case no match is found
         while(match) {
             start = match.index;
-			end = start + match[0].trim().length;
-			if (pos.ch >= start && pos.ch <= end) {
-				break;
-			}
-			match = ParameterRegex.exec(cursorLine); // look for the next match.
+            end = start + match[0].trim().length;
+            if (pos.ch >= start && pos.ch <= end) {
+                break;
+            }
+            match = ParameterRegex.exec(cursorLine); // look for the next match.
         }
 
         if(!match) {
