@@ -20,7 +20,7 @@ define(function (require, exports, module) {
      */
     function is3DParameter(tag) {
         var tagStart =Inline3dParametersUtils.TAG_START;
-        if(!tag.substr(0, 2) === tagStart) {
+        if(!(tag.substr(0, 2) === tagStart)) {
             return false;
         }
         return true;
