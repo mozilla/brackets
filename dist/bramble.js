@@ -4523,7 +4523,7 @@
                                     t || (R[0] === w.tutorialPath ? (c = e("tutorialRemoved", R[0], c), O = !1) : R[1] === w.tutorialPath && (c = e("tutorialAdded", R[1], c), O = !0)), c(t)
                                 })))
                             });
-							//reload webpage to remove tutorial button
+							//reload webpage if tutorial is modified to remove tutorial button.
 							if(name == "tutorial.html"){
 								window.location.reload();
 							}
@@ -4553,7 +4553,7 @@
                             h = R[0], m = R[1], g.readdir(h, function(t, n) {
                                 return t ? "ENOTDIR" === t.code ? I.rm(h, e("fileDelete", h, _)) : _(t) : !n || n.length < 1 || !m.recursive ? I.rm(h, _) : void i(h, _)
                             });
-							//reload webpage to remove tutorial button
+							//reload webpage if tutorial is modified to remove tutorial button.
 							if(name == "tutorial.html"){
 								window.location.reload();
 							}
