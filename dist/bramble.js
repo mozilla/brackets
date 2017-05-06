@@ -4515,7 +4515,7 @@
                             }));
                             break;
                         case "rename":
-							var name= R[0].substr(R[0].lastIndexOf("/")+1,R[0].length);
+                            var name= R[0].substr(R[0].lastIndexOf("/")+1,R[0].length);
 							g.stat(R[0], function(t, i) {
                                 t ? _(t) : i.isDirectory() ? u(R[0], function(t, e) {
                                     t ? _(t) : g.rename.apply(g, R.concat(r("folderRename", R[0], R[1], e, _)))
@@ -4523,10 +4523,10 @@
                                     t || (R[0] === w.tutorialPath ? (c = e("tutorialRemoved", R[0], c), O = !1) : R[1] === w.tutorialPath && (c = e("tutorialAdded", R[1], c), O = !0)), c(t)
                                 })))
                             });
-							//reload webpage to remove tutorial button
-							if(name == "tutorial.html"){
-								window.location.reload();
-							}
+                            //reload webpage if tutorial.html is renamed to remove tutorial button
+                            if(name == "tutorial.html"){
+                                window.location.reload();
+                            }
                             break;
                         case "unlink":
                             h = R[0], c = e("fileDelete", R[0], _), g.unlink.apply(g, R.concat(function(t) {
@@ -4549,14 +4549,14 @@
                             });
                             break;
                         case "rm":
-						    var name= R[0].substr(R[0].lastIndexOf("/")+1,R[0].length);
+                            var name= R[0].substr(R[0].lastIndexOf("/")+1,R[0].length);
                             h = R[0], m = R[1], g.readdir(h, function(t, n) {
                                 return t ? "ENOTDIR" === t.code ? I.rm(h, e("fileDelete", h, _)) : _(t) : !n || n.length < 1 || !m.recursive ? I.rm(h, _) : void i(h, _)
                             });
-							//reload webpage to remove tutorial button
-							if(name == "tutorial.html"){
-								window.location.reload();
-							}
+                            //reload webpage if tutorial is deleted to remove tutorial button
+                            if(name == "tutorial.html"){
+                                window.location.reload();
+                            }
                             break;
                         default:
                             v.shell ? I[v.method].apply(I, R.concat(_)) : g[v.method].apply(g, R.concat(_))
