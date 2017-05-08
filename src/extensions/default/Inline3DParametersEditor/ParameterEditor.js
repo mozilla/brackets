@@ -143,8 +143,8 @@
     };
 
     /*
-     * Returns tje number of parameters based on the parameters string
-     * @param {parameters} string consisting of parameters
+     * Returns the number of parameters based on the parameters string
+     * @param {parameters} String consisting of parameters
      * @return {Number}
      */
     ParameterEditor.prototype._getNumberOfProperties = function(parameters) {
@@ -152,7 +152,11 @@
         return parametersArray.length;
     };
 
-    ParameterEditor.prototype._getNewOffset = function(pos, zeroPos) {
+    /*
+     * Returns a modified offset to smoothen the scroll on the basis of the
+     * modifier of the ParameterEditor object.
+     */
+    ParameterEditor.prototype._getOffset = function(pos, zeroPos) {
         var offset = pos - zeroPos;
         return offset / this._modifier;
     };
@@ -160,12 +164,18 @@
     ParameterEditor.prototype._handleSliderDrag = function(event) {
         var index = event.data.index;
         var xPos = this._position;
-        var offset = this._getNewOffset(event.clientX, xPos);
+        var offset = this._getOffset(event.clientX, xPos);
         var n = this._values[index] + offset;
         this.$sliders[index].val(n.toFixed(2));
         this._commitParameters(this._getParameters());
     };
 
+    /*
+     * Returns a string consisting of as many space characters as the
+     * inptt parameter
+     * @param {number} Number of spaces required
+     * @return {String}
+     */
     ParameterEditor.prototype._getWhiteSpaces = function(number) {
         var spaces = "";
         for(var i = 0 ; i < number; i++) {
