@@ -1,0 +1,280 @@
+#editor-console {
+    -webkit-font-smoothing: subpixel-antialiased;
+    position: relative;
+}
+
+#editor-console .console {
+    overflow-x: hidden;
+    max-height: inherit;
+    height: calc(100% - 44px) !important;
+    box-sizing: border-box;
+}
+
+#editor-console .log-entry {
+    width: 100%;
+    padding: 6px 15px;
+    background: none;
+    border: 0;
+    outline: none;
+    box-shadow: none;
+    display: block;
+    font-size: 15px;
+    font-family: 'Menlo Regular', Consolas, Inconsolata, 'Vera Sans', 'Lucida Console', Courier, monospace, fixed;
+    user-select: text;
+    color: black;
+    opacity: .7;
+    transform-origin: 15% 50%;
+}
+
+.dark #editor-console .log-entry {
+    color: white;
+}
+
+#editor-console .log-entry.empty-string {
+    color: rgba(0,0,0,.6);
+    font-style: italic;
+}
+
+.dark #editor-console .log-entry.empty-string {
+    color: rgba(255,255,255,.6);
+    font-style: italic;
+}
+
+#editor-console .log-entry.new-log {
+    animation: newLogFlash 1.5s ease-out, consolePop .2s ease-out;
+}
+
+
+@keyframes newLogFlash {
+    0% {
+        opacity: 1;
+        background-color: rgba(13,142,204,.2);
+    }
+    70% {
+        opacity: 1;
+        background-color: rgba(13,142,204,.2);
+    }
+    100% {
+        opacity: .7;
+        background-color: transparent;
+    }
+}
+
+@keyframes newLogPop {
+    0%   { transform: scale(1.03); }
+    100% { transform: scale(1);    }
+}
+
+#editor-console .console .error {
+    color: #ED488B;
+}
+
+#editor-console .console .warn {
+    color: #707000;
+}
+
+#editor-console .console .time {
+    color: #5BA87E;
+}
+#editor-console .console .timeEnd {
+    color: #A0779F;
+}
+
+#editor-console .console .debug {
+    color: #8ACDEA;
+}
+
+#editor-console .title {
+    font-weight: 600;
+    font-family: "Open Sans", "Helvetica Neue", Arial, sans-serif;
+    font-size: 16px;
+    color: rgba(0,0,0,.3);
+    text-transform: uppercase;
+}
+
+.dark #editor-console .title {
+    color: rgba(255,255,255,.4);
+}
+
+#editor-console .badge {
+    text-shadow: none;
+    margin-left: 4px;
+    margin-bottom: -1px;
+    margin-right: -6px;
+}
+
+#editor-console #filterBtns .btn {
+    border-radius: 0;
+    background: inherit;
+    border: none;
+    box-shadow: none;
+    padding: 10px 15px;
+}
+
+/* Tab at the bottom of the page that shows the console when it's closed */
+
+.show-console-tab {
+    position: absolute;
+    background-color: rgba(0,0,0,.2);
+    bottom: -2px;
+    right: 15px;
+    color: #222;
+    height: 30px;
+    width: 36px;
+    background-image: url(/src/styles/images/icons/console-icon-dark.svg);
+    background-position: center 7px;
+    background-size: 17px;
+    background-repeat: no-repeat;
+    border-radius: 2px 2px 0 0;
+    opacity: .5;
+    transition: all .2s ease-out;
+    cursor: pointer;
+}
+
+.dark .show-console-tab {
+    background-color: rgba(0,0,0,.9);
+    background-image: url(/src/styles/images/icons/console-icon-light.svg);
+}
+
+.show-console-tab.has-unseen-logs,
+.dark .show-console-tab.has-unseen-logs {
+    background-image: url(/src/styles/images/icons/console-icon-light.svg);
+    background-color: #0d8ecc;
+    animation: consoleTabPop .2s ease-out;
+    transform-origin: bottom;
+    opacity: .8;
+}
+
+@keyframes consoleTabPop {
+    0% { transform: scaleY(1.2); }
+    100% { transform: scale(1); }
+}
+
+.show-console-tab:hover {
+    transform: translateY(-2px);
+    opacity: 1;
+}
+
+/* Hide the console tab when the console is open */
+
+.console-open .show-console-tab {
+    display: none;
+}
+
+/* Basic styles for the console */
+
+#editor-console,
+.dark #editor-console {
+    border-top: none;
+    background: #EEE;
+}
+
+.dark #editor-console {
+    background: #222;
+}
+
+#editor-console .toolbar,
+.dark #editor-console .toolbar {
+    box-shadow: none;
+    border: none;
+    padding: 10px 15px;
+}
+
+#editor-console .toolbar {
+    background: #CCCCCB;
+}
+
+.dark #editor-console .toolbar {
+    background: #3F3F3F;
+}
+
+/* Vertical resizer overrides */
+
+#editor-console .vert-resizer {
+    height: 10px;
+    background: rgba(0, 0, 0, .08);
+}
+
+.dark #editor-console .vert-resizer {
+    background: rgba(255, 255, 255, .08);
+}
+
+#editor-console .vert-resizer:hover,
+#editor-console .vert-resizer.active {
+    opacity: 1;
+}
+
+/* Close button in the console header bar */
+
+#editor-console .close {
+    display: block;
+    width: 32px;
+    height: 32px;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-image: url(/src/styles/images/icons/close-icon-dark.svg);
+    background-size: 14px;
+    top: 16px;
+    border-radius: 50%;
+    opacity: .6;
+    outline: none;
+    box-shadow: none;
+}
+
+.dark #editor-console .close {
+    background-image: url(/src/styles/images/icons/close-icon-light.svg);
+}
+
+#editor-console .close:hover {
+    opacity: .8;
+    background-color: rgba(255,255,255,.35);
+}
+
+.dark #editor-console .close:hover {
+    background-image: url(/src/styles/images/icons/close-icon-light.svg);
+    background-color: rgba(0,0,0,.2);
+}
+
+#editor-console .close:active {
+    background-color: rgba(255,255,255,.5);
+}
+
+.dark #editor-console .close:active {
+    background-image: url(/src/styles/images/icons/close-icon-light.svg);
+    background-color: rgba(0,0,0,.75);
+}
+
+/* Clear button in console header */
+
+#editor-console .clear-button {
+    font-family: "Open Sans", sans-serif;
+    margin: 0 0 0 12px;
+    outline: none;
+    padding: 3px 8px;
+    border: none;
+    font-weight: 600;
+    border-radius: 12px;
+    background: rgba(255,255,255,.5);
+    color: rgba(0,0,0,.4);
+}
+
+.dark #editor-console .clear-button {
+  background: #222;
+  color: rgba(255,255,255,.5);
+}
+
+#editor-console .clear-button:hover {
+  color: rgba(0,0,0,.7);
+}
+
+.dark #editor-console .clear-button:hover {
+  color: rgba(255,255,255,.8);
+}
+
+#editor-console .clear-button:active {
+  background: rgba(255,255,255,1);
+}
+
+.dark #editor-console .clear-button:active {
+  background: #1b1b1b;
+}
