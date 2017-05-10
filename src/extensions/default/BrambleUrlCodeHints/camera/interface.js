@@ -7,7 +7,7 @@ define(function (require, exports, module) {
     "use strict";
 
     var selfieWidgetHTML = require("text!camera/selfieWidget.html");
-    var base64ToBuffer = require("camera/utils").base64ToBuffer;
+    var base64ToBuffer = brackets.getModule("filesystem/impls/filer/FilerUtils").base64ToBuffer;
     var shutter;
 
     // We hardcode the width of the video interface for now

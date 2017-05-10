@@ -36,7 +36,8 @@ define(function (require, exports, module) {
         BlobUtils           = require("filesystem/impls/filer/BlobUtils"),
         FileUtils           = require("file/FileUtils"),
         _                   = require("thirdparty/lodash"),
-        Mustache            = require("thirdparty/mustache/mustache");
+        Mustache            = require("thirdparty/mustache/mustache"),
+        Image               = require("editor/Image");
 
     // Vibrant doesn't seem to play well with requirejs AMD loading, load it globally.
     require("thirdparty/Vibrant");
@@ -94,7 +95,10 @@ define(function (require, exports, module) {
      */
     function ImageView(file, $container) {
         this.file = file;
-        this.$el = $(Mustache.render(ImageViewTemplate, {imgUrl: _getImageUrl(file)}));
+        this.$el = $(Mustache.render(ImageViewTemplate, {
+            imgUrl: _getImageUrl(file),
+            Strings: Strings
+        }));
 
         $container.append(this.$el);
 
@@ -112,6 +116,8 @@ define(function (require, exports, module) {
         this.$image = this.$el.find(".image");
         this.$imageScale = this.$el.find(".image-scale");
         this.$imagePreview.on("load", _.bind(this._onImageLoaded, this));
+
+        Image.load(this.$imagePreview[0], file.fullPath);
 
         _viewers[file.fullPath] = this;
     }

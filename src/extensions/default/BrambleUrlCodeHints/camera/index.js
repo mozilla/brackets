@@ -8,11 +8,11 @@ define(function (require, exports, module) {
 
     var CommandManager = brackets.getModule("command/CommandManager");
     var Commands       = brackets.getModule("command/Commands");
+    var fs             = brackets.getModule("fileSystemImpl");
 
     var Interface = require("camera/interface");
     var Video = require("camera/video");
     var Photo = require("camera/photo");
-    var persist = require("camera/utils").persist;
 
     var navigator = window.navigator;
     var getUserMedia =  navigator.getUserMedia ||
@@ -46,7 +46,7 @@ define(function (require, exports, module) {
     Camera.prototype.savePhoto = function(data) {
         var self = this;
 
-        persist(this.savePath, data, function(err) {
+        fs.writeFile(this.savePath, data, {encoding: null}, function(err) {
             if(err) {
                 return self.fail(err);
             }

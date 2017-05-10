@@ -4,9 +4,26 @@
 define(function (require, exports, module) {
     "use strict";
 
+    var Buffer          = require("thirdparty/filer/dist/buffer.min");
+
+    // Based on http://stackoverflow.com/questions/21797299/convert-base64-string-to-arraybuffer
+    // Converts a base64 string representation of binary data to a Buffer
+    function base64ToBuffer(base64Str) {
+        var binary = window.atob(base64Str);
+        var len = binary.length;
+        var bytes = new window.Uint8Array(len);
+        for(var i = 0; i < len; i++) {
+            bytes[i] = binary.charCodeAt(i);
+        }
+
+        return new Buffer(bytes.buffer);
+    }
+
+    exports.base64ToBuffer  = base64ToBuffer;
+
     // If you need to debug Path or Buffer, change away from .min versions here
     exports.Path = require("thirdparty/filer/dist/path.min");
-    exports.Buffer = require("thirdparty/filer/dist/buffer.min");
+    exports.Buffer = Buffer;
 
     // Deal with Brackets encoding filepath URIs
     exports.decodePath = function(path) {
