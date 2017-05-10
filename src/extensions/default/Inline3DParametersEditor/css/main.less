@@ -2,29 +2,47 @@
     display: inline;
 }
 
-body .input-box {
+.parameter-editor .input-box {
+    font-family: inherit;
     width: 46px;
-    transition: 0.1s background-color ease-in-out, 0.1s border-color ease-in-out, 0.1s color ease-in-out;
-    min-height: 14px;
     outline: none;
-    background: #222;
-    border: 1px solid transparent;
-    color: #1faaf2;
     min-height: 20px;
-    padding-left: 5px;
-    padding-right: 5px;
-    background-color: transparent !important;
-    border: 0;
-    color: #20b1fb !important;
+    background: rgba(0,0,0,.08) !important;
+    border: none !important;
     cursor: col-resize;
-    font-size: 12px;
+    font-size: 15px;
     padding: 2px;
     margin-bottom: 0;
+    text-align: center;
+    margin: 0 5px 0 0;
+    display: inline-block;
+    vertical-align: middle;
+    font-weight: bold;
+    color: #4283C4;
+    margin-right: 20px;
+    box-shadow: none;
+    border-radius: 2px;
+}
+
+.dark .parameter-editor .input-box {
+    color: #4B8CB3;
+    background: rgba(255,255,255,.08) !important;
+}
+
+.parameter-editor span {
+    padding: 2px 0;
+    display: inline-block;
+    vertical-align: middle;
+    margin-right: 6px;
+    color: #008F5C;
+}
+
+.dark .parameter-editor span {
+    color: #A176A0;
 }
 
 .parameter-editor {
-    font-size: 12px;
-    min-width: 450px;
-    height: 30px;
-    padding: 16px 16px 24px 100px;
+    font-size: 15px;
+    padding: 20px;
+    text-align: center;
 }
