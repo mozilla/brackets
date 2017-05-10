@@ -138,7 +138,7 @@
             return;
         }
         for(var i = 0; i < labels.length; i++) {
-            this.$element.find("#label-"+(i+1)).html(labels[i] + " : ");
+            this.$element.find("#label-"+(i+1)).html(labels[i] + " &rarr;");
         }
     };
 
