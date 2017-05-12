@@ -38,6 +38,7 @@ define(function (require, exports, module) {
         StringUtils     = require("utils/StringUtils"),
         Filer           = require("filesystem/impls/filer/BracketsFiler"),
         Path            = Filer.Path,
+        fs              = Filer.fs(),
         Content         = require("filesystem/impls/filer/lib/content"),
         LanguageManager = require("language/LanguageManager"),
         StartupState    = require("bramble/StartupState"),
@@ -134,13 +135,13 @@ define(function (require, exports, module) {
             });
         }
 
-        function handleRegularFile(deferred, file, filename, buffer, encoding) {
+        function saveFile(deferred, file, filename, buffer, encoding) {
             file.write(buffer, {encoding: encoding}, function(err) {
                 if (err) {
                     onError(deferred, filename, err);
                     return;
                 }
-
+                                
                 // See if this file is worth trying to open in the editor or not
                 if(shouldOpenFile(filename, encoding)) {
                     pathList.push(filename);
@@ -150,11 +151,55 @@ define(function (require, exports, module) {
             });
         }
 
+        function handleRegularFile(deferred, file, filename, buffer, encoding) {
+            fs.exists(filename, function(doesExist) {
+                if (doesExist) {
+                    console.log("File: ", filename, " already exists!");
+
+                    // File exists. Prompt user for action
+                    Dialogs.showModalDialog(
+                        DefaultDialogs.DIALOG_ID_INFO,
+                        Strings.FILE_EXISTS_HEADER,
+                        StringUtils.format(Strings.DND_FILE_REPLACE, FileUtils.getBaseName(filename)),
+                        [
+                            {
+                                className : Dialogs.DIALOG_BTN_CLASS_NORMAL,
+                                id        : Dialogs.DIALOG_BTN_CANCEL,
+                                text      : Strings.CANCEL
+                            },
+                            {
+                                className : Dialogs.DIALOG_BTN_CLASS_NORMAL,
+                                id        : Dialogs.DIALOG_BTN_IMPORT,
+                                text      : Strings.USE_IMPORTED
+                            },
+                            {
+                                className : Dialogs.DIALOG_BTN_CLASS_PRIMARY,
+                                id        : Dialogs.DIALOG_BTN_OK,
+                                text      : Strings.KEEP_EXISTING
+                            }
+                        ]
+                    )
+                    .done(function(id) {
+                        if (id === Dialogs.DIALOG_BTN_IMPORT) {
+                            // Override file per user's request
+                            saveFile(deferred, file, filename, buffer, encoding);
+                        }
+                    });
+                } else {
+                    // File doesn't exist. Save without prompt
+                    saveFile(deferred, file, filename, buffer, encoding);
+                }
+            });
+        }
+
         function handleZipFile(deferred, file, filename, buffer, encoding) {
             var basename = Path.basename(filename);
 
             ArchiveUtils.unzip(buffer, { root: parentPath }, function(err) {
                 if (err) {
+                    if (err.message === "Operation Cancelled") {
+                        return deferred.resolve();
+                    }
                     onError(deferred, filename, new Error(Strings.DND_ERROR_UNZIP));
                     return;
                 }
@@ -168,6 +213,9 @@ define(function (require, exports, module) {
 
             ArchiveUtils.untar(buffer, { root: parentPath }, function(err) {
                 if (err) {
+                    if (err.message === "Operation Cancelled") {
+                        return deferred.resolve();
+                    }
                     onError(deferred, filename, new Error(Strings.DND_ERROR_UNTAR));
                     return;
                 }

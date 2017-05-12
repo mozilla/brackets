@@ -47,7 +47,6 @@ define(function (require, exports, module) {
     // this is the path they want to use as a parent dir root.
     var _dropPathHint;
 
-
     /**
      * Returns true if the drag and drop items contains valid drop objects.
      * @param {Array.<DataTransferItem>} items Array of items being dragged
@@ -141,7 +140,6 @@ define(function (require, exports, module) {
 
         return Async.doInParallel(paths, function (path, idx) {
             var result = new $.Deferred();
-
             // Only open files.
             FileSystem.resolve(path, function (err, item) {
                 if (!err && item.isFile) {
@@ -183,6 +181,7 @@ define(function (require, exports, module) {
             return result.promise();
         }, false)
             .fail(function () {
+                console.log("fail");
                 function errorToString(err) {
                     if (err === ERR_MULTIPLE_ITEMS_WITH_DIR) {
                         return Strings.ERROR_MIXED_DRAGDROP;
