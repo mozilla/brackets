@@ -327,6 +327,10 @@ define(function (require, exports, module) {
 
         function writeCallback(err) {
             if(err) {
+                if (err.message === "Operation Cancelled") {
+                    finish(err);
+                    return;
+                }
                 console.error("[Bramble untar] couldn't extract file", err);
             }
 
