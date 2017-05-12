@@ -1608,7 +1608,6 @@ define(function (require, exports, module) {
      * @param {callback} callback
      */
     function showErrorDialog(err, callback){
-        callback = callback || function () {};
         Dialogs.showModalDialog(
             DefaultDialogs.DIALOG_ID_ERROR,
             Strings.ERROR_DIALOG_HEADER,
@@ -1620,9 +1619,7 @@ define(function (require, exports, module) {
                 id        : Dialogs.DIALOG_BTN_OK,
                 text      : Strings.OK
             }]
-        );
-        console.error(err);
-        callback();
+        ).getPromise().then(callback, callback);
     }
 
     /** Download selected file or folder structure **/
@@ -1634,9 +1631,11 @@ define(function (require, exports, module) {
                 showErrorDialog(err);
                 return;
             }
+
             if (stats.type === "DIRECTORY") {
                 return ArchiveUtils.archive(path);
             }
+            
             // Prepare file for download
             fs.readFile(path, {encoding: null}, function(err, data){
                 if (err) {
