@@ -7,6 +7,7 @@
     max-height: inherit;
     height: ~"calc(100% - 44px)" !important;
     box-sizing: border-box;
+    position: relative;
 }
 
 #editor-console .log-entry {
@@ -24,6 +25,53 @@
     transform-origin: 15% 50%;
     white-space: pre-line;
 }
+
+#editor-console .console .helper {
+    font-size: 15px;
+    font-family: 'Menlo Regular', Consolas, Inconsolata, 'Vera Sans', 'Lucida Console', Courier, monospace, fixed;
+    display: none;
+    color: black;
+    position: absolute;
+    top: 0;
+    left: 0;
+    text-align: center;
+    vertical-align: center;
+    bottom: 0;
+    right: 0;
+    align-items: center;
+    justify-content: center;
+}
+
+.dark #editor-console .console .helper {
+    color: white;
+}
+
+#editor-console .console .helper span {
+    flex: 1;
+    color: rgba(0,0,0,.6);
+}
+
+.dark #editor-console .console .helper span {
+    color: rgba(255,255,255,.6);
+}
+
+#editor-console .console .helper code {
+    color: rgba(0,0,0,.8);
+    background: rgba(0,0,0,.1);
+    padding: 4px 5px;
+    font-weight: bold;
+    user-select: text;
+}
+
+.dark #editor-console .console .helper code {
+    color: rgba(255,255,255,1);
+    background: rgba(255,255,255,.1);
+}
+
+#editor-console .console .helper:only-child {
+    display: flex;
+}
+
 
 .dark #editor-console .log-entry {
     color: white;
@@ -259,22 +307,22 @@
 }
 
 .dark #editor-console .clear-button {
-  background: #222;
-  color: rgba(255,255,255,.5);
+    background: #222;
+    color: rgba(255,255,255,.5);
 }
 
 #editor-console .clear-button:hover {
-  color: rgba(0,0,0,.7);
+    color: rgba(0,0,0,.7);
 }
 
 .dark #editor-console .clear-button:hover {
-  color: rgba(255,255,255,.8);
+    color: rgba(255,255,255,.8);
 }
 
 #editor-console .clear-button:active {
-  background: rgba(255,255,255,1);
+    background: rgba(255,255,255,1);
 }
 
 .dark #editor-console .clear-button:active {
-  background: #1b1b1b;
+    background: #1b1b1b;
 }

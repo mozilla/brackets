@@ -45,7 +45,7 @@ define(function (require, exports, module) {
         maxLogs = 30;
 
     function clear() {
-        consoleEl.html("");
+        consoleEl.find(".log-entry").remove();
         unreadCount = 0;
     }
 
