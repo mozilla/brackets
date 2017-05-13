@@ -8,7 +8,7 @@
     var Strings                 = brackets.getModule("strings"),
         Mustache                = brackets.getModule("thirdparty/mustache/mustache"),
         Inline3dParametersUtils = require("Parameters3DUtils"),
-        Parameters              = require("text!Parameters.json");
+        Parameters              = JSON.parse(require("text!Parameters.json"));
 
     /** Mustache template that forms the bare DOM structure of the UI */
     var Template = require("text!ParameterEditorTemplate.html");
@@ -39,11 +39,20 @@
 
     /**Registers event listeners for sliders*/
     ParameterEditor.prototype._addListeners = function () {
-        var self = this;
+        var mouseupHandler = function (event) {
+            this.$sliders[i].unbind("mousedown", this._mouseDownCallback);
+            this.$sliders[i].unbind("mouseup", mouseupHandler);
+        };
+
         for(var i = 0; i < this._numberOfParameters; i++) {
             this.$sliders[i].bind("mousedown", {"index" : i, "self" : this}, this._mouseDownCallback);
+            this.$sliders[i].bind("mouseup", mouseupHandler);
             this._registerDragHandler(this.$sliders[i], this._handleSliderDrag, i);
         }
+        
+        $(this.$element).on("mousedown", function (e) {
+            e.preventDefault();
+        });
     };
 
     ParameterEditor.prototype._mouseDownCallback = function(event) {
@@ -129,7 +138,7 @@
      * Initialises the _spaces array to store number of spaces between parameters
      */
     ParameterEditor.prototype._setLabels = function() {
-        var parameter = JSON.parse(Parameters)[this._tag];
+        var parameter = Parameters[this._tag];
         if(!parameter) {
             return;
         }
@@ -205,10 +214,6 @@
         });
         $element.mousedown({"index" : index}, handler);
     };
-
-    $(window.document).on("mousedown", function (e) {
-        e.preventDefault();
-    });
 
     exports.ParameterEditor = ParameterEditor;
 });

@@ -18,6 +18,8 @@ define(function (require, exports, module) {
      * @param {!CodeMirror.TextMarker} marker
      */
     function Inline3DParameterEditor(parameters, marker, tag) {
+        this._handleParametersChange = this._handleParametersChange.bind(this);
+        this._handleHostDocumentChange = this._handleHostDocumentChange.bind(this);
         this._parameters = parameters;
         this._marker = marker;
         this._tag = tag;
@@ -25,8 +27,6 @@ define(function (require, exports, module) {
         this._isHostChange = false;
         this._origin = "+InlineParameterditor_" + (lastOriginId++);
 
-        this._handleParametersChange = this._handleParametersChange.bind(this);
-        this._handleHostDocumentChange = this._handleHostDocumentChange.bind(this);
         InlineWidget.call(this);
     }
 

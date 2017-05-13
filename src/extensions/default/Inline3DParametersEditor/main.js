@@ -20,10 +20,7 @@ define(function (require, exports, module) {
      */
     function is3DParameter(tag) {
         var tagStart =Inline3dParametersUtils.TAG_START;
-        if(!(tag.substr(0, 2) === tagStart)) {
-            return false;
-        }
-        return true;
+        return (tag.substr(0, 2) === tagStart); 
     }
 
     /*
@@ -115,8 +112,7 @@ define(function (require, exports, module) {
         inline3DParameterEditor.load(hostEditor);
 
         result = new $.Deferred();
-        result.resolve(inline3DParameterEditor);
-        return result.promise();
+        return result.resolve(inline3DParameterEditor).promise();
     }
 
     ExtensionUtils.loadStyleSheet(module, "css/main.less");

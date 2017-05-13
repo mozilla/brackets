@@ -41,9 +41,11 @@
     },
     {
         "path": "extensions/default/Inline3DParametersEditor",
-        "copy": [
-            "extensions/default/Inline3DParametersEditor/css/main.less"
-        ]
+        "less": {
+            "dist/extensions/default/Inline3DParametersEditor/css/main.css": [
+                "dist/extensions/default/Inline3DParametersEditor/css/main.less"
+            ]
+        }
     },
     {
         "path": "extensions/default/JavaScriptQuickEdit"
