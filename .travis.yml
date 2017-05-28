@@ -9,6 +9,7 @@ branches:
   only:
   - master
   - production
+  - collaboration
 env:
   global:
     - CXX=g++-4.8
@@ -47,6 +48,19 @@ deploy:
     on:
       repo: mozilla/brackets
       branch: production
+      condition: $UPDATE_STRINGS != true
+  - provider: s3
+    access_key_id: AKIAI7XHSZFYVHFRTRIA
+    secret_access_key:
+      secure: XFKkzJRsjVXShcDrTdihLug1CZjr3s/2rSpQrzQnkl2ChM+waydLqd8jHrfkIUl6np2pxO8JU3HWe9AYfuTMdNhWijQS2E1xesUTTK9KQaPdu5mhe98AkCu/rziAv485To4hze0om8GHyREUR1cOxalYVflupZtHIkKzQgbF8AY=
+    bucket: mozillathimblelivepreview-net-s3bucket-l1armm3pssk5
+    local-dir: dist
+    upload-dir: bramble/collaboration/dist
+    skip_cleanup: true
+    detect_encoding: true
+    on:
+      repo: mozilla/brackets
+      branch: collaboration
       condition: $UPDATE_STRINGS != true
 after_deploy:
 - node invalidate.js
