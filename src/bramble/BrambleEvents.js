@@ -22,12 +22,12 @@ define(function (require, exports, module) {
     EventDispatcher.makeEventDispatcher(exports);
 
     // bramble:updateLayoutStart event when layout begins to change
-    exports.triggerUpdateLayoutStart = function() {       
+    exports.triggerUpdateLayoutStart = function() {
         triggerUpdateLayoutEvent("Start");
     };
 
     // bramble:updateLayoutEnd event when layout finishes changing
-    exports.triggerUpdateLayoutEnd = function() {        
+    exports.triggerUpdateLayoutEnd = function() {
         triggerUpdateLayoutEvent("End");
     };
 
@@ -35,6 +35,12 @@ define(function (require, exports, module) {
     // `mode` should be "desktop" or "mobile"
     exports.triggerPreviewModeChange = function(mode) {
         exports.trigger("bramble:previewModeChange", mode);
+    };
+
+    // Triggers when the fullscreen is disabled so that we can send out the
+    // proper pane widths to Thimble.
+    exports.triggerFullscreeDisabled = function(mode) {
+        triggerUpdateLayoutEvent("End");
     };
 
     // bramble:themeChange event when the theme is switched
