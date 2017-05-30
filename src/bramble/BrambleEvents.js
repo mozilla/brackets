@@ -14,8 +14,6 @@ define(function (require, exports, module) {
         var secondPane = $("#second-pane");
         var sidebar = $("#sidebar");
 
-        console.log(eventName);
-
         exports.trigger(eventName, sidebar.is(":visible") ? sidebar.width() : 0,
                                    firstPane ? firstPane.width() : 0,
                                    secondPane ? secondPane.width() : 0);
