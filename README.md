@@ -1,7 +1,7 @@
 # Bramble is based on Brackets
 
 Brackets is a modern open-source code editor for HTML, CSS
-and JavaScript that's *built* in HTML, CSS and JavaScript.
+and JavaScript that is  *built* in HTML, CSS and JavaScript.
 
 Brackets is at 1.0 and we're not stopping there. We have many feature ideas on our
 [trello board](http://bit.ly/BracketsTrelloBoard) that we're anxious to add and other

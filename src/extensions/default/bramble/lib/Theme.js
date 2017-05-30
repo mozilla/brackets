@@ -16,6 +16,11 @@ define(function (require, exports, module) {
     var themePath        = Path.join(basePath, 'extensions/default/bramble/stylesheets');
     var BrambleEvents    = brackets.getModule("bramble/BrambleEvents");
 
+    // Pick .less or .css depending on whether this is src/ or dist/
+    function fixRuntimeExt(filename) {
+        return brackets.env === "production" ? filename.replace(".less", ".css") : filename;
+    }
+
     function toggle(data) {
         var theme = data.theme || getTheme();
         setTheme(theme === "light-theme" ? "dark-theme" : "light-theme");
@@ -32,16 +37,16 @@ define(function (require, exports, module) {
 
     function init(theme) {
         var lightFile = {
-            name: "main.less",
-            _path: Path.join(themePath, "lightTheme.less")
+            name: fixRuntimeExt("main.less"),
+            _path: Path.join(themePath, fixRuntimeExt("lightTheme.less"))
         };
         var lightOptions = {
             name: "light-theme"
         };
 
         var darkFile = {
-            name: "main.less",
-            _path: Path.join(themePath, "darkTheme.less")
+            name: fixRuntimeExt("main.less"),
+            _path: Path.join(themePath, fixRuntimeExt("darkTheme.less"))
         };
         var darkOptions = {
             name: "dark-theme",

@@ -84,6 +84,9 @@
             "dist/extensions/default/bramble/stylesheets/style.css": [
                 "src/extensions/default/bramble/stylesheets/style.less"
             ],
+            "dist/extensions/default/bramble/stylesheets/consoleTheme.css": [
+                "src/extensions/default/bramble/stylesheets/consoleTheme.less"
+            ],
             "dist/extensions/default/bramble/stylesheets/lightTheme.css": [
                 "src/extensions/default/bramble/stylesheets/lightTheme.less"
             ],

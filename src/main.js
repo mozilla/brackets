@@ -37,6 +37,7 @@ require.config({
         // implementations (e.g. cloud-based storage).
         "fileSystemImpl"    : "filesystem/impls/filer/FilerFileSystem",
 
+        "caman"             : "thirdparty/caman/caman.full.min",
         // In various places in the code, it's useful to know if this is a dev vs. prod env.
         // See Gruntfile for prod override of this to config.prod.js.
         "envConfig"         : "bramble/config/config.dev"
@@ -45,6 +46,11 @@ require.config({
         "*": {
             "thirdparty/CodeMirror2": "thirdparty/CodeMirror",
             "thirdparty/react":       "react"
+        }
+    },
+    shim: {
+        "caman": {
+            exports: "Caman"
         }
     }
 });
@@ -123,20 +129,11 @@ if ('serviceWorker' in window.navigator) {
 define(function (require) {
     "use strict";
 
-    // Load compatibility shims--these need to load early, be careful moving this
-    require([
-        "utils/Compatibility",
-        // XXXBramble: temporary MessageChannel shim for Firefox, see:
-        // https://bugzilla.mozilla.org/show_bug.cgi?id=952139
-        "bramble/thirdparty/MessageChannel/message_channel"
-    ],
-    function () {
-        // XXXBramble: get the filesystem loading ASAP for connection with parent window
-        require(["filesystem/impls/filer/RemoteFiler"], function(RemoteFiler) {
-            RemoteFiler.init();
-            // Load the brackets module. This is a self-running module that loads and
-            // runs the entire application.
-            require(["brackets"]);
-        });
+    // XXXBramble: get the filesystem loading ASAP for connection with parent window
+    require(["filesystem/impls/filer/RemoteFiler"], function(RemoteFiler) {
+        RemoteFiler.init();
+        // Load the brackets module. This is a self-running module that loads and
+        // runs the entire application.
+        require(["brackets"]);
     });
 });

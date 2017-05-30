@@ -96,8 +96,8 @@ define(function (require, exports, module) {
                 ConsoleManager.handleConsoleRequest(msgObj.data);
                 return;
             }
-            
-            // Trigger message event 
+
+            // Trigger message event
             module.exports.trigger("message", [connId, msgObj.message]);
         } else if (msgObj.type === "connect") {
             Browser.setListener();

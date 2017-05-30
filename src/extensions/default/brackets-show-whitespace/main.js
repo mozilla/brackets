@@ -276,15 +276,6 @@ define(function (require, exports, module) {
         _command.off("checkedStateChange", onCheckedStateChange);
         _command._commandFn = null;
     }
-
-    
-    function loadMenuItem() {
-        Menus.getMenu("view-menu").addMenuItem(commandID, "Ctrl-Alt-W");
-    }
-
-    function unloadMenuItem() {
-        Menus.getMenu("view-menu").removeMenuItem(commandID);
-    }
     
     
     function loadEditorSync() {
@@ -302,14 +293,12 @@ define(function (require, exports, module) {
         loadStyle();
         loadPrefListeners();
         loadCommand();
-        loadMenuItem();
         loadEditorSync();
     }
 
     // Tear down the UI
     function unload() {
         unloadEditorSync();
-        unloadMenuItem();
         unloadCommand();
         unloadStyle();
         unloadPrefListeners();

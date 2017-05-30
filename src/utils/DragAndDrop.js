@@ -38,20 +38,14 @@ define(function (require, exports, module) {
         FileUtils       = require("file/FileUtils"),
         ProjectManager  = require("project/ProjectManager"),
         Strings         = require("strings"),
-        StringUtils     = require("utils/StringUtils");
+        StringUtils     = require("utils/StringUtils"),
+        // XXXBramble specific bits
+        FileImport      = require("filesystem/impls/filer/lib/FileImport"),
+        FileSystemCache = require("filesystem/impls/filer/FileSystemCache");
 
-    // Bramble specific bits
-    var _               = require("thirdparty/lodash"),
-        Filer           = require("filesystem/impls/filer/BracketsFiler"),
-        Path            = Filer.Path,
-        Content         = require("filesystem/impls/filer/lib/content"),
-        LanguageManager = require("language/LanguageManager"),
-        StartupState    = require("bramble/StartupState"),
-        ArchiveUtils    = require("filesystem/impls/filer/ArchiveUtils");
-
-    // 3MB size limit for imported files. If you change this, also change the
-    // error message we generate in rejectImport() below!
-    var byteLimit = 3145728;
+    // If the user indicates they want to import files deep into the filetree
+    // this is the path they want to use as a parent dir root.
+    var _dropPathHint;
 
     /**
      * Returns true if the drag and drop items contains valid drop objects.
@@ -59,15 +53,48 @@ define(function (require, exports, module) {
      * @return {boolean} True if one or more items can be dropped.
      */
     function isValidDrop(types) {
+        var i = 0;
+        var type;
+
         if (types) {
             for (var i = 0; i < types.length; i++) {
-                if (types[i] === "Files") {
+                // Safari uses 'public.file-url', Mozilla recommends 'application/x-moz-file',
+                // everyone else seems to use 'Files', accept any.
+                type = types[i];
+                if (type === "Files"               ||
+                    type === "public.file-url"     ||
+                    type === "application/x-moz-file") {
                     return true;
                 }
-
             }
         }
         return false;
+    }
+
+    /**
+     * Determines if the event contains a type list that has a URI-list.
+     * If it does and contains an empty file list, then what is being dropped is a URL.
+     * If that is true then we stop the event propagation and default behavior to save Brackets editor from the browser taking over.
+     * @param {Array.<File>} files Array of File objects from the event datastructure. URLs are the only drop item that would contain a URI-list.
+     * @param {event} event The event datastucture containing datatransfer information about the drag/drop event. Contains a type list which may or may not hold a URI-list depending on what was dragged/dropped. Interested if it does.
+     */
+    function stopURIListPropagation(event) {
+        var files = event.dataTransfer.files;
+        var types = event.dataTransfer.types;
+
+        if ( !(files && files.length) && types ) { // We only want to check if a string of text was dragged into the editor
+            types.forEach(function (value) {
+                //Draging text externally (dragging text from another file): types has "text/plain" and "text/html"
+                //Draging text internally (dragging text to another line): types has just "text/plain"
+                //Draging a file: types has "Files"
+                //Draging a url: types has "text/plain" and "text/uri-list" <-what we are interested in
+                if (value === "text/uri-list") {
+                    event.stopPropagation();
+                    event.preventDefault();
+                    return;
+                }
+            });
+        }
     }
 
     function _showErrorDialog(errorFiles, callback) {
@@ -155,10 +182,34 @@ define(function (require, exports, module) {
             return result.promise();
         }, false)
             .fail(function () {
-                _showErrorDialog(errorFiles);
+                function errorToString(err) {
+                    if (err === ERR_MULTIPLE_ITEMS_WITH_DIR) {
+                        return Strings.ERROR_MIXED_DRAGDROP;
+                    } else {
+                        return FileUtils.getFileErrorString(err);
+                    }
+                }
+
+                if (errorFiles.length > 0) {
+                    var message = Strings.ERROR_OPENING_FILES;
+
+                    message += "<ul class='dialog-list'>";
+                    errorFiles.forEach(function (info) {
+                        message += "<li><span class='dialog-filename'>" +
+                            StringUtils.breakableUrl(ProjectManager.makeProjectRelativeIfPossible(info.path)) +
+                            "</span> - " + errorToString(info.error) +
+                            "</li>";
+                    });
+                    message += "</ul>";
+
+                    Dialogs.showModalDialog(
+                        DefaultDialogs.DIALOG_ID_ERROR,
+                        Strings.ERROR_OPENING_FILE_TITLE,
+                        message
+                    );
+                }
             });
     }
-
 
     /**
      * Attaches global drag & drop handlers to this window. This enables dropping files/folders to open them, and also
@@ -187,9 +238,10 @@ define(function (require, exports, module) {
 
         function handleDragOver(event) {
             event = event.originalEvent || event;
+            stopURIListPropagation(event);
+
             event.stopPropagation();
             event.preventDefault();
-
             options.ondragover(event);
 
             var dropEffect =  "none";
@@ -208,13 +260,17 @@ define(function (require, exports, module) {
 
         function handleDrop(event) {
             event = event.originalEvent || event;
+            stopURIListPropagation(event);
+
             event.stopPropagation();
             event.preventDefault();
-
             options.ondrop(event);
 
-            var files = event.dataTransfer.files;
-            processFiles(files, function() {
+            processFiles(event.dataTransfer, function(err) {
+                if(err) {
+                    console.log("[Bramble] error handling dropped files", err);
+                }
+
                 options.onfilesdone();
 
                 if(options.autoRemoveHandlers) {
@@ -261,196 +317,42 @@ define(function (require, exports, module) {
         options.elem.addEventListener("drop", codeMirrorDropHandler, true);
     }
 
-    // XXXBramble: given a list of dropped files, write them into the fs, unzipping zip files.
-    function processFiles(files, callback) {
-        var pathList = [];
-        var errorList = [];
+    /**
+     * Given a `source` of files (DataTransfer or FileList objects), get the associated files
+     * and process them, such that they end
+     */
+    function processFiles(source, callback) {
+        FileImport.import(source, _dropPathHint, function(err, paths) {
+            // Reset drop path, until we get an explicit one set in future.
+            _dropPathHint = null;
 
-        if (!(files && files.length)) {
-            return callback();
-        }
-
-        function shouldOpenFile(filename, encoding) {
-            return Content.isImage(Path.extname(filename)) || encoding === "utf8";
-        }
-
-        function handleRegularFile(deferred, file, filename, buffer, encoding) {
-            file.write(buffer, {encoding: encoding}, function(err) {
-                if (err) {
-                    errorList.push({path: filename, error: "unable to write file: " + err.message || ""});
-                    deferred.reject(err);
-                    return;
-                }
-
-                // See if this file is worth trying to open in the editor or not
-                if(shouldOpenFile(filename, encoding)) {
-                    pathList.push(filename);
-                }
-
-                deferred.resolve();
-            });
-        }
-
-        function handleZipFile(deferred, file, filename, buffer, encoding) {
-            var basename = Path.basename(filename);
-
-            ArchiveUtils.unzip(buffer, function(err) {
-                if (err) {
-                    errorList.push({path: filename, error: Strings.DND_ERROR_UNZIP});
-                    deferred.reject(err);
-                    return;
-                }
-
-                Dialogs.showModalDialog(
-                    DefaultDialogs.DIALOG_ID_INFO,
-                    Strings.DND_SUCCESS_UNZIP_TITLE,
-                    StringUtils.format(Strings.DND_SUCCESS_UNZIP, basename)
-                ).getPromise().then(deferred.resolve, deferred.reject);
-            });
-        }
-
-        function handleTarFile(deferred, file, filename, buffer, encoding) {
-            var basename = Path.basename(filename);
-
-            ArchiveUtils.untar(buffer, function(err) {
-                if (err) {
-                    errorList.push({path: filename, error: Strings.DND_ERROR_UNTAR});
-                    deferred.reject(err);
-                    return;
-                }
-
-                Dialogs.showModalDialog(
-                    DefaultDialogs.DIALOG_ID_INFO,
-                    Strings.DND_SUCCESS_UNTAR_TITLE,
-                    StringUtils.format(Strings.DND_SUCCESS_UNTAR, basename)
-                ).getPromise().then(deferred.resolve, deferred.reject);
-            });
-        }
-
-        /**
-         * Determine whether we want to import this file at all.  If it's too large
-         * or not a mime type we care about, reject it.
-         */
-        function rejectImport(item) {
-            if (item.size > byteLimit) {
-                return new Error(Strings.DND_MAX_FILE_SIZE_EXCEEDED);
+            if(err) {
+                _showErrorDialog(err);
+                callback(err);
+                return;
             }
 
-            // If we don't know about this language type, or the OS doesn't think
-            // it's text, reject it.
-            var ext = Path.extname(item.name).replace(/^\./, "").toLowerCase();
-            var languageIsSupported = !!LanguageManager.getLanguageForExtension(ext);
-            var typeIsText = Content.isTextType(item.type);
+            // Don't crash in legacy browsers if we rejected all paths (e.g., folder(s)).
+            paths = paths || [];
+            openDroppedFiles(paths);
 
-            if (languageIsSupported || typeIsText) {
-                return null;
-            }
-            return new Error(Strings.DND_UNSUPPORTED_FILE_TYPE);
-        }
+            callback();
+        });
+    }
 
-        function prepareDropPaths(fileList) {
-            // Convert FileList object to an Array with all image files first, then CSS
-            // followed by HTML files at the end, since we need to write any .css, .js, etc.
-            // resources first such that Blob URLs can be generated for these resources
-            // prior to rewriting an HTML file.
-            function rateFileByType(filename) {
-                var ext = Path.extname(filename);
-
-                // We want to end up with: [images, ..., js, ..., css, html]
-                // since CSS can include images, and HTML can include CSS or JS.
-                // We also treat .md like an HTML file, since we render them.
-                if(Content.isHTML(ext) || Content.isMarkdown(ext)) {
-                    return 10;
-                } else if(Content.isCSS(ext)) {
-                    return 8;
-                } else if(Content.isImage(ext)) {
-                    return 1;
-                }
-                return 3;
-            }
-
-            return _.toArray(fileList).sort(function(a,b) {
-                a = rateFileByType(a.name);
-                b = rateFileByType(b.name);
-
-                if(a < b) {
-                    return -1;
-                }
-                if(a > b) {
-                    return 1;
-                }
-                return 0;
-            });
-        }
-
-        function maybeImportFile(item) {
-            var deferred = new $.Deferred();
-            var reader = new FileReader();
-
-            // Check whether we want to import this file at all before we start.
-            var wasRejected = rejectImport(item);
-            if (wasRejected) {
-                errorList.push({path: item.name, error: wasRejected.message});
-                deferred.reject(wasRejected);
-                return deferred.promise();
-            }
-
-            reader.onload = function(e) {
-                delete reader.onload;
-
-                var filename = Path.join(StartupState.project("root"), item.name);
-                var file = FileSystem.getFileForPath(filename);
-                var ext = Path.extname(filename).toLowerCase();
-
-                // Create a Filer Buffer, and determine the proper encoding. We
-                // use the extension, and also the OS provided mime type for clues.
-                var buffer = new Filer.Buffer(e.target.result);
-                var utf8FromExt = Content.isUTF8Encoded(ext);
-                var utf8FromOS = Content.isTextType(item.type);
-                var encoding =  utf8FromExt || utf8FromOS ? 'utf8' : null;
-                if(encoding === 'utf8') {
-                    buffer = buffer.toString();
-                }
-
-                // Special-case .zip files, so we can offer to extract the contents
-                if(ext === ".zip") {
-                    handleZipFile(deferred, file, filename, buffer, encoding);
-                } else if(ext === ".tar") {
-                    handleTarFile(deferred, file, filename, buffer, encoding);
-                } else {
-                    handleRegularFile(deferred, file, filename, buffer, encoding);
-                }
-            };
-
-            // Deal with error cases, for example, trying to drop a folder vs. file
-            reader.onerror = function(e) {
-                delete reader.onerror;
-
-                errorList.push({path: item.name, error: e.target.error.message});
-                deferred.reject(e.target.error);
-            };
-            reader.readAsArrayBuffer(item);
-
-            return deferred.promise();
-        }
-
-        Async.doSequentially(prepareDropPaths(files), maybeImportFile, false)
-            .done(function() {
-                openDroppedFiles(pathList);
-                callback(null, pathList);
-            })
-            .fail(function() {
-                _showErrorDialog(errorList, function() {
-                    callback(errorList);
-                });
-            });
+    /**
+     * Sets a path to a root dir to use for importing dropped paths (see FileTreeView.js)
+     */
+    function setDropPathHint(path) {
+        _dropPathHint = path;
     }
 
     CommandManager.register(Strings.CMD_OPEN_DROPPED_FILES, Commands.FILE_OPEN_DROPPED_FILES, openDroppedFiles);
 
     // Export public API
+    exports.processFiles        = processFiles;
     exports.attachHandlers      = attachHandlers;
     exports.isValidDrop         = isValidDrop;
     exports.openDroppedFiles    = openDroppedFiles;
-    exports.processFiles        = processFiles;
+    exports.setDropPathHint     = setDropPathHint;
 });

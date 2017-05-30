@@ -5,9 +5,10 @@ define(function (require, exports, module) {
     "use strict";
 
     var LanguageManager = require('language/LanguageManager');
+    var FilerUtils = require('filesystem/impls/filer/FilerUtils');
 
     function _getLanguageId(ext) {
-        ext = ext.replace(/^\./, "").toLowerCase();
+        ext = FilerUtils.normalizeExtension(ext, true);
         var language = LanguageManager.getLanguageForExtension(ext);
         return language ? language.getId() : "";
     }
@@ -37,8 +38,13 @@ define(function (require, exports, module) {
             return id === "markdown";
         },
 
+        isArchive: function(ext) {
+            ext = FilerUtils.normalizeExtension(ext);
+            return ext === '.zip' || ext === '.tar'; 
+        },
+
         mimeFromExt: function(ext) {
-            ext = ext.toLowerCase();
+            ext = FilerUtils.normalizeExtension(ext);
 
             switch(ext) {
             case '.html':

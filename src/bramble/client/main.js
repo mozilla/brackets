@@ -29,8 +29,7 @@ define([
     "bramble/ChannelUtils",
     "bramble/thirdparty/EventEmitter/EventEmitter.min",
     "bramble/client/StateManager",
-    "bramble/client/ProjectStats",
-    "bramble/thirdparty/MessageChannel/message_channel"
+    "bramble/client/ProjectStats"
 ], function(Filer, ChannelUtils, EventEmitter, StateManager, ProjectStats) {
     "use strict";
 
@@ -217,6 +216,7 @@ define([
         self.getAutocomplete = function() { return _state.allowAutocomplete; };
         self.getAutoCloseTags = function() { return _state.autoCloseTags; };
         self.getAllowJavaScript = function() { return _state.allowJavaScript; };
+        self.getAllowWhiteSpace = function() { return _state.allowWhiteSpace; };
         self.getAutoUpdate = function() { return _state.autoUpdate; };
         self.getOpenSVGasXML = function() { return _state.openSVGasXML; };
         self.getTutorialExists = function() { return _tutorialExists; };
@@ -293,6 +293,7 @@ define([
                     _state.wordWrap = data.wordWrap;
                     _state.autoCloseTags = data.autoCloseTags;
                     _state.allowJavaScript = data.allowJavaScript;
+                    _state.allowWhiteSpace = data.allowWhiteSpace;
                     _state.autocomplete = data.autocomplete;
                     _state.autoUpdate = data.autoUpdate;
                     _state.openSVGasXML = data.openSVGasXML;
@@ -337,6 +338,8 @@ define([
                         _state.openSVGasXML = data.openSVGasXML;
                     } else if (eventName === "allowJavaScriptChange") {
                         _state.allowJavaScript = data.allowJavaScript;
+                    } else if (eventName === "allowWhiteSpaceChange") {
+                        _state.allowWhiteSpace = data.allowWhiteSpace;
                     } else if (eventName === "tutorialVisibilityChange") {
                         _tutorialVisible = data.visible;
                     } else if (eventName === "autocompleteChange") {
@@ -461,7 +464,8 @@ define([
                                     autoCloseTags: _state.autoCloseTags,
                                     autoUpdate: _state.autoUpdate,
                                     openSVGasXML: _state.openSVGasXML,
-                                    allowJavaScript: _state.allowJavaScript
+                                    allowJavaScript: _state.allowJavaScript,
+                                    allowWhiteSpace: _state.allowWhiteSpace
                                 }
                             };
                             _brambleWindow.postMessage(JSON.stringify(initMessage), _iframe.src);
@@ -485,10 +489,11 @@ define([
 
         function setupChannel(win) {
             var channel = new MessageChannel();
-            ChannelUtils.postMessage(win,
-                                     [JSON.stringify({type: "bramble:filer"}),
-                                     "*",
-                                     [channel.port2]]);
+            win.postMessage(
+                JSON.stringify({type: "bramble:filer"}),
+                "*",
+                [channel.port2]
+            );
             _port = channel.port1;
             _port.start();
 
@@ -950,6 +955,14 @@ define([
         this._executeRemoteCommand({commandCategory: "bramble", command: "BRAMBLE_DISABLE_SCRIPTS"}, callback);
     };
 
+    BrambleProxy.prototype.enableWhiteSpace = function(callback) {
+        this._executeRemoteCommand({commandCategory: "bramble", command: "BRAMBLE_ENABLE_WHITESPACE"}, callback);
+    };
+
+    BrambleProxy.prototype.disableWhiteSpace = function(callback) {
+        this._executeRemoteCommand({commandCategory: "bramble", command: "BRAMBLE_DISABLE_WHITESPACE"}, callback);
+    };
+
     BrambleProxy.prototype.enableAutocomplete = function(callback) {
         this._executeRemoteCommand({commandCategory: "bramble", command: "BRAMBLE_ENABLE_AUTOCOMPLETE"}, callback);
     };
@@ -1013,7 +1026,7 @@ define([
     };
 
     BrambleProxy.prototype.addNewFolder = function(callback) {
-        this._executeRemoteCommand({commandCategory: "brackets", command: "FILE_FOLDER"}, callback);
+        this._executeRemoteCommand({commandCategory: "brackets", command: "FILE_NEW_FOLDER"}, callback);
     };
 
     BrambleProxy.prototype.export = function(callback) {

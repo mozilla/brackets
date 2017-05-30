@@ -157,6 +157,18 @@ define(function (require, exports, module) {
             });
         });
 
+        // Listen for changes to allow whitespace
+        var whitespacePrefs = PreferencesManager.getExtensionPrefs("denniskehrig.ShowWhitespace");
+        whitespacePrefs.on("change", function (e, data) {
+            if(data.ids.indexOf("enabled") === -1) {
+                return;
+            }
+            sendEvent({
+                type: "bramble:allowWhiteSpaceChange",
+                allowWhiteSpace: whitespacePrefs.get("enabled")
+            });
+        });
+
         // Listen for changes to TagHints
         PreferencesManager.on("change", "codehint.TagHints", function () {
             sendEvent({
@@ -241,7 +253,8 @@ define(function (require, exports, module) {
             autoCloseTags: PreferencesManager.get("closeTags"),
             autoUpdate: PreferencesManager.get("autoUpdate"),
             openSVGasXML: PreferencesManager.get("openSVGasXML"),
-            allowJavaScript: PreferencesManager.get("allowJavaScript")
+            allowJavaScript: PreferencesManager.get("allowJavaScript"),
+            allowWhiteSpace: PreferencesManager.getExtensionPrefs("denniskehrig.ShowWhitespace").get("enabled")
         });
     }
 

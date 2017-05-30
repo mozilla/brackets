@@ -192,7 +192,8 @@ define(function (require, exports, module) {
             autoCloseTags: data.state.autoCloseTags,
             autoUpdate: data.state.autoUpdate,
             openSVGasXML: data.state.openSVGasXML,
-            allowJavaScript: data.state.allowJavaScript
+            allowJavaScript: data.state.allowJavaScript,
+            allowWhiteSpace: data.state.allowWhiteSpace
         });
 
         RemoteEvents.start();

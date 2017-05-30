@@ -27,6 +27,7 @@ define(function (require, exports, module) {
     var FileSystemEntry = require("filesystem/FileSystemEntry"),
         Content         = require("filesystem/impls/filer/lib/content"),
         Path            = require("filesystem/impls/filer/BracketsFiler").Path,
+        FilerUtils      = require("filesystem/impls/filer/FilerUtils"),
         defaultHTML     = require("text!filesystem/impls/filer/lib/default.html");
 
     /*
@@ -94,7 +95,11 @@ define(function (require, exports, module) {
         // for watched files. Note that we need to explicitly test this._contents
         // for a default value; otherwise it could be the empty string, which is
         // falsey.
-        if (this._contents !== null && this._stat) {
+        //
+        // XXXBramble: we don't ever want to use the cached contents of an SVG file,
+        // since we allow switching between UTF8 and Binary representations at runtime.
+        if (this._contents !== null && this._stat &&
+            FilerUtils.normalizeExtension(Path.extname(this._path)) !== ".svg") {
             callback(null, this._contents, this._stat);
             return;
         }

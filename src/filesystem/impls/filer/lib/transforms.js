@@ -159,29 +159,9 @@ define(function (require, exports, module) {
         });
     }
 
-    function _setupLessTransform() {
-        function lessToCSS(path, less, callback) {
-            ExtensionUtils.parseLessCode(less, path)
-                .done(function(css) {
-                    callback(null, css);
-                })
-                .fail(function() {
-                    callback(new Error("[Bramble transform] unable to parse less file " + path));
-                });
-        }
-
-        _register(new Transform({
-            srcExt: "less",
-            destExt: "css",
-            startComment: "/**",
-            endComment: "**/"
-        }, lessToCSS));
-    }
-
     function init() {
         LanguageManager.ready.always(function() {
             _setupMarkdownTransform();
-            _setupLessTransform();
         });
     }
 

@@ -139,6 +139,10 @@ define(function() {
                 get: function()  { return getBool(storage, "allowJavaScript"); },
                 set: function(v) { storage.setItem(prefix("allowJavaScript"), v); }
             },
+            allowWhiteSpace: {
+                get: function()  { return getBool(storage, "allowWhiteSpace"); },
+                set: function(v) { storage.setItem(prefix("allowWhiteSpace"), v); }
+            },
             allowAutocomplete: {
                 get: function()  { return getBool(storage, "allowAutocomplete"); },
                 set: function(v) { storage.setItem(prefix("allowAutocomplete"), v); }

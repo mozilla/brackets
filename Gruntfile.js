@@ -167,7 +167,7 @@ module.exports = function (grunt) {
                     // XXXBramble: if you change this, change configureExtensions() below too.
                     "dist/styles/brackets.min.css": [
                         "src/thirdparty/CodeMirror/lib/codemirror.css",
-                        "src/styles/brackets.less"
+                        "src/styles/bramble.less"
                     ]
                 },
                 options: {
@@ -206,7 +206,6 @@ module.exports = function (grunt) {
                     // so explicitly include it in main.js
                     include: [
                         "utils/Compatibility",
-                        "bramble/thirdparty/MessageChannel/message_channel",
                         "brackets"
                     ],
                     // required to support SourceMaps
@@ -290,8 +289,7 @@ module.exports = function (grunt) {
                 '!src/extensions/extra/brackets-cdn-suggestions/**',
                 '!src/extensions/extra/HTMLHinter/**',
                 '!src/extensions/extra/MDNDocs/**',
-                '!src/bramble/thirdparty/EventEmitter/**',
-                '!src/bramble/thirdparty/MessageChannel/**',
+                '!src/bramble/thirdparty/**/*',
                 '!src/extensions/disabled/**',
                 '!**/node_modules/**/*.js',
                 '!src/**/*-min.js',
@@ -415,10 +413,9 @@ module.exports = function (grunt) {
         },
 
         exec: {
-            localize: 'node scripts/properties2js',
-            'localize-dist': 'node scripts/properties2js dist',
-            'clean-nls': 'rm -fr src/nls && git checkout -- src/nls',
-            'add-src': 'git add "src/*"'
+            'localize': 'npm run localize',
+            'localize-dist': 'npm run localize-dist',
+            'unlocalize': 'npm run unlocalize'
         },
 
         swPrecache: {
@@ -554,8 +551,8 @@ module.exports = function (grunt) {
         /* XXXBramble: we skip this, since we don't use any of the node_modules in Bramble.
          'npm-install', */
         'cleanempty',
-        'exec:clean-nls',
-        'usemin',
+        'exec:unlocalize',
+        'usemin'
         'githooks'
         /* XXXBramble: we skip this, since we don't bother with its info, and copy it in copy:dist
         'build-config' */
@@ -577,9 +574,6 @@ module.exports = function (grunt) {
         'swPrecache',
         'compress:sw'
     ]);
-
-    // task: undo changes to the src/nls directory
-    grunt.registerTask('unlocalize', ['exec:clean-nls']);
 
     // Default task.
     grunt.registerTask('default', ['test']);

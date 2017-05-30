@@ -104,6 +104,9 @@ define(function (require, exports, module) {
         // TODO: https://developer.mozilla.org/en-US/docs/Web/CSS/Alternative_style_sheets
         var elements = this.doc.querySelectorAll("link[rel='stylesheet']");
 
+        // Cache of URLs for rewritten CSS from this current call to styleSheetLinks
+        var cachedUrls = {};
+
         Async.eachSeries(elements, function(element, callback) {
             var path = decodePath(element.getAttribute("href"));
             var fullPath = Path.resolve(dir, path);
@@ -113,12 +116,20 @@ define(function (require, exports, module) {
                 return;
             }
 
+            // If we've already rewritten this CSS file once during this rewrite session,
+            // reuse the generated URL so we don't invalidate the previous one.
+            if(cachedUrls[fullPath]) {
+                element.href = cachedUrls[fullPath];
+                return callback();
+            }
+
             // If the user has the given CSS file open in an editor,
             // use that; otherwise, get it from disk.
             server.serveLiveDocForPath(fullPath, function(err, url) {
                 if(err || url === fullPath) {
                     console.log("[HTMLRewriter warning] couldn't get URL for `" + fullPath + "`", err);
                 } else {
+                    cachedUrls[fullPath] = url;
                     element.href = url;
                 }
                 callback();

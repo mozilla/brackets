@@ -36,6 +36,7 @@ define(function (require, exports, module) {
         ThemeSettings      = require("view/ThemeSettings"),
         ThemeView          = require("view/ThemeView"),
         PreferencesManager = require("preferences/PreferencesManager"),
+        Path               = require("filesystem/impls/filer/FilerUtils").Path,
         prefs              = PreferencesManager.getExtensionPrefs("themes");
 
     var loadedThemes    = {},
@@ -168,7 +169,8 @@ define(function (require, exports, module) {
     function lessifyTheme(content, theme) {
         var deferred = new $.Deferred();
 
-        less.render("#editor-holder {" + content + "\n}", {
+        // XXXBramble: we pre-wrap our themes in #editor-holder {...} vs. here.
+        less.render(content, {
             rootpath: fixPath(stylesPath),
             filename: fixPath(theme.file._path)
         }, function (err, tree) {
@@ -233,20 +235,28 @@ define(function (require, exports, module) {
         var theme = getCurrentTheme();
         var pending = new $.Deferred();
 
+        function processCSS(css) {
+            var result = extractScrollbars(css);
+            var content = result.content;
+            theme.scrollbar = result.scrollbar;
+
+            $("body").toggleClass("dark", theme.dark);
+            styleNode.text(content);
+            $("body").attr('data-theme',theme.name);
+            pending.resolve(theme);
+        }
+
         if (theme) {
-            require(['text!' + theme.file._path], function(lessContent) {
-                lessifyTheme(lessContent.replace(commentRegex, ""), theme)
-                .then(function (content) {
-                    var result = extractScrollbars(content);
-                    theme.scrollbar = result.scrollbar;
-                    return result.content;
-                })
-                .then(function (cssContent) {
-                    $("body").toggleClass("dark", theme.dark);
-                    styleNode.text(cssContent);
-                    $("body").attr('data-theme',theme.name);
-                    pending.resolve(theme);
-                });
+            require(['text!' + theme.file._path], function(content) {
+                content = content.replace(commentRegex, "");
+
+                // If we already have CSS, don't bother with LESS.
+                if(Path.extname(theme.file._path) === ".css") {
+                    processCSS(content);
+                } else {
+                    lessifyTheme(content, theme)
+                    .then(processCSS);
+                }
             });
         }
 

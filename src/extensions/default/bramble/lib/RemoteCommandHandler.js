@@ -40,6 +40,11 @@ define(function (require, exports, module) {
             CommandManager.execute.apply(null, args).always(callback);
         }
 
+        // Fix outdated calls for new folder command (used to be FILE_FOLDER)
+        if(command === "FILE_FOLDER") {
+            command = "FILE_NEW_FOLDER";
+        }
+
         // Some commands require focus in the editor
         switch(command) {
         case "EDIT_UNDO":
@@ -99,6 +104,12 @@ define(function (require, exports, module) {
         case "BRAMBLE_DISABLE_SCRIPTS":
             PreferencesManager.set("allowJavaScript", false);
             PostMessageTransport.reload();
+            break;
+        case "BRAMBLE_ENABLE_WHITESPACE":
+            PreferencesManager.getExtensionPrefs("denniskehrig.ShowWhitespace").set("enabled", true);
+            break;
+        case "BRAMBLE_DISABLE_WHITESPACE":
+            PreferencesManager.getExtensionPrefs("denniskehrig.ShowWhitespace").set("enabled", false);
             break;
         case "BRAMBLE_ENABLE_INSPECTOR":
             MouseManager.enableInspector();

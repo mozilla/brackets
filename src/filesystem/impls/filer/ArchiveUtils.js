@@ -18,7 +18,7 @@ define(function (require, exports, module) {
     var fs              = Filer.fs();
 
     // Mac and Windows clutter zip files with extra files/folders we don't need
-    function _skipFile(filename) {
+    function skipFile(filename) {
         var basename = Path.basename(filename);
 
         // Skip OS X additions we don't care about in the browser fs
@@ -71,7 +71,7 @@ define(function (require, exports, module) {
             return;
         }
 
-        var root = StartupState.project("root");
+        var root = options.root || StartupState.project("root");
         var destination = Path.resolve(options.destination || root);
 
         function _unzip(data){
@@ -80,7 +80,7 @@ define(function (require, exports, module) {
             var filenames = [];
 
             archive.filter(function(relPath, file) {
-                if(_skipFile(file.name)) {
+                if(skipFile(file.name)) {
                     return;
                 }
 
@@ -206,16 +206,23 @@ define(function (require, exports, module) {
         });
     }
 
-    function untar(tarArchive, callback) {
+    function untar(tarArchive, options, callback) {
+        if(typeof options === 'function') {
+            callback = options;
+            options = {};
+        }
+        options = options || {};
+        callback = callback || function(){};
+
         var untarWorker = new Worker("thirdparty/bitjs/bitjs-untar.min.js");
-        var root = StartupState.project("root");
+        var root = options.root || StartupState.project("root");
         var pending = null;
 
         function extract(path, data, callback) {
             path = Path.resolve(root, path);
             var basedir = Path.dirname(path);
 
-            if(_skipFile(path)) {
+            if(skipFile(path)) {
                 return callback();
             }
 
@@ -262,6 +269,7 @@ define(function (require, exports, module) {
         untarWorker.postMessage({file: tarArchive.buffer});
     }
 
+    exports.skipFile = skipFile;
     exports.archive = archive;
     exports.unzip = unzip;
     exports.untar = untar;

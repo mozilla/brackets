@@ -287,7 +287,11 @@ define(function main(require, exports, module) {
         // by changing the preference value.
         MultiBrowserLiveDev.init(config);
 
-        _loadStyles();
+        // XXXBramble: don't do LESS loading for stylesheets we don't need.
+        if(!prefs.get(PREF_MULTIBROWSER)) {
+            _loadStyles();
+        }
+
         _updateHighlightCheckmark();
 
         _setImplementation(prefs.get(PREF_MULTIBROWSER));

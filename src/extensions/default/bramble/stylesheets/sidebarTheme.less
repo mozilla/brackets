@@ -181,7 +181,7 @@ li.jstree-open > ul:empty:after {
 li.jstree-closed a.context-node,
 li.jstree-open a.context-node,
 li.jstree-leaf a.context-node {
-    background: rgba(0,0,0,.08);
+    background: rgba(255,255,255,.08);
 }
 
 
@@ -254,7 +254,10 @@ body[data-theme='light-theme'] li.jstree-leaf a.selected-node:hover {
 /* File renaming UI */
 
 #project-files-container .jstree-brackets .jstree-rename-input {
-    padding: 17px 4px 18px 4px;
+    padding: 8px 6px 7px 6px;
+    @-moz-document url-prefix() {
+        padding: 10px 6px 10px 6px;
+    }
     font-size: 15px;
     line-height: 15px;
     background: white;
@@ -266,15 +269,28 @@ body[data-theme='light-theme'] li.jstree-leaf a.selected-node:hover {
     border-radius: 0;
     position: relative;
     border: none;
-    width: calc(100% - 60px) !important;
+    height: auto;
+    width: ~"calc(100% - 55px)" !important;
     box-sizing: border-box;
-}
-
-[data-theme='light-theme'] #project-files-container .jstree-brackets .jstree-rename-input {
+    animation: inputPop .15s ease-out;
     border: solid 1px rgba(0,0,0,.3);
+    display: inline-block;
+
+    &:focus {
+      border: solid 1px rgba(0,0,0,.3);
+    }
 }
 
+@keyframes inputPop {
+    0%    { transform: scale(.95);  }
+    50%   { transform: scale(1.03); }
+    100%  { transform: scale(1);    }
+}
 
+.dark #project-files-container .jstree-brackets .jstree-rename-input,
+.dark #project-files-container .jstree-brackets .jstree-rename-input:focus {
+    border: solid 1px transparent;
+}
 
 /* Overrides for Folder rename UI */
 

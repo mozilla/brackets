@@ -40,7 +40,8 @@ define(function (require, exports, module) {
         LanguageManager   = require("language/LanguageManager"),
         FileTreeViewModel = require("project/FileTreeViewModel"),
         ViewUtils         = require("utils/ViewUtils"),
-        KeyEvent          = require("utils/KeyEvent");
+        KeyEvent          = require("utils/KeyEvent"),
+        DragAndDrop       = require("utils/DragAndDrop");
 
     var DOM = React.DOM;
 
@@ -450,6 +451,18 @@ define(function (require, exports, module) {
         },
 
         /**
+         * When the user drags something over the file tree, use the location where they
+         * drag to set a hint for where files should be imported when dropped. This allows
+         * drag-and-drop to work deep into the filetree.
+         */
+        handleDragEnter: function (event) {
+            // If they drag over a file, assume they mean the file's parent dir.
+            DragAndDrop.setDropPathHint(this.props.parentPath);
+            event.stopPropagation();
+            event.preventDefault();
+        },
+
+        /**
          * When the user double clicks, we will select this file and add it to the working
          * set (via the `selectInWorkingSet` action.)
          */
@@ -538,7 +551,8 @@ define(function (require, exports, module) {
                     className: this.getClasses("jstree-leaf"),
                     onClick: this.handleClick,
                     onMouseDown: this.handleMouseDown,
-                    onDoubleClick: this.handleDoubleClick
+                    onDoubleClick: this.handleDoubleClick,
+                    onDragEnter: this.handleDragEnter
                 },
                 DOM.ins({
                     className: insClassName
@@ -734,6 +748,23 @@ define(function (require, exports, module) {
         },
 
         /**
+         * If you drag something over a directory, make sure it's open so we can get
+         * at sub-directories for drop targets.
+         */
+        handleDragEnter: function(event) {
+            var isOpen = this.props.entry.get("open");
+            if(!isOpen) {
+                this.props.actions.setDirectoryOpen(this.myPath(), true);
+            }
+
+            // If they drag over a file, assume they mean the file's parent dir.
+            DragAndDrop.setDropPathHint(this.myPath());
+
+            event.stopPropagation();
+            event.preventDefault();
+        },
+
+        /**
          * Create the data object to pass to extensions.
          *
          * @return {{name: {string}, isFile: {boolean}, fullPath: {string}}} Data for extensions
@@ -781,7 +812,8 @@ define(function (require, exports, module) {
                 {
                     className: this.getClasses("jstree-" + nodeClass),
                     onClick: this.handleClick,
-                    onMouseDown: this.handleMouseDown
+                    onMouseDown: this.handleMouseDown,
+                    onDragEnter: this.handleDragEnter
                 },
                 _createAlignedIns(this.props.depth)
             ];
