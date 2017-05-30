@@ -14,6 +14,8 @@ define(function (require, exports, module) {
         var secondPane = $("#second-pane");
         var sidebar = $("#sidebar");
 
+        console.log(eventName);
+
         exports.trigger(eventName, sidebar.is(":visible") ? sidebar.width() : 0,
                                    firstPane ? firstPane.width() : 0,
                                    secondPane ? secondPane.width() : 0);
@@ -39,7 +41,7 @@ define(function (require, exports, module) {
 
     // Triggers when the fullscreen is disabled so that we can send out the
     // proper pane widths to Thimble.
-    exports.triggerFullscreeDisabled = function(mode) {
+    exports.triggerFullscreeDisabled = function() {
         triggerUpdateLayoutEvent("End");
     };
 
