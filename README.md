@@ -367,6 +367,8 @@ the following events:
 * `"autoUpdateChange"` - triggered whenever the auto update preference changes from enabled to disabled, or vice versa. It includes an `Object` with a `autoUpdate` property set to `true` or `false`
 * `"projectDirty"` - triggered when one of the files in the project has been edited and those changes haven't been saved yet. It includes an `Object` with the `path` to the current file.
 * `"projectSaved"` - triggered whenever the changes are saved to the filesystem in the browser are completed.
+* `"dialogOpened"` - triggered whenever a modal dialog opens, like when a user is deleting a file.
+* `"dialogClosed"` - triggered whenever a modal dialog closes.
 
 There are also high-level events for changes to files:
 

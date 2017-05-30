@@ -33,7 +33,9 @@ define(function (require, exports, module) {
         KeyEvent          = require("utils/KeyEvent"),
         Strings           = require("strings"),
         DialogTemplate    = require("text!htmlContent/dialog-template.html"),
-        Mustache          = require("thirdparty/mustache/mustache");
+        Mustache          = require("thirdparty/mustache/mustache"),
+        BrambleEvents     = brackets.getModule("bramble/BrambleEvents");
+
 
     /**
      * Dialog Buttons IDs
@@ -285,6 +287,8 @@ define(function (require, exports, module) {
      * @return {Dialog}
      */
     function showModalDialogUsingTemplate(template, autoDismiss) {
+        BrambleEvents.triggerDialogOpened();
+
         if (autoDismiss === undefined) {
             autoDismiss = true;
         }
@@ -312,6 +316,8 @@ define(function (require, exports, module) {
 
         // Pipe dialog-closing notification back to client code
         $dlg.one("hidden", function () {
+            BrambleEvents.triggerDialogClosed();
+
             var buttonId = $dlg.data("buttonId");
             if (!buttonId) {    // buttonId will be undefined if closed via Bootstrap's "x" button
                 buttonId = DIALOG_BTN_CANCEL;
@@ -332,7 +338,7 @@ define(function (require, exports, module) {
 
             // Restore previous focus
             if (lastFocus) {
-                lastFocus.focus();    
+                lastFocus.focus();
             }
 
             //Remove wrapper

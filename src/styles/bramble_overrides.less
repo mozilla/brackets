@@ -308,15 +308,64 @@ span.dialog-button {
   transform: translateX(-10px);
 }
 
+.modal-backdrop {
+  opacity: .8;
+  animation: showModalBackdrop .1s ease-out;
+
+  @keyframes showModalBackdrop {
+    0% {
+      opacity: 0;
+    }
+    100% {
+      opacity: .8;
+    }
+  }
+}
 
 .dark .modal, .modal {
   background: white;
   border: none;
   border-radius: 0;
+  animation: showModal .25s ease-out;
+  transform: translateY(-100px);
+
+  @keyframes showModal {
+    0% {
+      transform: scale(.8);
+      transform: translateY(-80px);
+      opacity: 0;
+    }
+    60% {
+      transform: scale(1.04);
+      transform: translateY(-105px);
+    }
+    100% {
+      transform: scale(1);
+      transform: translateY(-100px);
+    }
+  }
 
   .modal-body {
     background: transparent;
     color: black;
+    border: none;
+    padding: 20px;
+  }
+
+  .dialog-title {
+    color: black;
+    font-family: "Open Sans", sans-serif;
+    padding: 20px 20px 0 20px;
+    font-weight: 600;
+
+    &:empty {
+      padding: 0;
+    }
+  }
+
+  .modal-header {
+    padding: 0;
+    background: transparent;
     border: none;
   }
 
@@ -324,31 +373,69 @@ span.dialog-button {
     font-family: "Open Sans";
     color: black;
     font-size: 16px;
+    margin: 0;
   }
 
   .modal-footer {
     background: rgba(0,0,0,.1);
     border-radius: 0;
     border: none;
+    padding: 15px 20px;
   }
 
   button {
-    float: right;
     margin-left: 10px;
     display: inline-block;
     padding: 8px 15px;
     cursor: pointer;
     color: white;
+    margin: 0;
+    border: none;
     -webkit-user-select: none;
     -moz-user-select: none;
     -ms-user-select: none;
-    border-bottom: solid 2px rgba(0,0,0,0.3);
     border-radius: 2px;
     background-color: #2A9961;
+    font-size: 16px;
+    font-weight: 600;
+    font-family: "Open Sans", sans-serif;
   }
-}
 
-.dark .modal-header {
-  background: transparent;
-  border: none;
+  .btn.primary {
+    border: none;
+    background-color: #2A9961;
+    border-bottom: solid 2px rgba(0,0,0,0.3);
+
+    &:hover {
+      background: #39AA6D;
+    }
+
+    &:active {
+      background: #288952;
+    }
+  }
+
+  .btn {
+    border: none;
+    background: #B0B0B0;
+    border-bottom: solid 2px rgba(0,0,0,0.3);
+
+    &:focus {
+      color: white;
+    }
+
+    &:hover {
+      background-color: #BCBCBC;
+      color: white;
+    }
+
+    &:active {
+      background-color: #9B9B9B;
+      position: relative;
+      color: white;
+      border-bottom: solid 2px transparent;
+      margin-top: 2px;
+      padding: 8px 15px 6px 15px;
+    }
+  }
 }

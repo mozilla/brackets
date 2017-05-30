@@ -65,6 +65,20 @@ define(function (require, exports, module) {
             });
         });
 
+        // Listen for changes to the sidebar
+        BrambleEvents.on("bramble:dialogOpened", function(e) {
+            sendEvent({
+                type: "bramble:dialogOpened"
+            });
+        });
+
+        // Listen for changes to the sidebar
+        BrambleEvents.on("bramble:dialogClosed", function(e) {
+            sendEvent({
+                type: "bramble:dialogClosed"
+            });
+        });
+
         // Listen for user changing file content
         BrambleEvents.on("bramble:projectDirty", function(e, path) {
             sendEvent({
@@ -72,7 +86,7 @@ define(function (require, exports, module) {
                 path: path
             });
         });
-        
+
         // Listen for files being saved for the whole project
         BrambleEvents.on("bramble:projectSaved", function(e) {
             sendEvent({

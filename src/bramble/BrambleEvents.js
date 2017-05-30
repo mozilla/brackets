@@ -26,6 +26,16 @@ define(function (require, exports, module) {
         triggerUpdateLayoutEvent("Start");
     };
 
+    // bramble:dialogOpened event when a modal dialog opens
+    exports.triggerDialogOpened = function() {
+      exports.trigger("bramble:dialogOpened");
+    };
+
+    // bramble:dialogOpened event when a modal dialog closes
+    exports.triggerDialogClosed = function() {
+      exports.trigger("bramble:dialogClosed");
+    };
+
     // bramble:updateLayoutEnd event when layout finishes changing
     exports.triggerUpdateLayoutEnd = function() {
         triggerUpdateLayoutEvent("End");
