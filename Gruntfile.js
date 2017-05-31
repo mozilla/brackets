@@ -90,8 +90,6 @@ module.exports = function (grunt) {
                         cwd: 'src/',
                         src: [
                             'nls/{,*/}*.js',
-                            'xorigin.js',
-                            'dependencies.js',
                             'thirdparty/github-markdown.css',
                             'hosted.*',
                             // XXXBramble: we don't use src/config.json like Brackets does,

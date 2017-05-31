@@ -57,6 +57,10 @@
              */
             outline: 1px solid transparent;
         }
+        #iframe-warning {
+            visibility: hidden;
+            padding: 20px;
+        }
 
         @-webkit-keyframes sk-rotatePlane {
             0% {
@@ -100,9 +104,6 @@
 
     <!-- NOTE: All scripts must be external for Chrome App support: http://developer.chrome.com/apps/app_csp.html -->
 
-    <!-- Warn about failed cross origin requests in Chrome -->
-    <script type="application/javascript" src="xorigin.js"></script>
-
     <!--(if target dev)><!-->
     <link rel="stylesheet" type="text/css" href="thirdparty/CodeMirror/lib/codemirror.css">
     <link rel="stylesheet/less" type="text/css" href="styles/bramble.less">
@@ -117,6 +118,11 @@
     -->
     <div id="spinner-container">
         <div class="sk-spinner sk-spinner-rotating-plane"></div>
+        <div id="iframe-warning">
+            <h1>Bramble must be hosted</h1> 
+            <p>Oops! Bramble was loaded directly, outside of an iframe. For security it must be hosted in an iframe.</p>
+            <p>For local development, you can run Bramble in an iframe by using <a href="hosted.html">hosted.html</a> instead of <a href="index.html">index.html</a>.</p>
+        </div>
     </div>
 
     <!-- HTML content is dynamically loaded and rendered by brackets.js.
@@ -144,7 +150,5 @@
     <script src="thirdparty/require.min.js" data-main="main"></script>
     <!-- endbuild -->
 
-    <!-- Verify that all dependencies are loaded. -->
-    <script src="dependencies.js"></script>
 </body>
 </html>
