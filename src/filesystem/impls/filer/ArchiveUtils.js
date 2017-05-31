@@ -142,11 +142,11 @@ define(function (require, exports, module) {
         }
     }
 
-    // Zip the entire project, starting at the project root.
-    function archive(callback) {
+    // Zip specific file or folder structure
+    function archive(path, callback) {
         var root = StartupState.project("root");
         var rootRegex = new RegExp("^" + root + "\/?");
-
+        callback = callback || function() {};
         // TODO: we should try to move this to a worker
         var jszip = new JSZip();
 
@@ -194,11 +194,11 @@ define(function (require, exports, module) {
             });
         }
 
-        add(root, function(err) {
+        add(path, function(err) {
             if(err) {
                 return callback(err);
             }
-
+            // Prepare folder for download
             var compressed = jszip.generate({type: 'arraybuffer'});
             var blob = new Blob([compressed], {type: "application/zip"});
             saveAs(blob, "project.zip");

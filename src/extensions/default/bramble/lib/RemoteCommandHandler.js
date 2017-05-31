@@ -12,6 +12,7 @@ define(function (require, exports, module) {
     var StatusBar          = brackets.getModule("widgets/StatusBar");
     var WorkspaceManager   = brackets.getModule("view/WorkspaceManager");
     var BrambleEvents      = brackets.getModule("bramble/BrambleEvents");
+    var StartupState       = brackets.getModule("bramble/StartupState");
     var PreferencesManager = brackets.getModule("preferences/PreferencesManager");
     var _                  = brackets.getModule("thirdparty/lodash");
     var ArchiveUtils       = brackets.getModule("filesystem/impls/filer/ArchiveUtils");
@@ -183,7 +184,7 @@ define(function (require, exports, module) {
             break;
         case "BRAMBLE_EXPORT":
             skipCallback = true;
-            ArchiveUtils.archive(callback);
+            ArchiveUtils.archive(StartupState.project("root"), callback);
             break;
         case "RESIZE":
             // The host window was resized, update all panes
