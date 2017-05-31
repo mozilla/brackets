@@ -322,26 +322,30 @@ span.dialog-button {
   }
 }
 
+
+// Modal overrides
+
+.modal-inner-wrapper {
+  vertical-align: top;
+}
+
 .dark .modal, .modal {
   background: white;
   border: none;
   border-radius: 0;
   animation: showModal .25s ease-out;
-  transform: translateY(-100px);
+  transform: translateY(70px);
 
   @keyframes showModal {
     0% {
-      transform: scale(.8);
-      transform: translateY(-80px);
+      transform: scale(.9) translateY(85px);
       opacity: 0;
     }
     60% {
-      transform: scale(1.04);
-      transform: translateY(-105px);
+      transform: scale(1.03) translateY(65px);
     }
     100% {
-      transform: scale(1);
-      transform: translateY(-100px);
+      transform: scale(1) translateY(70px);
     }
   }
 
