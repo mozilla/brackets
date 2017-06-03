@@ -77,6 +77,7 @@ define(function (require, exports, module) {
         ValidationUtils    = require("utils/ValidationUtils"),
         ViewUtils          = require("utils/ViewUtils"),
         MainViewManager    = require("view/MainViewManager"),
+        Collaboration      = require("editor/Collaboration").Collaboration,
         _                  = require("thirdparty/lodash");
 
     /** Editor preferences */
@@ -102,6 +103,7 @@ define(function (require, exports, module) {
     
 
     var cmOptions         = {};
+    var collabInstance = new Collaboration();
 
     /**
      * Constants
@@ -452,6 +454,7 @@ define(function (require, exports, module) {
             }
         });
 
+        collabInstance.setCodemirror(this._codemirror);
         // Set code-coloring mode BEFORE populating with text, to avoid a flash of uncolored text
         this._codeMirror.setOption("mode", mode);
 
@@ -929,6 +932,7 @@ define(function (require, exports, module) {
         // Editor dispatches a change event before this event is dispatched, because
         // CodeHintManager needs to hook in here when other things are already done.
         this.trigger("editorChange", this, changeList);
+        collabInstance.triggerCodemirrorChange(changeList);
     };
 
     /**

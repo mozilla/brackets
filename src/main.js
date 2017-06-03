@@ -38,6 +38,7 @@ require.config({
         "fileSystemImpl"    : "filesystem/impls/filer/FilerFileSystem",
 
         "caman"             : "thirdparty/caman/caman.full.min",
+        "togetherjs"        : "thirdparty/togetherjs/together",
         // In various places in the code, it's useful to know if this is a dev vs. prod env.
         // See Gruntfile for prod override of this to config.prod.js.
         "envConfig"         : "bramble/config/config.dev"
@@ -51,8 +52,10 @@ require.config({
     shim: {
         "caman": {
             exports: "Caman"
+        }, "togetherjs": {
+            exports: "togetherjs"
         }
-    }
+    },
 });
 
 if (window.location.search.indexOf("testEnvironment") > -1) {
