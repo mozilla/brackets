@@ -1659,7 +1659,7 @@ define(function (require, exports, module) {
             DefaultDialogs.DIALOG_ID_EXT_DELETED,
             Strings.CONFIRM_FOLDER_DELETE_TITLE,
             StringUtils.format(
-                "Are you sure you want to delete <span class='dialog-filename'>{0}</span>?",
+                Strings.CONFIRM_FILE_DELETE,
                 StringUtils.breakableUrl(entry.name)
             ),
             [
