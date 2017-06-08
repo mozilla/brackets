@@ -11,6 +11,8 @@
         baseUrl: './'
     });
 
+    var brambleModule;
+
     // Allow the user to override what we do with default files using `?forceFiles=1`
     var forceFiles = window.location.search.indexOf("forceFiles=1") > -1;
 
@@ -131,12 +133,15 @@
     }
 
     // Support loading from src/ or dist/ to make local dev easier
-    require(["bramble/client/main"], function(Bramble) {
+    if(window.location.pathname === "/dist/hosted.html") {
+        console.info("[Bramble] loading dist/ build.");
+        brambleModule = "bramble";
+    } else {
+        console.info("[Bramble] loading src/ build.");
+        brambleModule = "bramble/client/main";
+    }
+
+    require([brambleModule], function(Bramble) {
         load(Bramble);
-    }, function(err) {
-        console.log("Unable to load Bramble from src/, trying from dist/");
-        require(["bramble"], function(Bramble) {
-            load(Bramble);
-        });
     });
 }());
