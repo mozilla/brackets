@@ -317,10 +317,6 @@ define(function (require, exports, module) {
                 jQObject.off = firstArg.off.bind(firstArg);
                 // Don't offer legacy support for trigger()/triggerHandler() on core model objects; extensions
                 // shouldn't be doing that anyway since it's basically poking at private API
-
-                // Console warning, since $() is deprecated for EventDispatcher objects
-                // (pass true to only print once per caller, and index 4 since the extension caller is deeper in the stack than usual)
-                DeprecationWarning.deprecationWarning("Deprecated: Do not use $().on/off() on Brackets modules and model objects. Call on()/off() directly on the object without a $() wrapper.", true, 4);
             }
             return jQObject;
         };
