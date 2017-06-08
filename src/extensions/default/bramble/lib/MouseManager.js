@@ -16,6 +16,13 @@ define(function (require, exports, module) {
     var _isInspectorEnabled = false;
     var _prevLineMarker;
     var _prevElemHighlightId;
+    var _escapeMap = {
+        "&": "&amp;",
+        "\"": "&quot;",
+        "'": "&#39;",
+        "<": "&lt;",
+        ">": "&gt"
+    };
 
     // Override the preview document's cursor property
     function setIframeCursor(value) {
@@ -212,8 +219,19 @@ define(function (require, exports, module) {
         _prevLineMarker = codeMirror.markText(from, to, { className: "bramble-inspector-highlight" });
     }
 
+    function lookupChar(ch) {
+        return _escapeMap[ch];
+    }
+
+    function escape(str) {
+        return str.replace(/[&"'<>]/g, lookupChar);
+    }
+
     function getRemoteScript(filename) {
+
         filename = filename || "unknown";
+
+        filename = escape(filename);
 
         // Track scroll position per filename, so you can be at different points in each doc
         return "<script>window.___brambleFilename = '" + filename + "';</script>\n" +
