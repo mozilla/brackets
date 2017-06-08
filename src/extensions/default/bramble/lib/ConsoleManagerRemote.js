@@ -6,6 +6,9 @@
         transport.send("bramble-console", data);
     }
 
+    // console namespace
+    const consoleNS = console;
+
     // Implement standard console.* functions
     ["log",
      "warn",
@@ -16,6 +19,10 @@
      "clear",
      "time",
      "timeEnd"].forEach(function(type) {
+        // cache the old binding
+        let oldFn = console[type];
+
+        // rebind for our convenience
         console[type] = function() {
             var args = Array.prototype.slice.call(arguments);
             var data = [];
@@ -31,6 +38,9 @@
             });
 
             transportSend(type, data);
+
+            // and also fall through to the original function
+            oldFn.apply(consoleNS, arguments);
         };
     });
 
@@ -43,12 +53,20 @@
         transportSend("error", [ message, stack ]);
     }, false);
 
+    // cache the old assert binding
+    let oldAssert = console.assert;
+
+    // rebind for our convenience
     console.assert = function() {
         var args = Array.prototype.slice.call(arguments);
         var expr = args.shift();
+
         if (!expr) {
             args[0] = "Assertion Failed: " + args[0];
             transportSend("error", args);
         }
+
+        // and also fall through to the original function
+        oldAssert.apply(consoleNS, arguments);
     };
 }(window._Brackets_LiveDev_Transport, window.console));
