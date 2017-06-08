@@ -155,13 +155,51 @@ define(function (require, exports, module) {
                         return;
                     }
 
+                    function getFilesRecursively(targetDir, callback) {
+                        var directory = FileSystem.getDirectoryForPath(targetDir);
+                        var unfiltered = [];
+                        directory.getContents(function (err, contents) {
+                            var currentDeferred, entryStr, syncResults;
+                            if(err) {
+                                callback(err);
+                                return;
+                            }
+                            contents.forEach(function (entry) {
+                                if (!ProjectManager.shouldShow(entry)) {
+                                    callback();
+                                    return;
+                                }
+                                if (entry._isDirectory) {
+                                    var fPath = entry._path;
+                                    getFilesRecursively(fPath, function (err, files) {
+                                        if (err) {
+                                            callback(err);
+                                            return;
+                                        }
+                                        unfiltered.push(files);
+                                    });
+                                } 
+                                else {
+                                    entryStr = entry._name;
+                                    unfiltered.push(entryStr);
+                                }
+                            });
+                        });
+                        callback(null, unfiltered);
+                    }
+                    
                     // convert to doc relative path
                     entryStr = queryDir + entry._name;
-                    // TODO: should do a recursive walk of the files
+                    // walk of the files recursively
                     if (entry._isDirectory) {
-                        return;
+                        var fPath = entry._path;
+                        getFilesRecursively(fPath, function(err, data) {
+                            if (err) {
+                                return;
+                            }
+                            unfiltered.push(data);
+                        });
                     }
-
                     // code hints show the unencoded string so the
                     // choices are easier to read.  The encoded string
                     // will still be inserted into the editor.
@@ -213,7 +251,7 @@ define(function (require, exports, module) {
         unfiltered.forEach(function (item) {
             if(isImage) {
                 if(Content.isImage(Path.extname(item))) {
-                    result.push(item);
+                    result = result.concat(item);
                 }
             } else {
                 result.push(item);
