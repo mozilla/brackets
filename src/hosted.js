@@ -81,7 +81,6 @@
 
     function ensureFiles(Bramble, callback) {
         var fs = Bramble.getFileSystem();
-
         // If there's already a project dir there, don't create it again
         // so that we don't overwrite user's files.
         fs.exists(projectRoot, function(exists) {
@@ -93,8 +92,16 @@
     }
 
     function load(Bramble) {
+        var hash = location.hash.replace(/^#/, "");
+        var m = /&?togetherjs=([^&]*)/.exec(hash);
+        var URL = "index.html";
+        if(m) {
+            if(m[1]) {
+                URL += "#&togetherjs="+m[1];
+            }
+        }
         Bramble.load("#bramble",{
-            url: "index.html",
+            url: URL,
             useLocationSearch: true
         });
 

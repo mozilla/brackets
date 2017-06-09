@@ -5,7 +5,10 @@ define(function (require, exports, module) {
 
     function Collaboration() {
         this.togetherjs = togetherjs;
-        togetherjs();
+        var self = this;
+        document.getElementById("collaborate").onclick = function() {
+            self.togetherjs();
+        };
         this.init();
     }
 
@@ -45,7 +48,7 @@ define(function (require, exports, module) {
 
     Collaboration.prototype.triggerCodemirrorChange = function(changeList) {
         if(!this.changing) {
-            this.togetherjs.emit(changeList);
+            this.togetherjs.emit("data", changeList);
         }
     };
 
