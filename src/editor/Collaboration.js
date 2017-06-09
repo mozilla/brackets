@@ -20,7 +20,7 @@ define(function (require, exports, module) {
              return;
             }
             self.changing = true;
-            var cm = this.codeMirror;
+            var cm = self.codeMirror;
             var start = cm.indexFromPos(delta.from);
              // apply the delete operation first
             if (delta.removed.length > 0) {
