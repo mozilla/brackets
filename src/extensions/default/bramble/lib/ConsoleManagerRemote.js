@@ -7,7 +7,7 @@
     }
 
     // console namespace
-    const consoleNS = console;
+    var consoleNS = console;
 
     // Implement standard console.* functions
     ["log",
@@ -20,7 +20,7 @@
      "time",
      "timeEnd"].forEach(function(type) {
         // cache the old binding
-        let oldFn = console[type];
+        var oldFn = console[type];
 
         // rebind for our convenience
         console[type] = function() {
@@ -54,7 +54,7 @@
     }, false);
 
     // cache the old assert binding
-    let oldAssert = console.assert;
+    var oldAssert = console.assert;
 
     // rebind for our convenience
     console.assert = function() {
