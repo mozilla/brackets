@@ -28,6 +28,7 @@ define(function (require, exports, module) {
         function aggregate(content, callback) {
             var urls = [];
             var urlRegex = new RegExp('url\\([\\\'\\"]?([^\\\'\\"\\)]+)[\\\'\\"]?\\)', 'g');
+            var urlQuotesRegex = new RegExp(/[\"\'](.*?\.css)[\"\']/, 'g');
             var periodRegex = new RegExp('\\.', 'g');
             var forwardSlashRegex = new RegExp('\\/', 'g');
             var dashRegex = new RegExp('\\-', 'g');
@@ -66,6 +67,13 @@ define(function (require, exports, module) {
             }
 
             content.replace(urlRegex, function(_, url) {
+                if(!Content.isRelativeURL(url)) {
+                    return;
+                }
+                urls.push(url);
+            });
+
+            content.replace(urlQuotesRegex, function(_, url) {
                 if(!Content.isRelativeURL(url)) {
                     return;
                 }
