@@ -32,22 +32,6 @@ define(function (require, exports, module) {
 
     var DEFAULT_COLOR = "white";
 
-    /*
-    This function takes a line number, string and the colon position, and writes
-    the default color value at 2 places after the colon position
-     */
-    function setLine(lineNo, newContent, hostEditor, colonPos) {
-        var fileContent = [];
-        var content = hostEditor._codeMirror['doc']['children'][0]['lines'];
-        var lineContent = content[lineNo]['text'];
-        lineContent = [lineContent.slice(0, colonPos + 2), newContent, lineContent.slice(colonPos + 2)].join('');
-        content[lineNo]['text'] = lineContent;
-        for (var i = 0; i < content.length; i++) {
-            fileContent.push(content[i]['text']);
-        }
-        hostEditor._codeMirror.setValue(fileContent.join("\n"));
-    }
-
     /**
      * Prepare hostEditor for an InlineColorEditor at pos if possible. Return
      * editor context if so; otherwise null.
@@ -107,7 +91,11 @@ define(function (require, exports, module) {
                     }
                 } else {
                     // edit the color value of a new css rule
-                    setLine(pos.line, DEFAULT_COLOR, hostEditor, colonPos);
+                    var newText = " ", from, to;
+                    newText = newText.concat(DEFAULT_COLOR, ";");
+                    from = {line: pos.line, ch: colonPos + 1};
+                    to = {line: pos.line, ch: cursorLine.length};
+                    hostEditor._codeMirror.replaceRange(newText, from, to);
                     pos.ch = colonPos + 2;
                     endPos = {line: pos.line, ch: pos.ch + DEFAULT_COLOR.length};
                     colorValue = DEFAULT_COLOR;
