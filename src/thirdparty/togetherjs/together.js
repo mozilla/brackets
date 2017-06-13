@@ -317,9 +317,7 @@ define(function () {
       }
     }
     if (min) {
-        setTimeout(function(){
-          addScript("/src/thirdparty/togetherjs/togetherjsPackage.js ");
-        }, 3000);
+      addScript("/src/thirdparty/togetherjs/togetherjsPackage.js ");
     } else {
       addScript("/togetherjs/libs/require.js");
     }
