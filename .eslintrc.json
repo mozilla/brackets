@@ -1,10 +1,16 @@
 {
+    "extends": [
+        "prettier"
+    ],
+     "plugins": [
+        "prettier"
+    ],
     "rules": {
         "no-bitwise": 0,
         "curly": 2,
         "eqeqeq": 2,
         "guard-for-in": 0,
-        "wrap-iife": [2, "outside"],
+        "wrap-iife": [2, "inside"],
         "no-use-before-define": 0,
         "new-cap": [0, {
             "capIsNewExceptions": [
@@ -47,7 +53,13 @@
 
         "no-trailing-spaces": 0,
         "eol-last": 0,
-        "max-len": [1, 120]
+        "max-len": [1, 120],
+        "prettier/prettier": [
+            "error", 
+            {
+                "tabWidth": 4
+            }
+        ]
     },
     "globals": {
         "brackets": false,
