@@ -42,7 +42,9 @@ define(function (require, exports, module) {
         ViewUtils         = require("utils/ViewUtils"),
         KeyEvent          = require("utils/KeyEvent"),
         DragAndDrop       = require("utils/DragAndDrop"),
-        BlobUtils         = require("filesystem/impls/filer/BlobUtils");
+        BlobUtils         = require("filesystem/impls/filer/BlobUtils"),
+        Menus             = require("command/Menus"),
+        Commands        = require("command/Commands");
 
     var DOM = React.DOM;
 
@@ -144,6 +146,31 @@ define(function (require, exports, module) {
                 marginLeft: INDENTATION_WIDTH * depth
             }
         });
+    }
+
+    /**
+     * @private
+     *
+     * Create the dropdown-arrow icons used for dropdown menu.
+     *
+     * @return {ReactComponent} The resulting ins.
+     */
+    function _createDropDownIns() {
+        return DOM.ins({
+            className: "dropdown-arrow",
+            onClick:  addDropDown
+        });
+    }
+
+    /**
+     * @private
+     *
+     * Opens dropdown menu on-click of dropdown-arrow icon.
+     */
+    var addDropDown = function(e){
+        e.stopPropagation();
+        var project_cmenu = Menus.getContextMenu(Menus.ContextMenuIds.PROJECT_MENU);
+        project_cmenu.open(e);
     }
 
     /**
@@ -596,6 +623,12 @@ define(function (require, exports, module) {
             }
 
             liArgs.push(nameDisplay);
+
+            var dropdown = _createDropDownIns();
+
+            if (this.props.entry.get("selected")){
+                liArgs.push(dropdown);
+            }
 
             return DOM.li.apply(DOM.li, liArgs);
         }
