@@ -180,7 +180,7 @@ define(function () {
 
   function addScript(url) {
     var script = document.createElement("script");
-    script.src = url;
+    script.src = baseUrl + url + "?bust=" + cacheBust;
     document.head.appendChild(script);
   }
 
@@ -317,7 +317,7 @@ define(function () {
       }
     }
     if (min) {
-      addScript("/src/thirdparty/togetherjs/togetherjsPackage.js ");
+      addScript("/togetherjs/togetherjsPackage.js");
     } else {
       addScript("/togetherjs/libs/require.js");
     }
