@@ -171,7 +171,7 @@ define(function (require, exports, module) {
         e.stopPropagation();
         var project_cmenu = Menus.getContextMenu(Menus.ContextMenuIds.PROJECT_MENU);
         project_cmenu.open(e);
-    }
+    };
 
     /**
      * This is a mixin that provides rename input behavior. It is responsible for taking keyboard input
