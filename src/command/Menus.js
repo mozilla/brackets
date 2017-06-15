@@ -60,6 +60,7 @@ define(function (require, exports, module) {
         EDITOR_MENU:                    "editor-context-menu",
         INLINE_EDITOR_MENU:             "inline-editor-context-menu",
         PROJECT_MENU:                   "project-context-menu",
+        DROPDOWN_MENU:                  "dropdown-context-menu",
         WORKING_SET_CONTEXT_MENU:       "workingset-context-menu",
         WORKING_SET_CONFIG_MENU:        "workingset-configuration-menu",
         SPLITVIEW_MENU:                 "splitview-menu"

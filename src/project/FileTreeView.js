@@ -169,8 +169,8 @@ define(function (require, exports, module) {
      */
     var addDropDown = function(e){
         e.stopPropagation();
-        var project_cmenu = Menus.getContextMenu(Menus.ContextMenuIds.PROJECT_MENU);
-        project_cmenu.open(e);
+        var dropdown_cmenu = Menus.getContextMenu(Menus.ContextMenuIds.DROPDOWN_MENU);
+        dropdown_cmenu.open(e);
     };
 
     /**

@@ -250,6 +250,11 @@ define(function (require, exports, module) {
 //        project_cmenu.addMenuDivider();
 //        project_cmenu.addMenuItem(Commands.FILE_REFRESH);
         
+        var dropdown_cmenu = Menus.registerContextMenu(Menus.ContextMenuIds.DROPDOWN_MENU);
+        dropdown_cmenu.addMenuItem(Commands.FILE_RENAME);
+        dropdown_cmenu.addMenuItem(Commands.FILE_DELETE);
+        dropdown_cmenu.addMenuItem(Commands.FILE_DOWNLOAD);
+
         var editor_cmenu = Menus.registerContextMenu(Menus.ContextMenuIds.EDITOR_MENU);
         // editor_cmenu.addMenuItem(Commands.NAVIGATE_JUMPTO_DEFINITION);
         editor_cmenu.addMenuItem(Commands.TOGGLE_QUICK_EDIT);
