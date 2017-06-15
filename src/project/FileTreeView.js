@@ -50,6 +50,15 @@ define(function (require, exports, module) {
 
     /**
      * @private
+     * @type {Object}
+     *
+     * Stores the full file path of selected file.
+     * Used in getContext method for drop-down "Move To.." menu.
+     */
+    var _context = {};
+
+    /**
+     * @private
      * @type {Immutable.Map}
      *
      * Stores the file tree extensions for adding classes and icons. The keys of the map
@@ -97,6 +106,28 @@ define(function (require, exports, module) {
             return result;
         }
     };
+
+    /**
+     * @public
+     *
+     * Gets the context object for drop-down "Move TO..." menu.
+     *
+     * @return {object} Context to be used
+     */
+    function getContext() {
+        return _context;
+    }
+
+    /**
+     * @private
+     *
+     * Sets the context object for drop-down "Move TO..." menu.
+     *
+     * @param {object} context Context object with name and full path
+     */
+    function _setContext(context){
+        _context  = context;
+    }
 
     /**
      * @private
@@ -157,7 +188,7 @@ define(function (require, exports, module) {
      */
     function _createDropDownIns() {
         return DOM.ins({
-            className: "dropdown-arrow",
+            className: "dropdown-arrow context-node",
             onClick:  addDropDown
         });
     }
@@ -627,6 +658,7 @@ define(function (require, exports, module) {
             var dropdown = _createDropDownIns();
 
             if (this.props.entry.get("selected")){
+                _setContext(this.getDataForExtension());
                 liArgs.push(dropdown);
             }
 
@@ -1236,6 +1268,7 @@ define(function (require, exports, module) {
     exports._fileTreeView = fileTreeView;
 
     // Public API
+    exports.getContext = getContext;
     exports.addIconProvider = addIconProvider;
     exports.addClassesProvider = addClassesProvider;
     exports.render = render;

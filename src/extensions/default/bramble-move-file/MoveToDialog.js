@@ -7,6 +7,7 @@ define(function (require, exports, module) {
     var Dialogs                = brackets.getModule("widgets/Dialogs");
     var DefaultDialogs         = brackets.getModule("widgets/DefaultDialogs");
     var ProjectManager         = brackets.getModule("project/ProjectManager");
+    var FileTreeView           = brackets.getModule("project/FileTreeView");
     var CommandManager         = brackets.getModule("command/CommandManager");
     var Commands               = brackets.getModule("command/Commands");
     var MainViewManager        = brackets.getModule("view/MainViewManager");
@@ -186,7 +187,7 @@ define(function (require, exports, module) {
     }
 
     function open() {
-        var context = ProjectManager.getContext();
+        var context = ProjectManager.getContext() || FileTreeView.getContext();
         if(!context) {
             return;
         }
