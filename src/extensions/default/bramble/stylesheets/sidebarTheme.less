@@ -79,7 +79,7 @@ body[data-theme='light-theme'] li.jstree-open > a span {
 li.jstree-open a,
 li.jstree-closed a,
 li.jstree-leaf a {
-    padding: 10px 10px 10px 40px;
+    padding: 12px 10px 12px 40px;
     cursor: pointer !important;
     box-shadow: none;
 }
@@ -176,7 +176,6 @@ li.jstree-open > ul:empty:after {
 }
 
 
-
 /* Right-clicked file */
 
 li.jstree-closed a.context-node,
@@ -184,6 +183,13 @@ li.jstree-open a.context-node,
 li.jstree-leaf a.context-node {
     background: rgba(255,255,255,.08);
 }
+
+li.jstree-closed a.context-node span,
+li.jstree-open a.context-node span,
+li.jstree-leaf a.context-node span {
+    color: rgba(255,255,255,.6);
+}
+
 
 [data-theme='light-theme'] li.jstree-closed a.context-node,
 [data-theme='light-theme'] li.jstree-open a.context-node,
@@ -209,7 +215,7 @@ body[data-theme='light-theme'] li.jstree-leaf a.selected-node:hover {
 .jstree-brackets li.jstree-closed > .jstree-icon,
 .jstree-brackets li.jstree-open > .jstree-icon {
     transition: transform .15s ease-out !important;
-    top: 9px;
+    top: 11px;
     left: 14px !important;
     margin: 0 !important;
     background-image: url(../images/folder-arrow.svg);
@@ -315,7 +321,7 @@ body[data-theme='light-theme'] li.jstree-leaf a.selected-node:hover {
 /* TODO - separate dark and light styles into separate theme CSS files. */
 
 
-.context-menu .dropdown-menu    {
+.context-menu .dropdown-menu  {
     padding: 0;
     border-radius: 0;
     border: none;
@@ -328,11 +334,101 @@ body[data-theme='light-theme'] li.jstree-leaf a.selected-node:hover {
 }
 
 .context-menu .dropdown-menu li a {
-    padding: 10px 12px;
+    padding: 13px 12px 14px 12px;
     line-height: 16px;
     font-size: 16px;
     cursor: pointer;
     color: rgba(255,255,255,.8);
+    line-height: 16px;
+}
+
+.context-menu .dropdown-menu li a {
+    padding-left: 40px;
+    position: relative;
+}
+
+.context-menu .dropdown-menu li a span {
+    display: inline-block;
+    line-height: 16px;
+    font-size: 16px;
+    font-family: "Open Sans", sans-serif;
+}
+
+.context-menu .dropdown-menu li a:after {
+    background-repeat: no-repeat;
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    top: 0;
+    width: 40px;
+}
+
+
+// New File
+.context-menu .dropdown-menu li a.project-context-menu-filenewFile:after {
+    background-image: url(../images/menu-icons/file-dark.svg);
+    background-size: 17px;
+    background-position: 12px 12px;
+}
+
+.dark .context-menu .dropdown-menu li a.project-context-menu-filenewFile:after {
+    background-image: url(../images/menu-icons/file-white.svg);
+}
+
+// New folder
+.context-menu .dropdown-menu li a.project-context-menu-filenewFolder:after {
+    background-image: url(../images/menu-icons/folder-icon-dark.svg);
+    background-size: 16px;
+    background-position: 12px 15px;
+}
+
+.dark .context-menu .dropdown-menu li a.project-context-menu-filenewFolder:after {
+    background-image: url(../images/menu-icons/folder-icon-white.svg);
+}
+
+// Rename File
+.context-menu .dropdown-menu li a.project-context-menu-filerename:after {
+    background-image: url(../images/menu-icons/pencil-dark.svg);
+    background-size: 15px;
+    background-position: 12px 13px;
+}
+
+.dark .context-menu .dropdown-menu li a.project-context-menu-filerename:after {
+    background-image: url(../images/menu-icons/pencil-white.svg);
+}
+
+// Move File
+.context-menu .dropdown-menu li a.project-context-menu-bramble-move-filemoveFile:after {
+    background-image: url(../images/menu-icons/move-file-black.svg);
+    background-size: 16px;
+    background-position: 12px 15px;
+}
+
+.dark .context-menu .dropdown-menu li a.project-context-menu-bramble-move-filemoveFile:after {
+    background-image: url(../images/menu-icons/move-file-light.svg);
+}
+
+// Delete file
+.context-menu .dropdown-menu li a.project-context-menu-filedelete:after {
+    background-image: url(../images/menu-icons/trashcan-dark.svg);
+    background-size: 14px;
+    background-position: 13px 13px;
+}
+
+.dark .context-menu .dropdown-menu li a.project-context-menu-filedelete:after {
+    background-image: url(../images/menu-icons/trashcan-white.svg);
+}
+
+// Download file
+.context-menu .dropdown-menu li a.project-context-menu-filedownload:after {
+    background-image: url(../images/menu-icons/download-dark.svg);
+    background-size: 16px;
+    background-position: 13px 13px;
+}
+
+.dark .context-menu .dropdown-menu li a.project-context-menu-filedownload:after {
+    background-image: url(../images/menu-icons/download-white.svg);
 }
 
 .context-menu .dropdown-menu li a:before {
@@ -340,20 +436,41 @@ body[data-theme='light-theme'] li.jstree-leaf a.selected-node:hover {
 }
 
 .context-menu .dropdown-menu li a:hover {
-    background: rgba(255,255,255,.1);
+    background-color: rgba(255,255,255,.1);
     color: rgba(255,255,255,.8);
+    background-image: none;
+}
+
+.context-menu .dropdown-menu li .menu-shortcut {
+    display: none;
 }
 
 [data-theme='light-theme'] .context-menu .dropdown-menu {
     background: white;
-    border: solid 1px rgba(0,0,0,.1);
+    border: none;
 }
 
 [data-theme='light-theme'] .context-menu .dropdown-menu li a {
-    color: rgba(0,0,0,.5);
+    color: rgba(0,0,0,.6);
+}
+
+.context-menu .dropdown-menu li a:after {
+    opacity: .6;
 }
 
 [data-theme='light-theme'] .context-menu .dropdown-menu li a:hover {
-    background: rgba(0,0,0,.1);
-    color: rgba(0,0,0,.8);
+    background-color: rgba(0,0,0,.08);
+    background-image: none;
+}
+
+.dark .context-menu .dropdown-menu li a {
+    color: rgba(255,255,255,.6);
+}
+
+.dark .context-menu .dropdown-menu li a:hover {
+    background-image: none;
+}
+
+.dark .context-menu .dropdown-menu li a:after {
+    opacity: .8;
 }

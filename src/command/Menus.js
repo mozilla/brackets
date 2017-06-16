@@ -607,7 +607,7 @@ define(function (require, exports, module) {
                 $menuItem = $("<li><hr class='divider' id='" + id + "' /></li>");
             } else {
                 // Create the HTML Menu
-                $menuItem = $("<li><a href='#' id='" + id + "'> <span class='menu-name'></span></a></li>");
+                $menuItem = $("<li><a href='#' id='" + id + "' class='" + id.replace(".","") + "'><span class='menu-name'></span></a></li>");
 
                 $menuItem.on("click", function () {
                     menuItem._command.execute();
