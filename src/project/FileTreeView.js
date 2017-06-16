@@ -1113,7 +1113,7 @@ define(function (require, exports, module) {
                     isRoot: true,
                     depth: 1,
                     parentPath: this.props.parentPath,
-                    sortDirectoriesFirst : true, // As opposed to this.props.sortDirectoriesFirst
+                    sortDirectoriesFirst : this.props.sortDirectoriesFirst,
                     contents: this.props.treeData,
                     extensions: this.props.extensions,
                     actions: this.props.actions,
