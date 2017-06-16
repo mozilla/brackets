@@ -335,7 +335,7 @@ define(function (require, exports, module) {
      * See `ProjectModel.setSortDirectoriesFirst`
      */
     ActionCreator.prototype.setSortDirectoriesFirst = function (sortDirectoriesFirst) {
-        this.model.setSortDirectoriesFirst(true);
+        this.model.setSortDirectoriesFirst(sortDirectoriesFirst);
     };
 
     /**
@@ -1255,6 +1255,7 @@ define(function (require, exports, module) {
     CommandManager.register(Strings.CMD_FILE_REFRESH,     Commands.FILE_REFRESH,          refreshFileTree);
 
     // Define the preference to decide how to sort the Project Tree files
+    // XXXBramble: we force dirs to get shown at the top
     PreferencesManager.definePreference(SORT_DIRECTORIES_FIRST, "boolean", true, {
         description: Strings.DESCRIPTION_SORT_DIRECTORIES_FIRST
     })
