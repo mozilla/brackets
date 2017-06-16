@@ -335,7 +335,7 @@ define(function (require, exports, module) {
      * See `ProjectModel.setSortDirectoriesFirst`
      */
     ActionCreator.prototype.setSortDirectoriesFirst = function (sortDirectoriesFirst) {
-        this.model.setSortDirectoriesFirst(sortDirectoriesFirst);
+        this.model.setSortDirectoriesFirst(true);
     };
 
     /**
