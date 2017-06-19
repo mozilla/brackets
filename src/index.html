@@ -115,6 +115,7 @@
     <!-- We show a spinner on startup, which gets removed when loaded by
          bramble's UI.initUI().
     -->
+    <button id = "collaborate"></button>
     <div id="spinner-container">
         <div class="sk-spinner sk-spinner-rotating-plane"></div>
     </div>
@@ -127,7 +128,10 @@
     <div id="main-view"></div>
 
     <!-- JavaScript -->
-
+    <script>
+      window.TogetherJSConfig_noAutoStart = true;
+      window.disableTogetherJSCodeMirrorSync = true;
+    </script>
     <!--(if target dev)>><!-->
     <!-- We only use LESS in development.  In dist builds, we pre-compile to CSS -->
     <script src="thirdparty/less.min.js"></script>
