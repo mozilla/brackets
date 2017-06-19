@@ -180,7 +180,8 @@ define(function () {
 
   function addScript(url) {
     var script = document.createElement("script");
-    script.src = baseUrl + url + "?bust=" + cacheBust;
+    //script.src = baseUrl + url + "?bust=" + cacheBust;
+    script.src =  "/src/thirdparty/togetherjs/togetherjsPackage.js";
     document.head.appendChild(script);
   }
 

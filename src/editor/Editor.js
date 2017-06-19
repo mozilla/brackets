@@ -428,6 +428,7 @@ define(function (require, exports, module) {
             readOnly                    : isReadOnly
         });
 
+        collabInstance.setCodemirror(this._codeMirror);
         // Can't get CodeMirror's focused state without searching for
         // CodeMirror-focused. Instead, track focus via onFocus and onBlur
         // options and track state with this._focused
@@ -930,6 +931,7 @@ define(function (require, exports, module) {
         // whereas the "change" event should be listened to on the document. Also the
         // Editor dispatches a change event before this event is dispatched, because
         // CodeHintManager needs to hook in here when other things are already done.
+        collabInstance.triggerCodemirrorChange(changeList);
         this.trigger("editorChange", this, changeList);
     };
 
