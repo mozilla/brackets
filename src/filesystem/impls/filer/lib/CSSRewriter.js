@@ -80,7 +80,9 @@ define(function (require, exports, module) {
                 urls.push(url);
             });
 
-            urls = urls.filter((v, i, a) => a.indexOf(v) === i);
+            urls = urls.filter(function(item, pos, self) {
+              return self.indexOf(item) === pos;
+            });
             fetchFiles(urls, callback);
         }
 
