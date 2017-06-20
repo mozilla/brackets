@@ -1,6 +1,8 @@
 define(function (require, exports, module) {
     "use strict";
 
+    var SimpleWebRTC = require("simplewebrtc");
+
     function Collaboration() {
         var self = this;
         var webrtc = new SimpleWebRTC({
@@ -22,7 +24,7 @@ define(function (require, exports, module) {
         var self = this;
         self.changing  = false;
         this.webrtc.connection.on('message', function (msg) {
-          if(msg.type == "data") {
+          if(msg.type === "data") {
             var delta = msg.payload;
             if(!self.codemirror || self.changing) {
              return;
