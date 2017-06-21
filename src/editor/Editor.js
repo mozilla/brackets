@@ -103,7 +103,7 @@ define(function (require, exports, module) {
     
 
     var cmOptions         = {};
-    var collabInstance = new Collaboration();
+    var collabInstance    = new Collaboration();
 
     /**
      * Constants
@@ -432,7 +432,7 @@ define(function (require, exports, module) {
         // CodeMirror-focused. Instead, track focus via onFocus and onBlur
         // options and track state with this._focused
         this._focused = false;
-        collabInstance.setCodemirror(this._codeMirror);
+        collabInstance.init(this._codeMirror);
 
         this._installEditorListeners();
 
