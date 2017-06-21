@@ -16,6 +16,15 @@ define(function (require, exports, module) {
     var Buffer          = Filer.Buffer;
     var Path            = Filer.Path;
     var fs              = Filer.fs();
+    var Dialogs         = require("widgets/Dialogs");
+    var DefaultDialogs  = require("widgets/DefaultDialogs");
+    var Strings         = require("strings");
+    var StringUtils     = require("utils/StringUtils");
+
+    // These are const variables
+    var CANCEL_OPERATION        = -1,
+        OVERWRITE_OPERATION     = 1,
+        KEEP_EXISTING_OPERATION = 2;
 
     // Mac and Windows clutter zip files with extra files/folders we don't need
     function skipFile(filename) {
@@ -55,6 +64,49 @@ define(function (require, exports, module) {
             // Generate Blob URLs for all the files we imported
             FileSystemCache.refresh(callback);
         });
+    }
+
+    function showOverwriteWarning(path, callback) {
+        var filepath = stripRoot(path);
+        Dialogs.showModalDialog(
+            DefaultDialogs.DIALOG_ID_INFO,
+            Strings.FILE_EXISTS_HEADER,
+            StringUtils.format(Strings.DND_FILE_REPLACE, filepath),
+            [
+                {
+                    className : Dialogs.DIALOG_BTN_CLASS_NORMAL,
+                    id        : Dialogs.DIALOG_BTN_CANCEL,
+                    text      : Strings.CANCEL
+                },
+                {
+                    className : Dialogs.DIALOG_BTN_CLASS_NORMAL,
+                    id        : Dialogs.DIALOG_BTN_IMPORT,
+                    text      : Strings.USE_IMPORTED
+                },
+                {
+                    className : Dialogs.DIALOG_BTN_CLASS_PRIMARY,
+                    id        : Dialogs.DIALOG_BTN_OK,
+                    text      : Strings.KEEP_EXISTING
+                }
+            ]
+        ).getPromise().then(function (id) {
+            var result;
+            if (id === Dialogs.DIALOG_BTN_IMPORT) {
+                result = OVERWRITE_OPERATION;
+            } else if (id === Dialogs.DIALOG_BTN_OK) {
+                result = KEEP_EXISTING_OPERATION;
+            } else if (id === Dialogs.DIALOG_BTN_CANCEL) {
+                result = CANCEL_OPERATION;
+            }
+            callback(null, result);
+        }, callback);
+    }
+
+    function stripRoot(path) {
+        var root = StartupState.project("root");
+        var rootRegex = new RegExp("^" + root + "\/?");
+
+        return path.replace(rootRegex, "");
     }
 
     // zipfile can be a path (string) to a zipfile, or raw binary data.
@@ -110,21 +162,30 @@ define(function (require, exports, module) {
                 } else {
                     // XXX: some zip files don't seem to be structured such that dirs
                     // get created before files. Create base dir if not there yet.
-                    fs.stat(basedir, function(err, stats) {
-                        if(err) {
-                            if(err.code !== "ENOENT") {
-                                return callback(err);
-                            }
-
-                            fs.mkdirp(basedir, function(err) {
-                                if(err) {
-                                    return callback(err);
-                                }
-                                fs.writeFile(path.absPath, path.data, callback);
-                            });
-                        } else {
-                            fs.writeFile(path.absPath, path.data, callback);
+                    fs.mkdirp(basedir, function (err) {
+                        if (err) {
+                            return callback(err);
                         }
+                        fs.stat(path.absPath, function(err, stats) {
+                            if(err && err.code !== "ENOENT") {
+                                    return callback(err);
+                            }
+                            if (stats.type === "FILE") {
+                                showOverwriteWarning(path.absPath, function (err, result) {
+                                    if (err) {
+                                        return callback(err);
+                                    }
+
+                                    if (result === OVERWRITE_OPERATION) {
+                                        fs.writeFile(path.absPath, path.data, callback);
+                                    } else if (result === KEEP_EXISTING_OPERATION) {
+                                        callback();
+                                    } else if (result === CANCEL_OPERATION) {
+                                        callback(new Error("Operation Cancelled"));
+                                    }
+                                });
+                            }
+                        });
                     });
                 }
             }
@@ -249,11 +310,33 @@ define(function (require, exports, module) {
             }
 
             fs.mkdirp(basedir, function(err) {
-                if(err && err.code !== "EEXIST") {
+                if(err) {
                     return callback(err);
                 }
 
-                fs.writeFile(path, new Buffer(data), {encoding: null}, callback);
+                fs.stat(path, function (err, stats) {
+                    if (err && err.code !== "ENOENT") {
+                        return callback(err);
+                    }
+
+                    if (stats.type !== "FILE") {
+                        return callback();
+                    }
+
+                    showOverwriteWarning(path, function (err, result) {
+                        if (err) {
+                            return callback(err);
+                        }
+
+                        if (result === OVERWRITE_OPERATION) {
+                            fs.writeFile(path, new Buffer(data), {encoding: null}, callback);
+                        } else if (result === KEEP_EXISTING_OPERATION) {
+                            return callback();
+                        } else if (result === CANCEL_OPERATION) {
+                            callback(new Error("Operation Cancelled"));
+                        }
+                    });
+                });
             });
         }
 
@@ -266,6 +349,10 @@ define(function (require, exports, module) {
 
         function writeCallback(err) {
             if(err) {
+                if (err.message === "Operation Cancelled") {
+                    finish(err);
+                    return;
+                }
                 console.error("[Bramble untar] couldn't extract file", err);
             }
 
