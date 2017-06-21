@@ -199,9 +199,12 @@ li.jstree-leaf a.context-node span {
 
 /* Currently selected (edited) file */
 
-li.jstree-leaf a.selected-node,
-li.jstree-leaf a.selected-node:hover {
-    background: #222;
+li.jstree-leaf a.selected-node {
+  background: #222;
+
+  span {
+    color: white;
+  }
 }
 
 body[data-theme='light-theme'] li.jstree-leaf a.selected-node,
