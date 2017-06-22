@@ -17,5 +17,8 @@ define(function (require, exports, module) {
     var menu = Menus.getContextMenu(Menus.ContextMenuIds.PROJECT_MENU);
     menu.addMenuItem(MOVE_FILE, null, Menus.AFTER, Commands.FILE_RENAME);
 
+    var dropdown_menu = Menus.getContextMenu(Menus.ContextMenuIds.DROPDOWN_MENU);
+    dropdown_menu.addMenuItem(MOVE_FILE, null, Menus.AFTER, Commands.FILE_RENAME);
+
     ExtensionUtils.loadStyleSheet(module, "styles/style.less");
 });

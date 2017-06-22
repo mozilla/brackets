@@ -108,6 +108,7 @@ li.jstree-closed > a {
 
 /* Selected Item */
 
+
 li.jstree-leaf a.selected-node,
 li.jstree-leaf a.selected-node span,
 li.jstree-leaf a.selected-node:hover .extension,
@@ -198,6 +199,18 @@ li.jstree-leaf a.context-node span {
 }
 
 /* Currently selected (edited) file */
+
+.dropdown-arrow {
+    background-image: url(../images/down-arrow-dark.svg);
+    background-size: 15px;
+    background-repeat: no-repeat;
+    right: 14px !important;
+    top: 9px;
+}
+
+[data-theme='light-theme'] .dropdown-arrow {
+    background-image: url(../images/down-arrow-light.svg);
+}
 
 li.jstree-leaf a.selected-node,
 li.jstree-leaf a.selected-node:hover {

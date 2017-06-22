@@ -42,9 +42,20 @@ define(function (require, exports, module) {
         ViewUtils         = require("utils/ViewUtils"),
         KeyEvent          = require("utils/KeyEvent"),
         DragAndDrop       = require("utils/DragAndDrop"),
-        BlobUtils         = require("filesystem/impls/filer/BlobUtils");
+        BlobUtils         = require("filesystem/impls/filer/BlobUtils"),
+        Menus             = require("command/Menus"),
+        Commands        = require("command/Commands");
 
     var DOM = React.DOM;
+
+    /**
+     * @private
+     * @type {Object}
+     *
+     * Stores the full file path of selected file.
+     * Used in getContext method for drop-down "Move To.." menu.
+     */
+    var _context = {};
 
     /**
      * @private
@@ -97,6 +108,28 @@ define(function (require, exports, module) {
     };
 
     /**
+     * @public
+     *
+     * Gets the context object for drop-down "Move TO..." menu.
+     *
+     * @return {object} Context to be used
+     */
+    function getContext() {
+        return _context;
+    }
+
+    /**
+     * @private
+     *
+     * Sets the context object for drop-down "Move TO..." menu.
+     *
+     * @param {object} context Context object with name and full path
+     */
+    function _setContext(context){
+        _context  = context;
+    }
+
+    /**
      * @private
      *
      * Gets an appropriate width given the text provided.
@@ -145,6 +178,31 @@ define(function (require, exports, module) {
             }
         });
     }
+
+    /**
+     * @private
+     *
+     * Create the dropdown-arrow icons used for dropdown menu.
+     *
+     * @return {ReactComponent} The resulting ins.
+     */
+    function _createDropDownIns() {
+        return DOM.ins({
+            className: "dropdown-arrow context-node",
+            onClick:  addDropDown
+        });
+    }
+
+    /**
+     * @private
+     *
+     * Opens dropdown menu on-click of dropdown-arrow icon.
+     */
+    var addDropDown = function(e){
+        e.stopPropagation();
+        var dropdown_cmenu = Menus.getContextMenu(Menus.ContextMenuIds.DROPDOWN_MENU);
+        dropdown_cmenu.open(e);
+    };
 
     /**
      * This is a mixin that provides rename input behavior. It is responsible for taking keyboard input
@@ -596,6 +654,13 @@ define(function (require, exports, module) {
             }
 
             liArgs.push(nameDisplay);
+
+            var dropdown = _createDropDownIns();
+
+            if (this.props.entry.get("selected")){
+                _setContext(this.getDataForExtension());
+                liArgs.push(dropdown);
+            }
 
             return DOM.li.apply(DOM.li, liArgs);
         }
@@ -1203,6 +1268,7 @@ define(function (require, exports, module) {
     exports._fileTreeView = fileTreeView;
 
     // Public API
+    exports.getContext = getContext;
     exports.addIconProvider = addIconProvider;
     exports.addClassesProvider = addClassesProvider;
     exports.render = render;
