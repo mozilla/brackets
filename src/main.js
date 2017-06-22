@@ -43,10 +43,7 @@ require.config({
 
         // In various places in the code, it's useful to know if this is a dev vs. prod env.
         // See Gruntfile for prod override of this to config.prod.js.
-        "envConfig": "bramble/config/config.dev",
-        "yjs": "../node_modules/yjs/dist/y",
-        "y-text": "../node_modules/y-text/dist/y-text",
-        "y-array": "../node_modules/y-array/dist/y-array"
+        "envConfig": "bramble/config/config.dev"
     },
     map: {
         "*": {
