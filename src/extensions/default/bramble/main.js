@@ -15,6 +15,7 @@ define(function (require, exports, module) {
         PreferencesManager   = brackets.getModule("preferences/PreferencesManager"),
         LiveDevelopment      = brackets.getModule("LiveDevelopment/LiveDevMultiBrowser"),
         BrambleStartupState  = brackets.getModule("bramble/StartupState"),
+        BrambleEvents        = brackets.getModule("bramble/BrambleEvents"),
         ProjectManager       = brackets.getModule("project/ProjectManager"),
         CommandManager       = brackets.getModule("command/CommandManager"),
         Commands             = brackets.getModule("command/Commands"),
@@ -120,6 +121,13 @@ define(function (require, exports, module) {
 
         // We're all done loading and can pass startup state info back to the host app.
         RemoteEvents.loaded();
+
+        // Show Tutorial Pane by default if `tutorial.html` exists at project load
+        // Can only be done after Remote Events is finished loading so that thimble and bramble can communicate
+        var filename = BrambleStartupState.project("filename");
+        if(Path.basename(filename) === "tutorial.html") {
+            BrambleEvents.triggerTutorialVisibilityChange(true);
+        }
     }
 
     // Normally, in Brackets proper, this happens in src/brackets.js. We've moved it here
