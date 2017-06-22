@@ -8,6 +8,7 @@ define(function (require, exports, module) {
         Commands            = brackets.getModule("command/Commands"),
         Resizer             = brackets.getModule("utils/Resizer"),
         StatusBar           = brackets.getModule("widgets/StatusBar");
+
     // Orientation
     var VERTICAL_ORIENTATION    = 0,
         HORIZONTAL_ORIENTATION  = 1;
@@ -23,26 +24,26 @@ define(function (require, exports, module) {
      * Publicly avaialble function used to create an empty iframe within the second-panel
      */
     function init() {
-        //Check to see if we've created the iframe already, return if so
-        if(getBrowserIframe()) {
+        //Check to see if we've created the preview pane already, return if so
+        if(getPreviewPane()) {
             return;
         }
         //Get current GUI layout
         var result = MainViewManager.getLayoutScheme();
 
-        // If iframe does not exist, then show it
+        // If preview pane does not exist, then show it
         if(result.rows === 1 && result.columns === 1) {
             show(_orientation);
         }
         /*
-         *Creating the empty iFrame we'll be using
+         *Creating the empty iFrame we'll be using for preview
          * Starting by Emptying all contents of #second-pane
          */
         var _panel = $("#second-pane").empty();
 
         // Create the iFrame for the blob to live in later
         var iframeConfig = {
-            id: "bramble-iframe-browser",
+            id: "bramble-preview-pane",
             frameborder: 0
         };
         //Append iFrame to _panel
@@ -50,7 +51,7 @@ define(function (require, exports, module) {
     }
 
     /*
-     * Publicly available function used to change the _orientation value of iframe-browser
+     * Publicly available function used to change the _orientation value of Preview Pane
      * orientation: Takes one argument of either VERTICAL_ORIENTATION OR
      * HORIZONTAL_ORIENTATION and uses that to change the _orientation value accordingly
      */
@@ -64,7 +65,7 @@ define(function (require, exports, module) {
     }
 
     /*
-     * Publicly available function used to change the layout of the iFrame
+     * Publicly available function used to change the layout of the Preview Pane
      * orientation: Takes one argument of either VERTICAL_ORIENTATION OR
      * HORIZONTAL_ORIENTATION and uses that to change the layout accordingly
      */
@@ -91,20 +92,20 @@ define(function (require, exports, module) {
             return;
         }
 
-        var iframe = getBrowserIframe();
+        var preview = getPreviewPane();
         var doc;
 
         Compatibility.supportsIFrameHTMLBlobURL(function(err, shouldUseBlobURL) {
             if(err) {
-                console.error("[Brackets IFrame-Browser] Unexpected error:", err);
+                console.error("[Brackets Preview Pane] Unexpected error:", err);
                 return;
             }
 
-            if(iframe) {
+            if(preview) {
                 if(shouldUseBlobURL) {
-                    iframe.src = urlOrHTML;
+                    preview.src = urlOrHTML;
                 } else {
-                    doc = iframe.contentWindow.document.open("text/html", "replace");
+                    doc = preview.contentWindow.document.open("text/html", "replace");
                     doc.write(urlOrHTML);
                     doc.close();
                 }
@@ -124,36 +125,36 @@ define(function (require, exports, module) {
         });
     }
 
-    // Return reference to iframe element or null if not available.
-    function getBrowserIframe() {
-        return window.document.getElementById("bramble-iframe-browser");
+    // Return reference to Preview Pane element or null if not available.
+    function getPreviewPane() {
+        return window.document.getElementById("bramble-preview-pane");
     }
 
     /**
      * Used to hide second pane, spawn detached preview, and attach beforeunload listener
      */
     function detachPreview() {
-        var iframe = getBrowserIframe();
+        var preview = getPreviewPane();
 
-        if(!iframe) {
+        if(!preview) {
             return;
         }
 
         PostMessageTransport.reload();
 
-        var currentURL = iframe.src;
+        var currentURL = preview.src;
         // Open detached preview window
         detachedWindow = window.open(currentURL, "Preview");
 
         return Compatibility.supportsIFrameHTMLBlobURL(function(err, shouldUseBlobURL) {
             if(err) {
-                console.error("[Brackets IFrame-Browser] Unexpected error:", err);
+                console.error("[Brackets Preview Pane] Unexpected error:", err);
                 return;
             }
 
             if(!shouldUseBlobURL) {
                 var doc = detachedWindow.document.open("text/html", "replace");
-                doc.write(iframe.contentWindow.document.documentElement.outerHTML);
+                doc.write(preview.contentWindow.document.documentElement.outerHTML);
                 doc.close();
             }
 
@@ -168,6 +169,24 @@ define(function (require, exports, module) {
 
             return detachedWindow;
         });
+    }
+
+    /**
+     * Show the Preview.
+     */
+    function showPreview() {
+        
+        Resizer.show("#second-pane");
+        $("#first-pane").removeClass("expandEditor"); 
+    }
+
+    /**
+     * Hide the Preview.
+     */
+    function hidePreview() {
+
+        Resizer.hide("#second-pane");
+        $("#first-pane").addClass("expandEditor");
     }
 
     // Return reference of open window if it exists and isn't closed
@@ -209,11 +228,14 @@ define(function (require, exports, module) {
         }
     }
 
+
     // Define public API
     exports.init = init;
     exports.update = update;
     exports.show = show;
-    exports.getBrowserIframe = getBrowserIframe;
+    exports.showPreview = showPreview;
+    exports.hidePreview = hidePreview;
+    exports.getPreviewPane = getPreviewPane;
     // Expose these constants on our module, so callers can use them with setOrientation()
     exports.HORIZONTAL_ORIENTATION = HORIZONTAL_ORIENTATION;
     exports.VERTICAL_ORIENTATION = VERTICAL_ORIENTATION;

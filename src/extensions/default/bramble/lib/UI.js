@@ -21,7 +21,7 @@ define(function (require, exports, module) {
 
     var PhonePreview  = require("text!lib/Mobile.html");
     var PostMessageTransport = require("lib/PostMessageTransport");
-    var IframeBrowser = require("lib/iframe-browser");
+    var Preview = require("lib/Preview");
     var Compatibility = require("lib/compatibility");
     var Theme = require("lib/Theme");
 
@@ -256,7 +256,7 @@ define(function (require, exports, module) {
         StatusBar.updateIndicator("mobileViewButtonBox", true, "",
                                   "Click to open preview in a mobile view");
 
-        $("#bramble-iframe-browser").appendTo("#second-pane");
+        $("#bramble-preview-pane").appendTo("#second-pane");
         $(".phone-wrapper").detach();
         $("#second-pane").removeClass("second-pane-scroll");
         $("#second-pane").off("click", stealFocus);
@@ -281,9 +281,9 @@ define(function (require, exports, module) {
         StatusBar.updateIndicator("mobileViewButtonBox", true, "",
                                   "Click to open preview in a desktop view");
 
-        $("#bramble-iframe-browser").addClass("phone-body");
+        $("#bramble-preview-pane").addClass("phone-body");
         $("#second-pane").append(PhonePreview);
-        $("#bramble-iframe-browser").appendTo("#phone-content");
+        $("#bramble-preview-pane").appendTo("#phone-content");
         $("#second-pane").addClass("second-pane-scroll");
 
         // Give focus back to the editor when the outside of the mobile phone is clicked.
@@ -338,23 +338,23 @@ define(function (require, exports, module) {
             // If it is, the attached preview is hidden
             // and the detached preview is opened.
             if(Resizer.isVisible("#second-pane")) {
-                IframeBrowser.detachPreview();
+                Preview.detachPreview();
             }
             else {
-                IframeBrowser.attachPreview();
+                Preview.attachPreview();
             }
         });
 
         Compatibility.supportsIFrameHTMLBlobURL(function(err, isCompatible) {
             if(err) {
-                console.error("[Brackets IFrame-Browser] Unexpected error:", err);
+                console.error("[Brackets Preview Pane] Unexpected error:", err);
                 return callback();
             }
 
             // If we are in IE v<11, we hide the detachable preview button
             if(!isCompatible && document.all) {
                 $("#liveDevButton").css("display", "none");
-                console.log("[Brackets IFrame-Browser] Detachable preview disabled due to incompatibility with current browser (you are possibly running IE 10 or below)");
+                console.log("[Brackets Preview Pane] Detachable preview disabled due to incompatibility with current browser (you are possibly running IE 10 or below)");
             }
 
             callback();
