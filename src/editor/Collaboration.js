@@ -38,17 +38,16 @@ define(function (require, exports, module) {
     };
 
     Collaboration.prototype.handleMessage = function(msg) {
-        if(msg.type === "new client") {
-            this.addToPending(msg.from);
-        }
-        if(this.changing) {
-            return;
-        }
-        if(msg.type === "data") {
-            this.handleCodemirrorChange(msg.payload);
-        }
-        if(msg.type === "initClient") {
-            this.initiseEditor(msg.payload);
+        switch(msg.type) {
+            case "new client":
+                this.addToPending(msg.from);
+                break;
+            case "data":
+                this.handleCodemirrorChange(msg.payload);
+                break;
+            case "initClient":
+                this.initiseEditor(msg.payload);
+                break;
         }
     };
 
@@ -57,6 +56,9 @@ define(function (require, exports, module) {
     };
 
     Collaboration.prototype.initiseEditor = function(value) {
+        if(this.changing) {
+            return;
+        }
         this.changing = true;
         this.codemirror.setValue(value);
         this.changing = false;
@@ -75,6 +77,9 @@ define(function (require, exports, module) {
     };
 
     Collaboration.prototype.handleCodemirrorChange = function(delta) {
+        if(this.changing) {
+            return;
+        }
         this.changing = true;
         var cm = this.codemirror;
         var start = cm.indexFromPos(delta.from);
