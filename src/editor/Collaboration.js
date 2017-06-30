@@ -22,49 +22,37 @@ define(function (require, exports, module) {
         this.webrtc.joinRoom('thimble', function() {
             self.codemirror = codemirror;
             self.webrtc.sendToAll("new client", {});
-            self.addListeners();
-        });
-    };
+            self.webrtc.on("createdPeer", function(peer) {
+                self.initializeNewClient(peer);
+            });
 
-    Collaboration.prototype.addListeners = function() {
-        var self = this;
-        this.webrtc.on("createdPeer", function(peer) {
-            self.initialiseNewClient(peer);
-        });
-
-        this.webrtc.connection.on('message', function (msg) {
-            self.handleMessage(msg);
+            self.webrtc.connection.on('message', function (msg) {
+                self.handleMessage(msg);
+            });
         });
     };
 
     Collaboration.prototype.handleMessage = function(msg) {
         switch(msg.type) {
             case "new client":
-                this.addToPending(msg.from);
+                this.pending.push(msg.from);
                 break;
-            case "data":
+            case "codemirror-change":
                 this.handleCodemirrorChange(msg.payload);
                 break;
             case "initClient":
-                this.initiseEditor(msg.payload);
+                if(this.changing) {
+                    return;
+                }
+                this.changing = true;
+                this.codemirror.setValue(msg.payload);
+                this.changing = false;
                 break;
         }
     };
 
-    Collaboration.prototype.addToPending = function(id) {
-        this.pending.push(id);
-    };
 
-    Collaboration.prototype.initiseEditor = function(value) {
-        if(this.changing) {
-            return;
-        }
-        this.changing = true;
-        this.codemirror.setValue(value);
-        this.changing = false;
-    };
-
-    Collaboration.prototype.initialiseNewClient = function(peer) {
+    Collaboration.prototype.initializeNewClient = function(peer) {
         this.changing = true;
         for(var i = 0; i<this.pending.length; i++) {
             if(this.pending[i] === peer.id) {
@@ -103,10 +91,11 @@ define(function (require, exports, module) {
     };
 
     Collaboration.prototype.triggerCodemirrorChange = function(changeList) {
-        if(!this.changing) {
-            for(var i = 0; i<changeList.length; i++) {
-                this.webrtc.sendToAll("data",changeList[i]);
-            }
+        if(this.changing) {
+            return;
+        }
+        for(var i = 0; i<changeList.length; i++) {
+            this.webrtc.sendToAll("codemirror-change",changeList[i]);
         }
     };
 
