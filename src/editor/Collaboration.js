@@ -19,7 +19,7 @@ define(function (require, exports, module) {
         } else {
             this.room = Math.random().toString(36).substring(7);
         }
-        console.log("room is " + this.room);
+        console.log("Link -> http://localhost:8000/src/hosted.html#?collaboration=" + this.room);
         this.webrtc = webrtc;
         this.pending = []; // pending clients that need to be initialized.
         this.changing = false;
