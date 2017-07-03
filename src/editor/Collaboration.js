@@ -2,6 +2,8 @@ define(function (require, exports, module) {
     "use strict";
 
     var SimpleWebRTC    = require("simplewebrtc");
+    var StartupState    = require("bramble/StartupState");
+    var EditorManager   = require("editor/EditorManager");
 
     function Collaboration() {
         var webrtc = new SimpleWebRTC({
@@ -19,16 +21,9 @@ define(function (require, exports, module) {
         } else {
             this.room = Math.random().toString(36).substring(7);
         }
-        console.log("Link -> http://localhost:8000/src/hosted.html#?collaboration=" + this.room);
-        this.webrtc = webrtc;
-        this.pending = []; // pending clients that need to be initialized.
-        this.changing = false;
-    };
 
-    Collaboration.prototype.init = function(codemirror) {
         var self = this;
-        this.webrtc.joinRoom("brackets-"+this.room, function() {
-            self.codemirror = codemirror;
+        webrtc.joinRoom("brackets-"+this.room, function() {
             self.webrtc.sendToAll("new client", {});
             self.webrtc.on("createdPeer", function(peer) {
                 self.initializeNewClient(peer);
@@ -38,6 +33,15 @@ define(function (require, exports, module) {
                 self.handleMessage(msg);
             });
         });
+
+        console.log("Link -> http://localhost:8000/src/hosted.html#?collaboration=" + this.room);
+        this.webrtc = webrtc;
+        this.pending = []; // pending clients that need to be initialized.
+        this.changing = false;
+    };
+
+    Collaboration.prototype.init = function(codemirror) {
+        this.codemirror = codemirror;
     };
 
     Collaboration.prototype.handleMessage = function(msg) {
@@ -60,6 +64,7 @@ define(function (require, exports, module) {
     };
 
     Collaboration.prototype.initializeNewClient = function(peer) {
+        // TODO: Recursively send all files, not just the currently open file.
         this.changing = true;
         for(var i = 0; i<this.pending.length; i++) {
             if(this.pending[i] === peer.id) {
@@ -71,8 +76,16 @@ define(function (require, exports, module) {
         this.changing = false;
     };
 
-    Collaboration.prototype.handleCodemirrorChange = function(delta) {
+    Collaboration.prototype.handleCodemirrorChange = function(params) {
         if(this.changing) {
+            return;
+        }
+        var relPath = params.path;
+        var fullPath = StartupState.project("root") + relPath;
+        var delta = params.delta;
+        var currentEditor = EditorManager.getCurrentFullEditor();
+        if(currentEditor.getFile().fullPath !== fullPath) {
+            console.log("client changing " + fullPath + "open file is "+currentEditor.getFile().fullPath);
             return;
         }
         this.changing = true;
@@ -97,12 +110,16 @@ define(function (require, exports, module) {
         this.changing = false;
     };
 
-    Collaboration.prototype.triggerCodemirrorChange = function(changeList) {
+    Collaboration.prototype.triggerCodemirrorChange = function(changeList, fullPath) {
         if(this.changing) {
             return;
         }
+        var relPath = fullPath.replace(StartupState.project("root"), "");
         for(var i = 0; i<changeList.length; i++) {
-            this.webrtc.sendToAll("codemirror-change",changeList[i]);
+            this.webrtc.sendToAll("codemirror-change", {
+                delta: changeList[i],
+                path: relPath
+            });
         }
     };
 
