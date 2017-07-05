@@ -6,8 +6,8 @@ define(function (require, exports, module) {
     var EditorManager   = require("editor/EditorManager");
     var Initializer     = require("editor/Initializer");
     var FileSystemEntry = require("filesystem/FileSystem");
-
-
+    var DocumentManager = require("document/DocumentManager");
+    
     function Collaboration() {
         var webrtc = new SimpleWebRTC({
             // the id/element dom element that will hold "our" videos
@@ -63,9 +63,10 @@ define(function (require, exports, module) {
                 this.changing = false;
                 break;
             case "initFiles":
-                if(this.fileIsCurrentlyOpen(msg.payload.path.replace(StartupState.project("root"), ""))) {
+                var cm = this.getOpenCodemirrorInstance(msg.payload.path.replace(StartupState.project("root"), ""));
+                if(cm) {
                     this.changing = true;
-                    EditorManager.getCurrentFullEditor()._codeMirror.setValue(msg.payload.content);
+                    cm.setValue(msg.payload.content);
                     this.changing = false;
                     console.log("file changed in codemirror" + msg.payload.path);
                 } else {
@@ -109,10 +110,12 @@ define(function (require, exports, module) {
         var delta = params.delta;
         var relPath = params.path;
         var fullPath = StartupState.project("root") + relPath;
-        if(!this.fileIsCurrentlyOpen(params.path)) {
+        var cm = this.getOpenCodemirrorInstance(params.path);
+        if(!cm) {
             var file = FileSystemEntry.getFileForPath(fullPath);
             var self = this;
-            file.read({}, function(err, text) {
+            console.log("writting to file" + file);
+            /*file.read({}, function(err, text) {
                 self.changing = true;
                 if(delta.removed.length) {
                     var start = self.indexFromPos(text, delta.from);
@@ -133,11 +136,10 @@ define(function (require, exports, module) {
                     console.log(err);
                 });
                 self.changing = false;
-            });
+            });*/
             return;
         }
         this.changing = true;
-        var cm = EditorManager.getCurrentFullEditor()._codeMirror;
         var start = cm.indexFromPos(delta.from);
         // apply the delete operation first
         if (delta.removed.length > 0) {
@@ -197,10 +199,13 @@ define(function (require, exports, module) {
         return ch;
     };
 
-    Collaboration.prototype.fileIsCurrentlyOpen = function(relPath) {
+    Collaboration.prototype.getOpenCodemirrorInstance = function(relPath) {
         var fullPath = StartupState.project("root") + relPath;
-        var currentEditor = EditorManager.getCurrentFullEditor();
-        return currentEditor.getFile(relPath).fullPath === fullPath;
+        var doc = DocumentManager.getOpenDocumentForPath(fullPath);
+        if(doc && doc._masterEditor) {
+            return doc._masterEditor._codeMirror;
+        }
+        return null;
     };
 
     Collaboration.prototype.posFromIndex = function(text, index) {
