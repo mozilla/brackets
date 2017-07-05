@@ -77,6 +77,7 @@ define(function (require, exports, module) {
         ValidationUtils    = require("utils/ValidationUtils"),
         ViewUtils          = require("utils/ViewUtils"),
         MainViewManager    = require("view/MainViewManager"),
+        Collaboration      = require("editor/Collaboration").Collaboration,
         _                  = require("thirdparty/lodash");
 
     /** Editor preferences */
@@ -102,6 +103,7 @@ define(function (require, exports, module) {
     
 
     var cmOptions         = {};
+    var collabInstance    = new Collaboration();
 
     /**
      * Constants
@@ -430,6 +432,7 @@ define(function (require, exports, module) {
         // CodeMirror-focused. Instead, track focus via onFocus and onBlur
         // options and track state with this._focused
         this._focused = false;
+        collabInstance.init(this._codeMirror);
 
         this._installEditorListeners();
 
@@ -928,6 +931,7 @@ define(function (require, exports, module) {
         // whereas the "change" event should be listened to on the document. Also the
         // Editor dispatches a change event before this event is dispatched, because
         // CodeHintManager needs to hook in here when other things are already done.
+        collabInstance.triggerCodemirrorChange(changeList);
         this.trigger("editorChange", this, changeList);
     };
 
