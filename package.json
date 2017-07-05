@@ -51,6 +51,7 @@
         "q": "1.4.1",
         "semver": "^4.1.0",
         "wolfy87-eventemitter": "^5.1.0",
+        "simplewebrtc": "^3.0.0",
         "xmldoc": "^0.1.2"
     },
     "devDependencies": {
