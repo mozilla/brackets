@@ -7,7 +7,7 @@ define(function (require, exports, module) {
     var Initializer     = require("editor/Initializer");
     var FileSystemEntry = require("filesystem/FileSystem");
     var DocumentManager = require("document/DocumentManager");
-    
+
     function Collaboration() {
         var webrtc = new SimpleWebRTC({
             // the id/element dom element that will hold "our" videos
