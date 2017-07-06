@@ -82,7 +82,8 @@ define(function (require, exports, module) {
         docDir = FileUtils.getDirectoryPath(doc.file.fullPath);
 
         // get relative path from query string
-        queryUrl = window.PathUtils.parseUrl(query.queryStr);
+        var PathUtils = brackets.getModule("thirdparty/path-utils/path-utils");
+        queryUrl = PathUtils.parseUrl(query.queryStr);
         if (queryUrl) {
             queryDir = queryUrl.directory;
         }
