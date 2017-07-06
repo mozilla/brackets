@@ -12,7 +12,8 @@ define(function (require, exports, module) {
             // immediately ask for camera access
             autoRequestMedia: false
         });
-        var hash = location.hash.replace(/^#/, "");
+        //To be moved to the bramble API.
+        var hash = window.location.hash.replace(/^#/, "");
         var m = /&?collaboration=([^&]*)/.exec(hash);
         if(m && m[1]) {
             this.room = m[1];
@@ -27,7 +28,7 @@ define(function (require, exports, module) {
 
     Collaboration.prototype.init = function(codemirror) {
         var self = this;
-        this.webrtc.joinRoom("brackets-"+this.room, function() {
+        this.webrtc.joinRoom(this.room, function() {
             self.codemirror = codemirror;
             self.webrtc.sendToAll("new client", {});
             self.webrtc.on("createdPeer", function(peer) {

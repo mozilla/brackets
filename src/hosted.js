@@ -93,7 +93,7 @@
     }
 
     function load(Bramble) {
-        var hash = location.hash.replace(/^#/, "");
+        var hash = window.location.hash.replace(/^#/, "");
         var m = /&?collaboration=([^&]*)/.exec(hash);
         var url = "index.html";
         if(m && m[1]) {
