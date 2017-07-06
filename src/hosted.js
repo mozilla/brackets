@@ -93,8 +93,14 @@
     }
 
     function load(Bramble) {
+        var hash = location.hash.replace(/^#/, "");
+        var m = /&?collaboration=([^&]*)/.exec(hash);
+        var url = "index.html";
+        if(m && m[1]) {
+            url = url + "#&collaboration=" + m[1];
+        }
         Bramble.load("#bramble",{
-            url: "index.html",
+            url: url,
             useLocationSearch: true
         });
 

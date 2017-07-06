@@ -12,6 +12,14 @@ define(function (require, exports, module) {
             // immediately ask for camera access
             autoRequestMedia: false
         });
+        var hash = location.hash.replace(/^#/, "");
+        var m = /&?collaboration=([^&]*)/.exec(hash);
+        if(m && m[1]) {
+            this.room = m[1];
+        } else {
+            this.room = Math.random().toString(36).substring(7);
+        }
+        console.log("Link -> http://localhost:8000/src/hosted.html#?collaboration=" + this.room);
         this.webrtc = webrtc;
         this.pending = []; // pending clients that need to be initialized.
         this.changing = false;
@@ -19,7 +27,7 @@ define(function (require, exports, module) {
 
     Collaboration.prototype.init = function(codemirror) {
         var self = this;
-        this.webrtc.joinRoom('thimble', function() {
+        this.webrtc.joinRoom("brackets-"+this.room, function() {
             self.codemirror = codemirror;
             self.webrtc.sendToAll("new client", {});
             self.webrtc.on("createdPeer", function(peer) {
