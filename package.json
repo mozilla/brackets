@@ -16,6 +16,7 @@
         "anymatch": "1.3.0",
         "aws-sdk": "^2.19.0",
         "chokidar": "1.6.0",
+        "concurrently": "^3.5.0",
         "glob": "7.0.6",
         "grunt": "0.4.5",
         "grunt-cleanempty": "1.0.3",
@@ -46,8 +47,9 @@
         "pica": "^3.0.4",
         "q": "1.4.1",
         "semver": "^4.1.0",
-        "wolfy87-eventemitter": "^5.1.0",
+        "signal-master": "^1.0.1",
         "simplewebrtc": "^3.0.0",
+        "wolfy87-eventemitter": "^5.1.0",
         "xmldoc": "^0.1.2"
     },
     "devDependencies": {
@@ -73,7 +75,7 @@
         "preproduction": "grunt build-browser-compressed && npm run unlocalize",
         "production": "npm start -- --gzip",
         "test": "grunt test && grunt build-browser-compressed",
-        "server": "http-server -p 8000 --cors",
+        "server": "concurrently \"http-server -p 8000 --cors\" \"node node_modules/signal-master/server.js \"",
         "prestart": "npm run localize && grunt build-browser-dev",
         "start": "npm run server || true",
         "poststart": "npm run unlocalize"
