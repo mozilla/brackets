@@ -10,7 +10,9 @@ define(function (require, exports, module) {
             // the id/element dom element that will hold remote videos
             remoteVideosEl: 'remotesVideos',
             // immediately ask for camera access
-            autoRequestMedia: false
+            autoRequestMedia: false,
+            // TODO : Shift this to config.
+            url: "localhost:8888"
         });
         this.webrtc = webrtc;
         this.pending = []; // pending clients that need to be initialized.
