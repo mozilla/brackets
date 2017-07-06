@@ -75,7 +75,9 @@
         "preproduction": "grunt build-browser-compressed && npm run unlocalize",
         "production": "npm start -- --gzip",
         "test": "grunt test && grunt build-browser-compressed",
-        "server": "concurrently \"http-server -p 8000 --cors\" \"node node_modules/signal-master/server.js \"",
+        "server:webrtc": "node node_modules/signal-master",
+        "server:static": "http-server -p 8000 --cors",
+        "server": "concurrently \"npm run server:webrtc\" \"npm run server:static\"",
         "prestart": "npm run localize && grunt build-browser-dev",
         "start": "npm run server || true",
         "poststart": "npm run unlocalize"
