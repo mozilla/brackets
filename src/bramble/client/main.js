@@ -285,7 +285,9 @@ define([
                     if (options.hideUntilReady) {
                         _iframe.style.visibility = "visible";
                     }
-
+                    if(options.enableCollaboration) {
+                        self._executeRemoteCommand({commandCategory: "bramble", command: "INITIALIZE_COLLABORATION",args: [{collaborationUrl: options.collaborationUrl}]});
+                    }
                     // Set intial state
                     _state.fullPath = data.fullPath;
                     _state.filename = data.filename;
@@ -304,7 +306,6 @@ define([
                     _state.autoUpdate = data.autoUpdate;
                     _state.openSVGasXML = data.openSVGasXML;
 
-                    setReadyState(Bramble.READY);
                 }
                 // Listen for callbacks from commands we triggered via _executeRemoteCommand
                 else if(data.type === "bramble:remoteCommand:callback") {

@@ -1,15 +1,24 @@
 define(function (require, exports, module) {
     "use strict";
 
-    var SimpleWebRTC    = require("simplewebrtc");
-    var StartupState    = require("bramble/StartupState");
-    var EditorManager   = require("editor/EditorManager");
-    var Initializer     = require("editor/Initializer");
-    var FileSystemEntry = require("filesystem/FileSystem");
-    var DocumentManager = require("document/DocumentManager");
+    var SimpleWebRTC    = require("simplewebrtc"),
+        StartupState    = require("bramble/StartupState"),
+        EditorManager   = require("editor/EditorManager"),
+        Initializer     = require("editor/Initializer"),
+        FileSystemEntry = require("filesystem/FileSystem"),
+        DocumentManager = require("document/DocumentManager");
 
-    function Collaboration() {
-        var webrtc = new SimpleWebRTC({
+    var _webrtc;
+    var _changing;
+    var _pending;
+    var _room;
+
+    function initialize(options) {
+        if(_webrtc) {
+            console.error("Collaboration already initialized");
+            return;
+        }
+        _webrtc = new SimpleWebRTC({
             // the id/element dom element that will hold "our" videos
             localVideoEl: 'localVideo',
             // the id/element dom element that will hold remote videos
@@ -17,47 +26,39 @@ define(function (require, exports, module) {
             // immediately ask for camera access
             autoRequestMedia: false,
             // TODO : Shift this to config.
-            url: "localhost:8888"
+            url: options.collaborationUrl
         });
-        //To be moved to the bramble API.
-        var query = (new URL(window.location.href)).searchParams;
-        this.room = query.get("collaboration") || Math.random().toString(36).substring(7);
-        var self = this;
-        webrtc.joinRoom("brackets-" + this.room, function() {
-            self.webrtc.sendToAll("new client", {});
-            self.webrtc.on("createdPeer", function(peer) {
-                self.initializeNewClient(peer);
+        _room = options.room;
+        _webrtc.joinRoom(_room, function() {
+            _webrtc.sendToAll("new client", {});
+            _webrtc.on("createdPeer", function(peer) {
+                _initializeNewClient(peer);
             });
 
-            self.webrtc.connection.on('message', function (msg) {
-                self.handleMessage(msg);
+            _webrtc.connection.on('message', function (msg) {
+                _handleMessage(msg);
             });
         });
-        console.log(this.room);
-        this.webrtc = webrtc;
-        this.pending = []; // pending clients that need to be initialized.
-        this.changing = false;
+        console.log(_room);
+        _pending = []; // pending clients that need to be initialized.
+        _changing = false;
     };
 
-    Collaboration.prototype.init = function(codemirror) {
-        this.codemirror = codemirror;
-    };
-
-    Collaboration.prototype.handleMessage = function(msg) {
+    function _handleMessage(msg) {
         switch(msg.type) {
             case "new client":
-                this.pending.push(msg.from);
+                _pending.push(msg.from);
                 break;
             case "codemirror-change":
-                this.handleCodemirrorChange(msg.payload);
+                _handleCodemirrorChange(msg.payload);
                 break;
             case "initFiles":
-                var cm = this.getOpenCodemirrorInstance(msg.payload.path.replace(StartupState.project("root"), ""));
+                var cm = _getOpenCodemirrorInstance(msg.payload.path.replace(StartupState.project("root"), ""));
                 if(cm) {
-                    this.changing = true;
+                    _changing = true;
                     cm.setValue(msg.payload.content);
-                    this.changing = false;
-                    console.log("file changed in codemirror" + msg.payload.path);
+                    _changing = false;
+                    console.log("file initializing in codemirror" + msg.payload.path);
                 } else {
                     // No cm instance attached to file, need to change directly in indexeddb.
                     var file = FileSystemEntry.getFileForPath(msg.payload.path);
@@ -67,14 +68,13 @@ define(function (require, exports, module) {
                     file.write(msg.payload.content, {}, function(err) {
                         console.log(err);
                     });
+                    console.log("file initializing in indexeddb" + msg.payload.path);
                 }
                 break;
         }
     };
 
-    Collaboration.prototype.initializeNewClient = function(peer) {
-        this.changing = false;
-        var self = this;
+    function  _initializeNewClient(peer) {
         Initializer.initialize(function(fileName) {
             var file = FileSystemEntry.getFileForPath(fileName);
             file.read({}, function(err, text) {
@@ -85,21 +85,20 @@ define(function (require, exports, module) {
         });
     };
 
-    Collaboration.prototype.handleCodemirrorChange = function(params) {
-        if(this.changing) {
+    function _handleCodemirrorChange(params) {
+        if(_changing) {
             return;
         }
         var delta = params.delta;
         var relPath = params.path;
         var fullPath = StartupState.project("root") + relPath;
-        var cm = this.getOpenCodemirrorInstance(params.path);
+        var cm = _getOpenCodemirrorInstance(params.path);
         if(!cm) {
             var file = FileSystemEntry.getFileForPath(fullPath);
-            var self = this;
             console.log("writting to file which is not open in editor." + file);
             return;
         }
-        this.changing = true;
+        _changing = true;
         var start = cm.indexFromPos(delta.from);
         // apply the delete operation first
         if (delta.removed.length > 0) {
@@ -117,23 +116,10 @@ define(function (require, exports, module) {
         var from = cm.posFromIndex(start);
         var to = from;
         cm.replaceRange(param, from, to);
-        this.changing = false;
+        _changing = false;
     };
 
-    Collaboration.prototype.triggerCodemirrorChange = function(changeList, fullPath) {
-        if(this.changing) {
-            return;
-        }
-        var relPath = fullPath.replace(StartupState.project("root"), "");
-        for(var i = 0; i<changeList.length; i++) {
-            this.webrtc.sendToAll("codemirror-change", {
-                delta: changeList[i],
-                path: relPath
-            });
-        }
-    };
-
-    Collaboration.prototype.getOpenCodemirrorInstance = function(relPath) {
+    function _getOpenCodemirrorInstance(relPath) {
         var fullPath = StartupState.project("root") + relPath;
         var doc = DocumentManager.getOpenDocumentForPath(fullPath);
         if(doc && doc._masterEditor) {
@@ -142,5 +128,19 @@ define(function (require, exports, module) {
         return null;
     };
 
-    exports.Collaboration = Collaboration;
+    function triggerCodemirrorChange(changeList, fullPath) {
+        if(_changing) {
+            return;
+        }
+        var relPath = fullPath.replace(StartupState.project("root"), "");
+        for(var i = 0; i<changeList.length; i++) {
+            _webrtc.sendToAll("codemirror-change", {
+                delta: changeList[i],
+                path: relPath
+            });
+        }
+    };
+
+    exports.initialize = initialize;
+    exports.triggerCodemirrorChange = triggerCodemirrorChange;
 });
