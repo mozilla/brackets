@@ -116,29 +116,7 @@ define(function (require, exports, module) {
         if(!cm) {
             var file = FileSystemEntry.getFileForPath(fullPath);
             var self = this;
-            console.log("writting to file" + file);
-            /*file.read({}, function(err, text) {
-                self.changing = true;
-                if(delta.removed.length) {
-                    var start = self.indexFromPos(text, delta.from);
-                    var delLength = 0;
-                    for (var i = 0; i < delta.removed.length; i++) {
-                     delLength += delta.removed[i].length;
-                    }
-                    delLength += delta.removed.length - 1;
-                    var from = self.indexFromPos(text, start);
-                    var to = self.posFromIndex(text, start + delLength);
-                    text = self.replaceRange(text, '', self.posFromIndex(text, start), to);
-                }
-                var param = delta.text.join('\n');
-                var from = self.posFromIndex(text, start);
-                var to = from;
-                text = self.replaceRange(text, param, from, to);
-                file.write(text, {}, function(err) {
-                    console.log(err);
-                });
-                self.changing = false;
-            });*/
+            console.log("writting to file which is not open in editor." + file);
             return;
         }
         this.changing = true;
@@ -175,32 +153,6 @@ define(function (require, exports, module) {
         }
     };
 
-    Collaboration.prototype.replaceRange = function(text, param, from, to) {
-        //Assuming change in same line
-        var lines = text.split("\n");
-        //return text.slice(0, from) + param + text.slice( to, this.indexFromPos({line: text.length, ch: text[text.length - 1].length }));
-        if(from.line  === to.line) {
-            lines[from.line] = lines[from.line].slice(0, from.ch) + param + lines[from.line].slice(to.ch, lines[from.line].length);
-        } else {
-            lines[from.line] = lines[from.line].slice(0, from.ch);
-            lines[to.line] = lines[to.line].slice(to.ch, text[from.line].length);
-        }
-        for(var i = from.line + 1; i<to.line; i++) {
-            lines.splice(from.line + 1, 1);
-        }
-        return lines.join("\n");
-    };
-
-    Collaboration.prototype.indexFromPos = function(text, pos) {
-        var ch = 0;
-        var lines = text.split("\n");
-        for(var i = 0; i<pos.line; i++) {
-            ch += (lines[i].length);
-        }
-        ch += pos.ch;
-        return ch;
-    };
-
     Collaboration.prototype.getOpenCodemirrorInstance = function(relPath) {
         var fullPath = StartupState.project("root") + relPath;
         var doc = DocumentManager.getOpenDocumentForPath(fullPath);
@@ -208,20 +160,6 @@ define(function (require, exports, module) {
             return doc._masterEditor._codeMirror;
         }
         return null;
-    };
-
-    Collaboration.prototype.posFromIndex = function(text, index) {
-        var i = 0;
-        text = text.split("\n");
-        try {
-            while(index>text[i].length) {
-                i++;
-                index-=text[i].length;
-            }
-        } catch (e) {
-            console.log("exception : "+e);
-        }
-        return {line: i, ch: index};
     };
 
     exports.Collaboration = Collaboration;
