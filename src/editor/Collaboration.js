@@ -14,6 +14,10 @@ define(function (require, exports, module) {
             // TODO : Shift this to config.
             url: "localhost:8888"
         });
+        //To be moved to the bramble API.
+        var query = (new URL(window.location.href)).searchParams;
+        this.room = query.get("collaboration") || Math.random().toString(36).substring(7);
+        console.log(this.room);
         this.webrtc = webrtc;
         this.pending = []; // pending clients that need to be initialized.
         this.changing = false;
@@ -21,7 +25,7 @@ define(function (require, exports, module) {
 
     Collaboration.prototype.init = function(codemirror) {
         var self = this;
-        this.webrtc.joinRoom('thimble', function() {
+        this.webrtc.joinRoom(this.room, function() {
             self.codemirror = codemirror;
             self.webrtc.sendToAll("new client", {});
             self.webrtc.on("createdPeer", function(peer) {
