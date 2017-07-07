@@ -19,13 +19,9 @@ define(function (require, exports, module) {
             // TODO : Shift this to config.
             url: "localhost:8888"
         });
-        var hash = location.hash.replace(/^#/, "");
-        var m = /&?collaboration=([^&]*)/.exec(hash);
-        if(m && m[1]) {
-            this.room = m[1];
-        } else {
-            this.room = Math.random().toString(36).substring(7);
-        }
+        //To be moved to the bramble API.
+        var query = (new URL(window.location.href)).searchParams;
+        this.room = query.get("collaboration") || Math.random().toString(36).substring(7);
         var self = this;
         webrtc.joinRoom("brackets-" + this.room, function() {
             self.webrtc.sendToAll("new client", {});
@@ -37,8 +33,7 @@ define(function (require, exports, module) {
                 self.handleMessage(msg);
             });
         });
-
-        console.log("Link -> http://localhost:8000/src/hosted.html#?collaboration=" + this.room);
+        console.log(this.room);
         this.webrtc = webrtc;
         this.pending = []; // pending clients that need to be initialized.
         this.changing = false;
