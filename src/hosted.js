@@ -93,14 +93,11 @@
     }
 
     function load(Bramble) {
-        var url = "index.html";
-        var params = window.location.href.split("?").pop();
-        var room = new URLSearchParams(params).get("collaboration");
-        if(room) {
-            url = url + "?collaboration=" + room;
-        }
+        var query = (new URL(window.location.href)).searchParams;
+        var room = query.get("collaboration");
+
         Bramble.load("#bramble",{
-            url: url,
+            url: "index.html",
             useLocationSearch: true
         });
 

@@ -13,8 +13,8 @@ define(function (require, exports, module) {
             autoRequestMedia: false
         });
         //To be moved to the bramble API.
-        var params = window.location.href.split("?").pop();
-        this.room = new URLSearchParams(params).get("collaboration") || Math.random().toString(36).substring(7);
+        var query = (new URL(window.location.href)).searchParams;
+        this.room = query.get("collaboration") || Math.random().toString(36).substring(7);
         console.log("Link -> http://localhost:8000/src/hosted.html?collaboration=" + this.room);
         this.webrtc = webrtc;
         this.pending = []; // pending clients that need to be initialized.
