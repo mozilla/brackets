@@ -93,9 +93,6 @@
     }
 
     function load(Bramble) {
-        var query = (new URL(window.location.href)).searchParams;
-        var room = query.get("collaboration");
-
         Bramble.load("#bramble",{
             url: "index.html",
             useLocationSearch: true

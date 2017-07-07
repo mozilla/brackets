@@ -15,7 +15,7 @@ define(function (require, exports, module) {
         //To be moved to the bramble API.
         var query = (new URL(window.location.href)).searchParams;
         this.room = query.get("collaboration") || Math.random().toString(36).substring(7);
-        console.log("Link -> http://localhost:8000/src/hosted.html?collaboration=" + this.room);
+        console.log(this.room);
         this.webrtc = webrtc;
         this.pending = []; // pending clients that need to be initialized.
         this.changing = false;
