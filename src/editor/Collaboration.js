@@ -13,14 +13,9 @@ define(function (require, exports, module) {
             autoRequestMedia: false
         });
         //To be moved to the bramble API.
-        var hash = window.location.hash.replace(/^#/, "");
-        var m = /&?collaboration=([^&]*)/.exec(hash);
-        if(m && m[1]) {
-            this.room = m[1];
-        } else {
-            this.room = Math.random().toString(36).substring(7);
-        }
-        console.log("Link -> http://localhost:8000/src/hosted.html#?collaboration=" + this.room);
+        var params = window.location.href.split("?").pop();
+        this.room = new URLSearchParams(params).get("collaboration") || Math.random().toString(36).substring(7);
+        console.log("Link -> http://localhost:8000/src/hosted.html?collaboration=" + this.room);
         this.webrtc = webrtc;
         this.pending = []; // pending clients that need to be initialized.
         this.changing = false;

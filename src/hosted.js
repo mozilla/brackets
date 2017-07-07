@@ -93,11 +93,11 @@
     }
 
     function load(Bramble) {
-        var hash = window.location.hash.replace(/^#/, "");
-        var m = /&?collaboration=([^&]*)/.exec(hash);
         var url = "index.html";
-        if(m && m[1]) {
-            url = url + "#&collaboration=" + m[1];
+        var params = window.location.href.split("?").pop();
+        var room = new URLSearchParams(params).get("collaboration");
+        if(room) {
+            url = url + "?collaboration=" + room;
         }
         Bramble.load("#bramble",{
             url: url,
