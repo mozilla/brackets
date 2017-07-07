@@ -56,14 +56,6 @@ define(function (require, exports, module) {
             case "codemirror-change":
                 this.handleCodemirrorChange(msg.payload);
                 break;
-            case "initClient":
-                if(this.changing) {
-                    return;
-                }
-                this.changing = true;
-                EditorManager.getCurrentFullEditor()._codeMirror.setValue(msg.payload);
-                this.changing = false;
-                break;
             case "initFiles":
                 var cm = this.getOpenCodemirrorInstance(msg.payload.path.replace(StartupState.project("root"), ""));
                 if(cm) {
@@ -72,6 +64,7 @@ define(function (require, exports, module) {
                     this.changing = false;
                     console.log("file changed in codemirror" + msg.payload.path);
                 } else {
+                    // No cm instance attached to file, need to change directly in indexeddb.
                     var file = FileSystemEntry.getFileForPath(msg.payload.path);
                     if(!file) {
                         return;
@@ -85,14 +78,6 @@ define(function (require, exports, module) {
     };
 
     Collaboration.prototype.initializeNewClient = function(peer) {
-        this.changing = true;
-        for(var i = 0; i<this.pending.length; i++) {
-            if(this.pending[i] === peer.id) {
-                peer.send("initClient", EditorManager.getCurrentFullEditor()._codeMirror.getValue());
-                this.pending.splice(i, 1);
-                break;
-            }
-        }
         this.changing = false;
         var self = this;
         Initializer.initialize(function(fileName) {
