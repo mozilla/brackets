@@ -1,10 +1,20 @@
 define(function (require, exports, module) {
     "use strict";
 
-    var SimpleWebRTC    = require("simplewebrtc");
+    var SimpleWebRTC    = require("simplewebrtc"),
+        StartupState    = require("bramble/StartupState");
 
-    function Collaboration() {
-        var webrtc = new SimpleWebRTC({
+    var _webrtc;
+    var _changing;
+    var _pending;
+    var _room;
+
+    function initialize(options) {
+        if(_webrtc) {
+            console.error("Collaboration already initialized");
+            return;
+        }
+        _webrtc = new SimpleWebRTC({
             // the id/element dom element that will hold "our" videos
             localVideoEl: 'localVideo',
             // the id/element dom element that will hold remote videos
@@ -12,39 +22,31 @@ define(function (require, exports, module) {
             // immediately ask for camera access
             autoRequestMedia: false,
             // TODO : Shift this to config.
-            url: "localhost:8888"
+            url: options.collaborationUrl
         });
-        //To be moved to the bramble API.
-        var query = (new URL(window.location.href)).searchParams;
-        this.room = query.get("collaboration") || Math.random().toString(36).substring(7);
-        console.log(this.room);
-        this.webrtc = webrtc;
-        this.pending = []; // pending clients that need to be initialized.
-        this.changing = false;
-    };
-
-    Collaboration.prototype.init = function(codemirror) {
-        var self = this;
-        this.webrtc.joinRoom(this.room, function() {
-            self.codemirror = codemirror;
-            self.webrtc.sendToAll("new client", {});
-            self.webrtc.on("createdPeer", function(peer) {
-                self.initializeNewClient(peer);
+        _room = options.room;
+        _webrtc.joinRoom(_room, function() {
+            _webrtc.sendToAll("new client", {});
+            _webrtc.on("createdPeer", function(peer) {
+                _initializeNewClient(peer);
             });
 
-            self.webrtc.connection.on('message', function (msg) {
-                self.handleMessage(msg);
+            _webrtc.connection.on('message', function (msg) {
+                _handleMessage(msg);
             });
         });
+        console.log(_room);
+        _pending = []; // pending clients that need to be initialized.
+        _changing = false;
     };
 
-    Collaboration.prototype.handleMessage = function(msg) {
+    function _handleMessage(msg) {
         switch(msg.type) {
             case "new client":
-                this.pending.push(msg.from);
+                _pending.push(msg.from);
                 break;
             case "codemirror-change":
-                this.handleCodemirrorChange(msg.payload);
+                _handleCodemirrorChange(msg.payload);
                 break;
             case "initClient":
                 if(this.changing) {
@@ -57,8 +59,7 @@ define(function (require, exports, module) {
         }
     };
 
-
-    Collaboration.prototype.initializeNewClient = function(peer) {
+    function _initializeNewClient(peer) {
         this.changing = true;
         for(var i = 0; i<this.pending.length; i++) {
             if(this.pending[i] === peer.id) {
@@ -70,12 +71,14 @@ define(function (require, exports, module) {
         this.changing = false;
     };
 
-    Collaboration.prototype.handleCodemirrorChange = function(delta) {
-        if(this.changing) {
+    function _handleCodemirrorChange(params) {
+        if(_changing) {
             return;
         }
-        this.changing = true;
-        var cm = this.codemirror;
+        var delta = params.delta;
+        var relPath = params.path;
+        var fullPath = StartupState.project("root") + relPath;
+        _changing = true;
         var start = cm.indexFromPos(delta.from);
         // apply the delete operation first
         if (delta.removed.length > 0) {
@@ -93,17 +96,22 @@ define(function (require, exports, module) {
         var from = cm.posFromIndex(start);
         var to = from;
         cm.replaceRange(param, from, to);
-        this.changing = false;
+        _changing = false;
     };
 
-    Collaboration.prototype.triggerCodemirrorChange = function(changeList) {
-        if(this.changing) {
+    function triggerCodemirrorChange(changeList, fullPath) {
+        if(_changing) {
             return;
         }
+        var relPath = fullPath.replace(StartupState.project("root"), "");
         for(var i = 0; i<changeList.length; i++) {
-            this.webrtc.sendToAll("codemirror-change",changeList[i]);
+            _webrtc.sendToAll("codemirror-change", {
+                delta: changeList[i],
+                path: relPath
+            });
         }
     };
 
-    exports.Collaboration = Collaboration;
+    exports.initialize = initialize;
+    exports.triggerCodemirrorChange = triggerCodemirrorChange;
 });
