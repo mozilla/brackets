@@ -3,8 +3,6 @@ define(function (require, exports, module) {
 
     var SimpleWebRTC    = require("simplewebrtc"),
         StartupState    = require("bramble/StartupState"),
-        EditorManager   = require("editor/EditorManager"),
-        Initializer     = require("editor/Initializer"),
         FileSystemEntry = require("filesystem/FileSystem"),
         DocumentManager = require("document/DocumentManager");
 
@@ -75,14 +73,7 @@ define(function (require, exports, module) {
     };
 
     function  _initializeNewClient(peer) {
-        Initializer.initialize(function(fileName) {
-            var file = FileSystemEntry.getFileForPath(fileName);
-            file.read({}, function(err, text) {
-                if(!err) {
-                    peer.send("initFiles", {path: fileName, content: text});
-                }
-            });
-        });
+        //Add logic to initialize files for the new peer.
     };
 
     function _handleCodemirrorChange(params) {
