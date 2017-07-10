@@ -95,7 +95,8 @@
     function load(Bramble) {
         Bramble.load("#bramble",{
             url: "index.html",
-            useLocationSearch: true
+            useLocationSearch: true,
+            enableCollaboration: true
         });
 
         // Event listeners
