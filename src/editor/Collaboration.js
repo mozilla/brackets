@@ -2,9 +2,7 @@ define(function (require, exports, module) {
     "use strict";
 
     var SimpleWebRTC    = require("simplewebrtc"),
-        StartupState    = require("bramble/StartupState"),
-        FileSystemEntry = require("filesystem/FileSystem"),
-        DocumentManager = require("document/DocumentManager");
+        StartupState    = require("bramble/StartupState");
 
     var _webrtc;
     var _changing;
@@ -50,30 +48,27 @@ define(function (require, exports, module) {
             case "codemirror-change":
                 _handleCodemirrorChange(msg.payload);
                 break;
-            case "initFiles":
-                var cm = _getOpenCodemirrorInstance(msg.payload.path.replace(StartupState.project("root"), ""));
-                if(cm) {
-                    _changing = true;
-                    cm.setValue(msg.payload.content);
-                    _changing = false;
-                    console.log("file initializing in codemirror" + msg.payload.path);
-                } else {
-                    // No cm instance attached to file, need to change directly in indexeddb.
-                    var file = FileSystemEntry.getFileForPath(msg.payload.path);
-                    if(!file) {
-                        return;
-                    }
-                    file.write(msg.payload.content, {}, function(err) {
-                        console.log(err);
-                    });
-                    console.log("file initializing in indexeddb" + msg.payload.path);
+            case "initClient":
+                if(this.changing) {
+                    return;
                 }
+                this.changing = true;
+                this.codemirror.setValue(msg.payload);
+                this.changing = false;
                 break;
         }
     };
 
-    function  _initializeNewClient(peer) {
-        //Add logic to initialize files for the new peer.
+    function _initializeNewClient(peer) {
+        this.changing = true;
+        for(var i = 0; i<this.pending.length; i++) {
+            if(this.pending[i] === peer.id) {
+                peer.send("initClient", this.codemirror.getValue());
+                this.pending.splice(i, 1);
+                break;
+            }
+        }
+        this.changing = false;
     };
 
     function _handleCodemirrorChange(params) {
@@ -83,12 +78,6 @@ define(function (require, exports, module) {
         var delta = params.delta;
         var relPath = params.path;
         var fullPath = StartupState.project("root") + relPath;
-        var cm = _getOpenCodemirrorInstance(params.path);
-        if(!cm) {
-            var file = FileSystemEntry.getFileForPath(fullPath);
-            console.log("writting to file which is not open in editor." + file);
-            return;
-        }
         _changing = true;
         var start = cm.indexFromPos(delta.from);
         // apply the delete operation first
@@ -108,15 +97,6 @@ define(function (require, exports, module) {
         var to = from;
         cm.replaceRange(param, from, to);
         _changing = false;
-    };
-
-    function _getOpenCodemirrorInstance(relPath) {
-        var fullPath = StartupState.project("root") + relPath;
-        var doc = DocumentManager.getOpenDocumentForPath(fullPath);
-        if(doc && doc._masterEditor) {
-            return doc._masterEditor._codeMirror;
-        }
-        return null;
     };
 
     function triggerCodemirrorChange(changeList, fullPath) {
