@@ -104,7 +104,8 @@ define(function (require, exports, module) {
 
     var cmOptions         = {};
 
-    Collaboration.initialize();
+    Collaboration.connect();
+    
     /**
      * Constants
      * @type {number}
@@ -432,7 +433,7 @@ define(function (require, exports, module) {
         // CodeMirror-focused. Instead, track focus via onFocus and onBlur
         // options and track state with this._focused
         this._focused = false;
-        Collaboration.init(this._codeMirror);
+        Collaboration.setCodemirror(this._codeMirror);
 
         this._installEditorListeners();
 

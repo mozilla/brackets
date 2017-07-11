@@ -9,7 +9,7 @@ define(function (require, exports, module) {
         _room,
         _codemirror;
 
-    function initialize() {
+    function connect() {
         if(_webrtc) {
             console.error("Collaboration already initialized");
             return;
@@ -24,26 +24,27 @@ define(function (require, exports, module) {
             // TODO : Shift this to config.
             url: "localhost:8888"
         });
+        
+        _pending = []; // pending clients that need to be initialized.
+        _changing = false;
+        if(_room) {
+            console.warn("Room ", _room, ", already joined");
+            return;
+        }
         //To be moved to the bramble API.
         var query = (new URL(window.location.href)).searchParams;
         _room = query.get("collaboration") || Math.random().toString(36).substring(7);
-        console.log(_room);
-        _pending = []; // pending clients that need to be initialized.
-        _changing = false;
+        console.log(_room);        
+        _webrtc.joinRoom(_room, function() {
+            _webrtc.sendToAll("new client", {});
+            _webrtc.on("createdPeer", _initializeNewClient);
+
+            _webrtc.connection.on('message', _handleMessage);
+        });
     };
 
-    function init(codemirror) {
-        _webrtc.joinRoom(_room, function() {
-            _codemirror = codemirror;
-            _webrtc.sendToAll("new client", {});
-            _webrtc.on("createdPeer", function(peer) {
-                _initializeNewClient(peer);
-            });
-
-            _webrtc.connection.on('message', function (msg) {
-                _handleMessage(msg);
-            });
-        });
+    function setCodemirror(codemirror) {
+        _codemirror = codemirror;
     };
 
     function _handleMessage(msg) {
@@ -83,8 +84,7 @@ define(function (require, exports, module) {
             return;
         }
         _changing = true;
-        var cm = _codemirror;
-        var start = cm.indexFromPos(delta.from);
+        var start = _codemirror.indexFromPos(delta.from);
         // apply the delete operation first
         if (delta.removed.length > 0) {
             var delLength = 0;
@@ -92,15 +92,15 @@ define(function (require, exports, module) {
              delLength += delta.removed[i].length;
             }
             delLength += delta.removed.length - 1;
-            var from = cm.posFromIndex(start);
-            var to = cm.posFromIndex(start + delLength);
-            cm.replaceRange('', from, to);
+            var from = _codemirror.posFromIndex(start);
+            var to = _codemirror.posFromIndex(start + delLength);
+            _codemirror.replaceRange('', from, to);
         }
         // apply insert operation
         var param = delta.text.join('\n');
-        var from = cm.posFromIndex(start);
+        var from = _codemirror.posFromIndex(start);
         var to = from;
-        cm.replaceRange(param, from, to);
+        _codemirror.replaceRange(param, from, to);
         _changing = false;
     };
 
@@ -113,8 +113,8 @@ define(function (require, exports, module) {
         }
     };
 
-    exports.initialize = initialize;
+    exports.connect = connect;
     exports.triggerCodemirrorChange = triggerCodemirrorChange;
-    exports.init = init;
+    exports.setCodemirror = setCodemirror;
 
 });
