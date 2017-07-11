@@ -17,15 +17,114 @@ define(function (require, exports, module) {
         return language ? language.getId() : "";
     }
 
+    function _lookupMimeType(ext) {
+        ext = FilerUtils.normalizeExtension(ext);
+
+        switch(ext) {
+
+        // HTML
+        case '.html':
+        // fallsthrough
+        case '.htmls':
+        // fallsthrough
+        case '.htm':
+        // fallsthrough
+        case '.htx':
+        // fallsthrough
+        case '.md':
+        // fallsthrough
+        case '.markdown':
+            return 'text/html';
+
+        // CSS
+        case '.less':
+        // fallsthrough
+        case '.css':
+            return 'text/css';
+
+        // Scripts and Text
+        case '.jsx':
+        // fallsthrough
+        case '.js':
+            return 'text/javascript';
+        case '.json':
+            return 'application/javascript';
+        case '.txt':
+            return 'text/plain';
+
+        // Images
+        case '.ico':
+            return 'image/x-icon';
+        case '.bmp':
+            return 'image/bmp';
+        case '.svg':
+            return 'image/svg+xml';
+        case '.apng':
+        // fallsthrough
+        case '.png':
+            return 'image/png';
+        case '.ico':
+            return 'image/x-icon';
+        case '.jpg':
+        case '.jpe':
+        case '.jpeg':
+            return 'image/jpeg';
+        case '.gif':
+            return 'image/gif';
+
+        // Video: some of these media types can be video or audio, prefer video.
+        case '.mp4':
+            return 'video/mp4';
+        case '.mpeg':
+            return 'video/mpeg';
+        case '.ogg':
+        case '.ogv':
+            return 'video/ogg';
+        case '.webm':
+            return 'video/webm';
+
+        // Audio
+        case '.oga':
+            return 'audio/ogg';
+        case '.mpa':
+        case '.mp3':
+            return 'audio/mpeg';
+        case '.wave':
+        // fallsthrough
+        case '.wav':
+            return 'audio/vnd.wave';
+
+        // Web Fonts
+        case '.eot':
+            return 'application/vnd.ms-fontobject';
+        case '.otf':
+            return 'application/x-font-opentype';
+        case '.ttf':
+            return 'application/x-font-ttf';
+        case '.woff':
+            return 'application/font-woff';
+        }
+
+        // Default: binary
+        return 'application/octet-stream';
+    }
+
+    function FileInfo(ext) {
+        var mimeType = this.mimeType = _lookupMimeType(ext);
+        var parts = mimeType.split("/");
+        this.type = parts[0];
+        this.subType = parts[1];
+    }
+
     module.exports = {
         isImage: function(ext) {
-            var id = _getLanguageId(ext);
-            return id === "image" || id === "svg";
+            var info = new FileInfo(ext);
+            return info.type === "image";
         },
 
         isVideo: function(ext) {
-            ext = FilerUtils.normalizeExtension(ext);
-            return ext === ".ogv" || ext === ".mp4" || ext === ".webm";
+            var info = new FileInfo(ext);
+            return info.type === "video";
         },
 
         isResizableImage: function(ext) {
@@ -58,76 +157,7 @@ define(function (require, exports, module) {
         },
 
         mimeFromExt: function(ext) {
-            ext = FilerUtils.normalizeExtension(ext);
-
-            switch(ext) {
-            case '.html':
-            // fallsthrough
-            case '.htmls':
-            // fallsthrough
-            case '.htm':
-            // fallsthrough
-            case '.htx':
-            // fallsthrough
-            case '.md':
-            // fallsthrough
-            case '.markdown':
-                return 'text/html';
-            case '.ico':
-                return 'image/x-icon';
-            case '.bmp':
-                return 'image/bmp';
-            case '.css':
-                return 'text/css';
-            case '.js':
-                return 'text/javascript';
-            case '.txt':
-                return 'text/plain';
-            case '.svg':
-                return 'image/svg+xml';
-            case '.png':
-                return 'image/png';
-            case '.ico':
-                return 'image/x-icon';
-            case '.jpg':
-            case '.jpe':
-            case '.jpeg':
-                return 'image/jpeg';
-            case '.gif':
-                return 'image/gif';
-            // Some of these media types can be video or audio, prefer video.
-            case '.mp4':
-                return 'video/mp4';
-            case '.mpeg':
-                return 'video/mpeg';
-            case '.ogg':
-            case '.ogv':
-                return 'video/ogg';
-            case '.mov':
-            case '.qt':
-                return 'video/quicktime';
-            case '.webm':
-                return 'video/webm';
-            case '.avi':
-            case '.divx':
-                return 'video/avi';
-            case '.mpa':
-            case '.mp3':
-                return 'audio/mpeg';
-            case '.wav':
-                return 'audio/vnd.wave';
-            // Web Fonts
-            case '.eot':
-                return 'application/vnd.ms-fontobject';
-            case '.otf':
-                return 'application/x-font-opentype';
-            case '.ttf':
-                return 'application/x-font-ttf';
-            case '.woff':
-                return 'application/font-woff';
-            }
-
-            return 'application/octet-stream';
+            return _lookupMimeType(ext);
         },
 
         // Whether or not this is a text/* mime type
@@ -160,7 +190,7 @@ define(function (require, exports, module) {
         },
 
         /**
-         * Determine whether we want to allow a file to be imported based on name and size.
+         * Determine whether we want to allow a file to be imported based on its size
          */
         shouldRejectFile: function(filename, size) {
             var ext = Path.extname(filename);
@@ -181,17 +211,8 @@ define(function (require, exports, module) {
                 return new Error(StringUtils.format(Strings.DND_MAX_SIZE_EXCEEDED, sizeLimitMb));
             }
 
-            // If we don't know about this language type, or the OS doesn't think
-            // it's text, reject it.
-            var isSupported = !!LanguageManager.getLanguageForExtension(FilerUtils.normalizeExtension(ext, true));
-            var typeIsText = this.isTextType(mime);
-
-            if (isSupported || typeIsText || isArchive) {
-                return null;
-            }
-            return new Error(Strings.DND_UNSUPPORTED_FILE_TYPE);
+            return null;
         },
-
 
         /**
          * Test if image data size is too big (250K)
