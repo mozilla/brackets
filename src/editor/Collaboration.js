@@ -25,7 +25,7 @@ define(function (require, exports, module) {
             url: "localhost:8888"
         });
 
-        _room = options.room || Math.random().toString(36).substring(7);
+        _room = options.room;
         console.log(_room);
         _webrtc.joinRoom(_room, function() {
             _webrtc.sendToAll("new client", {});

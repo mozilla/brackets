@@ -199,7 +199,7 @@ define(function (require, exports, module) {
         case "INITIALIZE_COLLABORATION":
             var query = (new URL(window.location.href)).searchParams;
             var room = query.get("collaboration") || Math.random().toString(36).substring(7);
-            Collaboration.initialize({room: room});
+            Collaboration.initialize(args[0]);
             break;
         default:
             console.log('[Bramble] unknown command:', command);

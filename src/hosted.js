@@ -96,7 +96,10 @@
         Bramble.load("#bramble",{
             url: "index.html",
             useLocationSearch: true,
-            enableCollaboration: true
+            enableCollaboration: true,
+            collaboration: {
+                room: (new URL(window.location.href)).searchParams.get("collaboration") || Math.random().toString(36).substring(7)
+            }
         });
 
         // Event listeners

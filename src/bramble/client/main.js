@@ -289,7 +289,7 @@ define([
                         self._executeRemoteCommand({
                             commandCategory: "bramble",
                             command: "INITIALIZE_COLLABORATION",
-                            args: []
+                            args: [options.collaboration]
                         });
                     }
                     // Set intial state
