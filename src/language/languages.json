@@ -68,18 +68,11 @@
         "isBinary": true
     },
 
-    "video": {
-        "name": "Video",
-        "fileExtensions": ["mp4", "ogv", "webm"],
-        "isBinary": true
-    },
-
     "image": {
         "name": "Image",
         "fileExtensions": ["gif", "png", "jpe", "jpeg", "jpg", "ico", "bmp", "webp"],
         "isBinary": true
     },
-
 
     "binary": {
         "name": "Other Binary",

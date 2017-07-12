@@ -75,9 +75,6 @@ define(function (require, exports, module) {
         // Video: some of these media types can be video or audio, prefer video.
         case '.mp4':
             return 'video/mp4';
-        case '.mpeg':
-            return 'video/mpeg';
-        case '.ogg':
         case '.ogv':
             return 'video/ogg';
         case '.webm':
