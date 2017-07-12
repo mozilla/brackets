@@ -1,23 +1,47 @@
 <div class="video-view">
-    <div class="video-data"></div>
+    <div class="video-data">
+        <span class="file-type">{{ Strings.VIDEO_FILE }}</span>
+        <span class="divider">&bull;</span>
+        <span class="video-data-content"><span>
+    </div>
+
     <div class="video-wrapper">
         <video controls>
           <source src="{{ videoUrl }}" type="{{ videoType }}">
         </video>
     </div>
 
-    <h2>Video Options</h2>
+    <h2 class="options-title">{{ Strings.VIDEO_OPTIONS }}</h2>
 
     <ul class="tag-options">
-        <li><label><input type="checkbox" checked setting="controls" /> <span class="attribute-name">controls</span> &mdash; Show video controls</label></li>
-        <li><label><input type="checkbox" setting="autoplay" /> <span class="attribute-name">autoplay</span> &mdash; Start playing the video automatically</label></li>
-        <li><label><input type="checkbox" setting="loop" /> <span class="attribute-name">loop</span> &mdash; Restart the video when it is over</label></li>
-        <li><label><input type="checkbox" setting="muted" /> <span class="attribute-name">muted</span> &mdash; Disable audio</label></li>
+        <li>
+            <label>
+                <input type="checkbox" checked setting="controls" />
+                <span class="attribute-name">controls</span> &mdash; {{ Strings.VIDEO_OPTION_SHOW_CONTROLS }}
+            </label>
+        </li>
+        <li>
+            <label>
+                <input type="checkbox" setting="autoplay" />
+                <span class="attribute-name">autoplay</span> &mdash; {{ Strings.VIDEO_OPTION_AUTOPLAY }}
+            </label>
+        </li>
+        <li>
+            <label>
+                <input type="checkbox" setting="loop" />
+                <span class="attribute-name">loop</span> &mdash; {{ Strings.VIDEO_OPTION_LOOPING }}
+            </label>
+        </li>
+        <li>
+            <label>
+                <input type="checkbox" setting="muted" />
+                <span class="attribute-name">muted</span> &mdash; {{ Strings.VIDEO_OPTION_DISABLE_AUDIO }}
+            </label>
+        </li>
     </ul>
 
     <div class="code-wrapper">
+        <h2 class="code-title">{{{ Strings.VIDEO_CODE_SAMPLE }}}</h2>
         <pre></pre>
-        <h2>Copy &amp; paste the code above to add this video to an HTML page</h2>
     </div>
-
 </div>

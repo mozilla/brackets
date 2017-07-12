@@ -102,7 +102,7 @@ define(function (require, exports, module) {
         this.$videoEl = this.$el.find("video");
         this.$videoWrapperEl = this.$el.find(".video-wrapper");
         this.$videoMarkupEl = this.$el.find("pre");
-        this.$videoData = this.$el.find(".video-data");
+        this.$videoData = this.$el.find(".video-data-content");
 
         this.$videoEl.one("canplay", _.bind(this._onVideoLoaded, this));
         this.$videoEl.on("error", _.bind(console.error, console));
@@ -202,7 +202,7 @@ define(function (require, exports, module) {
         this.file.stat(function (err, stat) {
             var sizeString = "";
             if (stat.size) {
-                sizeString = " &mdash; " + StringUtils.prettyPrintBytes(stat.size, 2);
+                sizeString = " <span class='divider'>&bull;</span> " + StringUtils.prettyPrintBytes(stat.size, 2);
                 dimensionString = dimensionString + sizeString;
             }
             that.$videoData.html(dimensionString);
