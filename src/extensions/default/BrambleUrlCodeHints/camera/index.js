@@ -8,7 +8,7 @@ define(function (require, exports, module) {
 
     var CommandManager = brackets.getModule("command/CommandManager");
     var Commands       = brackets.getModule("command/Commands");
-    var fs             = brackets.getModule("fileSystemImpl");
+    var FilerUtils     = brackets.getModule("filesystem/impls/filer/FilerUtils");
 
     var Interface = require("camera/interface");
     var Video = require("camera/video");
@@ -46,16 +46,15 @@ define(function (require, exports, module) {
     Camera.prototype.savePhoto = function(data) {
         var self = this;
 
-        fs.writeFile(this.savePath, data, {encoding: null}, function(err) {
-            if(err) {
-                return self.fail(err);
-            }
+        FilerUtils
+            .writeFileAsBinary(this.savePath, data)
+            .done(function() {
+                // Update the file tree to show the new file
+                CommandManager.execute(Commands.FILE_REFRESH);
 
-            // Update the file tree to show the new file
-            CommandManager.execute(Commands.FILE_REFRESH);
-
-            self.success(self.savePath);
-        });
+                self.success(self.savePath);
+            })
+            .fail(self.fail);
     };
 
     // End the camera session if everything goes well

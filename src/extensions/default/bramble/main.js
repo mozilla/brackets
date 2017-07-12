@@ -30,7 +30,8 @@ define(function (require, exports, module) {
         FileSystemCache      = brackets.getModule("filesystem/impls/filer/FileSystemCache"),
         UrlCache             = brackets.getModule("filesystem/impls/filer/UrlCache"),
         RemoteCommandHandler = require("lib/RemoteCommandHandler"),
-        RemoteEvents         = require("lib/RemoteEvents");
+        RemoteEvents         = require("lib/RemoteEvents"),
+        Theme                = require("lib/Theme");
 
     ExtensionUtils.loadStyleSheet(module, "stylesheets/style.less");
 
@@ -172,6 +173,10 @@ define(function (require, exports, module) {
             allowJavaScript: data.state.allowJavaScript,
             allowWhiteSpace: data.state.allowWhiteSpace
         });
+
+        // Load the two theme extensions outside of
+        // the ExtensionLoader logic (avoids circular dependencies)
+        Theme.init(BrambleStartupState.ui("theme"));
 
         RemoteEvents.start();
         setupCaches(loadProject);

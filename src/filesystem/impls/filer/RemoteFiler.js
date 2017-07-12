@@ -9,6 +9,16 @@ define(function (require, exports, module) {
      * early, so that fs operations run quickly on startup.
      */
 
+    /**
+     * NOTE: For reading and writing UTF8 and Binary files, it is best/easiest
+     * to use the filesystem/impls/filer/FilerUtils module, since it does
+     * things at the right level of abstraction:
+     *  - readFileAsUTF8()
+     *  - readFileAsBinary()
+     *  - writeFileAsUTF8()
+     *  - writeFileASBinary()
+     */
+
     var fnQueue = require("filesystem/impls/filer/lib/queue");
     var ChannelUtils = require("bramble/ChannelUtils");
     var UUID = ChannelUtils.UUID;

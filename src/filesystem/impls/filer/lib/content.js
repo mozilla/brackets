@@ -151,6 +151,11 @@ define(function (require, exports, module) {
             return id === "markdown";
         },
 
+        isPDF: function(ext) {
+            ext = FilerUtils.normalizeExtension(ext);
+            return ext === ".pdf";
+        },
+
         isArchive: function(ext) {
             ext = FilerUtils.normalizeExtension(ext);
             return ext === '.zip' || ext === '.tar';

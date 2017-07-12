@@ -6,9 +6,9 @@ define(function (require, exports, module) {
     var BaseServer              = brackets.getModule("LiveDevelopment/Servers/BaseServer").BaseServer,
         LiveDevelopmentUtils    = brackets.getModule("LiveDevelopment/LiveDevelopmentUtils"),
         Content                 = brackets.getModule("filesystem/impls/filer/lib/content"),
-        UrlCache               = brackets.getModule("filesystem/impls/filer/UrlCache"),
-        Filer                   = brackets.getModule("filesystem/impls/filer/BracketsFiler"),
-        Path                    = Filer.Path,
+        UrlCache                = brackets.getModule("filesystem/impls/filer/UrlCache"),
+        FilerUtils              = brackets.getModule("filesystem/impls/filer/FilerUtils"),
+        Path                    = FilerUtils.Path,
         HTMLRewriter            = brackets.getModule("filesystem/impls/filer/lib/HTMLRewriter"),
         CSSRewriter             = brackets.getModule("filesystem/impls/filer/lib/CSSRewriter");
 
@@ -17,8 +17,7 @@ define(function (require, exports, module) {
         PostMessageTransport    = require("lib/PostMessageTransport"),
         LinkManager             = require("lib/LinkManager");
 
-    var fs = Filer.fs(),
-        _shouldUseBlobURL;
+    var _shouldUseBlobURL;
 
     function _isHTML(path) {
         return LiveDevelopmentUtils.isStaticHtmlFileExt(path);
@@ -152,37 +151,38 @@ define(function (require, exports, module) {
 
         // Prefer the LiveDoc, but use what's on disk if we have to
         if(liveDocument) {
-            serve(liveDocument.getResponseData().body);
-        } else {
-            fs.readFile(path, "utf8", function(err, content) {
-                if(err) {
-                    return callback(err);
+            return serve(liveDocument.getResponseData().body);
+        }
+
+        FilerUtils
+            .readFileAsUTF8(path)
+            .fail(callback)
+            .done(function(content) {
+                if(!_isHTML(path)) {
+                    return serve(content);
                 }
 
-                if (_isHTML(path)) {
-                    // Since we don't have a LiveDoc (yet) and aren't instrumenting fully,
-                    // at least inject the necessary remote scripts so preview APIs work.
-                    var scripts = PostMessageTransport.getRemoteScript(path);
-                    var scriptsWithEndTag = scripts + "$&";
-                    var headRegex = new RegExp(/<\/\s*head>/);
-                    var htmlRegex = new RegExp(/<\/\s*html>/);
+                // Since we don't have a LiveDoc (yet) and aren't instrumenting fully,
+                // at least inject the necessary remote scripts so preview APIs work.
+                var scripts = PostMessageTransport.getRemoteScript(path);
+                var scriptsWithEndTag = scripts + "$&";
+                var headRegex = new RegExp(/<\/\s*head>/);
+                var htmlRegex = new RegExp(/<\/\s*html>/);
 
-                    // Try to inject the scripts at the end of the <head> element
-                    // if it is present
-                    if(headRegex.test(content)) {
-                        content = content.replace(headRegex, scriptsWithEndTag);
-                    } else if(htmlRegex.test(content)) {
-                        // Otherwise add them at the end of the <html> element
-                        content = content.replace(htmlRegex, scriptsWithEndTag);
-                    } else {
-                        // Otherwise just add it at the end of the content
-                        content += scripts;
-                    }
+                // Try to inject the scripts at the end of the <head> element
+                // if it is present
+                if(headRegex.test(content)) {
+                    content = content.replace(headRegex, scriptsWithEndTag);
+                } else if(htmlRegex.test(content)) {
+                    // Otherwise add them at the end of the <html> element
+                    content = content.replace(htmlRegex, scriptsWithEndTag);
+                } else {
+                    // Otherwise just add it at the end of the content
+                    content += scripts;
                 }
 
                 serve(content);
             });
-        }
     };
 
     exports.HTMLServer = HTMLServer;

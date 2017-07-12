@@ -13,6 +13,7 @@ define(function (require, exports, module) {
     var FileSystemCache = require("filesystem/impls/filer/FileSystemCache");
     var FileSystem      = require("filesystem/FileSystem");
     var Filer           = require("filesystem/impls/filer/BracketsFiler");
+    var FilerUtils      = require("filesystem/impls/filer/FilerUtils");
     var saveAs          = require("thirdparty/FileSaver");
     var Buffer          = Filer.Buffer;
     var Path            = Filer.Path;
@@ -50,18 +51,9 @@ define(function (require, exports, module) {
         return false;
     }
 
-    // We need to use the right level of abstraction in order to have images get resized.
-    function writeBinaryFile(path, data, callback) {
-        var file = FileSystem.getFileForPath(path);
-        file.write(data, {encoding: null}, callback);
-    }
-
     function _refreshFilesystem(callback) {
         // Update the file tree to show the new files
-        CommandManager.execute(Commands.FILE_REFRESH).always(function() {
-            // Generate Blob URLs for all the files we imported
-            FileSystemCache.refresh(callback);
-        });
+        CommandManager.execute(Commands.FILE_REFRESH).always(callback);
     }
 
     // zipfile can be a path (string) to a zipfile, or raw binary data.
@@ -128,10 +120,10 @@ define(function (require, exports, module) {
                                     return callback(err);
                                 }
 
-                                writeBinaryFile(path.absPath, path.data, callback);
+                                FilerUtils.writeFileAsBinary(path.absPath, path.data, callback);
                             });
                         } else {
-                            writeBinaryFile(path.absPath, path.data, callback);
+                            FilerUtils.writeFileAsBinary(path.absPath, path.data, callback);
                         }
                     });
                 }
@@ -147,13 +139,10 @@ define(function (require, exports, module) {
         }
 
         if(typeof zipfile === "string") {
-            fs.readFile(Path.resolve(root, zipfile), function(err, data) {
-                if(err) {
-                    return callback(err);
-                }
-
-                _unzip(data);
-            });
+            FilerUtils
+                .readFileAsBinary(Path.resolve(root, zipfile))
+                .fail(callback)
+                .done(_unzip);
         } else {
             // zipfile is raw zip data, process it directly
             _unzip(zipfile);
@@ -186,14 +175,13 @@ define(function (require, exports, module) {
         }
 
         function addFile(path, callback) {
-            fs.readFile(path, {encoding: null}, function(err, data) {
-                if(err) {
-                    return callback(err);
-                }
-
-                jszip.file(toRelProjectPath(path), data.buffer, {binary: true});
-                callback();
-            });
+            FilerUtils
+                .readFileAsBinary(path)
+                .fail(callback)
+                .done(function(data) {
+                    jszip.file(toRelProjectPath(path), data.buffer, {binary: true});
+                    callback();
+                });
         }
 
         function addDir(path, callback) {
@@ -261,7 +249,7 @@ define(function (require, exports, module) {
                     return callback(err);
                 }
 
-                writeBinaryFile(path, new Buffer(data), callback);
+                FilerUtils.writeFileAsBinary(path, new Buffer(data), callback);
             });
         }
 

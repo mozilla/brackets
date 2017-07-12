@@ -19,25 +19,25 @@
         }
     },
     {
-        "path": "extensions/default/JavaScriptCodeHints",
+        "path": "extensions/extra/JavaScriptCodeHints-Browser",
         "less": {
-            "dist/extensions/default/JavaScriptCodeHints/styles/brackets-js-hints.css": [
-                "src/extensions/default/JavaScriptCodeHints/styles/brackets-js-hints.css"
+            "dist/extensions/extra/JavaScriptCodeHints-Browser/styles/brackets-js-hints.css": [
+                "src/extensions/extra/JavaScriptCodeHints-Browser/styles/brackets-js-hints.css"
             ]
         },
         "copy": [
-            "extensions/default/JavaScriptCodeHints/node_modules/tern/lib/tern.js",
-            "extensions/default/JavaScriptCodeHints/node_modules/tern/lib/infer.js",
-            "extensions/default/JavaScriptCodeHints/node_modules/tern/lib/def.js",
-            "extensions/default/JavaScriptCodeHints/node_modules/tern/lib/signal.js",
-            "extensions/default/JavaScriptCodeHints/node_modules/tern/defs/ecmascript.json",
-            "extensions/default/JavaScriptCodeHints/node_modules/tern/defs/browser.json",
-            "extensions/default/JavaScriptCodeHints/node_modules/acorn/dist/acorn.js",
-            "extensions/default/JavaScriptCodeHints/node_modules/acorn/dist/acorn_loose.js",
-            "extensions/default/JavaScriptCodeHints/node_modules/acorn/dist/walk.js",
-            "extensions/default/JavaScriptCodeHints/tern-worker.js",
-            "extensions/default/JavaScriptCodeHints/MessageIds.js",
-            "extensions/default/JavaScriptCodeHints/HintUtils2.js"
+            "extensions/extra/JavaScriptCodeHints-Browser/node_modules/tern/lib/tern.js",
+            "extensions/extra/JavaScriptCodeHints-Browser/node_modules/tern/lib/infer.js",
+            "extensions/extra/JavaScriptCodeHints-Browser/node_modules/tern/lib/def.js",
+            "extensions/extra/JavaScriptCodeHints-Browser/node_modules/tern/lib/signal.js",
+            "extensions/extra/JavaScriptCodeHints-Browser/node_modules/tern/defs/ecmascript.json",
+            "extensions/extra/JavaScriptCodeHints-Browser/node_modules/tern/defs/browser.json",
+            "extensions/extra/JavaScriptCodeHints-Browser/node_modules/acorn/dist/acorn.js",
+            "extensions/extra/JavaScriptCodeHints-Browser/node_modules/acorn/dist/acorn_loose.js",
+            "extensions/extra/JavaScriptCodeHints-Browser/node_modules/acorn/dist/walk.js",
+            "extensions/extra/JavaScriptCodeHints-Browser/tern-worker.js",
+            "extensions/extra/JavaScriptCodeHints-Browser/MessageIds.js",
+            "extensions/extra/JavaScriptCodeHints-Browser/HintUtils2.js"
         ]
     },
     {
@@ -74,16 +74,16 @@
         ]
     },
     {
-        "path": "extensions/default/WebPlatformDocs",
+        "path": "extensions/extra/WebPlatformDocs",
         "less": {
-            "dist/extensions/default/WebPlatformDocs/WebPlatformDocs.css": [
-                "src/extensions/default/WebPlatformDocs/WebPlatformDocs.less"
+            "dist/extensions/extra/WebPlatformDocs/WebPlatformDocs.css": [
+                "src/extensions/extra/WebPlatformDocs/WebPlatformDocs.less"
             ]
         },
         "copy": [
-            "extensions/default/WebPlatformDocs/html.json",
-            "extensions/default/WebPlatformDocs/css.json",
-            "extensions/default/WebPlatformDocs/logo.svg"
+            "extensions/extra/WebPlatformDocs/html.json",
+            "extensions/extra/WebPlatformDocs/css.json",
+            "extensions/extra/WebPlatformDocs/logo.svg"
         ]
     },
     {
@@ -154,5 +154,22 @@
                 "src/extensions/default/brackets-show-whitespace/styles/main.css"
             ]
         }
+    },
+    {
+        "path": "extensions/extra/PDFView",
+        "less": {
+            "dist/extensions/extra/PDFView/styles/styles.css": [
+                "src/extensions/extra/PDFView/styles/styles.less"
+            ],
+            "dist/extensions/extra/PDFView/styles/viewer-overrides.css": [
+                "src/extensions/extra/PDFView/styles/viewer-overrides.css"
+            ]
+        },
+        "copy": [
+            "extensions/extra/PDFView/thirdparty/**/*",
+            "extensions/extra/PDFView/images/**/*",
+            "extensions/extra/PDFView/htmlContent/viewer.html",
+            "extensions/extra/PDFView/bramble-pdfjs.js"
+        ]
     }
 ]

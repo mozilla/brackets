@@ -59,26 +59,27 @@ define(function (require, exports, module) {
         var swatches;
         var i = 0;
 
+        // Hide all the swatch elements, we'll unhide them later one by one as needed
+        $(".image-view-swatches .swatch-wrapper").addClass("hide");
+
         try {
             var vibrant = new window.Vibrant(img);
             swatches = vibrant.swatches();
-            $(".image-view-swatches").removeClass("hide");
         } catch(e) {
-            // Hide the color swatches, since we can't display anything
-            $(".image-view-swatches").addClass("hide");
             return;
         }
 
         Object.keys(swatches).forEach(function(swatch) {
             var swatchColor = swatchElems[i];
             var swatchHex = hexElems[i];
-
             var hex = swatches[swatch] && swatches[swatch].getHex();
+
             // Sometimes there isn't a LightMuted color
             if(!hex) {
                 return;
             }
 
+            swatchHex.parentNode.classList.remove("hide");
             swatchColor.style.backgroundColor = hex;
             swatchHex.textContent = hex;
             i++;

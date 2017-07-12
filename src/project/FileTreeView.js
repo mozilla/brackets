@@ -545,6 +545,9 @@ define(function (require, exports, module) {
                 case "json":
                     fileType = "js";
                     break;
+                case "pdf":
+                    fileType = "pdf";
+                    break;
                 default:
                     fileType = LanguageManager.getLanguageForPath(fullname).isBinary() ? "binary" : "default";
                     break;
