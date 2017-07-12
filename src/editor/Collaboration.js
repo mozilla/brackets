@@ -3,8 +3,18 @@ define(function (require, exports, module) {
 
     var SimpleWebRTC    = require("simplewebrtc");
 
-    function Collaboration() {
-        var webrtc = new SimpleWebRTC({
+    var _webrtc,
+        _pending,
+        _changing,
+        _room,
+        _codemirror;
+
+    function connect() {
+        if(_webrtc) {
+            console.error("Collaboration already initialized");
+            return;
+        }
+        _webrtc = new SimpleWebRTC({
             // the id/element dom element that will hold "our" videos
             localVideoEl: 'localVideo',
             // the id/element dom element that will hold remote videos
@@ -14,69 +24,67 @@ define(function (require, exports, module) {
             // TODO : Shift this to config.
             url: "localhost:8888"
         });
+        
+        _pending = []; // pending clients that need to be initialized.
+        _changing = false;
+        if(_room) {
+            console.warn("Room ", _room, ", already joined");
+            return;
+        }
         //To be moved to the bramble API.
         var query = (new URL(window.location.href)).searchParams;
-        this.room = query.get("collaboration") || Math.random().toString(36).substring(7);
-        console.log(this.room);
-        this.webrtc = webrtc;
-        this.pending = []; // pending clients that need to be initialized.
-        this.changing = false;
-    };
+        _room = query.get("collaboration") || Math.random().toString(36).substring(7);
+        console.log(_room);        
+        _webrtc.joinRoom(_room, function() {
+            _webrtc.sendToAll("new client", {});
+            _webrtc.on("createdPeer", _initializeNewClient);
 
-    Collaboration.prototype.init = function(codemirror) {
-        var self = this;
-        this.webrtc.joinRoom(this.room, function() {
-            self.codemirror = codemirror;
-            self.webrtc.sendToAll("new client", {});
-            self.webrtc.on("createdPeer", function(peer) {
-                self.initializeNewClient(peer);
-            });
-
-            self.webrtc.connection.on('message', function (msg) {
-                self.handleMessage(msg);
-            });
+            _webrtc.connection.on('message', _handleMessage);
         });
     };
 
-    Collaboration.prototype.handleMessage = function(msg) {
+    function setCodemirror(codemirror) {
+        _codemirror = codemirror;
+    };
+
+    function _handleMessage(msg) {
         switch(msg.type) {
             case "new client":
-                this.pending.push(msg.from);
+                _pending.push(msg.from);
                 break;
             case "codemirror-change":
-                this.handleCodemirrorChange(msg.payload);
+                _handleCodemirrorChange(msg.payload);
                 break;
             case "initClient":
-                if(this.changing) {
+                if(_changing) {
                     return;
                 }
-                this.changing = true;
-                this.codemirror.setValue(msg.payload);
-                this.changing = false;
+                _changing = true;
+                _codemirror.setValue(msg.payload);
+                _changing = false;
                 break;
         }
     };
 
 
-    Collaboration.prototype.initializeNewClient = function(peer) {
-        this.changing = true;
-        for(var i = 0; i<this.pending.length; i++) {
-            if(this.pending[i] === peer.id) {
-                peer.send("initClient", this.codemirror.getValue());
-                this.pending.splice(i, 1);
+    function _initializeNewClient(peer) {
+        _changing = true;
+        for(var i = 0; i<_pending.length; i++) {
+            if(_pending[i] === peer.id) {
+                peer.send("initClient", _codemirror.getValue());
+                _pending.splice(i, 1);
                 break;
             }
         }
-        this.changing = false;
+        _changing = false;
     };
 
-    Collaboration.prototype.handleCodemirrorChange = function(delta) {
-        if(this.changing) {
+    function _handleCodemirrorChange (delta) {
+        if(_changing) {
             return;
         }
-        this.changing = true;
-        var cm = this.codemirror;
-        var start = cm.indexFromPos(delta.from);
+        _changing = true;
+        var start = _codemirror.indexFromPos(delta.from);
         // apply the delete operation first
         if (delta.removed.length > 0) {
             var delLength = 0;
@@ -84,26 +92,29 @@ define(function (require, exports, module) {
              delLength += delta.removed[i].length;
             }
             delLength += delta.removed.length - 1;
-            var from = cm.posFromIndex(start);
-            var to = cm.posFromIndex(start + delLength);
-            cm.replaceRange('', from, to);
+            var from = _codemirror.posFromIndex(start);
+            var to = _codemirror.posFromIndex(start + delLength);
+            _codemirror.replaceRange('', from, to);
         }
         // apply insert operation
         var param = delta.text.join('\n');
-        var from = cm.posFromIndex(start);
+        var from = _codemirror.posFromIndex(start);
         var to = from;
-        cm.replaceRange(param, from, to);
-        this.changing = false;
+        _codemirror.replaceRange(param, from, to);
+        _changing = false;
     };
 
-    Collaboration.prototype.triggerCodemirrorChange = function(changeList) {
-        if(this.changing) {
+    function triggerCodemirrorChange(changeList) {
+        if(_changing) {
             return;
         }
         for(var i = 0; i<changeList.length; i++) {
-            this.webrtc.sendToAll("codemirror-change",changeList[i]);
+            _webrtc.sendToAll("codemirror-change",changeList[i]);
         }
     };
 
-    exports.Collaboration = Collaboration;
+    exports.connect = connect;
+    exports.triggerCodemirrorChange = triggerCodemirrorChange;
+    exports.setCodemirror = setCodemirror;
+
 });
