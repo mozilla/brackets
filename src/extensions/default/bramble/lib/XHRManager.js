@@ -2,8 +2,8 @@ define(function (require, exports, module) {
     "use strict";
 
     var UrlCache         = brackets.getModule("filesystem/impls/filer/UrlCache");
-    var Path             = brackets.getModule("filesystem/impls/filer/BracketsFiler").Path;
-    var fs               = brackets.getModule("filesystem/impls/filer/BracketsFiler").fs();
+    var FilerUtils       = brackets.getModule("filesystem/impls/filer/FilerUtils");
+    var Path             = FilerUtils.Path;
     var Browser          = require("lib/iframe-browser");
     var transport        = require("lib/PostMessageTransport");
 
@@ -33,7 +33,7 @@ define(function (require, exports, module) {
         var response = {method: "XMLHttpRequest"};
 
         // For now, we support text based requests only
-        fs.readFile(path, "utf8", function(err, data) {
+        FilerUtils.readFileAsUTF8(path, function(err, data) {
             if(err) {
                 if(err.code === "ENOENT") {
                     response.error = "No resource found for `" + path + "`";

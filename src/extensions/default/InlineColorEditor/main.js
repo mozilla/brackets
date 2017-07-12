@@ -27,8 +27,10 @@ define(function (require, exports, module) {
     var EditorManager       = brackets.getModule("editor/EditorManager"),
         ExtensionUtils      = brackets.getModule("utils/ExtensionUtils"),
         InlineColorEditor   = require("InlineColorEditor").InlineColorEditor,
-        ColorUtils          = brackets.getModule("utils/ColorUtils");
+        ColorUtils          = brackets.getModule("utils/ColorUtils"),
+        properties          = JSON.parse(require("text!ColorProperties.json"));
 
+    var DEFAULT_COLOR = "white";
 
     /**
      * Prepare hostEditor for an InlineColorEditor at pos if possible. Return
@@ -59,7 +61,54 @@ define(function (require, exports, module) {
         } while (match && (pos.ch < start || pos.ch > end));
 
         if (!match) {
-            return null;
+            // Check if the cursorLine has a CSS rule of type color
+            var cssPropertyName, semiColonPos, colonPos, colorValue, cursorLineSubstring, firstCharacterPos;
+
+            // Get the css property name after removing spaces and ":" so that we can check for it in the file ColorProperties.json
+            cssPropertyName = cursorLine.split(':')[0].trim();
+
+            if (!cssPropertyName || !properties[cssPropertyName]) {
+                return null;
+            }
+
+            if (properties[cssPropertyName]) {
+                colonPos = cursorLine.indexOf(":");
+                semiColonPos = cursorLine.indexOf(";");
+                cursorLineSubstring = cursorLine.substring(colonPos + 1, cursorLine.length);
+                colorValue = cursorLineSubstring.replace(/ /g,"").replace(";", "");
+                if (colorValue) {
+                    if (colorRegEx.test(colorValue)) {
+                        // edit the color value of an existing css rule
+                        firstCharacterPos = cursorLineSubstring.search(/\S/);
+                        pos.ch = colonPos + 1 + Math.min(firstCharacterPos,1);
+                        if (semiColonPos !== -1) {
+                            endPos = {line: pos.line, ch: semiColonPos};
+                        } else {
+                            endPos = {line: pos.line, ch: cursorLine.length};
+                        }
+                    } else {
+                         return null;
+                    }
+                } else {
+                    // edit the color value of a new css rule
+                    var newText = " ", from, to;
+                    newText = newText.concat(DEFAULT_COLOR, ";");
+                    from = {line: pos.line, ch: colonPos + 1};
+                    to = {line: pos.line, ch: cursorLine.length};
+                    hostEditor._codeMirror.replaceRange(newText, from, to);
+                    pos.ch = colonPos + 2;
+                    endPos = {line: pos.line, ch: pos.ch + DEFAULT_COLOR.length};
+                    colorValue = DEFAULT_COLOR;
+                }
+
+                marker = hostEditor._codeMirror.markText(pos, endPos);
+                hostEditor.setSelection(pos, endPos);
+
+                return {
+                    color: colorValue,
+                    marker: marker
+                };
+            }
         }
 
         // Adjust pos to the beginning of the match so that the inline editor won't get

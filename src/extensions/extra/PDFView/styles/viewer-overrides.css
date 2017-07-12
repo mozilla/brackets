@@ -1,0 +1,80 @@
+/**
+ * Various overrides of the built viewer.css file. Keep this as a CSS file vs. LESS
+ */
+
+ #viewerContainer {
+     top: 0;
+ }
+
+div.toolbar {
+    display: none !important;
+}
+
+#sidebarContainer {
+    display: none !important;
+}
+
+body.dark-theme {
+    background: #222;
+}
+
+body {
+    background: white;
+}
+
+body.dark-theme .meta, body.dark-theme .meta strong {
+    color: rgba(255,255,255,.6);
+}
+
+.meta, .meta strong {
+    color: rgba(0,0,0,.7);
+}
+
+
+#pdf-page-count {
+    position: relative;
+    padding-right: 16px;
+}
+
+#pdf-page-count:after {
+    content: "";
+    position: absolute;
+    right: 2px;
+    top: 0;
+    display: block;
+    background-image: url("../images/file-black.svg");
+    background-position: right center;
+    background-size: 10px;
+    width: 12px;
+    height: 100%;
+    opacity: .6;
+    background-repeat: no-repeat;
+}
+
+.dark-theme #pdf-page-count:after {
+    background-image: url("../images/file-white.svg");
+}
+
+body.dark-theme .pdfViewer .page {
+    box-shadow: 0 3px 5px rgba(0,0,0,.2);
+}
+
+.pdfViewer .page {
+    border-image: none;
+    border: none;
+    margin: 10px auto 20px auto;
+    box-shadow: 0 1px 8px rgba(0,0,0,.4);
+}
+
+.meta {
+    color: rgba(0,0,0,.7);
+    padding: 18px 18px 0 18px;
+    font-size: 15px;
+    font-family: "Open Sans";
+}
+
+
+
+.page:first-child {
+    margin-top: 20px;
+}

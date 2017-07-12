@@ -30,7 +30,8 @@ define(function (require, exports, module) {
 
 
     /** @const @type {number} */
-    var MAX_USED_COLORS = 7;
+    var MAX_USED_COLORS = 7,
+        DEFAULT_COLOR  = "white";
 
     /** @type {number} Global var used to provide a unique ID for each color editor instance's _origin field. */
     var lastOriginId = 1;
@@ -167,7 +168,7 @@ define(function (require, exports, module) {
         InlineColorEditor.prototype.parentClass.load.apply(this, arguments);
 
         // Create color picker control
-        var allColorsInDoc = this.hostEditor.document.getText().match(ColorUtils.COLOR_REGEX);
+        var allColorsInDoc = this.hostEditor.document.getText().match(ColorUtils.COLOR_REGEX) || [DEFAULT_COLOR];
         var swatchInfo = this._collateColors(allColorsInDoc, MAX_USED_COLORS);
         this.colorEditor = new ColorEditor(this.$htmlContent, this._color, this._handleColorChange, swatchInfo);
     };

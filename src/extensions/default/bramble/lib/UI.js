@@ -19,7 +19,6 @@ define(function (require, exports, module) {
 
     var PhonePreview  = require("text!lib/Mobile.html");
     var PostMessageTransport = require("lib/PostMessageTransport");
-    var Theme = require("lib/Theme");
 
     var isMobileViewOpen = false;
 
@@ -63,10 +62,6 @@ define(function (require, exports, module) {
      * Restores user state sent from the hosting app
      */
     function restoreState() {
-        // Load the two theme extensions outside of
-        // the ExtensionLoader logic (avoids circular dependencies)
-        Theme.init(BrambleStartupState.ui("theme"));
-
         var previewMode = BrambleStartupState.ui("previewMode");
         if(previewMode) {
             switch(previewMode) {

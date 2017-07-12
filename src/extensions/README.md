@@ -26,3 +26,15 @@ to `dist/` for this extension at build time.  Some extensions have no external
 dependencies, other than the `main.js` file.  If this is the case, you don't need
 to include `copy`.  However, most have some secondary resources, including things
 images, etc.  These need to get included in the `copy` array.
+
+Bramble runs and loads extensions in one of two ways:
+
+* `extensions/default/*` these extensions are bundled in the Service Worker precache.
+Put extensions here that you need/want to load and run by default and must be available
+for the app to function (offline).
+
+* `extensions/extra/*` these extensions are *not* bundled in the Service Worker precache,
+but are instead dynamically cached at runtime.  This means that we will try to download them,
+and then cache for offline use, but we won't block initial loading to seed the cache with
+the extension's files.  Place any extensions that are truly optional, and have lots of
+dependencies you don't want to cache (e.g., localization files, images, extra scripts).

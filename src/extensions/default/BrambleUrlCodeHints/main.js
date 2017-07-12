@@ -40,6 +40,7 @@ define(function (require, exports, module) {
         EditorManager   = brackets.getModule("editor/EditorManager"),
         Path            = brackets.getModule("filesystem/impls/filer/FilerUtils").Path,
         StartupState    = brackets.getModule("bramble/StartupState"),
+        PathUtils       = brackets.getModule("thirdparty/path-utils/path-utils"),
         Camera          = require("camera/index"),
         Selfie          = require("selfie"),
 
@@ -82,7 +83,7 @@ define(function (require, exports, module) {
         docDir = FileUtils.getDirectoryPath(doc.file.fullPath);
 
         // get relative path from query string
-        queryUrl = window.PathUtils.parseUrl(query.queryStr);
+        queryUrl = PathUtils.parseUrl(query.queryStr);
         if (queryUrl) {
             queryDir = queryUrl.directory;
         }

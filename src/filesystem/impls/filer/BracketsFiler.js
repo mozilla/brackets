@@ -3,6 +3,16 @@
 define(function (require, exports, module) {
     "use strict";
 
+    /**
+     * NOTE: For reading and writing UTF8 and Binary files, it is best/easiest
+     * to use the filesystem/impls/filer/FilerUtils module, since it does
+     * things at the right level of abstraction:
+     *  - readFileAsUTF8()
+     *  - readFileAsBinary()
+     *  - writeFileAsUTF8()
+     *  - writeFileASBinary()
+     */
+
     var proxyCall = require("filesystem/impls/filer/RemoteFiler").proxyCall;
     var FilerUtils = require("filesystem/impls/filer/FilerUtils");
     var Path = FilerUtils.Path;

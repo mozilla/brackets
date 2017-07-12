@@ -73,7 +73,10 @@ module.exports = function (grunt) {
                 files: [{
                     expand: true,
                     cwd: 'dist/',
-                    src: '**/*.js',
+                    src: [
+                        '**/*.js',
+                        '!**/extensions/extra/PDFView/thirdparty/**/*',
+                    ],
                     dest: 'dist/'
                 }]
             }
@@ -302,6 +305,7 @@ module.exports = function (grunt) {
                 '!src/extensions/extra/brackets-cdn-suggestions/**',
                 '!src/extensions/extra/HTMLHinter/**',
                 '!src/extensions/extra/MDNDocs/**',
+                '!**/extensions/extra/PDFView/thirdparty/**/*',
                 '!src/bramble/thirdparty/**/*',
                 '!src/extensions/disabled/**',
                 '!**/node_modules/**/*.js',
@@ -499,8 +503,10 @@ module.exports = function (grunt) {
             cacheId: 'bramble',
             logger: grunt.log.writeln,
             staticFileGlobs: [
-                // Avoid caching dist/nls/**/*, but take everything else in dist/
-                'dist/{extensions,styles,thirdparty}/**/*',
+                // Avoid caching dist/nls/**/* and dist/extensions/extra/**/*,
+                // but take everything else in dist/
+                'dist/{styles,thirdparty}/**/*',
+                'dist/extensions/default/**/*',
                 'dist/*.*'
             ],
             runtimeCaching: [{
@@ -508,6 +514,9 @@ module.exports = function (grunt) {
                 handler: 'fastest'
             }, {
                 urlPattern: /\/dist\/nls\//,
+                handler: 'fastest'
+            }, {
+                urlPattern: /\/dist\/extensions\/extra\//,
                 handler: 'fastest'
             }],
             stripPrefix: 'dist/',
