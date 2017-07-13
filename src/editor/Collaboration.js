@@ -24,7 +24,10 @@ define(function (require, exports, module) {
             // TODO : Shift this to config.
             url: "localhost:8888"
         });
-
+        if(_room) {
+            console.warn("Room ", _room, ", already joined");
+            return;
+        }
         _room = options.room || Math.random().toString(36).substring(7);
         console.log(_room);
         _webrtc.joinRoom(_room, function() {
