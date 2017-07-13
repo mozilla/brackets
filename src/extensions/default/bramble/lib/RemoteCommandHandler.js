@@ -197,8 +197,6 @@ define(function (require, exports, module) {
             CommandManager.execute("bramble.addCodeSnippet", args[0]).always(callback);
             break;
         case "INITIALIZE_COLLABORATION":
-            var query = (new URL(window.location.href)).searchParams;
-            var room = query.get("collaboration") || Math.random().toString(36).substring(7);
             Collaboration.connect(args[0]);
             break;
         default:
