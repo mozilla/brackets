@@ -1,0 +1,64 @@
+<style class="font-face" data-src="{{{url}}}?ver={{now}}">
+    @font-face {
+        font-family: {{ fontName }};
+        src: url("{{{url}}}?ver={{now}}");
+    }
+
+    .font-display-{{ fontName }} {
+        font-family: {{ fontName }};
+    }
+</style>
+
+<div class="font-viewer">
+    <div class="inner-content">
+
+        <div class="font-header">
+            {{ Strings.FONT_FILE }}<span class="divider">&bull;</span><span class="font-data">&nbsp;</span>
+        </div>
+
+        <div class="font-display font-display-{{ fontName }}">
+            ABCDEFGHIJKLMNOPQRSTUVWXYZ<br />
+            abcdefghijklmnopqrstuvwxyz<br />
+            0123456789<br />
+            &amp;%$@#?+-*{}()[]&lt;&gt;
+        </div>
+
+        <div class="code-wrapper">
+            <h2 class="code-title">{{ Strings.USE_FONT_INSTRUCTIONS }}</h2>
+            <pre>
+@font-face {
+  font-family: "{{fontName}}";
+  src: url("{{{relPath}}}");
+}
+
+p {
+  font-family: "{{fontName}}";
+}
+</pre>
+        </div>
+
+        <div class="font-samples">
+            <div class="sample">
+                <h3>{{ Strings.FONT_TYPE_NORMAL }}</h3>
+                <p class="normal font-display-{{ fontName }}">The quick brown fox jumped over the lazy dog.</p>
+            </div>
+            <div class="sample">
+                <h3>{{ Strings.FONT_TYPE_ITALIC }}</h3>
+                <p class="italic font-display-{{ fontName }}">The quick brown fox jumped over the lazy dog.</p>
+                <ul class="code-sample">
+                    <li><strong>HTML</strong> &rarr; {{{ Strings.FONT_BOLD_HTML_TAG }}}</li>
+                    <li><strong>CSS</strong> &rarr; {{{ Strings.FONT_BOLD_CSS_RULE }}}</li>
+                </ul>
+            </div>
+            <div class="sample">
+                <h3>{{ Strings.FONT_TYPE_BOLD }}</h3>
+                <p class="bold font-display-{{ fontName }}">The quick brown fox jumped over the lazy dog.</p>
+                <ul class="code-sample">
+                    <li><strong>HTML</strong> &rarr; {{{ Strings.FONT_ITALIC_HTML_TAG }}}</li>
+                    <li><strong>CSS</strong> &rarr; {{{ Strings.FONT_ITALIC_CSS_RULE }}}</li>
+                </ul>
+            </div>
+        </div>
+
+    </div>
+</div>

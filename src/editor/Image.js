@@ -15,10 +15,10 @@ define(function (require, exports, module) {
         var $saveBtn = $(".btn-image-filter-save");
         var $resetBtn = $(".btn-image-filter-reset");
         var $imageWrapper = $(".image-view .image-wrapper");
-
-        $("#image-filters-section").removeClass("hide");
-
         var processing = false;
+
+        // Show the image filter buttons
+        $(".image-view .image-filters-section").removeClass("hide");
 
         $resetBtn.click(function() {
             image.reset();

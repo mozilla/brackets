@@ -156,6 +156,14 @@
         }
     },
     {
+        "path": "extensions/extra/brackets-fonts-viewer",
+        "less":{
+            "dist/extensions/extra/brackets-fonts-viewer/styles/main.css": [
+                "src/extensions/extra/brackets-fonts-viewer/styles/main.less"
+            ]
+        }
+    },
+    {
         "path": "extensions/extra/PDFView",
         "less": {
             "dist/extensions/extra/PDFView/styles/styles.css": [
@@ -171,5 +179,13 @@
             "extensions/extra/PDFView/htmlContent/viewer.html",
             "extensions/extra/PDFView/bramble-pdfjs.js"
         ]
+    },
+    {
+        "path": "extensions/extra/brackets-fonts-viewer",
+        "less":{
+            "dist/extensions/extra/brackets-fonts-viewer/styles/main.css": [
+                "src/extensions/extra/brackets-fonts-viewer/styles/main.less"
+            ]
+        }
     }
 ]

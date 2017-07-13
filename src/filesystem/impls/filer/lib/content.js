@@ -158,6 +158,22 @@ define(function (require, exports, module) {
             return ext === '.zip' || ext === '.tar';
         },
 
+        isFont: function(ext) {
+            ext = FilerUtils.normalizeExtension(ext);
+            switch(ext) {
+            case '.eot':
+            // fallsthrough
+            case '.otf':
+            // fallsthrough
+            case '.ttf':
+            // fallsthrough
+            case '.woff':
+                return true;
+            default:
+                return false;
+            }
+        },
+
         mimeFromExt: function(ext) {
             return _lookupMimeType(ext);
         },

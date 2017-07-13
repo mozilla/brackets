@@ -1,0 +1,203 @@
+// Colors for dark theme
+@border-dark: rgba(255,255,255,.2);
+@text-dark: rgba(255,255,255,.6);
+@background-dark: #222;
+
+
+// Colors for light theme
+@border-light: rgba(0,0,0,.25);
+@text-light: rgba(0,0,0,.7);
+
+
+.font-viewer {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    user-select: text;
+    font-family: "Open Sans", "Helvetica Neue", Helvetica, sans-serif;
+    font-size: 15px;
+    overflow: auto;
+    color: @text-light;
+
+    .inner-content {
+        padding: 20px 25px;
+    }
+
+    .font-display {
+        border-top: solid 1px @border-light;
+        padding-top: 12px;
+        margin: 10px 0 30px 0;
+        font-size: 2em;
+        line-height: 1.35em;
+        cursor: text;
+        overflow-wrap: break-word;
+        word-wrap: break-word;
+        hyphens: auto;
+    }
+
+    .font-header {
+        text-align: left;
+
+        .divider {
+            margin: 0 7px;
+        }
+    }
+
+    .code-wrapper {
+         background: #e3f4fd;
+         border: solid 1px #c1dfef;
+         text-align: left;
+         margin: 20px 0 30px 0;
+
+         .code-title {
+             margin: 0;
+             padding: 18px 18px;
+             line-height: 16px;
+             font-weight: 400;
+             color: rgba(0,0,0,.7);
+             font-weight: 600;
+             font-size: 15px;
+             background: #c1dfef;
+         }
+
+         pre {
+             font-size: 13px;
+             user-select: text;
+             line-height: 140%;
+             border-radius: 2px;
+             padding: 16px 18px;
+             border: none;
+             color: rgba(0,0,0,.7);
+             background: transparent;
+             margin: 0;
+             display: block;
+             text-align: left;
+        }
+    }
+
+    .font-samples {
+        h3 {
+            font-size: 15px;
+            font-weight: 600;
+            margin: 0 0 10px 0;
+            padding: 0 0 4px 0;
+            line-height: 18px;
+            font-weight: 600;
+            border-bottom: solid 1px @border-light;
+        }
+
+        p {
+            font-size: 1.5em;
+            line-height: 1.5em;
+            margin: 0;
+        }
+
+        ul {
+            margin: 0;
+            list-style-type: none;
+            background: #e3f4fd;
+            margin: 15px 0 10px 0;
+            border: solid 1px #c1dfef;
+            color: @text-light;
+
+            li {
+                font-size: 14px;
+                padding: 10px 14px;
+
+                border-bottom: solid 1px #c1dfef;
+
+                strong {
+                    font-weight: 600;
+                    color: rgba(0,0,0,.9);
+                }
+
+                &:last-child {
+                    margin: 0;
+                    border: none;
+                }
+
+                code {
+                    font-size: 13px;
+                    color: #0984b7;
+                    margin: 0;
+                    padding: 0;
+                }
+            }
+        }
+    }
+
+    .font-samples .sample {
+        margin-bottom: 20px;
+        padding-bottom: 20px;
+
+        &:last-child {
+            border: none;
+        }
+    }
+
+    .font-samples .normal {
+        font-weight: normal;
+    }
+
+    .font-samples .bold {
+        font-weight: bold;
+    }
+
+    .font-samples .italic {
+        font-style: italic;
+    }
+}
+
+.dark {
+    .font-viewer {
+        background: @background-dark;
+        color: @text-dark;
+    }
+
+    .font-display {
+        border-top: solid 1px @border-dark;
+        color: rgba(255,255,255,.8);
+    }
+
+
+    .font-samples h3 {
+        border-bottom: solid 1px @border-dark;
+    }
+
+    .code-wrapper {
+       border: solid 1px #163a4e;
+       background: rgba(15, 40, 53, 0.8);
+
+       .code-title {
+           color: rgba(255,255,255,.8);
+           background: #0d3c54;
+       }
+
+       pre {
+           color: rgba(255,255,255,.6);
+       }
+    }
+
+
+    .font-samples ul  {
+       color: @text-dark;
+       border: solid 1px #163a4e;
+       background: rgba(15, 40, 53, 0.8);
+
+       li {
+           border-bottom: solid 1px #163a4e;
+
+           strong {
+               color: rgba(255,255,255,.8);
+           }
+
+           &:last-child {
+               border: none;
+           }
+       }
+
+    }
+}
+
