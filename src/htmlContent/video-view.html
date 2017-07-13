@@ -1,17 +1,18 @@
-<div class="video-view">
-    <div class="video-data">
+<div class="video-view viewer-wrapper">
+
+    <div class="video-data viewer-header">
         <span class="file-type">{{ Strings.VIDEO_FILE }}</span>
         <span class="divider">&bull;</span>
         <span class="video-data-content"><span>
     </div>
 
-    <div class="video-wrapper">
+    <div class="video-wrapper specimen-wrapper">
         <video controls>
           <source src="{{ videoUrl }}" type="{{ videoType }}">
         </video>
     </div>
 
-    <h2 class="options-title">{{ Strings.VIDEO_OPTIONS }}</h2>
+    <h3 class="options-title">{{ Strings.VIDEO_OPTIONS }}</h3>
 
     <ul class="tag-options">
         <li>

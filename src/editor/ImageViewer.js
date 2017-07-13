@@ -196,7 +196,7 @@ define(function (require, exports, module) {
             } else {
                 var sizeString = "";
                 if (stat.size) {
-                    sizeString = " &mdash; " + StringUtils.prettyPrintBytes(stat.size, 2);
+                    sizeString = " <span class='divider'>&bull;</span> " + StringUtils.prettyPrintBytes(stat.size, 2);
                 }
                 var dimensionAndSize = dimensionString + sizeString;
                 self.$imageData.html(dimensionAndSize)
