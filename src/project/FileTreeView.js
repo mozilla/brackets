@@ -256,10 +256,13 @@ define(function (require, exports, module) {
          * Send matching mouseDown events to the action creator as a setContext action.
          */
         handleMouseDown: function (e) {
+
             e.stopPropagation();
+
             if (e.button === RIGHT_MOUSE_BUTTON ||
                     (this.props.platform === "mac" && e.button === LEFT_MOUSE_BUTTON && e.ctrlKey)) {
                 this.props.actions.setContext(this.myPath());
+
                 e.preventDefault();
                 return;
             }
@@ -371,7 +374,9 @@ define(function (require, exports, module) {
          */
         getInitialState: function () {
             return {
-                clickTimer: null
+                clickTimer: null,
+                menuOpened: false
+
             };
         },
 
@@ -436,16 +441,16 @@ define(function (require, exports, module) {
                 return;
             }
 
-            if (this.props.entry.get("selected") && !e.ctrlKey) {
-                if (this.state.clickTimer === null && !this.props.entry.get("rename")) {
-                    var timer = window.setTimeout(this.startRename, CLICK_RENAME_MINIMUM);
-                    this.setState({
-                        clickTimer: timer
-                    });
-                }
-            } else {
-                this.props.actions.setSelected(this.myPath());
-            }
+            // if (this.props.entry.get("selected") && !e.ctrlKey) {
+            //     if (this.state.clickTimer === null && !this.props.entry.get("rename")) {
+            //         var timer = window.setTimeout(this.startRename, CLICK_RENAME_MINIMUM);
+            //         this.setState({
+            //             clickTimer: timer
+            //         });
+            //     }
+            // } else {
+            this.props.actions.setSelected(this.myPath());
+            // }
             e.stopPropagation();
             e.preventDefault();
         },
@@ -501,6 +506,26 @@ define(function (require, exports, module) {
                 isFile: true,
                 fullPath: this.myPath()
             };
+        },
+
+        handleToggleClick : function(event) {
+
+            console.log("============");
+            console.log("handleToggleClick");
+            // console.log(this.state.menuOpened);
+            // console.log($(".context-menu.open").length);
+
+            this.props.actions.setContext(this.myPath());
+
+            var menuToggle = $(event.nativeEvent.target);
+            var e = jQuery.Event("contextmenu");
+            e.pageX = menuToggle.offset().left + 2;
+            e.pageY = menuToggle.offset().top + 26;
+            $("#project-files-container").trigger(e);
+
+            event.stopPropagation();
+            event.preventDefault();
+
         },
 
         render: function () {
@@ -569,7 +594,7 @@ define(function (require, exports, module) {
                     className: this.getClasses("jstree-leaf"),
                     onClick: this.handleClick,
                     onMouseDown: this.handleMouseDown,
-                    onDoubleClick: this.handleDoubleClick,
+                    // onDoubleClick: this.handleDoubleClick,
                     onDragEnter: this.handleDragEnter,
                     onDragStart: this.handleDragStart,
                     draggable: true
@@ -577,7 +602,13 @@ define(function (require, exports, module) {
                 DOM.ins({
                     className: insClassName
                 }),
+                DOM.span({
+                    className: "menuToggle",
+                    onClick: this.handleToggleClick
+                })
             ];
+
+
 
             var thickness = _createThickness(this.props.depth);
 
@@ -597,6 +628,7 @@ define(function (require, exports, module) {
                 }, thickness, this.getIcons(), name, extension]);
                 nameDisplay = DOM.a.apply(DOM.a, aArgs);
             }
+
 
             liArgs.push(nameDisplay);
 

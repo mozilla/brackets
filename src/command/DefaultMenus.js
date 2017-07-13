@@ -187,16 +187,16 @@ define(function (require, exports, module) {
 //        menu.addMenuItem(Commands.HELP_SHOW_EXT_FOLDER);
 //
 //        var hasAboutItem = (brackets.platform !== "mac" || !brackets.nativeMenus);
-//        
+//
 //        // Add final divider only if we have a homepage URL or twitter URL or about item
 //        if (hasAboutItem || brackets.config.homepage_url || brackets.config.twitter_url) {
 //            menu.addMenuDivider();
 //        }
-//        
+//
 //        if (brackets.config.homepage_url) {
 //            menu.addMenuItem(Commands.HELP_HOMEPAGE);
 //        }
-//        
+//
 //        if (brackets.config.twitter_url) {
 //            menu.addMenuItem(Commands.HELP_TWITTER);
 //        }
@@ -249,7 +249,7 @@ define(function (require, exports, module) {
 //        project_cmenu.addMenuItem(Commands.CMD_REPLACE_IN_SUBTREE);
 //        project_cmenu.addMenuDivider();
 //        project_cmenu.addMenuItem(Commands.FILE_REFRESH);
-        
+
         var editor_cmenu = Menus.registerContextMenu(Menus.ContextMenuIds.EDITOR_MENU);
         // editor_cmenu.addMenuItem(Commands.NAVIGATE_JUMPTO_DEFINITION);
         editor_cmenu.addMenuItem(Commands.TOGGLE_QUICK_EDIT);
@@ -302,6 +302,7 @@ define(function (require, exports, module) {
          * Context menu for folder tree
          */
         $("#project-files-container").on("contextmenu", function (e) {
+            console.log("contextmenu triggered");
             project_cmenu.open(e);
         });
 
@@ -328,6 +329,7 @@ define(function (require, exports, module) {
         // Only open the menu if another one has already been opened
         // by clicking
         $(window.document).on("mouseenter", "#titlebar .dropdown", function (e) {
+           console.log("here??")
             var open = $(this).siblings(".open");
             if (open.length > 0) {
                 open.removeClass("open");

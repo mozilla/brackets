@@ -863,6 +863,7 @@ define(function (require, exports, module) {
      * Closes all menus that are open
      */
     function closeAll() {
+        console.log("closeAll");
         $(".dropdown").removeClass("open");
     }
 
@@ -1048,10 +1049,17 @@ define(function (require, exports, module) {
      */
     ContextMenu.prototype.open = function (mouseOrLocation) {
 
+        console.log("ContextMenu.prototype.open");
+
         if (!mouseOrLocation || !mouseOrLocation.hasOwnProperty("pageX") || !mouseOrLocation.hasOwnProperty("pageY")) {
             console.error("ContextMenu open(): missing required parameter");
             return;
         }
+
+        console.log("is this open", this.isOpen());
+
+        console.log($("#" + this.id));
+
 
         var $window = $(window),
             escapedId = StringUtils.jQueryIdEscape(this.id),
@@ -1059,6 +1067,7 @@ define(function (require, exports, module) {
             $menuWindow = $("#" + escapedId + " > ul"),
             posTop  = mouseOrLocation.pageY,
             posLeft = mouseOrLocation.pageX;
+
 
         // only show context menu if it has menu items
         if ($menuWindow.children().length <= 0) {
@@ -1099,8 +1108,11 @@ define(function (require, exports, module) {
         }
 
         // open the context menu at final location
-        $menuAnchor.addClass("open")
-                   .css({"left": posLeft, "top": posTop});
+        console.log("addClass open");
+        $menuAnchor.addClass("open").css({"left": posLeft, "top": posTop});
+
+        console.log("is this open", this.isOpen());
+
     };
 
 
@@ -1108,6 +1120,7 @@ define(function (require, exports, module) {
      * Closes the context menu.
      */
     ContextMenu.prototype.close = function () {
+        console.log("Closing");
         this.trigger("beforeContextMenuClose");
         $("#" + StringUtils.jQueryIdEscape(this.id)).removeClass("open");
     };
@@ -1116,6 +1129,7 @@ define(function (require, exports, module) {
      * Detect if current context menu is already open
      */
     ContextMenu.prototype.isOpen = function () {
+        console.log("ContextMenu.prototype.isOpen", this.id);
         return $("#" + StringUtils.jQueryIdEscape(this.id)).hasClass("open");
     };
 
@@ -1127,12 +1141,15 @@ define(function (require, exports, module) {
      */
     ContextMenu.assignContextMenuToSelector = function (selector, cmenu) {
         $(selector).on("click", function (e) {
+            console.log("assignContextMenuToSelector");
+
             var buttonOffset,
                 buttonHeight;
 
             e.stopPropagation();
 
             if (cmenu.isOpen()) {
+                console.log("close");
                 cmenu.close();
             } else {
                 buttonOffset = $(this).offset();
