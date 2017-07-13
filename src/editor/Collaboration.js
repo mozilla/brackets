@@ -9,7 +9,7 @@ define(function (require, exports, module) {
         _room,
         _codemirror;
 
-    function initialize(options) {
+    function connect(options) {
         if(_webrtc) {
             console.error("Collaboration already initialized");
             return;
@@ -25,7 +25,7 @@ define(function (require, exports, module) {
             url: "localhost:8888"
         });
 
-        _room = options.room;
+        _room = options.room || Math.random().toString(36).substring(7);
         console.log(_room);
         _webrtc.joinRoom(_room, function() {
             _webrtc.sendToAll("new client", {});
@@ -36,10 +36,6 @@ define(function (require, exports, module) {
 
         _pending = []; // pending clients that need to be initialized.
         _changing = false;
-    };
-
-    function init(codemirror) {
-        _codemirror = codemirror;
     };
 
     function setCodemirror(codemirror) {
@@ -108,7 +104,7 @@ define(function (require, exports, module) {
             return;
         }
         for(var i = 0; i<changeList.length; i++) {
-            _webrtc.sendToAll("codemirror-change",changeList[i]);
+            _webrtc.sendToAll("codemirror-change", changeList[i]);
         }
     };
 

@@ -98,7 +98,7 @@
             useLocationSearch: true,
             enableCollaboration: true,
             collaboration: {
-                room: (new URL(window.location.href)).searchParams.get("collaboration") || Math.random().toString(36).substring(7)
+                room: (new URL(window.location.href)).searchParams.get("collaboration")
             }
         });
 
