@@ -96,7 +96,6 @@
         Bramble.load("#bramble",{
             url: "index.html",
             useLocationSearch: true,
-            enableCollaboration: true,
             collaboration: {
                 room: (new URL(window.location.href)).searchParams.get("collaboration")
             }
