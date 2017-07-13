@@ -42,7 +42,9 @@ define(function (require, exports, module) {
         ViewUtils         = require("utils/ViewUtils"),
         KeyEvent          = require("utils/KeyEvent"),
         DragAndDrop       = require("utils/DragAndDrop"),
-        UrlCache          = require("filesystem/impls/filer/UrlCache");
+        UrlCache          = require("filesystem/impls/filer/UrlCache"),
+        Menus             = require("command/Menus");
+
 
     var DOM = React.DOM;
 
@@ -510,22 +512,20 @@ define(function (require, exports, module) {
 
         handleToggleClick : function(event) {
 
-            console.log("============");
-            console.log("handleToggleClick");
-            // console.log(this.state.menuOpened);
-            // console.log($(".context-menu.open").length);
-
-            this.props.actions.setContext(this.myPath());
-
-            var menuToggle = $(event.nativeEvent.target);
-            var e = jQuery.Event("contextmenu");
-            e.pageX = menuToggle.offset().left + 2;
-            e.pageY = menuToggle.offset().top + 26;
-            $("#project-files-container").trigger(e);
+            if($(event.target).hasClass("toggle-open")){
+                Menus.closeAll();
+            } else {
+                $(event.target).addClass("toggle-open");
+                this.props.actions.setContext(this.myPath());
+                var menuToggle = $(event.nativeEvent.target);
+                var e = jQuery.Event("contextmenu");
+                e.pageX = menuToggle.offset().left + 2;
+                e.pageY = menuToggle.offset().top + 26;
+                $("#project-files-container").trigger(e);
+            }
 
             event.stopPropagation();
             event.preventDefault();
-
         },
 
         render: function () {
@@ -601,10 +601,6 @@ define(function (require, exports, module) {
                 },
                 DOM.ins({
                     className: insClassName
-                }),
-                DOM.span({
-                    className: "menuToggle",
-                    onClick: this.handleToggleClick
                 })
             ];
 
@@ -630,7 +626,13 @@ define(function (require, exports, module) {
             }
 
 
+            var menuToggle = DOM.span({
+                className: "menuToggle",
+                onClick: this.handleToggleClick
+            });
+
             liArgs.push(nameDisplay);
+            liArgs.push(menuToggle);
 
             return DOM.li.apply(DOM.li, liArgs);
         }

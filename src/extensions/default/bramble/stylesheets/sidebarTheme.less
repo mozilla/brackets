@@ -163,7 +163,18 @@ li.jstree-closed > a span {
     background-size: 10px;
     background-position: center;
     background-repeat: no-repeat;
+    display: none;
+
+    &.toggle-open {
+        background-color: black;
+    }
 }
+
+.selected-node + .menuToggle {
+    display: block;
+}
+
+
 
 
 [data-theme='light-theme'] li.jstree-leaf a:not(.selected-node):hover > span {
