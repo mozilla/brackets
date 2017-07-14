@@ -1098,7 +1098,7 @@ define(function (require, exports, module) {
          * stopping the context menu from disappearing because it recognizes
          * that we want to interact with the context menu
          */
-        posLeft += 2;
+        posLeft += 3;
 
 
         if (clip.right > 0) {

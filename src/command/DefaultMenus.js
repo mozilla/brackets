@@ -302,7 +302,6 @@ define(function (require, exports, module) {
          * Context menu for folder tree
          */
         $("#project-files-container").on("contextmenu", function (e) {
-            console.log("contextmenu triggered");
             project_cmenu.open(e);
         });
 

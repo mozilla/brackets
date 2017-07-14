@@ -92,10 +92,10 @@ define(function (require, exports, module) {
     function show() {
         // XXXBramble: don't allow the sidebar to open at less than our minimum width
         if($sidebar.width() < MinimumSidebarWidthPX){
-            $sidebar.width(MinimumSidebarWidthPX); 
+            $sidebar.width(MinimumSidebarWidthPX);
         }
-        
-        Resizer.show($sidebar); 	    
+
+        Resizer.show($sidebar);
     }
 
     /**

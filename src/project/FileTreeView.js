@@ -625,7 +625,6 @@ define(function (require, exports, module) {
                 nameDisplay = DOM.a.apply(DOM.a, aArgs);
             }
 
-
             var menuToggle = DOM.span({
                 className: "menuToggle",
                 onClick: this.handleToggleClick
@@ -831,6 +830,24 @@ define(function (require, exports, module) {
             };
         },
 
+        handleToggleClick : function(event) {
+
+            if($(event.target).hasClass("toggle-open")){
+                Menus.closeAll();
+            } else {
+                $(event.target).addClass("toggle-open");
+                this.props.actions.setContext(this.myPath());
+                var menuToggle = $(event.nativeEvent.target);
+                var e = jQuery.Event("contextmenu");
+                e.pageX = menuToggle.offset().left + 2;
+                e.pageY = menuToggle.offset().top + 26;
+                $("#project-files-container").trigger(e);
+            }
+
+            event.stopPropagation();
+            event.preventDefault();
+        },
+
         render: function () {
             var entry = this.props.entry,
                 nodeClass,
@@ -890,6 +907,13 @@ define(function (require, exports, module) {
                 }, thickness, this.getIcons(), this.props.name]);
                 nameDisplay = DOM.a.apply(DOM.a, aArgs);
             }
+
+            var menuToggle = DOM.span({
+                className: "menuToggle",
+                onClick: this.handleToggleClick
+            });
+            liArgs.push(menuToggle);
+
 
             liArgs.push(nameDisplay);
             liArgs.push(childNodes);
