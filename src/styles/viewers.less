@@ -1,15 +1,17 @@
 // Colors for dark theme
 @border-dark: rgba(255,255,255,.2);
 @text-dark: rgba(255,255,255,.6);
+@text-dark-bright: rgba(255,255,255,.85);
 @background-dark: #222;
 
 
 // Colors for light theme
 @border-light: rgba(0,0,0,.25);
 @text-light: rgba(0,0,0,.7);
-
+@text-light-bright: rgba(0,0,0,.85);
 
 .viewer-wrapper {
+    cursor: auto;
     position: absolute;
     top: 0;
     right: 0;
@@ -39,9 +41,15 @@
         text-align: left;
         border-bottom: solid 1px @border-light;
         margin-bottom: 20px;
+        line-height: 15px;
 
         .file-type {
             font-weight: 600;
+            color: @text-light-bright;
+        }
+
+        .file-details {
+            float: right;
         }
 
         .divider {
@@ -66,20 +74,40 @@
     }
 
     .code-wrapper {
-         background: #e3f4fd;
-         border: solid 1px #c1dfef;
-         text-align: left;
-         margin: 20px 0 30px 0;
+        background: #e3f4fd;
+        text-align: left;
+        margin: 25px 0 30px 0;
+        position: relative;
+
+        &.code-html {
+            background: fade(#b73e1e, 20%);
+            .code-title {
+                background: #b73e1e;
+            }
+        }
+
+        &.code-css {
+            background: fade(#006c9e, 20%);
+            .code-title {
+                background: #006c9e;
+            }
+        }
 
          .code-title {
+             position: absolute;
+             right: 10px;
+             top: -12px;
              margin: 0;
-             padding: 12px 18px;
              line-height: 16px;
              font-weight: 400;
              color: rgba(0,0,0,.7);
              font-weight: 600;
              font-size: 15px;
              background: #c1dfef;
+             color: white;
+             text-shadow: 0 2px 0 rgba(0,0,0,.2);
+             padding: 7px 12px 8px 12px;
+             border-radius: 2px;
          }
 
          pre {
@@ -87,7 +115,7 @@
              user-select: text;
              line-height: 140%;
              border-radius: 2px;
-             padding: 16px 18px;
+             padding: 14px 18px;
              border: none;
              color: rgba(0,0,0,.7);
              background: transparent;
@@ -100,9 +128,34 @@
 
 .dark .viewer-wrapper {
     color: @text-dark;
+    background: @background-dark;
+
+    .code-wrapper {
+        &.code-html {
+            background: fade(#b73e1e, 20%);
+            .code-title {
+                background: #b73e1e;
+            }
+        }
+
+        &.code-css {
+            background: fade(#006c9e, 20%);
+            .code-title {
+                background: #006c9e;
+            }
+        }
+
+        pre {
+            color: fade(white, 70%);
+        }
+    }
 
     .viewer-header {
         border-bottom: solid 1px @border-dark;
+
+        .file-type {
+            color: @text-dark-bright;
+        }
     }
 }
 
@@ -186,34 +239,13 @@
 }
 
 .dark {
-    .font-viewer {
-        background: @background-dark;
-        color: @text-dark;
-    }
-
     .font-display {
         color: rgba(255,255,255,.8);
     }
 
-
     .font-samples h3 {
         border-bottom: solid 1px @border-dark;
     }
-
-    .code-wrapper {
-       border: solid 1px #163a4e;
-       background: rgba(15, 40, 53, 0.8);
-
-       .code-title {
-           color: rgba(255,255,255,.8);
-           background: #0d3c54;
-       }
-
-       pre {
-           color: rgba(255,255,255,.6);
-       }
-    }
-
 
     .font-samples ul  {
        color: @text-dark;
@@ -243,6 +275,8 @@
         font-family: monospace;
         color: rgba(0,0,0,.8);
         font-size: 15px;
+        display: inline-block;
+        min-width: 100px;
     }
 
     .tag-options {
@@ -268,31 +302,8 @@
     }
 
     .code-wrapper {
-        background: #e3f4fd;
-        border: solid 1px #c1dfef;
-
-        .code-title {
-            margin: 0;
-            padding: 18px 18px;
-            line-height: 16px;
-            font-weight: 400;
-            color: rgba(0,0,0,.7);
-            font-weight: 600;
-            font-size: 15px;
-            background: #c1dfef;
-        }
 
         pre {
-            font-size: 13px;
-            user-select: text;
-            line-height: 140%;
-            border-radius: 2px;
-            padding: 16px 18px;
-            border: none;
-            color: rgba(0,0,0,.7);
-            background: transparent;
-            margin: 0;
-            display: block;
 
             &.pop {
                 animation: pop .2s ease-out;
@@ -320,31 +331,12 @@
         color: rgba(255,255,255,.8);
     }
 
-
     .options-title {
         border-bottom: solid 1px rgba(255,255,255,.2);
     }
 
     .tag-options li {
         color: rgba(255,255,255,.4);
-    }
-
-    .video-wrapper {
-        background: rgba(0,0,0,.4);
-    }
-
-    .code-wrapper {
-        border: solid 1px #163a4e;
-        background: rgba(15, 40, 53, 0.8);
-
-        pre {
-            color: rgba(255,255,255,.7);
-        }
-
-        .code-title {
-            color: rgba(255,255,255,.8);
-            background: #0d3c54;
-        }
     }
 }
 

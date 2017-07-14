@@ -12,9 +12,8 @@
 <div class="font-viewer viewer-wrapper">
 
     <div class="viewer-header">
-        {{ Strings.FONT_FILE }}
-        <span class="divider">&bull;</span>
-        <span class="font-data">&nbsp;</span>
+        <span class="file-type">{{ Strings.FONT_FILE }}</span>
+        <span class="font-data file-details">&nbsp;</span>
     </div>
 
     <div class="font-display font-display-{{ fontName }} specimen-wrapper">
@@ -24,8 +23,8 @@
         &amp;%$@#?+-*{}()[]&lt;&gt;
     </div>
 
-    <div class="code-wrapper">
-        <h2 class="code-title">{{ Strings.USE_FONT_INSTRUCTIONS }}</h2>
+    <div class="code-wrapper code-css">
+        <h2 class="code-title">CSS</h2>
         <pre>
 @font-face {
   font-family: "{{fontName}}";

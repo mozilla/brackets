@@ -37,7 +37,8 @@ define(function (require, exports, module) {
         FileUtils           = require("file/FileUtils"),
         _                   = require("thirdparty/lodash"),
         Mustache            = require("thirdparty/mustache/mustache"),
-        Image               = require("editor/Image");
+        Image               = require("editor/Image"),
+        StartupState        = require("bramble/StartupState");
 
     // Vibrant doesn't seem to play well with requirejs AMD loading, load it globally.
     require("thirdparty/Vibrant");
@@ -111,6 +112,12 @@ define(function (require, exports, module) {
         return id === "image" || isSVGImage(fullPath);
     }
 
+    // Get a URL out of the cache that you can use in the project HTML
+    function _getLocalAssetUrl(file) {
+        var root = StartupState.project("root");
+        return file.fullPath.replace(root,"").replace("/","");
+    }
+
     /**
      * ImageView objects are constructed when an image is opened
      * @see {@link Pane} for more information about where ImageViews are rendered
@@ -123,6 +130,7 @@ define(function (require, exports, module) {
         this.file = file;
         this.$el = $(Mustache.render(ImageViewTemplate, {
             imgUrl: _getImageUrl(file),
+            localImgUrl: _getLocalAssetUrl(this.file),
             Strings: Strings
         }));
 
