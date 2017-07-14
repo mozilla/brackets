@@ -45,7 +45,6 @@ define(function (require, exports, module) {
         UrlCache          = require("filesystem/impls/filer/UrlCache"),
         Menus             = require("command/Menus");
 
-
     var DOM = React.DOM;
 
     /**
@@ -518,7 +517,7 @@ define(function (require, exports, module) {
                 $(event.target).addClass("toggle-open");
                 this.props.actions.setContext(this.myPath());
                 var menuToggle = $(event.nativeEvent.target);
-                var e = jQuery.Event("contextmenu");
+                var e = $.Event("contextmenu");
                 e.pageX = menuToggle.offset().left + 2;
                 e.pageY = menuToggle.offset().top + 26;
                 $("#project-files-container").trigger(e);
@@ -838,7 +837,7 @@ define(function (require, exports, module) {
                 $(event.target).addClass("toggle-open");
                 this.props.actions.setContext(this.myPath());
                 var menuToggle = $(event.nativeEvent.target);
-                var e = jQuery.Event("contextmenu");
+                var e = $.Event("contextmenu");
                 e.pageX = menuToggle.offset().left + 2;
                 e.pageY = menuToggle.offset().top + 26;
                 $("#project-files-container").trigger(e);
