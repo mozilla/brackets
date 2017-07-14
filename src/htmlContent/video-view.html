@@ -13,35 +13,57 @@
 
     <h3 class="options-title">{{ Strings.VIDEO_OPTIONS }}</h3>
 
-    <ul class="tag-options">
-        <li>
-            <label>
-                <input type="checkbox" checked setting="controls" />
-                <span class="attribute-name">controls</span> &mdash; {{ Strings.VIDEO_OPTION_SHOW_CONTROLS }}
-            </label>
-        </li>
-        <li>
-            <label>
-                <input type="checkbox" setting="autoplay" />
-                <span class="attribute-name">autoplay</span> &mdash; {{ Strings.VIDEO_OPTION_AUTOPLAY }}
-            </label>
-        </li>
-        <li>
-            <label>
-                <input type="checkbox" setting="loop" />
-                <span class="attribute-name">loop</span> &mdash; {{ Strings.VIDEO_OPTION_LOOPING }}
-            </label>
-        </li>
-        <li>
-            <label>
-                <input type="checkbox" setting="muted" />
-                <span class="attribute-name">muted</span> &mdash; {{ Strings.VIDEO_OPTION_DISABLE_AUDIO }}
-            </label>
-        </li>
-    </ul>
+    <table class="tag-options">
+        <tr>
+            <td>
+                <input type="checkbox" id="setting-controls" checked setting="controls" />
+            </td>
+            <td>
+                <label class="attribute-name" for="setting-controls">controls</label>
+            </td>
+            <td>
+                {{ Strings.VIDEO_OPTION_SHOW_CONTROLS }}
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <input type="checkbox" id="setting-autoplay" setting="autoplay" />
+            </td>
+            <td>
+                <label class="attribute-name" for="setting-autoplay">autoplay</label>
+            </td>
+            <td>
+                {{ Strings.VIDEO_OPTION_AUTOPLAY }}
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <input type="checkbox" id="setting-loop" setting="loop" />
+            </td>
+            <td>
+                <label class="attribute-name" for="setting-loop">loop</label>
+            </td>
+            <td>
+                {{ Strings.VIDEO_OPTION_LOOPING }}
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <input type="checkbox" id="setting-muted" setting="muted" />
+            </td>
+            <td>
+                <label for="setting-muted" class="attribute-name">muted</label>
+            </td>
+            <td>
+                {{ Strings.VIDEO_OPTION_DISABLE_AUDIO }}
+            </td>
+        </tr>
+    </table>
 
     <div class="code-wrapper code-html">
-        <h2 class="code-title">HTML</h2>
+        <h2 class="code-title">
+            HTML
+        </h2>
         <pre></pre>
     </div>
 </div>

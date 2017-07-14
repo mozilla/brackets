@@ -28,8 +28,9 @@
 
     input[type="checkbox"] {
         position: relative;
-        top: 0;
-        margin-right: 3px;
+        top: -1;
+        margin: 0;
+        padding: 0;
 
         &:focus {
             box-shadow: none;
@@ -69,20 +70,23 @@
 
     .specimen-wrapper {
         padding: 20px;
-        background: rgba(0,0,0,.4);
         margin: 20px 0;
+        background: rgba(0,0,0,.08);
     }
 
     .code-wrapper {
         background: #e3f4fd;
         text-align: left;
-        margin: 25px 0 30px 0;
+        margin: 20px 0 20px 0;
         position: relative;
 
         &.code-html {
             background: fade(#b73e1e, 20%);
             .code-title {
                 background: #b73e1e;
+            }
+            pre {
+                color: fade(#b73e1e, 70%);
             }
         }
 
@@ -91,12 +95,15 @@
             .code-title {
                 background: #006c9e;
             }
+            pre {
+                color: fade(#006c9e, 70%);
+            }
         }
 
          .code-title {
              position: absolute;
              right: 10px;
-             top: -12px;
+             top: 10px;
              margin: 0;
              line-height: 16px;
              font-weight: 400;
@@ -106,16 +113,18 @@
              background: #c1dfef;
              color: white;
              text-shadow: 0 2px 0 rgba(0,0,0,.2);
-             padding: 7px 12px 8px 12px;
-             border-radius: 2px;
+             padding: 7px 8px 8px 8px;
+             border-radius: 1px;
+
          }
 
          pre {
-             font-size: 13px;
+             font-size: 15px;
              user-select: text;
              line-height: 140%;
              border-radius: 2px;
-             padding: 14px 18px;
+             font-family: monospace;
+             padding: 15px 18px 15px 18px;
              border: none;
              color: rgba(0,0,0,.7);
              background: transparent;
@@ -129,6 +138,10 @@
 .dark .viewer-wrapper {
     color: @text-dark;
     background: @background-dark;
+
+    .specimen-wrapper {
+        background: rgba(0,0,0,.4);
+    }
 
     .code-wrapper {
         &.code-html {
@@ -165,7 +178,7 @@
 .font-viewer {
 
     .font-display {
-        margin: 0 0 30px 0;
+        margin: 0 0 20px 0;
         font-size: 2em;
         line-height: 1.35em;
         cursor: text;
@@ -188,12 +201,11 @@
             background: #e3f4fd;
             margin: 15px 0 10px 0;
             border: solid 1px #c1dfef;
-            color: @text-light;
+            color: rgba(255,255,255,.8);
 
             li {
                 font-size: 14px;
                 padding: 10px 14px;
-
                 border-bottom: solid 1px #c1dfef;
 
                 strong {
@@ -271,27 +283,23 @@
 // Video viewer
 #editor-holder .pane-content .video-view  {
 
-    .attribute-name {
-        font-family: monospace;
-        color: rgba(0,0,0,.8);
-        font-size: 15px;
-        display: inline-block;
-        min-width: 100px;
-    }
-
     .tag-options {
         margin: 0 0 25px 0;
         list-style-type: none;
         padding-left: 0;
 
-        li {
-            margin-bottom: 8px;
-            color: rgba(0,0,0,.5);
+        .attribute-name {
+            margin: 0;
+            font-family: monospace;
+            font-size: 16px;
+            position: relative;
+            top: 1px;
+            padding-right: 10px;
         }
-    }
 
-    .video-data {
-        margin-bottom: 10px;
+        td {
+            padding: 6px;
+        }
     }
 
     video {
@@ -302,7 +310,6 @@
     }
 
     .code-wrapper {
-
         pre {
 
             &.pop {
@@ -367,6 +374,7 @@
 
     .image-wrapper {
         position: relative;
+        text-align: center;
 
         &.processing .processing-overlay {
           opacity: 1;
@@ -417,8 +425,11 @@
         }
     }
 
+    .image-filters-section {
+        margin-top: 25px;
+    }
+
     .image-filter-actions {
-        float: right;
 
         button {
             cursor: pointer;
@@ -426,7 +437,7 @@
             padding: 8px 12px;
             border: none;
             color: white;
-            margin-left: 5px;
+            margin-right: 5px;
             border-radius: 2px;
             font-size: 15px;
             box-shadow: none;
@@ -464,7 +475,7 @@
     }
 
     .image-filters {
-        margin-bottom: 30px;
+        margin-bottom: 15px;
     }
 
     .image-filters button {

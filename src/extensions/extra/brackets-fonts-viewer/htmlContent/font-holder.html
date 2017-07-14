@@ -40,23 +40,64 @@ p {
     <div class="font-samples">
         <div class="sample">
             <h3>{{ Strings.FONT_TYPE_NORMAL }}</h3>
-            <p class="normal font-display-{{ fontName }}">The quick brown fox jumped over the lazy dog.</p>
+            <p class="normal font-display-{{ fontName }} specimen-wrapper">
+                The quick brown fox jumped over the lazy dog.
+            </p>
         </div>
+
         <div class="sample">
             <h3>{{ Strings.FONT_TYPE_ITALIC }}</h3>
-            <p class="italic font-display-{{ fontName }}">The quick brown fox jumped over the lazy dog.</p>
+            <p class="italic font-display-{{ fontName }} specimen-wrapper">
+                The quick brown fox jumped over the lazy dog.
+            </p>
+
+            <div class="code-wrapper code-html">
+                <h2 class="code-title">HTML</h2>
+                <pre>&lt;strong&gt;&lt;/strong&gt;</pre>
+                <!-- {{{ Strings.FONT_BOLD_HTML_TAG }}} -->
+            </div>
+
+            <div class="code-wrapper code-css">
+                <h2 class="code-title">CSS</h2>
+                <pre>p {
+  font-weight: bold;
+}</pre>
+                        <!-- {{{ Strings.FONT_BOLD_CSS_RULE }}} -->
+            </div>
+
+
+        <!--
             <ul class="code-sample">
                 <li><strong>HTML</strong> &rarr; {{{ Strings.FONT_BOLD_HTML_TAG }}}</li>
                 <li><strong>CSS</strong> &rarr; {{{ Strings.FONT_BOLD_CSS_RULE }}}</li>
             </ul>
+        -->
+
+
         </div>
+
         <div class="sample">
             <h3>{{ Strings.FONT_TYPE_BOLD }}</h3>
-            <p class="bold font-display-{{ fontName }}">The quick brown fox jumped over the lazy dog.</p>
-            <ul class="code-sample">
+            <p class="bold specimen-wrapper font-display-{{ fontName }}">
+                The quick brown fox jumped over the lazy dog.
+            </p>
+            <div class="code-wrapper code-html">
+                <h2 class="code-title">HTML</h2>
+                <pre>&lt;em&gt;&lt;/em&gt;</pre>
+            </div>
+
+            <div class="code-wrapper code-css">
+                <h2 class="code-title">CSS</h2>
+                <pre>p {
+  font-style: italic;
+}</pre>
+            </div>
+
+
+            <!-- <ul class="code-sample">
                 <li><strong>HTML</strong> &rarr; {{{ Strings.FONT_ITALIC_HTML_TAG }}}</li>
                 <li><strong>CSS</strong> &rarr; {{{ Strings.FONT_ITALIC_CSS_RULE }}}</li>
-            </ul>
+            </ul> -->
         </div>
     </div>
 </div>

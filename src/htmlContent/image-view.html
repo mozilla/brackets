@@ -5,13 +5,6 @@
         <span class="image-data file-details"></span>
     </div>
 
-    <div class="image-wrapper specimen-wrapper">
-      <img class="image-preview" src="{{imgUrl}}">
-      <div class="processing-overlay">
-        <div class="processing-spinner"></div>
-      </div>
-    </div>
-
     <div class="image-view-swatches">
         <div class="swatch-wrapper">
           <span class="image-view-swatch colorVibrant"></span>
@@ -35,16 +28,19 @@
         </div>
     </div>
 
+    <div class="image-wrapper specimen-wrapper">
+      <img class="image-preview" src="{{imgUrl}}">
+      <div class="processing-overlay">
+        <div class="processing-spinner"></div>
+      </div>
+    </div>
+
     <div class="code-wrapper code-html">
         <h2 class="code-title">HTML</h2>
-        <pre>&lt;img src="{{ localImgUrl }}" alt="blam" /&gt;</pre>
+        <pre>&lt;img src="{{ localImgUrl }}" alt="{{ Strings.IMAGE_ALT_TEXT }}" /&gt;</pre>
     </div>
 
     <div class="image-filters-section hide">
-      <div class="image-filter-actions">
-        <button class="btn btn-image-filter-reset" disabled="disabled">{{Strings.IMAGE_RESET_FILTERS}}</button>
-        <button class="btn btn-image-filter-save" disabled="disabled">{{Strings.IMAGE_SAVE_WITH_FILTERS}}</button>
-      </div>
 
       <h3>{{Strings.IMAGE_FILTERS_TITLE}}</h3>
       <div class="image-filters">
@@ -55,6 +51,11 @@
           <button class="btn btn-sunrise">{{Strings.IMAGE_FILTER_SUNRISE}}</button>
           <button class="btn btn-emboss">{{Strings.IMAGE_FILTER_EMBOSS}}</button>
           <button class="btn btn-glowing-sun">{{Strings.IMAGE_FILTER_GLOWING_SUN}}</button>
+      </div>
+
+      <div class="image-filter-actions">
+        <button class="btn btn-image-filter-reset" disabled="disabled">{{Strings.IMAGE_RESET_FILTERS}}</button>
+        <button class="btn btn-image-filter-save" disabled="disabled">{{Strings.IMAGE_SAVE_WITH_FILTERS}}</button>
       </div>
     </div>
 
