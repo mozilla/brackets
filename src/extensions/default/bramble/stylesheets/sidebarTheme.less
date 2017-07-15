@@ -178,23 +178,19 @@ li.jstree-closed > a span {
     }
 }
 
-.jstree-leaf:hover ,
-.jstree-closed:hover,
-.jstree-open:hover {
+.jstree-leaf a:hover ,
+.jstree-closed a:hover,
+.jstree-open a:hover {
     .menuToggle {
         opacity: .5;
         display: block;
     }
 }
 
-
-
 .selected-node + .menuToggle {
     display: block;
     opacity: .5;
 }
-
-
 
 
 [data-theme='light-theme'] li.jstree-leaf a:not(.selected-node):hover > span {
@@ -375,6 +371,18 @@ body[data-theme='light-theme'] li.jstree-leaf a.selected-node:hover {
     border-radius: 0;
     border: none !important;
     background: white !important;
+}
+
+// Don't show New File & New Folder actions when a file's context menu
+// has been opened by clicing the toggle icon.
+.context-menu.file-menu {
+    [id*=newFile] {
+        display: none;
+    }
+
+    [id*=newFolder] {
+        display: none;
+    }
 }
 
 .context-menu .menu-shortcut {

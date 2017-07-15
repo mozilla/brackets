@@ -510,16 +510,17 @@ define(function (require, exports, module) {
         },
 
         handleToggleClick : function(event) {
-
             if($(event.target).hasClass("toggle-open")){
                 Menus.closeAll();
             } else {
-                $(event.target).addClass("toggle-open");
                 this.props.actions.setContext(this.myPath());
                 var menuToggle = $(event.nativeEvent.target);
                 var e = $.Event("contextmenu");
+                e.menuToggleEl = event.target;
                 e.pageX = menuToggle.offset().left + 2;
                 e.pageY = menuToggle.offset().top + 26;
+                e.fileMenu = true;
+                e.fromToggle = true;
                 $("#project-files-container").trigger(e);
             }
 
@@ -828,14 +829,14 @@ define(function (require, exports, module) {
         },
 
         handleToggleClick : function(event) {
-
             if($(event.target).hasClass("toggle-open")){
                 Menus.closeAll();
             } else {
-                $(event.target).addClass("toggle-open");
                 this.props.actions.setContext(this.myPath());
                 var menuToggle = $(event.nativeEvent.target);
                 var e = $.Event("contextmenu");
+                e.fromToggle = true;
+                e.menuToggleEl = event.target;
                 e.pageX = menuToggle.offset().left + 2;
                 e.pageY = menuToggle.offset().top + 26;
                 $("#project-files-container").trigger(e);

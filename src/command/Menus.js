@@ -1048,16 +1048,12 @@ define(function (require, exports, module) {
      *      for a specific location.
      */
     ContextMenu.prototype.open = function (mouseOrLocation) {
-
         if (!mouseOrLocation || !mouseOrLocation.hasOwnProperty("pageX") || !mouseOrLocation.hasOwnProperty("pageY")) {
             console.error("ContextMenu open(): missing required parameter");
             return;
         }
 
-        if(this.isOpen()) {
-            closeAll();
-            return;
-        }
+        closeAll();
 
         var $window = $(window),
             escapedId = StringUtils.jQueryIdEscape(this.id),
@@ -1066,6 +1062,15 @@ define(function (require, exports, module) {
             posTop  = mouseOrLocation.pageY,
             posLeft = mouseOrLocation.pageX;
 
+        if(mouseOrLocation.menuToggleEl) {
+            $(mouseOrLocation.menuToggleEl).addClass("toggle-open");
+        }
+
+        if(mouseOrLocation.fileMenu) {
+            $("#project-context-menu").addClass("file-menu");
+        } else {
+            $("#project-context-menu").removeClass("file-menu");
+        }
 
         // only show context menu if it has menu items
         if ($menuWindow.children().length <= 0) {
@@ -1073,9 +1078,6 @@ define(function (require, exports, module) {
         }
 
         this.trigger("beforeContextMenuOpen");
-
-        // close all other dropdowns
-        // closeAll();
 
         // adjust positioning so menu is not clipped off bottom or right
         var elementRect = {
@@ -1225,3 +1227,4 @@ define(function (require, exports, module) {
     exports.MenuItem = MenuItem;
     exports.ContextMenu = ContextMenu;
 });
+
