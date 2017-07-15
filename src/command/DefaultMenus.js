@@ -328,7 +328,6 @@ define(function (require, exports, module) {
         // Only open the menu if another one has already been opened
         // by clicking
         $(window.document).on("mouseenter", "#titlebar .dropdown", function (e) {
-           console.log("here??")
             var open = $(this).siblings(".open");
             if (open.length > 0) {
                 open.removeClass("open");
