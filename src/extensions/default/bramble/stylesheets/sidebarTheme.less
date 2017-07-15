@@ -46,8 +46,14 @@ li.jstree-leaf {
 
 // Override for ellipsis
 .jstree-brackets li a {
+    color: rgba(0,0,0,.4) !important;
+}
+
+.dark .jstree-brackets li a {
     color: rgba(255,255,255,.4) !important;
 }
+
+
 
 li.jstree-leaf a span,
 li.jstree-leaf span.extension {
@@ -143,9 +149,9 @@ li.jstree-open > a:first-of-type:hover {
 }
 
 
-[data-theme='light-theme'] li.jstree-leaf:hover a:not(.selected-node),
-[data-theme='light-theme'] li.jstree-open:hover a:first-of-type,
-[data-theme='light-theme'] li.jstree-closed:hover a:first-of-type {
+[data-theme='light-theme'] li.jstree-leaf a:hover:not(.selected-node),
+[data-theme='light-theme'] li.jstree-open a:hover:first-of-type,
+[data-theme='light-theme'] li.jstree-closed a:hover:first-of-type {
     background: rgba(0,0,0,.08);
 }
 
@@ -164,7 +170,7 @@ li.jstree-closed > a span {
     height: 27px;
     width: 26px;
     cursor: pointer;
-    background-image: url(../images/arrow-down-light.svg);
+    background-image: url(../images/arrow-down-dark.svg);
     background-size: 10px;
     background-position: center;
     background-repeat: no-repeat;
@@ -172,15 +178,38 @@ li.jstree-closed > a span {
     border-radius: 1px;
 
     &:hover {
-        background-color: rgba(0,0,0,.6);
+        background-color: rgba(0,0,0,.15);
         opacity: .7;
     }
 
     &.toggle-open {
         display: block;
-        opacity: 1 !important;
-        background-color: white !important;
+        opacity: 1;
+        background-color: rgba(0,0,0,.15);
+        background-image: url(../images/arrow-down-light.svg);
+    }
+}
+
+.dark .menuToggle {
+    box-shadow: none;
+    background-image: url(../images/arrow-down-light.svg);
+
+    &:not(.toggle-open):hover {
+        background-color: rgba(0,0,0,.6);
+    }
+
+    &.toggle-open {
+        background-color: white;
         background-image: url(../images/arrow-down-dark.svg);
+    }
+}
+
+.selected-node .menuToggle {
+    display: block;
+    opacity: .5;
+
+    &.toggle-open {
+        opacity: 1;
     }
 }
 
@@ -189,17 +218,11 @@ li.jstree-closed > a span {
 .jstree-open a:hover {
     padding-right: 40px;
 
-    .menuToggle {
+    .menuToggle:not(.toggle-open) {
         opacity: .5;
         display: block;
     }
 }
-
-.selected-node .menuToggle {
-    display: block;
-    opacity: .5;
-}
-
 
 [data-theme='light-theme'] li.jstree-leaf a:not(.selected-node):hover > span {
     color: rgba(0,0,0,.6);
@@ -231,6 +254,7 @@ li.jstree-open > ul:empty:after {
 li.jstree-closed a.context-node,
 li.jstree-open a.context-node,
 li.jstree-leaf a.context-node {
+    padding-right: 40px;
     background: rgba(255,255,255,.08);
 }
 
@@ -426,17 +450,12 @@ body[data-theme='light-theme'] li.jstree-leaf a.selected-node:hover {
     width: 40px;
 }
 
-
 // New File
 .context-menu .dropdown-menu li a.project-context-menu-filenewFile:after {
     background-image: url(../images/menu-icons/file-dark.svg);
     background-size: 17px;
     background-position: 12px 12px;
 }
-
-// .dark .context-menu .dropdown-menu li a.project-context-menu-filenewFile:after {
-//     background-image: url(../images/menu-icons/file-white.svg);
-// }
 
 // New folder
 .context-menu .dropdown-menu li a.project-context-menu-filenewFolder:after {
@@ -445,20 +464,12 @@ body[data-theme='light-theme'] li.jstree-leaf a.selected-node:hover {
     background-position: 12px 15px;
 }
 
-// .dark .context-menu .dropdown-menu li a.project-context-menu-filenewFolder:after {
-//     background-image: url(../images/menu-icons/folder-icon-white.svg);
-// }
-
 // Rename File
 .context-menu .dropdown-menu li a.project-context-menu-filerename:after {
     background-image: url(../images/menu-icons/pencil-dark.svg);
     background-size: 15px;
     background-position: 12px 13px;
 }
-
-// .dark .context-menu .dropdown-menu li a.project-context-menu-filerename:after {
-//     background-image: url(../images/menu-icons/pencil-white.svg);
-// }
 
 // Move File
 .context-menu .dropdown-menu li a.project-context-menu-bramble-move-filemoveFile:after {
@@ -467,10 +478,6 @@ body[data-theme='light-theme'] li.jstree-leaf a.selected-node:hover {
     background-position: 12px 15px;
 }
 
-// .dark .context-menu .dropdown-menu li a.project-context-menu-bramble-move-filemoveFile:after {
-//     background-image: url(../images/menu-icons/move-file-light.svg);
-// }
-
 // Delete file
 .context-menu .dropdown-menu li a.project-context-menu-filedelete:after {
     background-image: url(../images/menu-icons/trashcan-dark.svg);
@@ -478,20 +485,12 @@ body[data-theme='light-theme'] li.jstree-leaf a.selected-node:hover {
     background-position: 13px 13px;
 }
 
-// .dark .context-menu .dropdown-menu li a.project-context-menu-filedelete:after {
-//     background-image: url(../images/menu-icons/trashcan-white.svg);
-// }
-
 // Download file
 .context-menu .dropdown-menu li a.project-context-menu-filedownload:after {
     background-image: url(../images/menu-icons/download-dark.svg);
     background-size: 16px;
     background-position: 13px 13px;
 }
-
-// .dark .context-menu .dropdown-menu li a.project-context-menu-filedownload:after {
-//     background-image: url(../images/menu-icons/download-white.svg);
-// }
 
 .context-menu .dropdown-menu li a:before {
     display: none;
@@ -508,7 +507,6 @@ body[data-theme='light-theme'] li.jstree-leaf a.selected-node:hover {
 }
 
 .context-menu .dropdown-menu {
-    // background: white;
     border: none;
 }
 
@@ -521,15 +519,3 @@ body[data-theme='light-theme'] li.jstree-leaf a.selected-node:hover {
     background-color: rgba(0,0,0,.08);
     background-image: none;
 }
-
-// .dark .context-menu .dropdown-menu li a {
-//     color: rgba(255,255,255,.6);
-// }
-//
-// .dark .context-menu .dropdown-menu li a:hover {
-//     background-image: none;
-// }
-//
-// .dark .context-menu .dropdown-menu li a:after {
-//     opacity: .8;
-// }
