@@ -44,6 +44,11 @@ li.jstree-leaf {
     min-height: 37px;
 }
 
+// Override for ellipsis
+.jstree-brackets li a {
+    color: rgba(255,255,255,.4) !important;
+}
+
 li.jstree-leaf a span,
 li.jstree-leaf span.extension {
     font-size: 15px;
@@ -82,8 +87,9 @@ li.jstree-leaf a {
     padding: 12px 10px 12px 40px;
     cursor: pointer !important;
     box-shadow: none;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
-
 
 /* Hides the 'spacing indenter' that the filetree adds into
    into items in folders */
@@ -181,13 +187,15 @@ li.jstree-closed > a span {
 .jstree-leaf a:hover ,
 .jstree-closed a:hover,
 .jstree-open a:hover {
+    padding-right: 40px;
+
     .menuToggle {
         opacity: .5;
         display: block;
     }
 }
 
-.selected-node + .menuToggle {
+.selected-node .menuToggle {
     display: block;
     opacity: .5;
 }
@@ -243,6 +251,7 @@ li.jstree-leaf a.context-node span {
 
 li.jstree-leaf a.selected-node {
   background: #222;
+  padding-right: 40px;
 
   span {
     color: white;
