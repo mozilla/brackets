@@ -620,17 +620,15 @@ define(function (require, exports, module) {
                 var aArgs = _.flatten([{
                     href: "#",
                     className: fileClasses
-                }, thickness, this.getIcons(), name, extension]);
+                },
+                DOM.span({
+                    className: "menuToggle",
+                    onClick: this.handleToggleClick
+                }),thickness, this.getIcons(), name, extension]);
                 nameDisplay = DOM.a.apply(DOM.a, aArgs);
             }
 
-            var menuToggle = DOM.span({
-                className: "menuToggle",
-                onClick: this.handleToggleClick
-            });
-
             liArgs.push(nameDisplay);
-            liArgs.push(menuToggle);
 
             return DOM.li.apply(DOM.li, liArgs);
         }
@@ -903,16 +901,12 @@ define(function (require, exports, module) {
                 var aArgs = _.flatten([{
                     href: "#",
                     className: directoryClasses
-                }, thickness, this.getIcons(), this.props.name]);
+                },DOM.span({
+                    className: "menuToggle",
+                    onClick: this.handleToggleClick
+                }),thickness, this.getIcons(), this.props.name]);
                 nameDisplay = DOM.a.apply(DOM.a, aArgs);
             }
-
-            var menuToggle = DOM.span({
-                className: "menuToggle",
-                onClick: this.handleToggleClick
-            });
-            liArgs.push(menuToggle);
-
 
             liArgs.push(nameDisplay);
             liArgs.push(childNodes);
