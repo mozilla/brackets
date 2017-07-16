@@ -377,7 +377,6 @@ define(function (require, exports, module) {
             return {
                 clickTimer: null,
                 menuOpened: false
-
             };
         },
 
