@@ -1136,15 +1136,12 @@ define(function (require, exports, module) {
      */
     ContextMenu.assignContextMenuToSelector = function (selector, cmenu) {
         $(selector).on("click", function (e) {
-            console.log("assignContextMenuToSelector");
-
             var buttonOffset,
                 buttonHeight;
 
             e.stopPropagation();
 
             if (cmenu.isOpen()) {
-                console.log("close");
                 cmenu.close();
             } else {
                 buttonOffset = $(this).offset();
