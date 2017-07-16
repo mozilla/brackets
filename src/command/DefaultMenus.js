@@ -240,8 +240,8 @@ define(function (require, exports, module) {
         project_cmenu.addMenuItem(Commands.FILE_NEW);
         project_cmenu.addMenuItem(Commands.FILE_NEW_FOLDER);
         project_cmenu.addMenuItem(Commands.FILE_RENAME);
-        project_cmenu.addMenuItem(Commands.FILE_DELETE);
         project_cmenu.addMenuItem(Commands.FILE_DOWNLOAD);
+        project_cmenu.addMenuItem(Commands.FILE_DELETE);
 // XXXBramble: not something we want to support at the moment/ever
 //        project_cmenu.addMenuItem(Commands.NAVIGATE_SHOW_IN_OS);
 //        project_cmenu.addMenuDivider();
