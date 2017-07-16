@@ -94,7 +94,6 @@ define(function (require, exports, module) {
         if($sidebar.width() < MinimumSidebarWidthPX){
             $sidebar.width(MinimumSidebarWidthPX);
         }
-
         Resizer.show($sidebar);
     }
 
