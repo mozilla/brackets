@@ -257,13 +257,11 @@ define(function (require, exports, module) {
          * Send matching mouseDown events to the action creator as a setContext action.
          */
         handleMouseDown: function (e) {
-
             e.stopPropagation();
 
             if (e.button === RIGHT_MOUSE_BUTTON ||
                     (this.props.platform === "mac" && e.button === LEFT_MOUSE_BUTTON && e.ctrlKey)) {
                 this.props.actions.setContext(this.myPath());
-
                 e.preventDefault();
                 return;
             }
@@ -375,7 +373,6 @@ define(function (require, exports, module) {
          */
         getInitialState: function () {
             return {
-                clickTimer: null,
                 menuOpened: false
             };
         },
@@ -405,17 +402,6 @@ define(function (require, exports, module) {
                 // project-files-container and then the file tree will be one self-contained
                 // functional unit.
                 ViewUtils.scrollElementIntoView($("#project-files-container"), $(ReactDOM.findDOMNode(this)), true);
-            } else if (!isSelected && wasSelected && this.state.clickTimer !== null) {
-                this.clearTimer();
-            }
-        },
-
-        clearTimer: function () {
-            if (this.state.clickTimer !== null) {
-                window.clearTimeout(this.state.clickTimer);
-                this.setState({
-                    clickTimer: null
-                });
             }
         },
 
@@ -423,7 +409,6 @@ define(function (require, exports, module) {
             if (!this.props.entry.get("rename")) {
                 this.props.actions.startRename(this.myPath());
             }
-            this.clearTimer();
         },
 
         /**
@@ -441,16 +426,7 @@ define(function (require, exports, module) {
                 return;
             }
 
-            // if (this.props.entry.get("selected") && !e.ctrlKey) {
-            //     if (this.state.clickTimer === null && !this.props.entry.get("rename")) {
-            //         var timer = window.setTimeout(this.startRename, CLICK_RENAME_MINIMUM);
-            //         this.setState({
-            //             clickTimer: timer
-            //         });
-            //     }
-            // } else {
             this.props.actions.setSelected(this.myPath());
-            // }
             e.stopPropagation();
             e.preventDefault();
         },
@@ -480,19 +456,6 @@ define(function (require, exports, module) {
             dataTransfer.effectAllowed = "copy";
 
             event.stopPropagation();
-        },
-
-        /**
-         * When the user double clicks, we will select this file and add it to the working
-         * set (via the `selectInWorkingSet` action.)
-         */
-        handleDoubleClick: function () {
-            if (!this.props.entry.get("rename")) {
-                if (this.state.clickTimer !== null) {
-                    this.clearTimer();
-                }
-                this.props.actions.selectInWorkingSet(this.myPath());
-            }
         },
 
         /**
@@ -593,7 +556,6 @@ define(function (require, exports, module) {
                     className: this.getClasses("jstree-leaf"),
                     onClick: this.handleClick,
                     onMouseDown: this.handleMouseDown,
-                    // onDoubleClick: this.handleDoubleClick,
                     onDragEnter: this.handleDragEnter,
                     onDragStart: this.handleDragStart,
                     draggable: true
