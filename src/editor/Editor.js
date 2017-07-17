@@ -797,6 +797,20 @@ define(function (require, exports, module) {
     };
 
     /**
+     * Grabs the widget assosiated with the lineNum
+     * @param {number} lineNum
+     * @return {?InlineWidget} Returns Inlinewidget if exists
+     */
+    Editor.prototype.getWidget = function(lineNum){
+        var lineInfo = this._codeMirror.lineInfo(lineNum),
+            widgetInfo = (lineInfo && lineInfo.widgets) ? [].concat(lineInfo.widgets) : null,
+            allWidgetInfos = this._inlineWidgets.map(function (w) {
+                return w.info;
+            });
+        return (widgetInfo ? this._inlineWidgets[allWidgetInfos.indexOf(widgetInfo[0])] : null);
+    };
+
+    /**
      * Determine the mode to use from the document's language
      * Uses "text/plain" if the language does not define a mode
      * @return {string} The mode to use
@@ -807,7 +821,6 @@ define(function (require, exports, module) {
         // here so we're always explicit, avoiding console noise.
         return this.document.getLanguage().getMode() || "text/plain";
     };
-
 
     /**
      * Selects all text and maintains the current scroll position.
@@ -1792,7 +1805,7 @@ define(function (require, exports, module) {
         return this._inlineWidgets;
     };
 
-      /**
+    /**
      * Returns the currently focused inline widget, if any.
      * @return {?InlineWidget}
      */

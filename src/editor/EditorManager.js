@@ -294,8 +294,9 @@ define(function (require, exports, module) {
         var currentEditor = getCurrentFullEditor();
 
         if (currentEditor) {
-            var inlineWidget = currentEditor.getFocusedInlineWidget();
-
+            var curPos = currentEditor.getCursorPos();
+            var inlineWidget = currentEditor.getFocusedInlineWidget() || currentEditor.getWidget(curPos.line);
+            
             if (inlineWidget) {
                 // an inline widget's editor has focus, so close it
                 PerfUtils.markStart(PerfUtils.INLINE_WIDGET_CLOSE);
