@@ -114,9 +114,7 @@ define(function (require, exports, module) {
             MoveUtils.move(source, destination)
             .done(_finishMove.bind(null, source, destination))
             .fail(_failMove.bind(null, source, destination))
-            .always(function() {
-                dialog.close();
-            });
+            .then(dialog.close());
         });
     }
 
