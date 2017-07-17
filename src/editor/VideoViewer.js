@@ -51,7 +51,7 @@ define(function (require, exports, module) {
     // Get a URL out of the cache that you can use in the project HTML
     function _getLocalVideoUrl(file) {
         var root = StartupState.project("root");
-        return file.fullPath.replace(root,"").replace("/","");
+        return encodeURI(file.fullPath.replace(root,"").replace("/",""));
     }
 
     /**
