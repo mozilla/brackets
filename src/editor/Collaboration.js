@@ -7,7 +7,8 @@ define(function (require, exports, module) {
         _pending,
         _changing,
         _room,
-        _codemirror;
+        _codemirror,
+        _cursors;
 
     function connect() {
         if(_webrtc) {
@@ -26,6 +27,7 @@ define(function (require, exports, module) {
         });
         
         _pending = []; // pending clients that need to be initialized.
+        _cursors = {};
         _changing = false;
         if(_room) {
             console.warn("Room ", _room, ", already joined");
@@ -45,6 +47,17 @@ define(function (require, exports, module) {
 
     function setCodemirror(codemirror) {
         _codemirror = codemirror;
+        _codemirror.on("refresh", function() {
+            for (var id in _cursors) {
+              if (_cursors.hasOwnProperty(id)) {
+                var element = document.getElementById(id);
+                if(element) {
+                    element.parentNode.removeChild(element);
+                }
+                _codemirror.addWidget(_cursors[id].position, _getCursorElement(id, _cursors[id].color), false, "over");
+              }
+            }
+        });
     };
 
     function _handleMessage(msg) {
@@ -62,6 +75,19 @@ define(function (require, exports, module) {
                 _changing = true;
                 _codemirror.setValue(msg.payload);
                 _changing = false;
+                break;
+            case "cursor-position":
+                var id = msg.sid;
+                var color = _getRandomColor();
+                if(_cursors[id]) {
+                    var element = document.getElementById(id);
+                    if(element) {
+                        element.parentNode.removeChild(element);
+                    }
+                    color = _cursors[msg.sid].color;
+                }
+                _cursors[id] = {position: msg.payload, color: color};
+                _codemirror.addWidget(msg.payload, _getCursorElement(id, color), false, "over");
                 break;
         }
     };
@@ -104,6 +130,30 @@ define(function (require, exports, module) {
         _changing = false;
     };
 
+    //might be a duplicate
+    //TODO : Look for a similar existing function
+    function _getRandomColor() {
+        var letters = '0123456789ABCDEF';
+        var color = '#';
+        for (var i = 0; i < 6; i++ ) {
+            color += letters[Math.floor(Math.random() * 16)];
+        }
+        return color;
+    }
+
+    function _getCursorElement(id, color) {
+        var d = document.createElement("div");
+        var x = document.createElement("PRE");
+        var t = document.createTextNode(" ");
+        x.appendChild(t);
+        d.appendChild(x);
+        x.style.opacity = "0.9";
+        x.style.width = "1px";
+        x.id = id;
+        x.style.backgroundColor = color;
+        return x;
+    }
+
     function triggerCodemirrorChange(changeList) {
         if(_changing) {
             return;
@@ -113,8 +163,12 @@ define(function (require, exports, module) {
         }
     };
 
+    function triggerCodemirrorCursorChange(cursorPosition) {
+        _webrtc.sendToAll("cursor-position", cursorPosition);
+    };
+
     exports.connect = connect;
     exports.triggerCodemirrorChange = triggerCodemirrorChange;
     exports.setCodemirror = setCodemirror;
-
+    exports.triggerCodemirrorCursorChange = triggerCodemirrorCursorChange;
 });
