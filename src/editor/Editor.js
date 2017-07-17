@@ -459,6 +459,10 @@ define(function (require, exports, module) {
         // Set code-coloring mode BEFORE populating with text, to avoid a flash of uncolored text
         this._codeMirror.setOption("mode", mode);
 
+        this._codeMirror.on("cursorActivity", function(e) {
+            Collaboration.triggerCodemirrorCursorChange(e.getCursor());
+        });
+
         // Initially populate with text. This will send a spurious change event, so need to make
         // sure this is understood as a 'sync from document' case, not a genuine edit
         this._duringSync = true;
