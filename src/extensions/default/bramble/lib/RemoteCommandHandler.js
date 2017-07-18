@@ -16,6 +16,7 @@ define(function (require, exports, module) {
     var PreferencesManager = brackets.getModule("preferences/PreferencesManager");
     var _                  = brackets.getModule("thirdparty/lodash");
     var ArchiveUtils       = brackets.getModule("filesystem/impls/filer/ArchiveUtils");
+    var Collaboration      = brackets.getModule("editor/Collaboration");
 
     var SVGUtils = require("lib/SVGUtils");
     var MouseManager = require("lib/MouseManager");
@@ -194,6 +195,9 @@ define(function (require, exports, module) {
         case "BRAMBLE_ADD_CODE_SNIPPET":
             skipCallback = true;
             CommandManager.execute("bramble.addCodeSnippet", args[0]).always(callback);
+            break;
+        case "INITIALIZE_COLLABORATION":
+            Collaboration.connect(args[0]);
             break;
         default:
             console.log('[Bramble] unknown command:', command);

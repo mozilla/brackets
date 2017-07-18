@@ -104,8 +104,6 @@ define(function (require, exports, module) {
 
     var cmOptions         = {};
 
-    Collaboration.connect();
-    
     /**
      * Constants
      * @type {number}
