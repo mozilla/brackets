@@ -40,8 +40,14 @@
         <pre>&lt;img src="{{ localImgUrl }}" alt="{{ Strings.IMAGE_ALT_TEXT }}" /&gt;</pre>
     </div>
 
-    <div class="image-filters-section hide">
+    <div class="code-wrapper code-css">
+        <h2 class="code-title">CSS</h2>
+        <pre>.myImage {
+  background-image: url("{{localImgUrl}}");
+}</pre>
+    </div>
 
+    <div class="image-filters-section hide">
       <h3>{{Strings.IMAGE_FILTERS_TITLE}}</h3>
       <div class="image-filters">
           <button class="btn btn-pinhole">{{Strings.IMAGE_FILTER_PINHOLE}}</button>
@@ -52,7 +58,6 @@
           <button class="btn btn-emboss">{{Strings.IMAGE_FILTER_EMBOSS}}</button>
           <button class="btn btn-glowing-sun">{{Strings.IMAGE_FILTER_GLOWING_SUN}}</button>
       </div>
-
       <div class="image-filter-actions">
         <button class="btn btn-image-filter-reset" disabled="disabled">{{Strings.IMAGE_RESET_FILTERS}}</button>
         <button class="btn btn-image-filter-save" disabled="disabled">{{Strings.IMAGE_SAVE_WITH_FILTERS}}</button>
