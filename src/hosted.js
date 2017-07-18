@@ -95,7 +95,10 @@
     function load(Bramble) {
         Bramble.load("#bramble",{
             url: "index.html",
-            useLocationSearch: true
+            useLocationSearch: true,
+            collaboration: {
+                room: (new URL(window.location.href)).searchParams.get("collaboration")
+            }
         });
 
         // Event listeners
