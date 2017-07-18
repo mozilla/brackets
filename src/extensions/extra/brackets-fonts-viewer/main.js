@@ -64,8 +64,21 @@ define(function (require, exports, module) {
      * @param {!jQuery} container  The container to render the image view in
      */
     function FontView(file, $container) {
-        this.file    = file;
-        this.relPath = ProjectManager.makeProjectRelativeIfPossible(this.file.fullPath);
+        this.file       = file;
+        this.$container = $container;
+        this.relPath    = ProjectManager.makeProjectRelativeIfPossible(this.file.fullPath);
+
+        this._buildPage(this.file, this.$container);
+
+        // Update the page if the file is renamed
+        DocumentManager.on("fileNameChange", _.bind(this._onFilenameChange, this));
+
+        _viewers[file.fullPath] = this;
+    }
+
+
+    // Updates the page markup
+    FontView.prototype._buildPage = function (file, $container) {
         this.$el     = $(Mustache.render(FontHolderTemplate, {
             url      : _getUrl(this.file.fullPath),
             relPath  : this.relPath,
@@ -77,20 +90,14 @@ define(function (require, exports, module) {
         $container.append(this.$el);
 
         this.$fontFace    = this.$el.find(".font-face");
-        this.$fontPath    = this.$el.find(".font-path");
         this.$fontData    = this.$el.find(".font-data");
 
-        // Update the file stats
         this._updateStats();
+    };
 
-        // make sure we always show the right file name
-        DocumentManager.on("fileNameChange", _.bind(this._onFilenameChange, this));
-
-        _viewers[file.fullPath] = this;
-    }
 
     /**
-     * Updates the Font Stats
+     * Updates the Font Stats ()
      */
     FontView.prototype._updateStats = function () {
         var self = this;
@@ -116,8 +123,8 @@ define(function (require, exports, module) {
         // so we just need to see if the file has the same path as our image
         if (this.file.fullPath === newPath) {
             this.relPath = ProjectManager.makeProjectRelativeIfPossible(newPath);
-            this.$fontPath.text(this.relPath).attr("title", this.relPath);
         }
+        this._buildPage(this.file, this.$container);
     };
 
     /**
