@@ -114,7 +114,7 @@ define(function (require, exports, module) {
             that.updateVideoTagMarkup(true);
         });
 
-        this.$videoEl.attr("src", _getVideoUrl(this.file));
+        this.$videoEl.find("source").attr("src", _getVideoUrl(this.file));
         this.updateVideoTagMarkup();
         _viewers[file.fullPath] = this;
     }
@@ -152,6 +152,7 @@ define(function (require, exports, module) {
 
             this.$videoWrapperEl.css("min-height", videoWrapperHeight);
             this.$videoEl.one("canplay", _.bind(this._onVideoReloaded, this));
+            this.$videoEl.find("source").attr("src", _getVideoUrl(this.file));
             this.$videoEl[0].load();
         }
     };
@@ -174,6 +175,8 @@ define(function (require, exports, module) {
         if (this.file.fullPath === newPath) {
             this.relPath = ProjectManager.makeProjectRelativeIfPossible(newPath);
         }
+
+        this.updateVideoTagMarkup(true);
     };
 
 
@@ -245,7 +248,7 @@ define(function (require, exports, module) {
      */
     VideoView.prototype.refresh = function () {
         // Update the DOM node with the src URL
-        this.$videoEl.attr("src", _getVideoUrl(this.file));
+        this.$videoEl.find("source").attr("src", _getVideoUrl(this.file));
     };
 
     /*
