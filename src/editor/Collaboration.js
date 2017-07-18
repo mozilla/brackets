@@ -9,7 +9,7 @@ define(function (require, exports, module) {
         _room,
         _codemirror;
 
-    function connect() {
+    function connect(options) {
         if(_webrtc) {
             console.error("Collaboration already initialized");
             return;
@@ -24,23 +24,21 @@ define(function (require, exports, module) {
             // TODO : Shift this to config.
             url: "localhost:8888"
         });
-        
-        _pending = []; // pending clients that need to be initialized.
-        _changing = false;
         if(_room) {
             console.warn("Room ", _room, ", already joined");
             return;
         }
-        //To be moved to the bramble API.
-        var query = (new URL(window.location.href)).searchParams;
-        _room = query.get("collaboration") || Math.random().toString(36).substring(7);
-        console.log(_room);        
+        _room = options.room || Math.random().toString(36).substring(7);
+        console.log(_room);
         _webrtc.joinRoom(_room, function() {
             _webrtc.sendToAll("new client", {});
             _webrtc.on("createdPeer", _initializeNewClient);
 
             _webrtc.connection.on('message', _handleMessage);
         });
+
+        _pending = []; // pending clients that need to be initialized.
+        _changing = false;
     };
 
     function setCodemirror(codemirror) {
@@ -109,7 +107,7 @@ define(function (require, exports, module) {
             return;
         }
         for(var i = 0; i<changeList.length; i++) {
-            _webrtc.sendToAll("codemirror-change",changeList[i]);
+            _webrtc.sendToAll("codemirror-change", changeList[i]);
         }
     };
 

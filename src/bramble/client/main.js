@@ -379,6 +379,11 @@ define([
                     if (options.hideUntilReady) {
                         _iframe.style.visibility = "visible";
                     }
+                    self._executeRemoteCommand({
+                        commandCategory: "bramble",
+                        command: "INITIALIZE_COLLABORATION",
+                        args: [options.collaboration]
+                    });
 
                     // Set intial state
                     _state.fullPath = data.fullPath;

@@ -18,6 +18,7 @@ define(function (require, exports, module) {
     var _                  = brackets.getModule("thirdparty/lodash");
     var ArchiveUtils       = brackets.getModule("filesystem/impls/filer/ArchiveUtils");
     var Sizes              = brackets.getModule("filesystem/impls/filer/lib/Sizes");
+    var Collaboration      = brackets.getModule("editor/Collaboration");
 
     var SVGUtils = require("lib/SVGUtils");
     var MouseManager = require("lib/MouseManager");
@@ -216,6 +217,9 @@ define(function (require, exports, module) {
             break;
         case "BRAMBLE_PROJECT_SIZE_CHANGE":
             UI.setProjectSizeInfo(args[0]);
+            break;
+        case "INITIALIZE_COLLABORATION":
+            Collaboration.connect(args[0]);
             break;
         default:
             console.log('[Bramble] unknown command:', command);
