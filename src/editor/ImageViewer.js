@@ -128,32 +128,39 @@ define(function (require, exports, module) {
      */
     function ImageView(file, $container) {
         this.file = file;
+        this.$container = $container;
+
+        this._naturalWidth = 0;
+        this._naturalHeight = 0;
+        this.relPath = ProjectManager.makeProjectRelativeIfPossible(this.file.fullPath);
+
+        this._buildPage(file, $container);
+
+        _viewers[file.fullPath] = this;
+    }
+
+    // Updates the page markup and...
+    // * Assigns variables to elements
+    // * Adds load and error listeners
+    ImageView.prototype._buildPage = function (file, $container) {
+
         this.$el = $(Mustache.render(ImageViewTemplate, {
-            imgUrl: _getImageUrl(file),
+            imgUrl: _getImageUrl(this.file),
             localImgUrl: _getLocalAssetUrl(this.file),
             Strings: Strings
         }));
 
         $container.append(this.$el);
 
-        this._naturalWidth = 0;
-        this._naturalHeight = 0;
-        this._scale = 100;           // 100%
-        this._scaleDivInfo = null;   // coordinates of hidden scale sticker
-
-        this.relPath = ProjectManager.makeProjectRelativeIfPossible(this.file.fullPath);
-
         this.$imagePath = this.$el.find(".image-path");
         this.$imagePreview = this.$el.find(".image-preview");
         this.$imageData = this.$el.find(".image-data");
 
         this.$image = this.$el.find(".image");
-        this.$imageScale = this.$el.find(".image-scale");
         this.$imagePreview.on("load", _.bind(this._onImageLoaded, this));
         this.$imagePreview.on("error", _.bind(console.error, console));
+    };
 
-        _viewers[file.fullPath] = this;
-    }
 
     /**
      * DocumentManger.fileNameChange handler - when an image is renamed, we must
@@ -172,6 +179,9 @@ define(function (require, exports, module) {
         if (this.file.fullPath === newPath) {
             this.relPath = ProjectManager.makeProjectRelativeIfPossible(newPath);
         }
+
+        // Rebuild the page markup to account for the new filename
+        this._buildPage(this.file, this.$container);
     };
 
     /**
@@ -182,7 +192,7 @@ define(function (require, exports, module) {
      * @private
      */
     ImageView.prototype._onImageLoaded = function (e) {
-        // add dimensions and size
+        // Add dimensions and size
         this._naturalWidth = e.currentTarget.naturalWidth;
         this._naturalHeight = e.currentTarget.naturalHeight;
 
@@ -226,90 +236,6 @@ define(function (require, exports, module) {
     };
 
     /**
-     * Update the scale element
-     * @private
-     */
-    ImageView.prototype._updateScale = function () {
-        var currentWidth = this.$imagePreview.width();
-
-        if (currentWidth && currentWidth < this._naturalWidth) {
-            this._scale = currentWidth / this._naturalWidth * 100;
-            this.$imageScale.text(Math.floor(this._scale) + "%")
-                // Keep the position of the image scale div relative to the image.
-                .css("left", this.$imagePreview.position().left + 5)
-                .show();
-        } else {
-            // Reset everything related to the image scale sticker before hiding it.
-            this._scale = 100;
-            this._scaleDivInfo = null;
-            this.$imageScale.text("").hide();
-        }
-    };
-
-    /**
-     * Check mouse entering/exiting the scale sticker.
-     * Hide it when entering and show it again when exiting.
-     *
-     * @param {number} offsetX mouse offset from the left of the previewing image
-     * @param {number} offsetY mouseoffset from the top of the previewing image
-     * @private
-     */
-    ImageView.prototype._handleMouseEnterOrExitScaleSticker = function (offsetX, offsetY) {
-        var imagePos       = this.$imagePreview.position(),
-            scaleDivPos    = this.$imageScale.position(),
-            imgWidth       = this.$imagePreview.width(),
-            imgHeight      = this.$imagePreview.height(),
-            scaleDivLeft,
-            scaleDivTop,
-            scaleDivRight,
-            scaleDivBottom;
-
-        if (this._scaleDivInfo) {
-            scaleDivLeft   = this._scaleDivInfo.left;
-            scaleDivTop    = this._scaleDivInfo.top;
-            scaleDivRight  = this._scaleDivInfo.right;
-            scaleDivBottom = this._scaleDivInfo.bottom;
-
-            if ((imgWidth + imagePos.left) < scaleDivRight) {
-                scaleDivRight = imgWidth + imagePos.left;
-            }
-
-            if ((imgHeight + imagePos.top) < scaleDivBottom) {
-                scaleDivBottom = imgHeight + imagePos.top;
-            }
-
-        } else {
-            scaleDivLeft   = scaleDivPos.left;
-            scaleDivTop    = scaleDivPos.top;
-            scaleDivRight  = this.$imageScale.width() + scaleDivLeft;
-            scaleDivBottom = this.$imageScale.height() + scaleDivTop;
-        }
-
-        if (this._scaleDivInfo) {
-            // See whether the cursor is no longer inside the hidden scale div.
-            // If so, show it again.
-            if ((offsetX < scaleDivLeft || offsetX > scaleDivRight) ||
-                    (offsetY < scaleDivTop || offsetY > scaleDivBottom)) {
-                this._scaleDivInfo = null;
-                this.$imageScale.show();
-            }
-        } else if ((offsetX >= scaleDivLeft && offsetX <= scaleDivRight) &&
-                (offsetY >= scaleDivTop && offsetY <= scaleDivBottom)) {
-            // Handle mouse inside image scale div.
-            // But hide it only if the pixel under mouse is also in the image.
-            if (offsetX < (imagePos.left + imgWidth) &&
-                    offsetY < (imagePos.top + imgHeight)) {
-                // Remember image scale div coordinates before hiding it.
-                this._scaleDivInfo = {left: scaleDivPos.left,
-                                 top: scaleDivPos.top,
-                                 right: scaleDivRight,
-                                 bottom: scaleDivBottom};
-                this.$imageScale.hide();
-            }
-        }
-    };
-
-    /**
      * View Interface functions
      */
 
@@ -339,7 +265,6 @@ define(function (require, exports, module) {
                         left: pos.left + ((oWidth - iWidth) / 2),
                         width: iWidth,
                         height: iHeight});
-        this._updateScale();
     };
 
     /*
