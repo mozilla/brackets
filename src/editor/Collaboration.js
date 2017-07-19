@@ -22,7 +22,7 @@ define(function (require, exports, module) {
             // immediately ask for camera access
             autoRequestMedia: false,
             // TODO : Shift this to config.
-            url: "localhost:8888"
+            url: options.collaborationUrl
         });
         if(_room) {
             console.warn("Room ", _room, ", already joined");
