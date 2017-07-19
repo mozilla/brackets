@@ -76,6 +76,10 @@ define(function (require, exports, module) {
             return new $.Deferred().reject(err).promise();
         }
 
+        // Because we might want the file as UTF8 or Binary, force the File module
+        // to re-read the file from disk vs. using whatever is cached.
+        options.ignoreCachedContents = true;
+
         if(typeof callback === "function") {
             file.read(options, callback);
         } else {

@@ -96,9 +96,12 @@ define(function (require, exports, module) {
         // for a default value; otherwise it could be the empty string, which is
         // falsey.
         //
-        // XXXBramble: we don't ever want to use the cached contents of an SVG file,
+        // XXXBramble: we often don't want to use the cached contents of a file,
         // since we allow switching between UTF8 and Binary representations at runtime.
-        if (this._contents !== null && this._stat &&
+        // We also special case SVG files, since we can flip our internal representation.
+        if (!options.ignoreCachedContents                                   &&
+            this._contents !== null                                         &&
+            this._stat                                                      &&
             FilerUtils.normalizeExtension(Path.extname(this._path)) !== ".svg") {
             callback(null, this._contents, this._stat);
             return;

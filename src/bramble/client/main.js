@@ -35,8 +35,9 @@ define([
     "bramble/ChannelUtils",
     "EventEmitter",
     "bramble/client/StateManager",
-    "bramble/client/ProjectStats"
-], function(Filer, ChannelUtils, EventEmitter, StateManager, ProjectStats) {
+    "bramble/client/ProjectStats",
+    "filesystem/impls/filer/lib/Sizes"
+], function(Filer, ChannelUtils, EventEmitter, StateManager, ProjectStats, Sizes) {
     "use strict";
 
     // PROD URL for Bramble, which can be changed below
@@ -54,6 +55,9 @@ define([
 
     // We only support having a single instance in the page.
     var _instance;
+
+    // Project size info, and filesystem book-keeping. We create during Bramble.mount()
+    var _projectStats;
 
     function parseEventData(data) {
         debug("parseEventData", data);
@@ -89,6 +93,8 @@ define([
         // When we hit the READY state, also trigger an event and pass instance up
         if (_readyState === Bramble.READY) {
             Bramble.trigger("ready", [_instance]);
+            // Send project size info into Brackets too.
+            _projectStats.checkCapacity();
         }
         // When we go into the ERROR state, also trigger an event and pass err
         else if (_readyState === Bramble.ERROR) {
@@ -116,15 +122,25 @@ define([
 
     // Expose Filer for Path, Buffer, providers, etc.
     Bramble.Filer = Filer;
-    // We wrap the filesystem, and add metrics to keep track of project stats
-    var _fs = ProjectStats.getFileSystem();
+    var _fs = new Filer.FileSystem();
     Bramble.getFileSystem = function() {
         return _fs;
     };
-    
+
     // NOTE: THIS WILL DESTROY DATA! For error cases only, or to wipe the disk.
     Bramble.formatFileSystem = function(callback) {
-        _fs = ProjectStats.formatFileSystem({flags: ["FORMAT"]}, callback);
+        _fs = new Filer.FileSystem({flags: ["FORMAT"]}, function(err) {
+            if(err) {
+                return callback(err);
+            }
+
+            // Re-init the ProjectStats object with the updated filesystem instance.
+            if(_projectStats) {
+                _projectStats.init(_fs, callback);
+            } else {
+                callback();
+            }
+        });
     };
 
     // Start loading Bramble's resources, setup communication with iframe
@@ -155,14 +171,73 @@ define([
             return;
         }
 
-        ProjectStats.init(root, function(err){
+        _projectStats = new ProjectStats({
+            root: root,
+            capacity: _instance.getMaxCapacity(),
+        });
+
+        // Monitor disk use and limit activity when we hit capacity.
+        _projectStats.on("capacityStateChange", function(overCapacity, amountInBytes) {
+            function fireOverCapacity() {
+                amountInBytes = Math.abs(amountInBytes);
+
+                console.warn("[Bramble] project has exceeded maximum allowed capacity by " + amountInBytes + " bytes. Limiting disk activity until space is recovered.");
+
+                _instance._executeRemoteCommand({
+                    commandCategory: "bramble",
+                    command: "BRAMBLE_ENABLE_PROJECT_CAPACITY_LIMITS",
+                    args: [ amountInBytes ]
+                });
+
+                _instance.trigger("capacityExceeded", [ amountInBytes ]);
+            }
+
+            function fireCapacityRestored() {
+                console.warn("[Bramble] project within allowed capacity, removing disk actity limits.");
+
+                _instance._executeRemoteCommand({
+                    commandCategory: "bramble",
+                    command: "BRAMBLE_DISABLE_PROJECT_CAPACITY_LIMITS"
+                });
+
+                _instance.trigger("capacityRestored");
+            }
+
+            if(overCapacity) {
+                // If we're starting up, and exceed the size, wait til the app's fully loaded to trigger.
+                if(_readyState !== Bramble.READY) {
+                    Bramble.once("ready", fireOverCapacity);
+                } else {
+                    fireOverCapacity();
+                }
+            } else {
+                fireCapacityRestored();
+            }
+        });
+
+        _projectStats.init(_fs, function(err) {
             if(err) {
                 setReadyState(Bramble.ERROR, new Error("Unable to access filesystem: ", err));
                 return;
             }
+
+            // Listen for changes to the project's size on disk, and update both app + bramble with info.
+            _projectStats.on("projectSizeChange", function(size, percentUsed) {
+                _instance.trigger("projectSizeChange", [size, percentUsed]);
+
+                _instance._executeRemoteCommand({
+                    commandCategory: "bramble",
+                    command: "BRAMBLE_PROJECT_SIZE_CHANGE",
+                    args: [{
+                        size: size,
+                        percentUsed: percentUsed
+                    }]
+                });
+            });
+
+
             _instance.mount(root, filename);
         });
-
     };
 
     /**
@@ -208,6 +283,9 @@ define([
         // Whether or not we want to try and auto-recover a corrupted filesystem on error
         self._autoRecoverFileSystem = options.autoRecoverFileSystem;
 
+        // Project disk capacity.  If not specified, use default
+        var _capacity = options.capacity || Sizes.DEFAULT_PROJECT_SIZE_LIMIT;
+
         // Public getters for state. Most of these aren't useful until bramble.ready()
         self.getID = function() { return _id; };
         self.getIFrame = function() { return _iframe; };
@@ -227,9 +305,25 @@ define([
         self.getOpenSVGasXML = function() { return _state.openSVGasXML; };
         self.getTutorialExists = function() { return _tutorialExists; };
         self.getTutorialVisible = function() { return _tutorialVisible; };
-        self.getTotalProjectSize = function() { return ProjectStats.getTotalProjectSize(); };
-        self.hasIndexFile =  function() { return ProjectStats.hasIndexFile(); };
-        self.getFileCount = function() { return ProjectStats.getFileCount(); };
+        self.getTotalProjectSize = function() {
+            if(!_projectStats) {
+                return 0;
+            }
+            return _projectStats.getTotalProjectSize();
+        };
+        self.getMaxCapacity = function() { return _capacity; };
+        self.hasIndexFile =  function() {
+            if(!_projectStats) {
+                return false;
+            }
+            return _projectStats.hasIndexFile();
+        };
+        self.getFileCount = function() {
+           if(!_projectStats) {
+                return 0;
+            }
+            return _projectStats.getFileCount();
+        };
         self.getLayout = function() {
             return {
                 sidebarWidth: _state.sidebarWidth,

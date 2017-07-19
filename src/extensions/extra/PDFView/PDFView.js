@@ -32,6 +32,21 @@ define(function (require, exports, module) {
                               .getExtensionPrefs("themes"),
         PDFViewTemplate     = require("text!htmlContent/pdf-view.html");
 
+    var _viewers = {};
+
+    // Track theme changes, and let any open PDF Viewers know
+    ThemePrefs.on("change", "theme", function() {
+        var theme = ThemePrefs.get("theme");
+
+        Object.keys(_viewers).forEach(function(filename) {
+            var viewer = _viewers[filename];
+            var pdfWindow = viewer.$el[0].contentWindow;
+            if(pdfWindow) {
+                pdfWindow.postMessage("theme:" + theme, "*");
+            }
+        });
+    });
+
     /**
      * PDFView objects are constructed when a PDF file is opened
      * @see {@link Pane} for more information about where PDFViews are rendered
@@ -43,6 +58,7 @@ define(function (require, exports, module) {
     function PDFView(file, $container) {
         this.file = file;
         this.$container = $container;
+        _viewers[file.fullPath] = this;
     }
 
     PDFView.prototype._init = function (deferred) {
@@ -64,16 +80,8 @@ define(function (require, exports, module) {
             }));
             $container.append(self.$el);
 
-            ThemePrefs.on("change", "theme", self._updateTheme.bind(self));
-
             deferred.resolve(file);
         });
-    };
-
-    PDFView.prototype._updateTheme = function () {
-        var theme = ThemePrefs.get("theme");
-        var pdfWindow = this.$el[0].contentWindow;
-        pdfWindow.postMessage("theme:" + theme, "*");
     };
 
     /*
@@ -110,7 +118,7 @@ define(function (require, exports, module) {
      * Destroys the view
      */
     PDFView.prototype.destroy = function () {
-        ThemePrefs.off("change", "theme", self._updateTheme.bind(self));
+        delete _viewers[this.file.fullPath];
         this.$el.remove();
     };
 
