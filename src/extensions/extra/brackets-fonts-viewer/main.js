@@ -97,7 +97,7 @@ define(function (require, exports, module) {
 
 
     /**
-     * Updates the Font Stats ()
+     * Updates the Font Stats
      */
     FontView.prototype._updateStats = function () {
         var self = this;
