@@ -70,6 +70,8 @@ define(function (require, exports, module) {
      * @param {!jQuery} container - The container to render the audio view in
      */
     function FileView(file, $container) {
+        console.log("Audio View");
+
         var that = this;
         this.file = file;
         this.container = $container;
@@ -217,6 +219,7 @@ define(function (require, exports, module) {
      * Destroys the view
      */
     FileView.prototype.destroy = function () {
+        console.log("Destroy - Audio")
         delete _viewers[this.file.fullPath];
         DocumentManager.off(".AudioView");
         this.$audioEl.off(".AudioView");
@@ -284,7 +287,6 @@ define(function (require, exports, module) {
      */
     MainViewFactory.registerViewFactory({
         canOpenFile: function (fullPath) {
-            console.log(isAudio(fullPath));
             return isAudio(fullPath);
         },
         openFile: function (file, pane) {

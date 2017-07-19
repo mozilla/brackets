@@ -1,15 +1,15 @@
-<style class="font-face" data-src="{{{url}}}?ver={{now}}">
-    @font-face {
-        font-family: {{ fontName }};
-        src: url("{{{url}}}?ver={{now}}");
-    }
-
-    .font-display-{{ fontName }} {
-        font-family: {{ fontName }};
-    }
-</style>
-
 <div class="font-viewer viewer-wrapper">
+
+    <style class="font-face" data-src="{{{url}}}?ver={{now}}">
+        @font-face {
+            font-family: {{ fontName }};
+            src: url("{{{url}}}?ver={{now}}");
+        }
+
+        .font-display-{{ fontName }} {
+            font-family: {{ fontName }};
+        }
+    </style>
 
     <div class="viewer-header">
         <span class="file-type">{{ Strings.FONT_FILE }}</span>

@@ -127,6 +127,8 @@ define(function (require, exports, module) {
      * @param {!jQuery} container - The container to render the image view in
      */
     function ImageView(file, $container) {
+        console.log("Image View - Instantiation");
+
         this.file = file;
         this.$container = $container;
 
@@ -134,7 +136,11 @@ define(function (require, exports, module) {
         this._naturalHeight = 0;
         this.relPath = ProjectManager.makeProjectRelativeIfPossible(this.file.fullPath);
 
-        this._buildPage(file, $container);
+        // Update the page if the file is renamed
+        console.log("Image View - adding new filenamechange listener");
+        DocumentManager.on("fileNameChange", _.bind(this._onFilenameChange, this));
+
+        this._buildPage(file, $container, false);
 
         _viewers[file.fullPath] = this;
     }
@@ -142,13 +148,20 @@ define(function (require, exports, module) {
     // Updates the page markup and...
     // * Assigns variables to elements
     // * Adds load and error listeners
-    ImageView.prototype._buildPage = function (file, $container) {
+    ImageView.prototype._buildPage = function (file, $container, fileRename) {
+
+        // Since we are rebuilding the page by appending new markup
+        // we have to remove the old viewer markup.
+        if(fileRename && $container.find(".viewer-wrapper").length > 0) {
+            $container.find(".viewer-wrapper").remove();
+        }
 
         this.$el = $(Mustache.render(ImageViewTemplate, {
             imgUrl: _getImageUrl(this.file),
             localImgUrl: _getLocalAssetUrl(this.file),
             Strings: Strings
         }));
+        console.log("Image view - appending");
 
         $container.append(this.$el);
 
@@ -176,12 +189,14 @@ define(function (require, exports, module) {
          * File objects are already updated when the event is triggered
          * so we just need to see if the file has the same path as our image
          */
+
+        console.log("imagViewer - onfilenamechange");
         if (this.file.fullPath === newPath) {
             this.relPath = ProjectManager.makeProjectRelativeIfPossible(newPath);
         }
 
         // Rebuild the page markup to account for the new filename
-        this._buildPage(this.file, this.$container);
+        this._buildPage(this.file, this.$container, true);
     };
 
     /**
@@ -271,7 +286,10 @@ define(function (require, exports, module) {
      * Destroys the view
      */
     ImageView.prototype.destroy = function () {
+        console.log("Destroy - Image");
+
         delete _viewers[this.file.fullPath];
+        DocumentManager.off("fileNameChange", _.bind(this._onFilenameChange, this));
         DocumentManager.off(".ImageView");
         this.$image.off(".ImageView");
         this.$el.remove();
