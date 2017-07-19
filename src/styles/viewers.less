@@ -140,6 +140,10 @@
     color: @text-dark;
     background: @background-dark;
 
+    h3 {
+        border-bottom: solid 1px @border-dark;
+    }
+
     .specimen-wrapper {
         background: rgba(0,0,0,.4);
     }
@@ -427,7 +431,7 @@
     }
 
     .image-filters-section {
-        margin-top: 25px;
+        margin: 25px 0;
     }
 
     .image-filter-actions {
@@ -518,5 +522,54 @@
         position: relative;
         top: 4px;
         cursor: text;
+    }
+}
+
+// Video viewer
+#editor-holder .pane-content .audio-view  {
+
+    .tag-options {
+        margin: 0 0 25px 0;
+        list-style-type: none;
+        padding-left: 0;
+
+        .attribute-name {
+            margin: 0;
+            font-family: monospace;
+            font-size: 16px;
+            position: relative;
+            top: 1px;
+            padding-right: 10px;
+        }
+
+        td {
+            padding: 6px;
+        }
+    }
+
+    audio {
+        margin: 0 auto;
+        display: block;
+    }
+
+    .code-wrapper {
+        pre {
+
+            &.pop {
+                animation: pop .2s ease-out;
+            }
+
+            @keyframes pop {
+                0% {
+                    transform: scale(1);
+                }
+                40% {
+                    transform: scale(1.03);
+                }
+                100% {
+                    transform: scale(1);
+                }
+            }
+        }
     }
 }

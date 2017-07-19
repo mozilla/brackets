@@ -124,6 +124,11 @@ define(function (require, exports, module) {
             return info.type === "video";
         },
 
+        isAudio: function(ext) {
+            var info = new FileInfo(ext);
+            return info.type === "audio";
+        },
+
         isResizableImage: function(ext) {
             ext = FilerUtils.normalizeExtension(ext);
             return ext === '.png' || ext === '.jpg' || ext === '.jpeg';

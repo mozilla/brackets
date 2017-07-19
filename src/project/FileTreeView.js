@@ -537,6 +537,9 @@ define(function (require, exports, module) {
                 case "ttf":
                     fileType = "font";
                     break;
+                case "mp3":
+                    fileType = "audio";
+                    break;
                 case "ogv":
                 case "mp4":
                 case "webm":

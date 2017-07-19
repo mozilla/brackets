@@ -1,0 +1,69 @@
+<div class="audio-view viewer-wrapper">
+
+    <div class="video-data viewer-header">
+        <span class="file-type">{{ Strings.AUDIO_FILE }}</span>
+        <span class="video-data-content file-details"><span>
+    </div>
+
+    <div class="audio-wrapper specimen-wrapper">
+        <audio controls>
+          <source src="{{ fileUrl }}" type="{{ fileType }}">
+        </audio>
+    </div>
+
+    <h3 class="options-title">{{ Strings.AUDIO_OPTIONS }}</h3>
+
+    <table class="tag-options">
+        <tr>
+            <td>
+                <input type="checkbox" id="setting-controls" checked setting="controls" />
+            </td>
+            <td>
+                <label class="attribute-name" for="setting-controls">controls</label>
+            </td>
+            <td>
+                {{ Strings.AUDIO_OPTION_SHOW_CONTROLS }}
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <input type="checkbox" id="setting-autoplay" setting="autoplay" />
+            </td>
+            <td>
+                <label class="attribute-name" for="setting-autoplay">autoplay</label>
+            </td>
+            <td>
+                {{ Strings.AUDIO_OPTION_AUTOPLAY }}
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <input type="checkbox" id="setting-loop" setting="loop" />
+            </td>
+            <td>
+                <label class="attribute-name" for="setting-loop">loop</label>
+            </td>
+            <td>
+                {{ Strings.AUDIO_OPTION_LOOPING }}
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <input type="checkbox" id="setting-muted" setting="muted" />
+            </td>
+            <td>
+                <label for="setting-muted" class="attribute-name">muted</label>
+            </td>
+            <td>
+                {{ Strings.AUDIO_OPTION_DISABLE_AUDIO }}
+            </td>
+        </tr>
+    </table>
+
+    <div class="code-wrapper code-html">
+        <h2 class="code-title">
+            HTML
+        </h2>
+        <pre></pre>
+    </div>
+</div>
