@@ -127,8 +127,6 @@ define(function (require, exports, module) {
      * @param {!jQuery} container - The container to render the image view in
      */
     function ImageView(file, $container) {
-        console.log("Image View - Instantiation");
-
         this.file = file;
         this.$container = $container;
 
@@ -137,8 +135,8 @@ define(function (require, exports, module) {
         this.relPath = ProjectManager.makeProjectRelativeIfPossible(this.file.fullPath);
 
         // Update the page if the file is renamed
-        console.log("Image View - adding new filenamechange listener");
-        DocumentManager.on("fileNameChange", _.bind(this._onFilenameChange, this));
+        this.fileChangeHandler = _.bind(this._onFilenameChange, this);
+        DocumentManager.on("fileNameChange", this.fileChangeHandler);
 
         this._buildPage(file, $container, false);
 
@@ -161,7 +159,6 @@ define(function (require, exports, module) {
             localImgUrl: _getLocalAssetUrl(this.file),
             Strings: Strings
         }));
-        console.log("Image view - appending");
 
         $container.append(this.$el);
 
@@ -189,14 +186,10 @@ define(function (require, exports, module) {
          * File objects are already updated when the event is triggered
          * so we just need to see if the file has the same path as our image
          */
-
-        console.log("imagViewer - onfilenamechange");
         if (this.file.fullPath === newPath) {
             this.relPath = ProjectManager.makeProjectRelativeIfPossible(newPath);
+            this._buildPage(this.file, this.$container, true);
         }
-
-        // Rebuild the page markup to account for the new filename
-        this._buildPage(this.file, this.$container, true);
     };
 
     /**
@@ -237,8 +230,8 @@ define(function (require, exports, module) {
             }
         });
 
-        // make sure we always show the right file name
-        DocumentManager.on("fileNameChange.ImageView", _.bind(this._onFilenameChange, this));
+        // // make sure we always show the right file name
+        // DocumentManager.on("fileNameChange.ImageView", _.bind(this._onFilenameChange, this));
 
         // For regular images, we allow image filters and colour extraction.
         // For SVG, we only do colour extraction.
@@ -286,12 +279,8 @@ define(function (require, exports, module) {
      * Destroys the view
      */
     ImageView.prototype.destroy = function () {
-        console.log("Destroy - Image");
-
         delete _viewers[this.file.fullPath];
-        DocumentManager.off("fileNameChange", _.bind(this._onFilenameChange, this));
-        DocumentManager.off(".ImageView");
-        this.$image.off(".ImageView");
+        DocumentManager.off("fileNameChange", this.fileChangeHandler);
         this.$el.remove();
     };
 
@@ -317,6 +306,7 @@ define(function (require, exports, module) {
         } else {
             view = new ImageView(file, pane.$content);
             pane.addView(view, true);
+            // pane.addToViewList(file);
         }
         return new $.Deferred().resolve().promise();
     }
@@ -330,6 +320,7 @@ define(function (require, exports, module) {
      * @param {Array.<FileSystemEntry>=} removed If entry is a Directory, contains zero or more removed children
      */
     function _handleFileSystemChange(event, entry, added, removed) {
+
         // this may have been called because files were added
         //  or removed to the file system.  We don't care about those
         if (!entry || entry.isDirectory) {

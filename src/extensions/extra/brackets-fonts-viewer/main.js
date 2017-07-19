@@ -71,7 +71,8 @@ define(function (require, exports, module) {
         this._buildPage(this.file, this.$container, false);
 
         // Update the page if the file is renamed
-        DocumentManager.on("fileNameChange", _.bind(this._onFilenameChange, this));
+        this.fileChangeHandler = _.bind(this._onFilenameChange, this);
+        DocumentManager.on("fileNameChange", this.fileChangeHandler);
 
         _viewers[file.fullPath] = this;
     }
@@ -84,8 +85,7 @@ define(function (require, exports, module) {
         // we have to remove the old viewer markup.
 
         if(fileRename && $container.find(".viewer-wrapper").length > 0) {
-            console.log("Font - removing viewer and rebuilding");
-            // $container.find(".viewer-wrapper").remove();
+            $container.find(".viewer-wrapper").remove();
         }
 
         this.$el     = $(Mustache.render(FontHolderTemplate, {
@@ -132,8 +132,8 @@ define(function (require, exports, module) {
         // so we just need to see if the file has the same path as our image
         if (this.file.fullPath === newPath) {
             this.relPath = ProjectManager.makeProjectRelativeIfPossible(newPath);
+            this._buildPage(this.file, this.$container, true);
         }
-        this._buildPage(this.file, this.$container, true);
     };
 
     /**
@@ -173,12 +173,9 @@ define(function (require, exports, module) {
      * Destroys the view
      */
     FontView.prototype.destroy = function () {
-        console.log("Destroy - Font");
         delete _viewers[this.file.fullPath];
-        DocumentManager.off("fileNameChange", _.bind(this._onFilenameChange, this));
+        DocumentManager.off("fileNameChange", this.fileChangeHandler);
         this.$el.remove();
-        // DocumentManager.off(".ImageView");
-        // this.$image.off(".ImageView");
     };
 
     /*

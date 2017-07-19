@@ -70,8 +70,6 @@ define(function (require, exports, module) {
      * @param {!jQuery} container - The container to render the audio view in
      */
     function FileView(file, $container) {
-        console.log("Audio View");
-
         var that = this;
         this.file = file;
         this.container = $container;
@@ -116,6 +114,10 @@ define(function (require, exports, module) {
         this.updateTagMarkup();
 
         _viewers[file.fullPath] = this;
+
+        // Update the page if the file is renamed
+        this.fileChangeHandler = _.bind(this._onFilenameChange, this);
+        DocumentManager.on("fileNameChange", this.fileChangeHandler);
     }
 
     // Updates the markup used in the preview & the sample markup below
@@ -192,8 +194,6 @@ define(function (require, exports, module) {
             }
             that.$audioData.html(sizeString);
         });
-
-        DocumentManager.on("fileNameChange.AudioView", _.bind(this._onFilenameChange, this));
     };
 
     /**
@@ -219,10 +219,8 @@ define(function (require, exports, module) {
      * Destroys the view
      */
     FileView.prototype.destroy = function () {
-        console.log("Destroy - Audio")
         delete _viewers[this.file.fullPath];
-        DocumentManager.off(".AudioView");
-        this.$audioEl.off(".AudioView");
+        DocumentManager.off("fileNameChange", this.fileChangeHandler);
         this.$el.remove();
     };
 

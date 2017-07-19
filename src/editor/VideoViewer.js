@@ -70,11 +70,7 @@ define(function (require, exports, module) {
      * @param {!jQuery} container - The container to render the video view in
      */
     function VideoView(file, $container) {
-        console.log("VideoView");
-
-
         var that = this;
-
         this.file = file;
         this.container = $container;
 
@@ -95,7 +91,6 @@ define(function (require, exports, module) {
             Strings: Strings
         }));
 
-        console.log("trying to append video el");
         $container.append(this.$el);
 
         this._naturalWidth = 0;
@@ -215,7 +210,10 @@ define(function (require, exports, module) {
             that.$videoData.html(dimensionString);
         });
 
-        DocumentManager.on("fileNameChange.VideoView", _.bind(this._onFilenameChange, this));
+        // Update the page if the file is renamed
+        this.fileChangeHandler = _.bind(this._onFilenameChange, this);
+        DocumentManager.on("fileNameChange", this.fileChangeHandler);
+
     };
 
     /**
@@ -241,10 +239,8 @@ define(function (require, exports, module) {
      * Destroys the view
      */
     VideoView.prototype.destroy = function () {
-        console.log("Destroy - Video");
         delete _viewers[this.file.fullPath];
-        DocumentManager.off(".VideoView");
-        this.$videoEl.off(".VideoView");
+        DocumentManager.off("fileNameChange", this.fileChangeHandler);
         this.$el.remove();
     };
 
