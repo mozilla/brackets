@@ -206,7 +206,7 @@ define(function (require, exports, module) {
 
         var extension = FileUtils.getFileExtension(this.file.fullPath);
 
-        var stringFormat = Strings.IMAGE_DIMENSIONS;
+        var stringFormat = Strings.IMAGE_DIMENSIONS_1;
         var dimensionString = StringUtils.format(stringFormat, this._naturalWidth, this._naturalHeight);
 
         if (extension === "ico") {
