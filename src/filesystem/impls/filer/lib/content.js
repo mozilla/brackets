@@ -66,7 +66,9 @@ define(function (require, exports, module) {
         case '.ico':
             return 'image/x-icon';
         case '.jpg':
+        // fallsthrough
         case '.jpe':
+        // fallsthrough
         case '.jpeg':
             return 'image/jpeg';
         case '.gif':
@@ -84,9 +86,11 @@ define(function (require, exports, module) {
         case '.oga':
             return 'audio/ogg';
         case '.mpa':
+        // fallsthrough
         case '.mp3':
             return 'audio/mpeg';
         case '.wave':
+        // fallsthrough
         case '.wav':
             return 'audio/vnd.wave';
 
