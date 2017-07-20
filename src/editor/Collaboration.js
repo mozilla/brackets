@@ -14,6 +14,10 @@ define(function (require, exports, module) {
             console.error("Collaboration already initialized");
             return;
         }
+        if(!options.serverUrl) {
+            console.error(new Error("A WebRTC server url must be provided to enable collaboration."));
+            return;
+        }
         _webrtc = new SimpleWebRTC({
             // the id/element dom element that will hold "our" videos
             localVideoEl: 'localVideo',
@@ -22,7 +26,7 @@ define(function (require, exports, module) {
             // immediately ask for camera access
             autoRequestMedia: false,
             // TODO : Shift this to config.
-            url: "localhost:8888"
+            url: options.serverUrl
         });
         if(_room) {
             console.warn("Room ", _room, ", already joined");

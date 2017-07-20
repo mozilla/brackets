@@ -97,6 +97,7 @@
             url: "index.html",
             useLocationSearch: true,
             collaboration: {
+                serverUrl: "localhost:8888",
                 room: (new URL(window.location.href)).searchParams.get("collaboration")
             }
         });
