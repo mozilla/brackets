@@ -1,11 +1,10 @@
 define(function (require, exports, module) {
     "use strict";
 
-    var FileSystem = require("filesystem/FileSystem");
+    var FileSystem      = require("filesystem/FileSystem");
     var StartupState    = require("bramble/StartupState");
     var SimpleWebRTC    = require("simplewebrtc");
-    var BracketsFiler   = require("filesystem/impls/filer/BracketsFiler");
-    var Path            = BracketsFiler.Path;
+    var Path            = require("filesystem/impls/filer/FilerUtils").Path;
 
     var _webrtc,
         _pending,
@@ -43,9 +42,11 @@ define(function (require, exports, module) {
 
         _pending = []; // pending clients that need to be initialized.
         _changing = false;
+
         FileSystem.on("rename", function(event, oldPath, newPath) {
-            var relOldPath = oldPath.replace(StartupState.project("root"), "");
-            var relNewPath = newPath.replace(StartupState.project("root"), "");
+            var rootDir = StartupState.project("root");
+            var relOldPath = Path.relative(rootDir, oldPath);
+            var relNewPath = Path.relative(rootDir, newPath);
             _webrtc.sendToAll("file-rename", {oldPath: relOldPath, newPath: relNewPath});
         });
     };
@@ -55,16 +56,19 @@ define(function (require, exports, module) {
     };
 
     function _handleMessage(msg) {
+        var payload = msg.payload;
+        var oldPath, newPath;
+        var rootDir = StartupState.project("root");
         switch(msg.type) {
             case "new client":
                 _pending.push(msg.from);
                 break;
             case "codemirror-change":
-                _handleCodemirrorChange(msg.payload);
+                _handleCodemirrorChange(payload);
                 break;
             case "file-rename":
-                var oldPath = Path.relative(msg.payload.oldPath, root);
-                var newPath = Path.relative(msg.payload.newPath, root); 
+                oldPath = Path.join(rootDir, payload.oldPath);
+                newPath = Path.join(rootDir, payload.newPath); 
                 console.log("renamed " + oldPath + " to " + newPath);
                 break;
             case "initClient":
@@ -72,7 +76,7 @@ define(function (require, exports, module) {
                     return;
                 }
                 _changing = true;
-                _codemirror.setValue(msg.payload);
+                _codemirror.setValue(payload);
                 _changing = false;
                 break;
         }
