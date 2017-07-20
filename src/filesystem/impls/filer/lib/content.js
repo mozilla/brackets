@@ -87,7 +87,6 @@ define(function (require, exports, module) {
         case '.mp3':
             return 'audio/mpeg';
         case '.wave':
-        // fallsthrough
         case '.wav':
             return 'audio/vnd.wave';
 

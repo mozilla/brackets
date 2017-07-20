@@ -306,7 +306,6 @@ define(function (require, exports, module) {
         } else {
             view = new ImageView(file, pane.$content);
             pane.addView(view, true);
-            // pane.addToViewList(file);
         }
         return new $.Deferred().resolve().promise();
     }

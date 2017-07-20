@@ -525,6 +525,9 @@ define(function (require, exports, module) {
                     fileType = "font";
                     break;
                 case "mp3":
+                case "oga":
+                case "wav":
+                case "wave":
                     fileType = "audio";
                     break;
                 case "ogv":
