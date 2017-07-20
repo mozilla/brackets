@@ -31,17 +31,124 @@ div.working-set-option-btn[style] {
     padding: 12px 0 0 0;
     font-weight: 400;
     font-family: "Open Sans", "Helvetica Neue", sans-serif;
+    overflow-x: hidden !important;
+}
+
+// Indicates used and available room in a project
+#project-size-info {
+    padding: 12px 10px;
+    transition: opacity .2s ease-out;
+    overflow: hidden;
+
+    &.hidden {
+        opacity: 0;
+    }
+
+    .space-available {
+        background: rgba(0,0,0,.1);
+        position: relative;
+        height: 6px;
+        margin-bottom: 6px;
+        border-radius: 2px;
+    }
+
+    .space-used-bar {
+        border-radius: 2px;
+        width: 0;
+        background: #61a782;
+        height: 100%;
+        position: absolute;
+        left: 0;
+        transition: all .2s ease-out;
+        transition-delay: .2s;
+    }
+
+    &.project-size-warning .space-used-bar {
+        background: #ef7e42;
+    }
+
+    &.project-size-exceeded {
+        .space-used-bar {
+            background: #da2828;
+        }
+
+        .space-used-summary {
+            color: #da2828;
+
+            strong {
+                color: inherit;
+            }
+        }
+    }
+
+    .space-used-summary {
+        color: rgba(0,0,0,.4);
+        font-family: "Open Sans";
+        margin: 0;
+
+        strong {
+            font-weight: 600;
+            color: inherit;
+            color: rgba(0,0,0,.5);
+        }
+    }
+}
+
+.dark #project-size-info {
+
+    .space-available {
+        background: rgba(255,255,255,.2);
+    }
+
+    .space-used-bar {
+        background: #2a794f;
+    }
+
+    .space-used-summary {
+        color: rgba(255,255,255,.4);
+
+        strong {
+            color: rgba(255,255,255,.5);
+        }
+    }
+
+    &.project-size-warning .space-used-bar {
+        background: #c35921;
+    }
+
+    &.project-size-exceeded {
+
+        .space-used-bar {
+            background: #a51818;
+        }
+
+        .space-used-summary {
+            color: #a02626;
+
+            strong {
+                color: inherit;
+            }
+        }
+    }
 }
 
 #project-files-container ul {
     padding: 0 !important;
 }
 
-
 /* File tree basic styles */
 
 li.jstree-leaf {
     min-height: 37px;
+}
+
+// Override for ellipsis
+.jstree-brackets li a {
+    color: rgba(0,0,0,.4) !important;
+}
+
+.dark .jstree-brackets li a {
+    color: rgba(255,255,255,.4) !important;
 }
 
 li.jstree-leaf a span,
@@ -56,14 +163,12 @@ li.jstree-open > a span {
     color: rgba(255,255,255,.7);
 }
 
-
 body[data-theme='light-theme'] li.jstree-leaf a span,
 body[data-theme='light-theme'] li.jstree-leaf span.extension,
 body[data-theme='light-theme'] li.jstree-closed > a span,
 body[data-theme='light-theme'] li.jstree-open > a span {
     color: rgba(0,0,0,.6);
 }
-
 
 /* Overrides not needed margin */
 
@@ -82,8 +187,9 @@ li.jstree-leaf a {
     padding: 12px 10px 12px 40px;
     cursor: pointer !important;
     box-shadow: none;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
-
 
 /* Hides the 'spacing indenter' that the filetree adds into
    into items in folders */
@@ -123,33 +229,91 @@ li.jstree-leaf a.selected-node .extension {
 }
 
 
-
 /* Hover state for all items */
 
-li.jstree-leaf a:not(.selected-node):hover,
-li.jstree-open a:first-of-type:hover,
-li.jstree-closed a:first-of-type:hover {
+li.jstree-leaf:hover a:not(.selected-node),
+li.jstree-closed:hover a:first-of-type {
     background: rgba(255,255,255,.08);
 }
 
-[data-theme='light-theme'] li.jstree-leaf a:not(.selected-node):hover,
-[data-theme='light-theme'] li.jstree-open a:first-of-type:hover,
-[data-theme='light-theme'] li.jstree-closed a:first-of-type:hover {
+li.jstree-open > a:first-of-type:hover {
+    background: rgba(255,255,255,.08);
+}
+
+[data-theme='light-theme'] li.jstree-leaf a:hover:not(.selected-node),
+[data-theme='light-theme'] li.jstree-open a:hover:first-of-type,
+[data-theme='light-theme'] li.jstree-closed a:hover:first-of-type {
     background: rgba(0,0,0,.08);
 }
 
 
 /* Hover state item text */
 
-li.jstree-leaf a:not(.selected-node):hover > span {
-    color: rgba(255,255,255,.6);
-}
-
 li.jstree-open > a span,
 li.jstree-closed > a span {
     color: rgba(255,255,255,.7);
 }
 
+.menuToggle {
+    position: absolute;
+    right: 6px;
+    top: 7px;
+    height: 27px;
+    width: 26px;
+    cursor: pointer;
+    background-image: url(../images/arrow-down-dark.svg);
+    background-size: 10px;
+    background-position: center;
+    background-repeat: no-repeat;
+    display: none;
+    border-radius: 1px;
+
+    &:hover {
+        background-color: rgba(0,0,0,.15);
+        opacity: .7;
+    }
+
+    &.toggle-open {
+        display: block;
+        opacity: 1;
+        background-color: rgba(0,0,0,.15);
+        background-image: url(../images/arrow-down-light.svg);
+    }
+}
+
+.dark .menuToggle {
+    box-shadow: none;
+    background-image: url(../images/arrow-down-light.svg);
+
+    &:not(.toggle-open):hover {
+        background-color: rgba(255,255,255,.2);
+    }
+
+    &.toggle-open {
+        background-color: white;
+        background-image: url(../images/arrow-down-dark.svg);
+    }
+}
+
+.selected-node .menuToggle {
+    display: block;
+    opacity: .5;
+
+    &.toggle-open {
+        opacity: 1;
+    }
+}
+
+.jstree-leaf a:hover ,
+.jstree-closed a:hover,
+.jstree-open a:hover {
+    padding-right: 40px;
+
+    .menuToggle:not(.toggle-open) {
+        opacity: .5;
+        display: block;
+    }
+}
 
 [data-theme='light-theme'] li.jstree-leaf a:not(.selected-node):hover > span {
     color: rgba(0,0,0,.6);
@@ -181,15 +345,9 @@ li.jstree-open > ul:empty:after {
 li.jstree-closed a.context-node,
 li.jstree-open a.context-node,
 li.jstree-leaf a.context-node {
+    padding-right: 40px;
     background: rgba(255,255,255,.08);
 }
-
-li.jstree-closed a.context-node span,
-li.jstree-open a.context-node span,
-li.jstree-leaf a.context-node span {
-    color: rgba(255,255,255,.6);
-}
-
 
 [data-theme='light-theme'] li.jstree-closed a.context-node,
 [data-theme='light-theme'] li.jstree-open a.context-node,
@@ -201,6 +359,7 @@ li.jstree-leaf a.context-node span {
 
 li.jstree-leaf a.selected-node {
   background: #222;
+  padding-right: 40px;
 
   span {
     color: white;
@@ -327,9 +486,20 @@ body[data-theme='light-theme'] li.jstree-leaf a.selected-node:hover {
 .context-menu .dropdown-menu  {
     padding: 0;
     border-radius: 0;
-    border: none;
-    background: black;
-    border: solid 1px rgba(255,255,255,.1);
+    border: none !important;
+    background: white !important;
+}
+
+// Don't show New File & New Folder actions when a file's context menu
+// has been opened by clicing the toggle icon.
+.context-menu.file-menu {
+    [id*=newFile] {
+        display: none;
+    }
+
+    [id*=newFolder] {
+        display: none;
+    }
 }
 
 .context-menu .menu-shortcut {
@@ -341,13 +511,10 @@ body[data-theme='light-theme'] li.jstree-leaf a.selected-node:hover {
     line-height: 16px;
     font-size: 16px;
     cursor: pointer;
-    color: rgba(255,255,255,.8);
     line-height: 16px;
-}
-
-.context-menu .dropdown-menu li a {
     padding-left: 40px;
     position: relative;
+    color: rgba(0,0,0,.6) !important;
 }
 
 .context-menu .dropdown-menu li a span {
@@ -367,16 +534,11 @@ body[data-theme='light-theme'] li.jstree-leaf a.selected-node:hover {
     width: 40px;
 }
 
-
 // New File
 .context-menu .dropdown-menu li a.project-context-menu-filenewFile:after {
     background-image: url(../images/menu-icons/file-dark.svg);
     background-size: 17px;
     background-position: 12px 12px;
-}
-
-.dark .context-menu .dropdown-menu li a.project-context-menu-filenewFile:after {
-    background-image: url(../images/menu-icons/file-white.svg);
 }
 
 // New folder
@@ -386,19 +548,11 @@ body[data-theme='light-theme'] li.jstree-leaf a.selected-node:hover {
     background-position: 12px 15px;
 }
 
-.dark .context-menu .dropdown-menu li a.project-context-menu-filenewFolder:after {
-    background-image: url(../images/menu-icons/folder-icon-white.svg);
-}
-
 // Rename File
 .context-menu .dropdown-menu li a.project-context-menu-filerename:after {
     background-image: url(../images/menu-icons/pencil-dark.svg);
     background-size: 15px;
     background-position: 12px 13px;
-}
-
-.dark .context-menu .dropdown-menu li a.project-context-menu-filerename:after {
-    background-image: url(../images/menu-icons/pencil-white.svg);
 }
 
 // Move File
@@ -408,19 +562,11 @@ body[data-theme='light-theme'] li.jstree-leaf a.selected-node:hover {
     background-position: 12px 15px;
 }
 
-.dark .context-menu .dropdown-menu li a.project-context-menu-bramble-move-filemoveFile:after {
-    background-image: url(../images/menu-icons/move-file-light.svg);
-}
-
 // Delete file
 .context-menu .dropdown-menu li a.project-context-menu-filedelete:after {
     background-image: url(../images/menu-icons/trashcan-dark.svg);
     background-size: 14px;
     background-position: 13px 13px;
-}
-
-.dark .context-menu .dropdown-menu li a.project-context-menu-filedelete:after {
-    background-image: url(../images/menu-icons/trashcan-white.svg);
 }
 
 // Download file
@@ -430,17 +576,13 @@ body[data-theme='light-theme'] li.jstree-leaf a.selected-node:hover {
     background-position: 13px 13px;
 }
 
-.dark .context-menu .dropdown-menu li a.project-context-menu-filedownload:after {
-    background-image: url(../images/menu-icons/download-white.svg);
-}
-
 .context-menu .dropdown-menu li a:before {
     display: none;
 }
 
 .context-menu .dropdown-menu li a:hover {
-    background-color: rgba(255,255,255,.1);
-    color: rgba(255,255,255,.8);
+    background-color: rgba(0,0,0,.1);
+    color: rgba(0,0,0,.8);
     background-image: none;
 }
 
@@ -448,32 +590,16 @@ body[data-theme='light-theme'] li.jstree-leaf a.selected-node:hover {
     display: none;
 }
 
-[data-theme='light-theme'] .context-menu .dropdown-menu {
-    background: white;
+.context-menu .dropdown-menu {
     border: none;
 }
 
-[data-theme='light-theme'] .context-menu .dropdown-menu li a {
-    color: rgba(0,0,0,.6);
-}
 
 .context-menu .dropdown-menu li a:after {
     opacity: .6;
 }
 
-[data-theme='light-theme'] .context-menu .dropdown-menu li a:hover {
+.context-menu .dropdown-menu li a:hover {
     background-color: rgba(0,0,0,.08);
     background-image: none;
-}
-
-.dark .context-menu .dropdown-menu li a {
-    color: rgba(255,255,255,.6);
-}
-
-.dark .context-menu .dropdown-menu li a:hover {
-    background-image: none;
-}
-
-.dark .context-menu .dropdown-menu li a:after {
-    opacity: .8;
 }

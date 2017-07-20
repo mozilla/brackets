@@ -41,7 +41,8 @@ define(function (require, exports, module) {
         StringUtils     = require("utils/StringUtils"),
         // XXXBramble specific bits
         FileImport      = require("filesystem/impls/filer/lib/FileImport"),
-        FileSystemCache = require("filesystem/impls/filer/FileSystemCache");
+        FileSystemCache = require("filesystem/impls/filer/FileSystemCache"),
+        Sizes           = require("filesystem/impls/filer/lib/Sizes");
 
     // If the user indicates they want to import files deep into the filetree
     // this is the path they want to use as a parent dir root.
@@ -322,6 +323,15 @@ define(function (require, exports, module) {
      * and process them, such that they end
      */
     function processFiles(source, callback) {
+        // Make sure we have enough room to add new files.
+        if(Sizes.getEnforceLimits()) {
+            return CommandManager
+                .execute("bramble.projectSizeError")
+                .done(function() {
+                    callback(new Error("not enough free space."));
+                });
+        }
+
         FileImport.import(source, _dropPathHint, function(err, paths) {
             // Reset drop path, until we get an explicit one set in future.
             _dropPathHint = null;

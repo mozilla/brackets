@@ -187,16 +187,16 @@ define(function (require, exports, module) {
 //        menu.addMenuItem(Commands.HELP_SHOW_EXT_FOLDER);
 //
 //        var hasAboutItem = (brackets.platform !== "mac" || !brackets.nativeMenus);
-//        
+//
 //        // Add final divider only if we have a homepage URL or twitter URL or about item
 //        if (hasAboutItem || brackets.config.homepage_url || brackets.config.twitter_url) {
 //            menu.addMenuDivider();
 //        }
-//        
+//
 //        if (brackets.config.homepage_url) {
 //            menu.addMenuItem(Commands.HELP_HOMEPAGE);
 //        }
-//        
+//
 //        if (brackets.config.twitter_url) {
 //            menu.addMenuItem(Commands.HELP_TWITTER);
 //        }
@@ -240,8 +240,8 @@ define(function (require, exports, module) {
         project_cmenu.addMenuItem(Commands.FILE_NEW);
         project_cmenu.addMenuItem(Commands.FILE_NEW_FOLDER);
         project_cmenu.addMenuItem(Commands.FILE_RENAME);
-        project_cmenu.addMenuItem(Commands.FILE_DELETE);
         project_cmenu.addMenuItem(Commands.FILE_DOWNLOAD);
+        project_cmenu.addMenuItem(Commands.FILE_DELETE);
 // XXXBramble: not something we want to support at the moment/ever
 //        project_cmenu.addMenuItem(Commands.NAVIGATE_SHOW_IN_OS);
 //        project_cmenu.addMenuDivider();
@@ -249,7 +249,7 @@ define(function (require, exports, module) {
 //        project_cmenu.addMenuItem(Commands.CMD_REPLACE_IN_SUBTREE);
 //        project_cmenu.addMenuDivider();
 //        project_cmenu.addMenuItem(Commands.FILE_REFRESH);
-        
+
         var editor_cmenu = Menus.registerContextMenu(Menus.ContextMenuIds.EDITOR_MENU);
         // editor_cmenu.addMenuItem(Commands.NAVIGATE_JUMPTO_DEFINITION);
         editor_cmenu.addMenuItem(Commands.TOGGLE_QUICK_EDIT);

@@ -7,6 +7,7 @@ define(function (require, exports, module) {
     var CommandManager     = brackets.getModule("command/CommandManager");
     var EditorManager      = brackets.getModule("editor/EditorManager");
     var Commands           = brackets.getModule("command/Commands");
+    var FileSystem         = brackets.getModule("filesystem/FileSystem");
     var HTMLRewriter       = brackets.getModule("filesystem/impls/filer/lib/HTMLRewriter");
     var SidebarView        = brackets.getModule("project/SidebarView");
     var StatusBar          = brackets.getModule("widgets/StatusBar");
@@ -16,6 +17,7 @@ define(function (require, exports, module) {
     var PreferencesManager = brackets.getModule("preferences/PreferencesManager");
     var _                  = brackets.getModule("thirdparty/lodash");
     var ArchiveUtils       = brackets.getModule("filesystem/impls/filer/ArchiveUtils");
+    var Sizes              = brackets.getModule("filesystem/impls/filer/lib/Sizes");
 
     var SVGUtils = require("lib/SVGUtils");
     var MouseManager = require("lib/MouseManager");
@@ -180,7 +182,16 @@ define(function (require, exports, module) {
             break;
         case "BRAMBLE_ADD_NEW_FILE":
             skipCallback = true;
-            CommandManager.execute("bramble.addFile", args[0]).always(callback);
+            // Make sure we have enough room to add new files.
+            if(Sizes.getEnforceLimits()) {
+                CommandManager
+                    .execute("bramble.projectSizeError")
+                    .always(callback);
+            } else {
+                CommandManager
+                    .execute("bramble.addFile", args[0])
+                    .always(callback);
+            }
             break;
         case "BRAMBLE_EXPORT":
             skipCallback = true;
@@ -194,6 +205,17 @@ define(function (require, exports, module) {
         case "BRAMBLE_ADD_CODE_SNIPPET":
             skipCallback = true;
             CommandManager.execute("bramble.addCodeSnippet", args[0]).always(callback);
+            break;
+        case "BRAMBLE_ENABLE_PROJECT_CAPACITY_LIMITS":
+            skipCallback = true;
+            Sizes.setEnforceLimits(true);
+            CommandManager.execute("bramble.projectSizeError").always(callback);
+            break;
+        case "BRAMBLE_DISABLE_PROJECT_CAPACITY_LIMITS":
+            Sizes.setEnforceLimits(false);
+            break;
+        case "BRAMBLE_PROJECT_SIZE_CHANGE":
+            UI.setProjectSizeInfo(args[0]);
             break;
         default:
             console.log('[Bramble] unknown command:', command);

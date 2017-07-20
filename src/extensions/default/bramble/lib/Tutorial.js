@@ -9,7 +9,8 @@ define(function (require, exports, module) {
     var Path            = Filer.Path;
 
     var PostMessageTransport = require("lib/PostMessageTransport");
-
+    var UI                   = require("lib/UI");
+    
     // Whether or not we're overriding the preview with a tutorial
     var _tutorialOverride;
 
@@ -17,16 +18,33 @@ define(function (require, exports, module) {
     // show, we need to force a reload for the preview.
     var _forceReload;
 
+    // Preserves the mobile view state
+    var _shouldRestoreMobileView = false;
+
     function setOverride(val) {
         _tutorialOverride = !!val;
+        
+        // If mobile view is on we need to preserve it.
+        if (UI.getPreviewMode() === "mobile") {
+            _shouldRestoreMobileView = true;
+        }
 
         // We need to reload the browser preview. If we're going to override,
         // we can simply reload the current live dev instance.  If not, we
         // need to properly reset live dev so it points at the project's main file.
+        
         if(_tutorialOverride) {
             _forceReload = true;
+            UI.showDesktopView(true);  // Always show in desktop mode 
             PostMessageTransport.reload();
         } else {
+
+            if(_shouldRestoreMobileView) {
+                // If mobile view was preserved.
+                _shouldRestoreMobileView = false; 
+                UI.showMobileView(true);
+            }
+            
             // If we're turning off the override, we need to open the project's
             // "main" web file, and the easiest way is to close/re-open live dev.
             LiveDevelopment.close().done(LiveDevelopment.open);

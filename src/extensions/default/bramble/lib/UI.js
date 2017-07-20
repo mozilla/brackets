@@ -11,16 +11,24 @@ define(function (require, exports, module) {
         MainViewManager     = brackets.getModule("view/MainViewManager"),
         BrambleEvents       = brackets.getModule("bramble/BrambleEvents"),
         BrambleStartupState = brackets.getModule("bramble/StartupState"),
+        CommandManager      = brackets.getModule("command/CommandManager"),
         FileSystem          = brackets.getModule("filesystem/FileSystem"),
+        Sizes               = brackets.getModule("filesystem/impls/filer/lib/Sizes"),
         ViewCommandHandlers = brackets.getModule("view/ViewCommandHandlers"),
         SidebarView         = brackets.getModule("project/SidebarView"),
         WorkspaceManager    = brackets.getModule("view/WorkspaceManager"),
-        PreferencesManager  = brackets.getModule("preferences/PreferencesManager");
+        PreferencesManager  = brackets.getModule("preferences/PreferencesManager"),
+        Dialogs             = brackets.getModule("widgets/Dialogs"),
+        DefaultDialogs      = brackets.getModule("widgets/DefaultDialogs"),
+        Strings             = brackets.getModule("strings"),
+        StringUtils         = brackets.getModule("utils/StringUtils");
 
     var PhonePreview  = require("text!lib/Mobile.html");
     var PostMessageTransport = require("lib/PostMessageTransport");
 
     var isMobileViewOpen = false;
+
+    var DEFAULT_PROJECT_SIZE_LIMIT_FORMATTED = Sizes.formatBytes(Sizes.DEFAULT_PROJECT_SIZE_LIMIT);
 
     /**
      * This function calls all the hide functions and listens
@@ -282,6 +290,31 @@ define(function (require, exports, module) {
         return isMobileViewOpen ? "mobile" : "desktop";
     }
 
+    /**
+     * Update File Tree size info when the project's files changes on disk
+     */
+    function setProjectSizeInfo(info) {
+        var currentSize = Sizes.formatBytes(info.size);
+
+        // Normalize to between 0 - 100%
+        var percentUsed = (Math.max(Math.min(info.percentUsed * 100, 100), 0)).toFixed(2) + "%";
+
+        SidebarView._updateProjectSizeIndicator(currentSize, DEFAULT_PROJECT_SIZE_LIMIT_FORMATTED, percentUsed);
+    }
+
+    /**
+     * Show the user an error dialog, indicating that the project has exceeded the max amount of disk space.
+     */
+    function showProjectSizeErrorDialog() {
+        return Dialogs.showModalDialog(
+            DefaultDialogs.DIALOG_ID_ERROR,
+            Strings.ERROR_OUT_OF_SPACE_TITLE,
+            Strings.ERROR_PROJECT_SIZE_EXCEEDED
+        ).getPromise();
+    }
+
+    CommandManager.registerInternal("bramble.projectSizeError", showProjectSizeErrorDialog);
+
     // Define public API
     exports.initUI                 = initUI;
     exports.showMobileView         = showMobileView;
@@ -292,4 +325,5 @@ define(function (require, exports, module) {
     exports.removeLeftSideToolBar  = removeLeftSideToolBar;
     exports.removeMainToolBar      = removeMainToolBar;
     exports.removeRightSideToolBar = removeRightSideToolBar;
+    exports.setProjectSizeInfo     = setProjectSizeInfo;
 });
