@@ -2,6 +2,10 @@ define(function (require, exports, module) {
     "use strict";
 
     var SimpleWebRTC    = require("simplewebrtc");
+    var Initializer     = require("editor/Initializer");
+    var FileSystemEntry = require("filesystem/FileSystem");
+    var StartupState    = require("bramble/StartupState");
+    var DocumentManager = require("document/DocumentManager");
 
     var _webrtc,
         _pending,
@@ -65,6 +69,26 @@ define(function (require, exports, module) {
                 _codemirror.setValue(msg.payload);
                 _changing = false;
                 break;
+            case "initFiles":
+                var cm = _getOpenCodemirrorInstance(msg.payload.path.replace(StartupState.project("root"), ""));
+                if(cm) {
+                    _changing = true;
+                    cm.setValue(msg.payload.content);
+                    _changing = false;
+                    console.log("file initializing in codemirror" + msg.payload.path);
+                } else {
+                    var file = FileSystemEntry.getFileForPath(msg.payload.path);
+                    if(!file) {
+                        return;
+                    }
+                    file.write(msg.payload.content, {}, function(err) {
+                        if(err) {
+                            console.log(err);
+                        }
+                    });
+                    console.log("file initializing in indexeddb" + msg.payload.path);
+                }
+                break;
         }
     };
 
@@ -73,7 +97,19 @@ define(function (require, exports, module) {
         _changing = true;
         for(var i = 0; i<_pending.length; i++) {
             if(_pending[i] === peer.id) {
-                peer.send("initClient", _codemirror.getValue());
+                Initializer.initialize(function(fileName) {
+                    var cm = _getOpenCodemirrorInstance(fileName.replace(StartupState.project("root"), ""));
+                    if(cm) {
+                        peer.send("initFiles", {path: fileName, content: cm.getValue()});
+                    } else {
+                        var file = FileSystemEntry.getFileForPath(fileName);
+                        file.read({}, function(err, text) {
+                            if(!err) {
+                                peer.send("initFiles", {path: fileName, content: text});
+                            }
+                        });
+                    }
+                });
                 _pending.splice(i, 1);
                 break;
             }
@@ -104,6 +140,15 @@ define(function (require, exports, module) {
         var to = from;
         _codemirror.replaceRange(param, from, to);
         _changing = false;
+    };
+
+    function _getOpenCodemirrorInstance(relPath) {
+        var fullPath = StartupState.project("root") + relPath;
+        var doc = DocumentManager.getOpenDocumentForPath(fullPath);
+        if(doc && doc._masterEditor) {
+            return doc._masterEditor._codeMirror;
+        }
+        return null;
     };
 
     function triggerCodemirrorChange(changeList) {
