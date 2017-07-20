@@ -1,9 +1,11 @@
 define(function (require, exports, module) {
     "use strict";
 
-    var FileSystemEntry = require("filesystem/FileSystem");
+    var FileSystem = require("filesystem/FileSystem");
     var StartupState    = require("bramble/StartupState");
     var SimpleWebRTC    = require("simplewebrtc");
+    var BracketsFiler   = require("filesystem/impls/filer/BracketsFiler");
+    var Path            = BracketsFiler.Path;
 
     var _webrtc,
         _pending,
@@ -41,7 +43,7 @@ define(function (require, exports, module) {
 
         _pending = []; // pending clients that need to be initialized.
         _changing = false;
-        FileSystemEntry.on("rename", function(event, oldPath, newPath) {
+        FileSystem.on("rename", function(event, oldPath, newPath) {
             var relOldPath = oldPath.replace(StartupState.project("root"), "");
             var relNewPath = newPath.replace(StartupState.project("root"), "");
             _webrtc.sendToAll("file-rename", {oldPath: relOldPath, newPath: relNewPath});
@@ -61,8 +63,8 @@ define(function (require, exports, module) {
                 _handleCodemirrorChange(msg.payload);
                 break;
             case "file-rename":
-                var oldPath = StartupState.project("root") + msg.payload.oldPath;
-                var newPath = StartupState.project("root") + msg.payload.newPath;
+                var oldPath = Path.relative(msg.payload.oldPath, root);
+                var newPath = Path.relative(msg.payload.newPath, root); 
                 console.log("renamed " + oldPath + " to " + newPath);
                 break;
             case "initClient":
