@@ -76,7 +76,7 @@ define(function (require, exports, module) {
      */
     EventDispatcher.on_duringInit(MainViewManager, "workingSetAdd", function (event, addedFile) {
         // XXXBramble: always keep focus on the Project Manager vs. Working Set View
-        _fileSelectionFocus = WORKING_SET_VIEW;
+        _fileSelectionFocus = PROJECT_MANAGER;
         exports.trigger("documentSelectionFocusChange");
     });
     /**
@@ -87,10 +87,10 @@ define(function (require, exports, module) {
         if (!_curDocChangedDueToMe) {
             // The the cause of the doc change was not openAndSelectDocument, so pick the best fileSelectionFocus
             perfTimerName = PerfUtils.markStart("FileViewController._oncurrentFileChange():\t" + (file ? (file.fullPath) : "(no open file)"));
-            
-            // XXXBramble: always keep focus on the Project Manager vs. Working Set View
-            _fileSelectionFocus = PROJECT_MANAGER;
         }
+
+        // XXXBramble: always keep focus on the Project Manager vs. Working Set View
+        _fileSelectionFocus = PROJECT_MANAGER;
 
         exports.trigger("documentSelectionFocusChange");
 
@@ -125,13 +125,9 @@ define(function (require, exports, module) {
             console.error("Bad parameter passed to FileViewController.setFileViewFocus");
             return;
         }
-        // XXXBramble: always keep focus on the Project Manager vs. Working Set View 
-        fileSelectionFocus = PROJECT_MANAGER;
-
-        if (_fileSelectionFocus !== fileSelectionFocus) {
-            _fileSelectionFocus = fileSelectionFocus;
-            exports.trigger("fileViewFocusChange");
-        }
+        // XXXBramble: always keep focus on the Project Manager vs. Working Set View
+        _fileSelectionFocus = PROJECT_MANAGER;
+        exports.trigger("fileViewFocusChange");
     }
 
     /**
@@ -169,8 +165,8 @@ define(function (require, exports, module) {
         // and checked in the currentFileChange handler
         _curDocChangedDueToMe = true;
 
-        _fileSelectionFocus = fileSelectionFocus;
-
+        // XXXBramble: always keep focus on the Project Manager vs. Working Set View
+        _fileSelectionFocus = PROJECT_MANAGER;
 
         paneId = (paneId || _getDerivedPaneContext() || MainViewManager.ACTIVE_PANE);
 

@@ -332,7 +332,7 @@ define(function (require, exports, module) {
                 });
         }
 
-        FileImport.import(source, _dropPathHint, function(err, paths) {
+        FileImport.import(source, _dropPathHint, function(err, pathsToOpen) {
             // Reset drop path, until we get an explicit one set in future.
             _dropPathHint = null;
 
@@ -342,9 +342,8 @@ define(function (require, exports, module) {
                 return;
             }
 
-            // Don't crash in legacy browsers if we rejected all paths (e.g., folder(s)).
-            paths = paths || [];
-            openDroppedFiles(paths);
+            pathsToOpen = pathsToOpen || [];
+            openDroppedFiles(pathsToOpen);
 
             callback();
         });
