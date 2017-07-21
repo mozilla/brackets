@@ -1,7 +1,10 @@
 define(function (require, exports, module) {
     "use strict";
 
+    var FileSystem      = require("filesystem/FileSystem");
+    var StartupState    = require("bramble/StartupState");
     var SimpleWebRTC    = require("simplewebrtc");
+    var Path            = require("filesystem/impls/filer/FilerUtils").Path;
 
     var _webrtc,
         _pending,
@@ -43,6 +46,13 @@ define(function (require, exports, module) {
 
         _pending = []; // pending clients that need to be initialized.
         _changing = false;
+
+        FileSystem.on("rename", function(event, oldPath, newPath) {
+            var rootDir = StartupState.project("root");
+            var relOldPath = Path.relative(rootDir, oldPath);
+            var relNewPath = Path.relative(rootDir, newPath);
+            _webrtc.sendToAll("file-rename", {oldPath: relOldPath, newPath: relNewPath});
+        });
     };
 
     function setCodemirror(codemirror) {
@@ -50,19 +60,27 @@ define(function (require, exports, module) {
     };
 
     function _handleMessage(msg) {
+        var payload = msg.payload;
+        var oldPath, newPath;
+        var rootDir = StartupState.project("root");
         switch(msg.type) {
             case "new client":
                 _pending.push(msg.from);
                 break;
             case "codemirror-change":
-                _handleCodemirrorChange(msg.payload);
+                _handleCodemirrorChange(payload);
+                break;
+            case "file-rename":
+                oldPath = Path.join(rootDir, payload.oldPath);
+                newPath = Path.join(rootDir, payload.newPath); 
+                console.log("renamed " + oldPath + " to " + newPath);
                 break;
             case "initClient":
                 if(_changing) {
                     return;
                 }
                 _changing = true;
-                _codemirror.setValue(msg.payload);
+                _codemirror.setValue(payload);
                 _changing = false;
                 break;
         }
