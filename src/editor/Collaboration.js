@@ -53,6 +53,23 @@ define(function (require, exports, module) {
             var relNewPath = Path.relative(rootDir, newPath);
             _webrtc.sendToAll("file-rename", {oldPath: relOldPath, newPath: relNewPath});
         });
+
+        FileSystem.on("change", function(event, entry, added, removed) {
+            var rootDir = StartupState.project("root");
+            if(added) {
+                added.forEach(function(addedFile) {
+                    _webrtc.sendToAll("file-added", Path.relative(rootDir, addedFile._path));
+                });
+            }
+            if(!removed) {
+                return;
+            }
+            if(removed) {
+                removed.forEach(function(removedFile) {
+                    _webrtc.sendToAll("file-removed", Path.relative(rootDir, removedFile._path));
+                });
+            }
+        });
     };
 
     function setCodemirror(codemirror) {
@@ -61,7 +78,7 @@ define(function (require, exports, module) {
 
     function _handleMessage(msg) {
         var payload = msg.payload;
-        var oldPath, newPath;
+        var oldPath, newPath, fullPath;
         var rootDir = StartupState.project("root");
         switch(msg.type) {
             case "new client":
@@ -74,6 +91,14 @@ define(function (require, exports, module) {
                 oldPath = Path.join(rootDir, payload.oldPath);
                 newPath = Path.join(rootDir, payload.newPath); 
                 console.log("renamed " + oldPath + " to " + newPath);
+                break;
+            case "file-added":
+                fullPath = Path.join(rootDir, payload);
+                console.log("added file  " + fullPath);
+                break;
+            case "file-removed":
+                fullPath = Path.join(rootDir, payload);
+                console.log("removed file  " + fullPath);
                 break;
             case "initClient":
                 if(_changing) {
