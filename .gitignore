@@ -54,3 +54,7 @@ Thumbs.db
 # We use src/vfs and dist/vfs as a root for the live preview in service worker URLs
 # Don't put any files under this path!
 /src/vfs
+
+# Ignore generated test files
+.grunt/
+_SpecRunner.html
