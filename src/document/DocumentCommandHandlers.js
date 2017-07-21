@@ -63,6 +63,7 @@ define(function (require, exports, module) {
     var Content            = require("filesystem/impls/filer/lib/content");
     var saveAs             = require("thirdparty/FileSaver");
     var StartupState       = require("bramble/StartupState");
+    var Sizes              = require("filesystem/impls/filer/lib/Sizes");
     var Path               = BracketsFiler.Path;
     var fs                 = BracketsFiler.fs();
 
@@ -702,6 +703,11 @@ define(function (require, exports, module) {
      * Create a new file in the project tree.
      */
     function handleFileNewInProject() {
+        // XXXBramble: make sure we have enough room to add new files.
+        if(Sizes.getEnforceLimits()) {
+            return CommandManager.execute("bramble.projectSizeError");
+        }
+
         _handleNewItemInProject(false);
     }
 

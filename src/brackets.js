@@ -156,6 +156,7 @@ define(function (require, exports, module) {
     require("editor/EditorStatusBar");
     require("editor/ImageViewer");
     require("editor/VideoViewer");
+    require("editor/AudioViewer");
     require("search/FindInFilesUI");
     require("search/FindReplace");
 

@@ -55,6 +55,9 @@ Thumbs.db
 # Don't put any files under this path!
 /src/vfs
 
-# Ignore generated test files
+# ignore package-lock.json files
+package-lock.json
+
+# ignore generated test files
 .grunt/
 _SpecRunner.html

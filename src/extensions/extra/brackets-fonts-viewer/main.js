@@ -64,8 +64,30 @@ define(function (require, exports, module) {
      * @param {!jQuery} container  The container to render the image view in
      */
     function FontView(file, $container) {
-        this.file    = file;
-        this.relPath = ProjectManager.makeProjectRelativeIfPossible(this.file.fullPath);
+        this.file       = file;
+        this.$container = $container;
+        this.relPath    = ProjectManager.makeProjectRelativeIfPossible(this.file.fullPath);
+
+        this._buildPage(this.file, this.$container, false);
+
+        // Update the page if the file is renamed
+        this.fileChangeHandler = _.bind(this._onFilenameChange, this);
+        DocumentManager.on("fileNameChange", this.fileChangeHandler);
+
+        _viewers[file.fullPath] = this;
+    }
+
+
+    // Updates the page markup
+    FontView.prototype._buildPage = function (file, $container, fileRename) {
+
+        // Since we are rebuilding the page by appending new markup
+        // we have to remove the old viewer markup.
+
+        if(fileRename && $container.find(".viewer-wrapper").length > 0) {
+            $container.find(".viewer-wrapper").remove();
+        }
+
         this.$el     = $(Mustache.render(FontHolderTemplate, {
             url      : _getUrl(this.file.fullPath),
             relPath  : this.relPath,
@@ -77,17 +99,11 @@ define(function (require, exports, module) {
         $container.append(this.$el);
 
         this.$fontFace    = this.$el.find(".font-face");
-        this.$fontPath    = this.$el.find(".font-path");
         this.$fontData    = this.$el.find(".font-data");
 
-        // Update the file stats
         this._updateStats();
+    };
 
-        // make sure we always show the right file name
-        DocumentManager.on("fileNameChange", _.bind(this._onFilenameChange, this));
-
-        _viewers[file.fullPath] = this;
-    }
 
     /**
      * Updates the Font Stats
@@ -116,7 +132,7 @@ define(function (require, exports, module) {
         // so we just need to see if the file has the same path as our image
         if (this.file.fullPath === newPath) {
             this.relPath = ProjectManager.makeProjectRelativeIfPossible(newPath);
-            this.$fontPath.text(this.relPath).attr("title", this.relPath);
+            this._buildPage(this.file, this.$container, true);
         }
     };
 
@@ -158,7 +174,8 @@ define(function (require, exports, module) {
      */
     FontView.prototype.destroy = function () {
         delete _viewers[this.file.fullPath];
-        DocumentManager.off("fileNameChange", _.bind(this._onFilenameChange, this));
+        DocumentManager.off("fileNameChange", this.fileChangeHandler);
+        this.$el.remove();
     };
 
     /*

@@ -94,7 +94,6 @@ High quality code and a top-notch user experience are very important in Brackets
 review pull requests to keep it that way. The better you follow the guidelines above, the more likely
 we are to accept your pull request - and the faster the code review will go.
 
- 
 ## The Code Review Process
 
 Brackets committers are responsible for reviewing all pull requests, providing feedback, and

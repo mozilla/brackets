@@ -103,6 +103,14 @@
             console.log("Bramble ready");
             // For debugging, attach to window.
             window.bramble = bramble;
+
+            bramble.on("capacityExceeded", function(amountInBytes) {
+                console.log("[Bramble] capacityExceeded event", amountInBytes);
+            });
+
+            bramble.on("capacityRestored", function() {
+                console.log("[Bramble] capacityRestored event.");
+            });
         });
 
         Bramble.once("error", function(err) {

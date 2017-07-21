@@ -9,7 +9,9 @@
         "Lance Campbell <lkcampbell@gmail.com> (https://github.com/lkcampbell)"
     ],
     "license": "MIT",
-    "engines": { "brackets": ">=1.1.0" },
+    "engines": {
+        "brackets": ">=1.1.0"
+    },
     "i18n": [
         "fi",
         "en"

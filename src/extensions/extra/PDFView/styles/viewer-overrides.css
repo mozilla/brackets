@@ -22,10 +22,6 @@ body {
     background: white;
 }
 
-body.dark-theme .meta, body.dark-theme .meta strong {
-    color: rgba(255,255,255,.6);
-}
-
 .meta, .meta strong {
     color: rgba(0,0,0,.7);
 }
@@ -66,15 +62,43 @@ body.dark-theme .pdfViewer .page {
     box-shadow: 0 1px 8px rgba(0,0,0,.4);
 }
 
-.meta {
-    color: rgba(0,0,0,.7);
-    padding: 18px 18px 0 18px;
-    font-size: 15px;
-    font-family: "Open Sans";
+.pdfViewer .page:first-child {
+    margin-top: 20px;
 }
 
+.header-wrapper {
+    padding: 20px 25px 0 25px;
+}
 
+.viewer-header {
+    padding-bottom: 10px;
+    text-align: left;
+    margin-bottom: 20px;
+    font-size: 15px;
+    font-family: "Open Sans", "Helvetica Neue", Helvetica, sans-serif;
+    color: rgba(0,0,0,.6);
+    line-height: 15px;
+    border-bottom: solid 1px rgba(0,0,0,.25);
+}
 
-.page:first-child {
-    margin-top: 20px;
+.viewer-header .file-type {
+    font-weight: 600;
+    color: rgba(0,0,0,.85);
+}
+
+.viewer-header .file-details {
+    float: right;
+}
+
+.viewer-header .divider {
+    margin: 0 3px;
+}
+
+body.dark-theme .viewer-header {
+    color: rgba(255,255,255,.6);
+    border-bottom: solid 1px rgba(255,255,255,.2);
+}
+
+body.dark-theme .viewer-header .file-type {
+    color: rgba(255,255,255,.85);
 }

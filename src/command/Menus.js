@@ -864,6 +864,7 @@ define(function (require, exports, module) {
      */
     function closeAll() {
         $(".dropdown").removeClass("open");
+        $(".toggle-open").removeClass("toggle-open");
     }
 
     /**
@@ -1047,11 +1048,12 @@ define(function (require, exports, module) {
      *      for a specific location.
      */
     ContextMenu.prototype.open = function (mouseOrLocation) {
-
         if (!mouseOrLocation || !mouseOrLocation.hasOwnProperty("pageX") || !mouseOrLocation.hasOwnProperty("pageY")) {
             console.error("ContextMenu open(): missing required parameter");
             return;
         }
+
+        closeAll();
 
         var $window = $(window),
             escapedId = StringUtils.jQueryIdEscape(this.id),
@@ -1060,15 +1062,19 @@ define(function (require, exports, module) {
             posTop  = mouseOrLocation.pageY,
             posLeft = mouseOrLocation.pageX;
 
+        if(mouseOrLocation.menuToggleEl) {
+            $(mouseOrLocation.menuToggleEl).addClass("toggle-open");
+        }
+
+        // Add a file-menu class to hide non-file items from file context menu
+        $("#project-context-menu").toggleClass("file-menu", mouseOrLocation.fileMenu);
+
         // only show context menu if it has menu items
         if ($menuWindow.children().length <= 0) {
             return;
         }
 
         this.trigger("beforeContextMenuOpen");
-
-        // close all other dropdowns
-        closeAll();
 
         // adjust positioning so menu is not clipped off bottom or right
         var elementRect = {
@@ -1091,7 +1097,7 @@ define(function (require, exports, module) {
          * stopping the context menu from disappearing because it recognizes
          * that we want to interact with the context menu
          */
-        posLeft += 2;
+        posLeft += 3;
 
 
         if (clip.right > 0) {
@@ -1099,8 +1105,7 @@ define(function (require, exports, module) {
         }
 
         // open the context menu at final location
-        $menuAnchor.addClass("open")
-                   .css({"left": posLeft, "top": posTop});
+        $menuAnchor.addClass("open").css({"left": posLeft, "top": posTop});
     };
 
 
@@ -1109,6 +1114,7 @@ define(function (require, exports, module) {
      */
     ContextMenu.prototype.close = function () {
         this.trigger("beforeContextMenuClose");
+        $(".toggle-open").removeClass("toggle-open");
         $("#" + StringUtils.jQueryIdEscape(this.id)).removeClass("open");
     };
 
@@ -1215,3 +1221,4 @@ define(function (require, exports, module) {
     exports.MenuItem = MenuItem;
     exports.ContextMenu = ContextMenu;
 });
+

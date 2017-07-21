@@ -1,17 +1,17 @@
-<div class="video-view viewer-wrapper">
+<div class="audio-view viewer-wrapper">
 
     <div class="video-data viewer-header">
-        <span class="file-type">{{ Strings.VIDEO_FILE }}</span>
+        <span class="file-type">{{ Strings.AUDIO_FILE }}</span>
         <span class="video-data-content file-details"><span>
     </div>
 
-    <div class="video-wrapper specimen-wrapper">
-        <video controls>
-          <source src="{{ videoUrl }}" type="{{ videoType }}">
-        </video>
+    <div class="audio-wrapper specimen-wrapper">
+        <audio controls>
+          <source src="{{ fileUrl }}" type="{{ fileType }}">
+        </audio>
     </div>
 
-    <h3 class="options-title">{{ Strings.VIDEO_OPTIONS }}</h3>
+    <h3 class="options-title">{{ Strings.AUDIO_OPTIONS }}</h3>
 
     <table class="tag-options">
         <tr>
@@ -22,7 +22,7 @@
                 <label class="attribute-name" for="setting-controls">controls</label>
             </td>
             <td>
-                {{ Strings.VIDEO_OPTION_SHOW_CONTROLS }}
+                {{ Strings.AUDIO_OPTION_SHOW_CONTROLS }}
             </td>
         </tr>
         <tr>
@@ -33,7 +33,7 @@
                 <label class="attribute-name" for="setting-autoplay">autoplay</label>
             </td>
             <td>
-                {{ Strings.VIDEO_OPTION_AUTOPLAY }}
+                {{ Strings.AUDIO_OPTION_AUTOPLAY }}
             </td>
         </tr>
         <tr>
@@ -44,7 +44,7 @@
                 <label class="attribute-name" for="setting-loop">loop</label>
             </td>
             <td>
-                {{ Strings.VIDEO_OPTION_LOOPING }}
+                {{ Strings.AUDIO_OPTION_LOOPING }}
             </td>
         </tr>
         <tr>
@@ -55,7 +55,7 @@
                 <label for="setting-muted" class="attribute-name">muted</label>
             </td>
             <td>
-                {{ Strings.VIDEO_OPTION_DISABLE_AUDIO }}
+                {{ Strings.AUDIO_OPTION_DISABLE_AUDIO }}
             </td>
         </tr>
     </table>

@@ -223,7 +223,8 @@ The `options` object allows you to configure Bramble:
  * `disableUIState`: `<Boolean>` by default, UI state is kept between sessions.  This disables it (and clears old values), and uses the defaults from Bramble.
  * `autoRecoverFileSystem`: `<Boolean>` whether to try and autorecover the filesystem on failure (see `Bramble.formatFileSystem` above).
  * `debug`: `<Boolean>` whether to log debug info.
-* `zipFilenamePrefix`: `<String>` the prefix name to use for project zip files, or `"thimble-project"` by default.
+ * `zipFilenamePrefix`: `<String>` the prefix name to use for project zip files, or `"thimble-project"` by default.
+ * `capacity`: `<Number>` the number of bytes of disk space to allow for this project.  Defaults to 5MB if not set.
 
 ## Bramble.mount(root[, filename])
 
@@ -370,6 +371,9 @@ the following events:
 * `"projectSaved"` - triggered whenever the changes are saved to the filesystem in the browser are completed.
 * `"dialogOpened"` - triggered whenever a modal dialog opens, like when a user is deleting a file.
 * `"dialogClosed"` - triggered whenever a modal dialog closes.
+* `"capacityExceeded"` - triggered whenever the project's files reach or exceed the maximum allowed disk capacity. Some operations will be disallowed until sufficient space has been recovered (e.g., user deletes files).  A second argument, `size`, indicates the number of bytes the project is over capacity.
+* `"capacityRestored"` - triggered after a `"capacityExceeded"` event when sufficient space has been recovered to continue normal disk activity.
+* `"projectSizeChange"` - triggered when the project's size on disk changes. The event includes two arguments: `size`, which is the new size of the project in bytes, and `percentUsed` which is a percentage of disk space used out of the total available capacity.
 
 There are also high-level events for changes to files:
 

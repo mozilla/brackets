@@ -42,7 +42,8 @@ define(function (require, exports, module) {
         ViewUtils         = require("utils/ViewUtils"),
         KeyEvent          = require("utils/KeyEvent"),
         DragAndDrop       = require("utils/DragAndDrop"),
-        UrlCache          = require("filesystem/impls/filer/UrlCache");
+        UrlCache          = require("filesystem/impls/filer/UrlCache"),
+        Menus             = require("command/Menus");
 
     var DOM = React.DOM;
 
@@ -257,6 +258,7 @@ define(function (require, exports, module) {
          */
         handleMouseDown: function (e) {
             e.stopPropagation();
+
             if (e.button === RIGHT_MOUSE_BUTTON ||
                     (this.props.platform === "mac" && e.button === LEFT_MOUSE_BUTTON && e.ctrlKey)) {
                 this.props.actions.setContext(this.myPath());
@@ -371,7 +373,7 @@ define(function (require, exports, module) {
          */
         getInitialState: function () {
             return {
-                clickTimer: null
+                menuOpened: false
             };
         },
 
@@ -400,17 +402,6 @@ define(function (require, exports, module) {
                 // project-files-container and then the file tree will be one self-contained
                 // functional unit.
                 ViewUtils.scrollElementIntoView($("#project-files-container"), $(ReactDOM.findDOMNode(this)), true);
-            } else if (!isSelected && wasSelected && this.state.clickTimer !== null) {
-                this.clearTimer();
-            }
-        },
-
-        clearTimer: function () {
-            if (this.state.clickTimer !== null) {
-                window.clearTimeout(this.state.clickTimer);
-                this.setState({
-                    clickTimer: null
-                });
             }
         },
 
@@ -418,7 +409,6 @@ define(function (require, exports, module) {
             if (!this.props.entry.get("rename")) {
                 this.props.actions.startRename(this.myPath());
             }
-            this.clearTimer();
         },
 
         /**
@@ -436,16 +426,7 @@ define(function (require, exports, module) {
                 return;
             }
 
-            if (this.props.entry.get("selected") && !e.ctrlKey) {
-                if (this.state.clickTimer === null && !this.props.entry.get("rename")) {
-                    var timer = window.setTimeout(this.startRename, CLICK_RENAME_MINIMUM);
-                    this.setState({
-                        clickTimer: timer
-                    });
-                }
-            } else {
-                this.props.actions.setSelected(this.myPath());
-            }
+            this.props.actions.setSelected(this.myPath());
             e.stopPropagation();
             e.preventDefault();
         },
@@ -478,19 +459,6 @@ define(function (require, exports, module) {
         },
 
         /**
-         * When the user double clicks, we will select this file and add it to the working
-         * set (via the `selectInWorkingSet` action.)
-         */
-        handleDoubleClick: function () {
-            if (!this.props.entry.get("rename")) {
-                if (this.state.clickTimer !== null) {
-                    this.clearTimer();
-                }
-                this.props.actions.selectInWorkingSet(this.myPath());
-            }
-        },
-
-        /**
          * Create the data object to pass to extensions.
          *
          * @return {!{name:string, isFile:boolean, fullPath:string}} Data for extensions
@@ -501,6 +469,25 @@ define(function (require, exports, module) {
                 isFile: true,
                 fullPath: this.myPath()
             };
+        },
+
+        handleToggleClick : function(event) {
+            if($(event.target).hasClass("toggle-open")){
+                Menus.closeAll();
+            } else {
+                this.props.actions.setContext(this.myPath());
+                var menuToggle = $(event.nativeEvent.target);
+                var e = $.Event("contextmenu");
+                e.menuToggleEl = event.target;
+                e.pageX = menuToggle.offset().left + 2;
+                e.pageY = menuToggle.offset().top + 26;
+                e.fileMenu = true;
+                e.fromToggle = true;
+                $("#project-files-container").trigger(e);
+            }
+
+            event.stopPropagation();
+            event.preventDefault();
         },
 
         render: function () {
@@ -530,6 +517,18 @@ define(function (require, exports, module) {
                 case "jpeg":
                 case "gif":
                     fileType = "image";
+                    break;
+                case "eot":
+                case "woff":
+                case "otf":
+                case "ttf":
+                    fileType = "font";
+                    break;
+                case "mp3":
+                case "oga":
+                case "wav":
+                case "wave":
+                    fileType = "audio";
                     break;
                 case "ogv":
                 case "mp4":
@@ -574,15 +573,16 @@ define(function (require, exports, module) {
                     className: this.getClasses("jstree-leaf"),
                     onClick: this.handleClick,
                     onMouseDown: this.handleMouseDown,
-                    onDoubleClick: this.handleDoubleClick,
                     onDragEnter: this.handleDragEnter,
                     onDragStart: this.handleDragStart,
                     draggable: true
                 },
                 DOM.ins({
                     className: insClassName
-                }),
+                })
             ];
+
+
 
             var thickness = _createThickness(this.props.depth);
 
@@ -599,7 +599,11 @@ define(function (require, exports, module) {
                 var aArgs = _.flatten([{
                     href: "#",
                     className: fileClasses
-                }, thickness, this.getIcons(), name, extension]);
+                },
+                DOM.span({
+                    className: "menuToggle",
+                    onClick: this.handleToggleClick
+                }),thickness, this.getIcons(), name, extension]);
                 nameDisplay = DOM.a.apply(DOM.a, aArgs);
             }
 
@@ -802,6 +806,24 @@ define(function (require, exports, module) {
             };
         },
 
+        handleToggleClick : function(event) {
+            if($(event.target).hasClass("toggle-open")){
+                Menus.closeAll();
+            } else {
+                this.props.actions.setContext(this.myPath());
+                var menuToggle = $(event.nativeEvent.target);
+                var e = $.Event("contextmenu");
+                e.fromToggle = true;
+                e.menuToggleEl = event.target;
+                e.pageX = menuToggle.offset().left + 2;
+                e.pageY = menuToggle.offset().top + 26;
+                $("#project-files-container").trigger(e);
+            }
+
+            event.stopPropagation();
+            event.preventDefault();
+        },
+
         render: function () {
             var entry = this.props.entry,
                 nodeClass,
@@ -858,7 +880,10 @@ define(function (require, exports, module) {
                 var aArgs = _.flatten([{
                     href: "#",
                     className: directoryClasses
-                }, thickness, this.getIcons(), this.props.name]);
+                },DOM.span({
+                    className: "menuToggle",
+                    onClick: this.handleToggleClick
+                }),thickness, this.getIcons(), this.props.name]);
                 nameDisplay = DOM.a.apply(DOM.a, aArgs);
             }
 

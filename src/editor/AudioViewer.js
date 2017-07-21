@@ -25,7 +25,7 @@ define(function (require, exports, module) {
     "use strict";
 
     var DocumentManager     = require("document/DocumentManager"),
-        VideoViewTemplate   = require("text!htmlContent/video-view.html"),
+        ViewTemplate        = require("text!htmlContent/audio-view.html"),
         ProjectManager      = require("project/ProjectManager"),
         PreferencesManager  = require("preferences/PreferencesManager"),
         MainViewFactory     = require("view/MainViewFactory"),
@@ -44,129 +44,125 @@ define(function (require, exports, module) {
     var _viewers = {};
 
     // Get a URL out of the cache
-    function _getVideoUrl(file) {
+    function _getFileUrl(file) {
         return UrlCache.getUrl(file.fullPath);
     }
 
     // Get a URL out of the cache that you can use in the project HTML
-    function _getLocalVideoUrl(file) {
+    function _getLocalFileUrl(file) {
         var root = StartupState.project("root");
         return encodeURI(file.fullPath.replace(root,"").replace("/",""));
     }
 
     /**
-     * Check if it's a video file
+     * Check if it's a audio file
      */
-    function isVideo(fullPath) {
-        return Content.isVideo(Path.extname(fullPath));
+    function isAudio(fullPath) {
+        return Content.isAudio(Path.extname(fullPath));
     }
 
     /**
-     * VideoView objects are constructed when a video is opened
-     * @see {@link Pane} for more information about where VideoViews are rendered
+     * FileView objects are constructed when a audio is opened
+     * @see {@link Pane} for more information about where FileViews are rendered
      *
      * @constructor
-     * @param {!File} file - The video file object to render
-     * @param {!jQuery} container - The container to render the video view in
+     * @param {!File} file - The audio file object to render
+     * @param {!jQuery} container - The container to render the audio view in
      */
-    function VideoView(file, $container) {
+    function FileView(file, $container) {
         var that = this;
         this.file = file;
         this.container = $container;
 
-        // Set defaults, and keep track of which video element attributes are enabled.
-        this.videoTagSettings = {
+        // Settings for the <audio> element
+        this.tagSettings = {
             controls: true,
             autoplay: false,
             loop: false,
             muted: false
         };
 
-        // Gets the video type for sample markup
-        this.videoType = Content.mimeFromExt(Path.extname(this.file.fullPath));
+        // Gets the file type for sample markup
+        this.fileType = Content.mimeFromExt(Path.extname(this.file.fullPath));
 
-        this.$el = $(Mustache.render(VideoViewTemplate, {
-            videoUrl: _getVideoUrl(file),
-            videoType: this.videoType,
+        this.$el = $(Mustache.render(ViewTemplate, {
+            fileUrl: _getFileUrl(file),
+            fileType: this.fileType,
             Strings: Strings
         }));
 
         $container.append(this.$el);
 
-        this._naturalWidth = 0;
-        this._naturalHeight = 0;
-
         this.relPath = ProjectManager.makeProjectRelativeIfPossible(this.file.fullPath);
 
-        this.$videoEl = this.$el.find("video");
-        this.$videoWrapperEl = this.$el.find(".video-wrapper");
-        this.$videoMarkupEl = this.$el.find("pre");
-        this.$videoData = this.$el.find(".video-data-content");
+        this.$audioEl = this.$el.find("audio");
+        this.$audioWrapperEl = this.$el.find(".audio-wrapper");
+        this.$audioMarkupEl = this.$el.find("pre");
+        this.$audioData = this.$el.find(".video-data-content");
 
-        this.$videoEl.one("canplay", _.bind(this._onVideoLoaded, this));
-        this.$videoEl.on("error", _.bind(console.error, console));
+        this.$audioEl.one("canplay", _.bind(this._onFileLoaded, this));
+        this.$audioEl.on("error", _.bind(console.error, console));
 
         this.$el.find(".tag-options").on("change", "input", function(){
             var attribute = $(this).attr("setting");
             var isEnabled = $(this).is(":checked");
-            that.videoTagSettings[attribute] = isEnabled;
-            that.updateVideoTagMarkup(true);
+            that.tagSettings[attribute] = isEnabled;
+            that.updateTagMarkup(true);
         });
 
-        this.$videoEl.find("source").attr("src", _getVideoUrl(this.file));
-        this.updateVideoTagMarkup();
+        this.$audioEl.find("source").attr("src", _getFileUrl(this.file));
+        this.updateTagMarkup();
+
         _viewers[file.fullPath] = this;
+
+        // Update the page if the file is renamed
+        this.fileChangeHandler = _.bind(this._onFilenameChange, this);
+        DocumentManager.on("fileNameChange", this.fileChangeHandler);
     }
 
     // Updates the markup used in the preview & the sample markup below
-    VideoView.prototype.updateVideoTagMarkup = function(reload){
-        var videoTagAttributesString = "";
+    FileView.prototype.updateTagMarkup = function(reload){
+        var tagAttributesString = "";
 
-        for(var k in this.videoTagSettings) {
-            if(this.videoTagSettings[k]) {
-                videoTagAttributesString = videoTagAttributesString + " " + k;
-                this.$videoEl.attr(k,"");
+        for(var k in this.tagSettings) {
+            if(this.tagSettings[k]) {
+                tagAttributesString = tagAttributesString + " " + k;
+                this.$audioEl.attr(k,"");
             } else {
-                this.$videoEl.removeAttr(k);
+                this.$audioEl.removeAttr(k);
             }
         }
 
-        var videoTagMarkup =
-            '<video'+ videoTagAttributesString +'>\n' +
-            '  <source src="'+ _getLocalVideoUrl(this.file) + '" type="' + this.videoType + '">\n'+
-            '</video>';
+        var tagMarkup =
+            '<audio'+ tagAttributesString +'>\n' +
+            '  <source src="'+ _getLocalFileUrl(this.file) + '" type="' + this.fileType + '">\n'+
+            '</audio>';
 
-        this.$videoMarkupEl.text(videoTagMarkup);
+        this.$audioMarkupEl.text(tagMarkup);
 
-        // Reloads the video when one of the attributes is changed
+        // Reloads the audio when one of the attributes is changed
         // so that the preview reflects the changes
         if(reload) {
-            this.$videoMarkupEl.one("animationend",function(){
+            this.$audioMarkupEl.one("animationend",function(){
                 $(this).removeClass("pop");
             });
 
-            this.$videoMarkupEl.addClass("pop");
-
-            var videoWrapperHeight = this.$videoWrapperEl.height();
-
-            this.$videoWrapperEl.css("min-height", videoWrapperHeight);
-            this.$videoEl.one("canplay", _.bind(this._onVideoReloaded, this));
-            this.$videoEl.find("source").attr("src", _getVideoUrl(this.file));
-            this.$videoEl[0].load();
+            this.$audioMarkupEl.addClass("pop");
+            this.$audioEl.find("source").attr("src", _getFileUrl(this.file));
+            this.$audioEl[0].load();
         }
     };
 
 
     /**
-     * DocumentManger.fileNameChange handler - when an video is renamed, we must
-     * update the view
+     * DocumentManger.fileNameChange handler - when the file is renamed we must update the vie
      *
      * @param {jQuery.Event} e - event
      * @param {!string} oldPath - the name of the file that's changing changing
      * @param {!string} newPath - the name of the file that's changing changing
      * @private
      */
-    VideoView.prototype._onFilenameChange = function (e, oldPath, newPath) {
+    FileView.prototype._onFilenameChange = function (e, oldPath, newPath) {
         /*
          * File objects are already updated when the event is triggered
          * so we just need to see if the file has the same path as our video
@@ -175,45 +171,29 @@ define(function (require, exports, module) {
             this.relPath = ProjectManager.makeProjectRelativeIfPossible(newPath);
         }
 
-        this.updateVideoTagMarkup(true);
+        this.updateTagMarkup(true);
     };
 
-
-    /* Removes min-height property */
-    VideoView.prototype._onVideoReloaded = function (e) {
-        this.$videoWrapperEl.css("min-height", "auto");
-    };
 
     /**
-     * <video>.on("canplay") handler - updates content of the video view
+     * <audio>.on("canplay") handler - updates content of the audio view
      *                            initializes computed values
      *                            installs event handlers
      * @param {Event} e - event
      * @private
      */
-    VideoView.prototype._onVideoLoaded = function (e) {
-        this._naturalWidth = e.target.videoWidth;
-        this._naturalHeight = e.target.videoHeight;
+    FileView.prototype._onFileLoaded = function (e) {
 
         var extension = FileUtils.getFileExtension(this.file.fullPath);
-        var stringFormat = Strings.IMAGE_DIMENSIONS_1;
-        var dimensionString = StringUtils.format(stringFormat, this._naturalWidth, this._naturalHeight);
-
         var that = this;
 
         this.file.stat(function (err, stat) {
             var sizeString = "";
             if (stat.size) {
-                sizeString = " <span class='divider'>&bull;</span> " + StringUtils.prettyPrintBytes(stat.size, 2);
-                dimensionString = dimensionString + sizeString;
+                sizeString = StringUtils.prettyPrintBytes(stat.size, 2);
             }
-            that.$videoData.html(dimensionString);
+            that.$audioData.html(sizeString);
         });
-
-        // Update the page if the file is renamed
-        this.fileChangeHandler = _.bind(this._onFilenameChange, this);
-        DocumentManager.on("fileNameChange", this.fileChangeHandler);
-
     };
 
     /**
@@ -224,47 +204,47 @@ define(function (require, exports, module) {
      * Retrieves the file object for this view
      * return {!File} the file object for this view
      */
-    VideoView.prototype.getFile = function () {
+    FileView.prototype.getFile = function () {
         return this.file;
     };
 
     /*
      * Updates the layout of the view
      */
-    VideoView.prototype.updateLayout = function () {
+    FileView.prototype.updateLayout = function () {
         return;
     };
 
     /*
      * Destroys the view
      */
-    VideoView.prototype.destroy = function () {
+    FileView.prototype.destroy = function () {
         delete _viewers[this.file.fullPath];
         DocumentManager.off("fileNameChange", this.fileChangeHandler);
         this.$el.remove();
     };
 
     /*
-     * Refreshes the video preview with what's on disk
+     * Refreshes the audio preview with what's on disk
      */
-    VideoView.prototype.refresh = function () {
+    FileView.prototype.refresh = function () {
         // Update the DOM node with the src URL
-        this.$videoEl.find("source").attr("src", _getVideoUrl(this.file));
+        this.$audioEl.find("source").attr("src", _getFileUrl(this.file));
     };
 
     /*
-     * Creates a video view object and adds it to the specified pane
-     * @param {!File} file - the file to create an video of
+     * Creates a audio view object and adds it to the specified pane
+     * @param {!File} file - the file to create an audio of
      * @param {!Pane} pane - the pane in which to host the view
      * @return {jQuery.Promise}
      */
-    function _createVideoView(file, pane) {
+    function _createFileView(file, pane) {
         var view = pane.getViewForPath(file.fullPath);
 
         if (view) {
             pane.showView(view);
         } else {
-            view = new VideoView(file, pane.$content);
+            view = new FileView(file, pane.$content);
             pane.addView(view, true);
         }
         return new $.Deferred().resolve(file).promise();
@@ -272,7 +252,7 @@ define(function (require, exports, module) {
 
     /**
      * Handles file system change events so we can refresh
-     *  video viewers for the files that changed on disk due to external editors
+     *  audio viewers for the files that changed on disk due to external editors
      * @param {jQuery.event} event - event object
      * @param {?File} file - file object that changed
      * @param {Array.<FileSystemEntry>=} added If entry is a Directory, contains zero or more added children
@@ -296,7 +276,7 @@ define(function (require, exports, module) {
 
     /*
      * Install an event listener to receive all file system change events
-     * so we can refresh the view when changes are made to the video in an external editor
+     * so we can refresh the view when changes are made to the audio in an external editor
      */
     FileSystem.on("change", _handleFileSystemChange);
 
@@ -305,10 +285,10 @@ define(function (require, exports, module) {
      */
     MainViewFactory.registerViewFactory({
         canOpenFile: function (fullPath) {
-            return isVideo(fullPath);
+            return isAudio(fullPath);
         },
         openFile: function (file, pane) {
-            return _createVideoView(file, pane);
+            return _createFileView(file, pane);
         }
     });
 
@@ -316,5 +296,5 @@ define(function (require, exports, module) {
      * This is for extensions that want to create a
      * view factory based on ImageViewer
      */
-    exports.VideoView = VideoView;
+    exports.AudioView = FileView;
 });

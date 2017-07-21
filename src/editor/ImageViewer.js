@@ -37,7 +37,8 @@ define(function (require, exports, module) {
         FileUtils           = require("file/FileUtils"),
         _                   = require("thirdparty/lodash"),
         Mustache            = require("thirdparty/mustache/mustache"),
-        Image               = require("editor/Image");
+        Image               = require("editor/Image"),
+        StartupState        = require("bramble/StartupState");
 
     // Vibrant doesn't seem to play well with requirejs AMD loading, load it globally.
     require("thirdparty/Vibrant");
@@ -111,6 +112,12 @@ define(function (require, exports, module) {
         return id === "image" || isSVGImage(fullPath);
     }
 
+    // Get a URL out of the cache that you can use in the project HTML
+    function _getLocalAssetUrl(file) {
+        var root = StartupState.project("root");
+        return encodeURI(file.fullPath.replace(root,"").replace("/",""));
+    }
+
     /**
      * ImageView objects are constructed when an image is opened
      * @see {@link Pane} for more information about where ImageViews are rendered
@@ -121,31 +128,49 @@ define(function (require, exports, module) {
      */
     function ImageView(file, $container) {
         this.file = file;
+        this.$container = $container;
+
+        this._naturalWidth = 0;
+        this._naturalHeight = 0;
+        this.relPath = ProjectManager.makeProjectRelativeIfPossible(this.file.fullPath);
+
+        // Update the page if the file is renamed
+        this.fileChangeHandler = _.bind(this._onFilenameChange, this);
+        DocumentManager.on("fileNameChange", this.fileChangeHandler);
+
+        this._buildPage(file, $container, false);
+
+        _viewers[file.fullPath] = this;
+    }
+
+    // Updates the page markup and...
+    // * Assigns variables to elements
+    // * Adds load and error listeners
+    ImageView.prototype._buildPage = function (file, $container, fileRename) {
+
+        // Since we are rebuilding the page by appending new markup
+        // we have to remove the old viewer markup.
+        if(fileRename && $container.find(".viewer-wrapper").length > 0) {
+            $container.find(".viewer-wrapper").remove();
+        }
+
         this.$el = $(Mustache.render(ImageViewTemplate, {
-            imgUrl: _getImageUrl(file),
+            imgUrl: _getImageUrl(this.file),
+            localImgUrl: _getLocalAssetUrl(this.file),
             Strings: Strings
         }));
 
         $container.append(this.$el);
-
-        this._naturalWidth = 0;
-        this._naturalHeight = 0;
-        this._scale = 100;           // 100%
-        this._scaleDivInfo = null;   // coordinates of hidden scale sticker
-
-        this.relPath = ProjectManager.makeProjectRelativeIfPossible(this.file.fullPath);
 
         this.$imagePath = this.$el.find(".image-path");
         this.$imagePreview = this.$el.find(".image-preview");
         this.$imageData = this.$el.find(".image-data");
 
         this.$image = this.$el.find(".image");
-        this.$imageScale = this.$el.find(".image-scale");
         this.$imagePreview.on("load", _.bind(this._onImageLoaded, this));
         this.$imagePreview.on("error", _.bind(console.error, console));
+    };
 
-        _viewers[file.fullPath] = this;
-    }
 
     /**
      * DocumentManger.fileNameChange handler - when an image is renamed, we must
@@ -163,6 +188,7 @@ define(function (require, exports, module) {
          */
         if (this.file.fullPath === newPath) {
             this.relPath = ProjectManager.makeProjectRelativeIfPossible(newPath);
+            this._buildPage(this.file, this.$container, true);
         }
     };
 
@@ -174,13 +200,13 @@ define(function (require, exports, module) {
      * @private
      */
     ImageView.prototype._onImageLoaded = function (e) {
-        // add dimensions and size
+        // Add dimensions and size
         this._naturalWidth = e.currentTarget.naturalWidth;
         this._naturalHeight = e.currentTarget.naturalHeight;
 
         var extension = FileUtils.getFileExtension(this.file.fullPath);
 
-        var stringFormat = Strings.IMAGE_DIMENSIONS;
+        var stringFormat = Strings.IMAGE_DIMENSIONS_1;
         var dimensionString = StringUtils.format(stringFormat, this._naturalWidth, this._naturalHeight);
 
         if (extension === "ico") {
@@ -196,7 +222,7 @@ define(function (require, exports, module) {
             } else {
                 var sizeString = "";
                 if (stat.size) {
-                    sizeString = " &mdash; " + StringUtils.prettyPrintBytes(stat.size, 2);
+                    sizeString = " <span class='divider'>&bull;</span> " + StringUtils.prettyPrintBytes(stat.size, 2);
                 }
                 var dimensionAndSize = dimensionString + sizeString;
                 self.$imageData.html(dimensionAndSize)
@@ -204,8 +230,8 @@ define(function (require, exports, module) {
             }
         });
 
-        // make sure we always show the right file name
-        DocumentManager.on("fileNameChange.ImageView", _.bind(this._onFilenameChange, this));
+        // // make sure we always show the right file name
+        // DocumentManager.on("fileNameChange.ImageView", _.bind(this._onFilenameChange, this));
 
         // For regular images, we allow image filters and colour extraction.
         // For SVG, we only do colour extraction.
@@ -215,90 +241,6 @@ define(function (require, exports, module) {
             });
         }
         _extractColors(this.$el, e.currentTarget);
-    };
-
-    /**
-     * Update the scale element
-     * @private
-     */
-    ImageView.prototype._updateScale = function () {
-        var currentWidth = this.$imagePreview.width();
-
-        if (currentWidth && currentWidth < this._naturalWidth) {
-            this._scale = currentWidth / this._naturalWidth * 100;
-            this.$imageScale.text(Math.floor(this._scale) + "%")
-                // Keep the position of the image scale div relative to the image.
-                .css("left", this.$imagePreview.position().left + 5)
-                .show();
-        } else {
-            // Reset everything related to the image scale sticker before hiding it.
-            this._scale = 100;
-            this._scaleDivInfo = null;
-            this.$imageScale.text("").hide();
-        }
-    };
-
-    /**
-     * Check mouse entering/exiting the scale sticker.
-     * Hide it when entering and show it again when exiting.
-     *
-     * @param {number} offsetX mouse offset from the left of the previewing image
-     * @param {number} offsetY mouseoffset from the top of the previewing image
-     * @private
-     */
-    ImageView.prototype._handleMouseEnterOrExitScaleSticker = function (offsetX, offsetY) {
-        var imagePos       = this.$imagePreview.position(),
-            scaleDivPos    = this.$imageScale.position(),
-            imgWidth       = this.$imagePreview.width(),
-            imgHeight      = this.$imagePreview.height(),
-            scaleDivLeft,
-            scaleDivTop,
-            scaleDivRight,
-            scaleDivBottom;
-
-        if (this._scaleDivInfo) {
-            scaleDivLeft   = this._scaleDivInfo.left;
-            scaleDivTop    = this._scaleDivInfo.top;
-            scaleDivRight  = this._scaleDivInfo.right;
-            scaleDivBottom = this._scaleDivInfo.bottom;
-
-            if ((imgWidth + imagePos.left) < scaleDivRight) {
-                scaleDivRight = imgWidth + imagePos.left;
-            }
-
-            if ((imgHeight + imagePos.top) < scaleDivBottom) {
-                scaleDivBottom = imgHeight + imagePos.top;
-            }
-
-        } else {
-            scaleDivLeft   = scaleDivPos.left;
-            scaleDivTop    = scaleDivPos.top;
-            scaleDivRight  = this.$imageScale.width() + scaleDivLeft;
-            scaleDivBottom = this.$imageScale.height() + scaleDivTop;
-        }
-
-        if (this._scaleDivInfo) {
-            // See whether the cursor is no longer inside the hidden scale div.
-            // If so, show it again.
-            if ((offsetX < scaleDivLeft || offsetX > scaleDivRight) ||
-                    (offsetY < scaleDivTop || offsetY > scaleDivBottom)) {
-                this._scaleDivInfo = null;
-                this.$imageScale.show();
-            }
-        } else if ((offsetX >= scaleDivLeft && offsetX <= scaleDivRight) &&
-                (offsetY >= scaleDivTop && offsetY <= scaleDivBottom)) {
-            // Handle mouse inside image scale div.
-            // But hide it only if the pixel under mouse is also in the image.
-            if (offsetX < (imagePos.left + imgWidth) &&
-                    offsetY < (imagePos.top + imgHeight)) {
-                // Remember image scale div coordinates before hiding it.
-                this._scaleDivInfo = {left: scaleDivPos.left,
-                                 top: scaleDivPos.top,
-                                 right: scaleDivRight,
-                                 bottom: scaleDivBottom};
-                this.$imageScale.hide();
-            }
-        }
     };
 
     /**
@@ -331,7 +273,6 @@ define(function (require, exports, module) {
                         left: pos.left + ((oWidth - iWidth) / 2),
                         width: iWidth,
                         height: iHeight});
-        this._updateScale();
     };
 
     /*
@@ -339,8 +280,7 @@ define(function (require, exports, module) {
      */
     ImageView.prototype.destroy = function () {
         delete _viewers[this.file.fullPath];
-        DocumentManager.off(".ImageView");
-        this.$image.off(".ImageView");
+        DocumentManager.off("fileNameChange", this.fileChangeHandler);
         this.$el.remove();
     };
 
@@ -379,6 +319,7 @@ define(function (require, exports, module) {
      * @param {Array.<FileSystemEntry>=} removed If entry is a Directory, contains zero or more removed children
      */
     function _handleFileSystemChange(event, entry, added, removed) {
+
         // this may have been called because files were added
         //  or removed to the file system.  We don't care about those
         if (!entry || entry.isDirectory) {

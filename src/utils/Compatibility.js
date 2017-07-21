@@ -35,6 +35,11 @@ define(function (require, exports, module) {
         String.prototype.trimLeft = function () { return this.replace(/^\s+/, ""); };
     }
 
+    // [IE] Number.isFinite() is missing
+    Number.isFinite = Number.isFinite || function(value) {
+        return typeof value === 'number' && isFinite(value);
+    };
+
     // Feature detection for Error.stack. Not all browsers expose it
     // and Brackets assumes it will be a non-null string.
     if (typeof (new Error()).stack === "undefined") {

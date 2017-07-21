@@ -66,7 +66,9 @@ define(function (require, exports, module) {
         case '.ico':
             return 'image/x-icon';
         case '.jpg':
+        // fallsthrough
         case '.jpe':
+        // fallsthrough
         case '.jpeg':
             return 'image/jpeg';
         case '.gif':
@@ -84,6 +86,7 @@ define(function (require, exports, module) {
         case '.oga':
             return 'audio/ogg';
         case '.mpa':
+        // fallsthrough
         case '.mp3':
             return 'audio/mpeg';
         case '.wave':
@@ -122,6 +125,11 @@ define(function (require, exports, module) {
         isVideo: function(ext) {
             var info = new FileInfo(ext);
             return info.type === "video";
+        },
+
+        isAudio: function(ext) {
+            var info = new FileInfo(ext);
+            return info.type === "audio";
         },
 
         isResizableImage: function(ext) {

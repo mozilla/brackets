@@ -1,58 +1,67 @@
-<div class="image-view">
-    <div class="image-centering">
-        <div class="image-header">
-            <div class="image-data"></div>
-            <div class="image-path"></div>
+<div class="image-view viewer-wrapper">
 
-            <div class="image-view-swatches">
-                <div class="swatch-wrapper">
-                  <span class="image-view-swatch colorVibrant"></span>
-                  <span class="image-view-hex"></span>
-                </div>
-                <div class="swatch-wrapper">
-                  <span class="image-view-swatch colorMuted"></span>
-                  <span class="image-view-hex"></span>
-                </div>
-                <div class="swatch-wrapper">
-                  <span class="image-view-swatch colorDarkVibrant"></span>
-                  <span class="image-view-hex"></span>
-                </div>
-                <div class="swatch-wrapper">
-                  <span class="image-view-swatch colorDarkMuted"></span>
-                  <span class="image-view-hex"></span>
-                </div>
-                <div class="swatch-wrapper">
-                  <span class="image-view-swatch colorLightVibrant"></span>
-                  <span class="image-view-hex"></span>
-                </div>
-            </div>
+    <div class="viewer-header">
+        <span class="file-type">{{ Strings.IMAGE_FILE_TITLE }}</span>
+        <span class="image-data file-details"></span>
+    </div>
+
+    <div class="image-view-swatches">
+        <div class="swatch-wrapper">
+          <span class="image-view-swatch colorVibrant"></span>
+          <span class="image-view-hex"></span>
         </div>
-        <div class="image">
-            <div class="image-scale"></div>
-            <div class="image-wrapper">
-              <img class="image-preview" src="{{imgUrl}}">
-              <div class="processing-overlay">
-                <div class="processing-spinner"></div>
-              </div>
-            </div>
-
-            <div class="image-filters-section hide">
-              <div class="image-filter-actions">
-                <button class="btn btn-image-filter-reset" disabled="disabled">{{Strings.IMAGE_RESET_FILTERS}}</button>
-                <button class="btn btn-image-filter-save" disabled="disabled">{{Strings.IMAGE_SAVE_WITH_FILTERS}}</button>
-              </div>
-
-              <h3>{{Strings.IMAGE_FILTERS_TITLE}}</h3>
-              <div class="image-filters">
-                  <button class="btn btn-pinhole">{{Strings.IMAGE_FILTER_PINHOLE}}</button>
-                  <button class="btn btn-sepia">{{Strings.IMAGE_FILTER_SEPIA}}</button>
-                  <button class="btn btn-contrast">{{Strings.IMAGE_FILTER_CONTRAST}}</button>
-                  <button class="btn btn-vintage">{{Strings.IMAGE_FILTER_VINTAGE}}</button>
-                  <button class="btn btn-sunrise">{{Strings.IMAGE_FILTER_SUNRISE}}</button>
-                  <button class="btn btn-emboss">{{Strings.IMAGE_FILTER_EMBOSS}}</button>
-                  <button class="btn btn-glowing-sun">{{Strings.IMAGE_FILTER_GLOWING_SUN}}</button>
-              </div>
-            </div>
+        <div class="swatch-wrapper">
+          <span class="image-view-swatch colorMuted"></span>
+          <span class="image-view-hex"></span>
+        </div>
+        <div class="swatch-wrapper">
+          <span class="image-view-swatch colorDarkVibrant"></span>
+          <span class="image-view-hex"></span>
+        </div>
+        <div class="swatch-wrapper">
+          <span class="image-view-swatch colorDarkMuted"></span>
+          <span class="image-view-hex"></span>
+        </div>
+        <div class="swatch-wrapper">
+          <span class="image-view-swatch colorLightVibrant"></span>
+          <span class="image-view-hex"></span>
         </div>
     </div>
+
+    <div class="image-wrapper specimen-wrapper">
+      <img class="image-preview" src="{{imgUrl}}">
+      <div class="processing-overlay">
+        <div class="processing-spinner"></div>
+      </div>
+    </div>
+
+    <div class="code-wrapper code-html">
+        <h2 class="code-title">HTML</h2>
+        <pre>&lt;img src="{{ localImgUrl }}" alt="{{ Strings.IMAGE_ALT_TEXT }}" /&gt;</pre>
+    </div>
+
+    <div class="code-wrapper code-css">
+        <h2 class="code-title">CSS</h2>
+        <pre>.myImage {
+  background-image: url("{{localImgUrl}}");
+}</pre>
+    </div>
+
+    <div class="image-filters-section hide">
+      <h3>{{Strings.IMAGE_FILTERS_TITLE}}</h3>
+      <div class="image-filters">
+          <button class="btn btn-pinhole">{{Strings.IMAGE_FILTER_PINHOLE}}</button>
+          <button class="btn btn-sepia">{{Strings.IMAGE_FILTER_SEPIA}}</button>
+          <button class="btn btn-contrast">{{Strings.IMAGE_FILTER_CONTRAST}}</button>
+          <button class="btn btn-vintage">{{Strings.IMAGE_FILTER_VINTAGE}}</button>
+          <button class="btn btn-sunrise">{{Strings.IMAGE_FILTER_SUNRISE}}</button>
+          <button class="btn btn-emboss">{{Strings.IMAGE_FILTER_EMBOSS}}</button>
+          <button class="btn btn-glowing-sun">{{Strings.IMAGE_FILTER_GLOWING_SUN}}</button>
+      </div>
+      <div class="image-filter-actions">
+        <button class="btn btn-image-filter-reset" disabled="disabled">{{Strings.IMAGE_RESET_FILTERS}}</button>
+        <button class="btn btn-image-filter-save" disabled="disabled">{{Strings.IMAGE_SAVE_WITH_FILTERS}}</button>
+      </div>
+    </div>
+
 </div>

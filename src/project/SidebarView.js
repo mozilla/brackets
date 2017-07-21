@@ -53,7 +53,8 @@ define(function (require, exports, module) {
         $splitViewMenu,
         $projectTitle,
         $projectFilesContainer,
-        $workingSetViewsContainer;
+        $workingSetViewsContainer,
+        $projectSizeIndicator;
     var _cmdSplitNone,
         _cmdSplitVertical,
         _cmdSplitHorizontal;
@@ -92,10 +93,9 @@ define(function (require, exports, module) {
     function show() {
         // XXXBramble: don't allow the sidebar to open at less than our minimum width
         if($sidebar.width() < MinimumSidebarWidthPX){
-            $sidebar.width(MinimumSidebarWidthPX); 
+            $sidebar.width(MinimumSidebarWidthPX);
         }
-        
-        Resizer.show($sidebar); 	    
+        Resizer.show($sidebar);
     }
 
     /**
@@ -146,6 +146,29 @@ define(function (require, exports, module) {
             $workingSetViewsContainer.show();
             $gearMenu.show();
         }
+    }
+
+    // Updates the project size indicator UI
+    function _updateProjectSizeIndicator(currentSize, maxSize, percent) {
+        $projectSizeIndicator.removeClass("project-size-warning project-size-exceeded");
+
+        percent = parseInt(percent);
+        if(percent < 10) {
+            $projectSizeIndicator.addClass("hidden");
+            return;
+        }
+
+        $projectSizeIndicator.removeClass("hidden");
+
+        if(percent > 80 && percent < 100) {
+            $projectSizeIndicator.addClass("project-size-warning");
+        } else if(percent === 100) {
+            $projectSizeIndicator.addClass("project-size-exceeded");
+        }
+
+        $projectSizeIndicator.find(".space-used-bar").css("width", percent + "%");
+        $projectSizeIndicator.find(".space-used").text(currentSize);
+        $projectSizeIndicator.find(".max-project-size").text(maxSize);
     }
 
     /**
@@ -210,6 +233,7 @@ define(function (require, exports, module) {
         $projectTitle             = $sidebar.find("#project-title");
         $projectFilesContainer    = $sidebar.find("#project-files-container");
         $workingSetViewsContainer = $sidebar.find("#working-set-list-container");
+        $projectSizeIndicator     = $sidebar.find("#project-size-info");
 
         // init
         $sidebar.on("panelResizeStart", function (evt, width) {
@@ -266,6 +290,7 @@ define(function (require, exports, module) {
         });
 
         _updateUIStates();
+        _updateProjectSizeIndicator();
 
         // Tooltips
         $gearMenu.attr("title", Strings.GEAR_MENU_TOOLTIP);
@@ -291,4 +316,5 @@ define(function (require, exports, module) {
     exports.hide        = hide;
     exports.isVisible   = isVisible;
     exports.resize      = resize;
+    exports._updateProjectSizeIndicator = _updateProjectSizeIndicator;
 });
