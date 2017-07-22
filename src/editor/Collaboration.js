@@ -60,6 +60,11 @@ define(function (require, exports, module) {
             if(added) {
                 added.forEach(function(addedFile) {
                     _webrtc.sendToAll("file-added", {path: Path.relative(rootDir, addedFile.fullPath), isFolder: addedFile.isDirectory});
+                    if(typeof (addedFile._contents) === "object") {
+                        _webrtc.getPeers().forEach(function(peer) {
+                            peer.sendFile(new Blob ([addedFile._contents]));
+                        });
+                    }
                 });
             }
             if(removed) {
@@ -125,6 +130,16 @@ define(function (require, exports, module) {
             }
         }
         _changing = false;
+        peer.on('fileTransfer', function (metadata, receiver) {
+            console.log('incoming filetransfer', metadata.name, metadata);
+            receiver.on('progress', function (bytesReceived) {
+                console.log("Percentage of file received : " + (bytesReceived / metadata.size * 100));
+            });
+            receiver.on('receivedFile', function (file, metadata) {
+                console.log("received file" + file);
+                receiver.channel.close();
+            });
+        });
     };
 
     function _handleCodemirrorChange(delta, relPath) {
