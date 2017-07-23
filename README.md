@@ -55,7 +55,7 @@ The easiest way to run Bramble is to simply use:
 $ npm start
 ```
 
-This will generate the strings needed for localization in your `src/nls` folder and allow you to access Bramble on `localhost:8000` (NOTE: you need npm version 5 for the cleanup step to run properly; if it doesn't, use `npm run unlocalize` to restore the files in `src/nls/**/*`). It will also build the Bramble iframe API in dist/ if necessary. You can terminate the server with `Ctrl+C` which will also clean up the strings that were generated in your `src/nls` folder.
+This will generate the strings needed for localization in your `src/nls` folder and allow you to access Bramble on `localhost:8000` (NOTE: you need npm version 5 for the cleanup step to run properly; if it doesn't, use `npm run unlocalize` to restore the files in `src/nls/**/*`). It will also build the Bramble iframe API in `dist/` if necessary. You can terminate the server with `Ctrl+C` which will also clean up the strings that were generated in your `src/nls` folder.
 
 If you want to simply run the server without the localized strings, run:
 
@@ -101,7 +101,7 @@ with the editor, preview, etc.
 ## Loading the API
 
 The hosting app must include the Bramble IFrame API (i.e., `dist/bramble.js`).  Note: in
-development you can use `src/hosted.html`, which does this).  This script can either be used as
+development you can use `src/hosted.html`, which does this.  This script can either be used as
 an AMD module, or as a browser global:
 
 ```html
@@ -317,7 +317,7 @@ to be notified when the action completes:
 * `find([callback])` - opens the Find dialog to search within the current document
 * `findInFiles([callback])` - opens the Find in Files dialog to search in all project files
 * `replace([callback])` - opens the Replace dialog to replace text in the current document
-* `replaceInFiles([callback])` - opens the Replace In Files dialog to replace text in all project files
+* `replaceInFiles([callback])` - opens the Replace in Files dialog to replace text in all project files
 * `useLightTheme([callback])` - sets the editor to use the light theme (default)
 * `useDarkTheme([callback])` - sets the editor to use the dark theme
 * `showSidebar([callback])` - opens the file tree sidebar
@@ -353,7 +353,7 @@ to be notified when the action completes:
 The Bramble instance is also an [`EventEmitter`](https://github.com/Wolfy87/EventEmitter/) and raises
 the following events:
 
-* `"layout"` - triggered whenever the sidebar, editor, or preview panes are changed. It includes an `Object` that returns the same information as the `getLayout()` getter: : `sidebarWidth`, `firstPaneWidth`, `secondPathWidth`
+* `"layout"` - triggered whenever the sidebar, editor, or preview panes are changed. It includes an `Object` that returns the same information as the `getLayout()` getter: `sidebarWidth`, `firstPaneWidth`, `secondPathWidth`
 * `"activeEditorChange"` - triggered whenever the editor changes from one file to another. It includes an `Object` with the current file's `fullPath` and `filename`.
 * `"previewModeChange"` - triggered whenever the preview mode is changed. It includes an `Object` with the new `mode`
 * `"sidebarChange"` - triggered whenever the sidebar is hidden or shown. It includes an `Object` with a `visible` property set to `true` or `false`
@@ -371,7 +371,7 @@ the following events:
 * `"projectSaved"` - triggered whenever the changes are saved to the filesystem in the browser are completed.
 * `"dialogOpened"` - triggered whenever a modal dialog opens, like when a user is deleting a file.
 * `"dialogClosed"` - triggered whenever a modal dialog closes.
-* `"capacityExceeded"` - triggered whenever the project's files reach or exceed the maximum allowed disk capacity. Some operations will be disallowed until sufficient space has been recovered (e.g., user deletes files).  A second argument, `size`, indicates the number of bytes the project is over capacity.
+* `"capacityExceeded"` - triggered whenever the project's files reach or exceed the maximum allowed disk capacity. Some operations will be disallowed until sufficient space has been recovered (e.g., user deletes files). A second argument, `size`, indicates the number of bytes the project is over capacity.
 * `"capacityRestored"` - triggered after a `"capacityExceeded"` event when sufficient space has been recovered to continue normal disk activity.
 * `"projectSizeChange"` - triggered when the project's size on disk changes. The event includes two arguments: `size`, which is the new size of the project in bytes, and `percentUsed` which is a percentage of disk space used out of the total available capacity.
 
