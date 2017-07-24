@@ -87,7 +87,7 @@ define(function (require, exports, module) {
                     color = _cursors[msg.sid].color;
                 }
                 _cursors[id] = {position: msg.payload, color: color};
-                _codemirror.addWidget(msg.payload, _getCursorElement(id, color), false, "over");
+                _codemirror.addWidget({line: msg.payload.line, ch: msg.payload.ch + 1}, _getCursorElement(id, color), false, "over");
                 break;
         }
     };
@@ -142,16 +142,15 @@ define(function (require, exports, module) {
     }
 
     function _getCursorElement(id, color) {
-        var d = document.createElement("div");
-        var x = document.createElement("PRE");
-        var t = document.createTextNode(" ");
-        x.appendChild(t);
-        d.appendChild(x);
-        x.style.opacity = "0.9";
-        x.style.width = "1px";
-        x.id = id;
-        x.style.backgroundColor = color;
-        return x;
+        var d = document.createElement("span");
+        var t = document.createTextNode("|");
+        t.fontSize = "10px";
+        d.appendChild(t);
+        d.display = "inline-block";
+        d.id = id;
+        d.style.backgroundColor= color;
+        d.style.color= color;
+        return d;
     }
 
     function triggerCodemirrorChange(changeList) {
