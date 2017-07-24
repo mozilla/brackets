@@ -139,7 +139,7 @@ define(function (require, exports, module) {
 
     function _enableEditor() {
         var element = document.getElementById("dimmed");
-        if(dimmed) {
+        if(element) {
             element.parentNode.removeChild(element);
         }
     }
