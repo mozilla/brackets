@@ -133,6 +133,17 @@ define(function (require, exports, module) {
         }
     };
 
+    function _disableEditor() {
+        $("body").append("<div id = \"dimmed\"><div class=\"sk-spinner sk-spinner-rotating-plane\"></div></div>");
+    }
+
+    function _enableEditor() {
+        var element = document.getElementById("dimmed");
+        if(element) {
+            element.parentNode.removeChild(element);
+        }
+    }
+
     exports.connect = connect;
     exports.triggerCodemirrorChange = triggerCodemirrorChange;
     exports.setCodemirror = setCodemirror;
