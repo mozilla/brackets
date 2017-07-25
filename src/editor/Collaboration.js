@@ -60,22 +60,22 @@ define(function (require, exports, module) {
             var rootDir = StartupState.project("root");
             if(added) {
                 added.forEach(function(addedFile) {
-                    var path = addedFile._path;
+                    var path = addedFile.fullPath;
                     var isFolder = false;
                     if(path[path.length - 1] === "/") {
                         isFolder = true;
                     }
-                    _webrtc.sendToAll("file-added", {path: Path.relative(rootDir, addedFile._path), isFolder: isFolder});
+                    _webrtc.sendToAll("file-added", {path: Path.relative(rootDir, addedFile.fullPath), isFolder: isFolder});
                 });
             }
             if(removed) {
                 removed.forEach(function(removedFile) {
-                    var path = removedFile._path;
+                    var path = removedFile.fullPath;
                     var isFolder = false;
                     if(path[path.length - 1] === "/") {
                         isFolder = true;
                     }
-                    _webrtc.sendToAll("file-removed", {path: Path.relative(rootDir, removedFile._path), isFolder: isFolder});
+                    _webrtc.sendToAll("file-removed", {path: Path.relative(rootDir, removedFile.fullPath), isFolder: isFolder});
                 });
             }
         });
