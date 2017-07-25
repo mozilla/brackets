@@ -148,10 +148,10 @@ define(function (require, exports, module) {
         }
         var relPath = Path.relative(StartupState.project("root"), fullPath);
             changeList.forEach(function(change) {
-            _webrtc.sendToAll("codemirror-change", {
-                delta: change,
-                path: relPath
-            });
+                _webrtc.sendToAll("codemirror-change", {
+                    delta: change,
+                    path: relPath
+                });
         });
     };
 
