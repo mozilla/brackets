@@ -61,21 +61,13 @@ define(function (require, exports, module) {
             if(added) {
                 added.forEach(function(addedFile) {
                     var path = addedFile.fullPath;
-                    var isFolder = false;
-                    if(path[path.length - 1] === "/") {
-                        isFolder = true;
-                    }
-                    _webrtc.sendToAll("file-added", {path: Path.relative(rootDir, addedFile.fullPath), isFolder: isFolder});
+                    _webrtc.sendToAll("file-added", {path: Path.relative(rootDir, addedFile.fullPath), isFolder: addedFile.isDirectory()});
                 });
             }
             if(removed) {
                 removed.forEach(function(removedFile) {
                     var path = removedFile.fullPath;
-                    var isFolder = false;
-                    if(path[path.length - 1] === "/") {
-                        isFolder = true;
-                    }
-                    _webrtc.sendToAll("file-removed", {path: Path.relative(rootDir, removedFile.fullPath), isFolder: isFolder});
+                    _webrtc.sendToAll("file-removed", {path: Path.relative(rootDir, removedFile.fullPath), isFolder: removedFile.isDirectory()});
                 });
             }
         });
