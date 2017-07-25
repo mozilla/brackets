@@ -1076,10 +1076,6 @@ define(function (require, exports, module) {
         baseDir = model.getDirectoryInProject(baseDir);
 
         if (skipRename) {
-            var path = baseDir + initialName;
-            if(isFolder) {
-                path += "/";
-            }
             return model.createAtPath(path, isFolder);
         }
         return actionCreator.startCreating(baseDir, initialName, isFolder);
