@@ -68,9 +68,6 @@ define(function (require, exports, module) {
                     _webrtc.sendToAll("file-added", {path: Path.relative(rootDir, addedFile._path), isFolder: isFolder});
                 });
             }
-            if(!removed) {
-                return;
-            }
             if(removed) {
                 removed.forEach(function(removedFile) {
                     var path = removedFile._path;
