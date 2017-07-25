@@ -6,6 +6,8 @@ define(function (require, exports, module) {
     var SimpleWebRTC    = require("simplewebrtc");
     var Path            = require("filesystem/impls/filer/FilerUtils").Path;
     var EditorManager   = require("editor/EditorManager");
+    var ProjectManager  = require("project/ProjectManager");
+    var FileUtils       = require("file/FileUtils");
 
     var _webrtc,
         _pending,
@@ -58,7 +60,12 @@ define(function (require, exports, module) {
             var rootDir = StartupState.project("root");
             if(added) {
                 added.forEach(function(addedFile) {
-                    _webrtc.sendToAll("file-added", Path.relative(rootDir, addedFile._path));
+                    var path = addedFile._path;
+                    var isFolder = false;
+                    if(path[path.length - 1] === "/") {
+                        isFolder = true;
+                    }
+                    _webrtc.sendToAll("file-added", {path: Path.relative(rootDir, addedFile._path), isFolder: isFolder});
                 });
             }
             if(!removed) {
@@ -66,7 +73,12 @@ define(function (require, exports, module) {
             }
             if(removed) {
                 removed.forEach(function(removedFile) {
-                    _webrtc.sendToAll("file-removed", Path.relative(rootDir, removedFile._path));
+                    var path = removedFile._path;
+                    var isFolder = false;
+                    if(path[path.length - 1] === "/") {
+                        isFolder = true;
+                    }
+                    _webrtc.sendToAll("file-removed", {path: Path.relative(rootDir, removedFile._path), isFolder: isFolder});
                 });
             }
         });
@@ -89,12 +101,16 @@ define(function (require, exports, module) {
                 console.log("renamed " + oldPath + " to " + newPath);
                 break;
             case "file-added":
-                fullPath = Path.join(rootDir, payload);
-                console.log("added file  " + fullPath);
+                var path = Path.join(rootDir, payload.path);
+                ProjectManager.createNewItem(FileUtils.getParentPath(path), FileUtils.getBaseName(path) , true, payload.isFolder);
                 break;
             case "file-removed":
-                fullPath = Path.join(rootDir, payload);
-                console.log("removed file  " + fullPath);
+                fullPath = Path.join(rootDir, payload.path);
+                if(payload.isFolder) {
+                    FileSystem.getDirectoryForPath(fullPath).unlink();
+                } else {
+                    FileSystem.getFileForPath(fullPath).unlink();
+                }
                 break;
             case "initClient":
                 if(_changing) {
