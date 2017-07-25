@@ -61,13 +61,11 @@ define(function (require, exports, module) {
             var rootDir = StartupState.project("root");
             if(added) {
                 added.forEach(function(addedFile) {
-                    var path = addedFile.fullPath;
                     _webrtc.sendToAll("file-added", {path: Path.relative(rootDir, addedFile.fullPath), isFolder: addedFile.isDirectory});
                 });
             }
             if(removed) {
                 removed.forEach(function(removedFile) {
-                    var path = removedFile.fullPath;
                     _webrtc.sendToAll("file-removed", {path: Path.relative(rootDir, removedFile.fullPath), isFolder: removedFile.isDirectory});
                 });
             }
@@ -91,9 +89,8 @@ define(function (require, exports, module) {
                 console.log("renamed " + oldPath + " to " + newPath);
                 break;
             case "file-added":
-                var path = Path.join(rootDir, payload.path);
                 if(payload.isFolder) {
-
+                    console.log("made change in file");
                 } else {
                     CommandManager.execute("bramble.addFile", {filename: payload.path, contents: ""});                
                 }
