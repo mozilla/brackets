@@ -8,6 +8,7 @@ define(function (require, exports, module) {
     var EditorManager   = require("editor/EditorManager");
     var ProjectManager  = require("project/ProjectManager");
     var FileUtils       = require("file/FileUtils");
+    var CommandManager  = require("command/CommandManager");
 
     var _webrtc,
         _pending,
@@ -61,13 +62,13 @@ define(function (require, exports, module) {
             if(added) {
                 added.forEach(function(addedFile) {
                     var path = addedFile.fullPath;
-                    _webrtc.sendToAll("file-added", {path: Path.relative(rootDir, addedFile.fullPath), isFolder: addedFile.isDirectory()});
+                    _webrtc.sendToAll("file-added", {path: Path.relative(rootDir, addedFile.fullPath), isFolder: addedFile.isDirectory});
                 });
             }
             if(removed) {
                 removed.forEach(function(removedFile) {
                     var path = removedFile.fullPath;
-                    _webrtc.sendToAll("file-removed", {path: Path.relative(rootDir, removedFile.fullPath), isFolder: removedFile.isDirectory()});
+                    _webrtc.sendToAll("file-removed", {path: Path.relative(rootDir, removedFile.fullPath), isFolder: removedFile.isDirectory});
                 });
             }
         });
@@ -91,7 +92,12 @@ define(function (require, exports, module) {
                 break;
             case "file-added":
                 var path = Path.join(rootDir, payload.path);
-                ProjectManager.createNewItem(FileUtils.getParentPath(path), FileUtils.getBaseName(path) , true, payload.isFolder);
+                if(payload.isFolder) {
+
+                } else {
+                    CommandManager.execute("bramble.addFile", {filename: payload.path, contents: ""});                
+                }
+
                 break;
             case "file-removed":
                 fullPath = Path.join(rootDir, payload.path);
