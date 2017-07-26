@@ -5,12 +5,12 @@ define(function (require, exports, module) {
     var StartupState    = require("bramble/StartupState");
     var SimpleWebRTC    = require("simplewebrtc");
     var Path            = require("filesystem/impls/filer/FilerUtils").Path;
+    var EditorManager   = require("editor/EditorManager");
 
     var _webrtc,
         _pending,
         _changing,
-        _room,
-        _codemirror;
+        _room;
 
     function connect(options) {
         if(_webrtc) {
@@ -55,10 +55,6 @@ define(function (require, exports, module) {
         });
     };
 
-    function setCodemirror(codemirror) {
-        _codemirror = codemirror;
-    };
-
     function _handleMessage(msg) {
         var payload = msg.payload;
         var oldPath, newPath;
@@ -80,7 +76,7 @@ define(function (require, exports, module) {
                     return;
                 }
                 _changing = true;
-                _codemirror.setValue(payload);
+                EditorManager.getCurrentFullEditor()._codeMirror.setValue(payload);
                 _changing = false;
                 break;
         }
@@ -91,7 +87,7 @@ define(function (require, exports, module) {
         _changing = true;
         for(var i = 0; i<_pending.length; i++) {
             if(_pending[i] === peer.id) {
-                peer.send("initClient", _codemirror.getValue());
+                peer.send("initClient", EditorManager.getCurrentFullEditor()._codeMirror.getValue());
                 _pending.splice(i, 1);
                 break;
             }
@@ -99,12 +95,20 @@ define(function (require, exports, module) {
         _changing = false;
     };
 
-    function _handleCodemirrorChange (delta) {
+    function _handleCodemirrorChange (params) {
         if(_changing) {
             return;
         }
+        var delta = params.delta;
+        var relPath = params.path;
+        var fullPath = Path.join(StartupState.project("root"), relPath);
+        var codemirror = _getOpenCodemirrorInstance(fullPath);
+
+        if(!codemirror) {
+            return _handleFileChangeEvent(fullPath, params.delta);
+        }
         _changing = true;
-        var start = _codemirror.indexFromPos(delta.from);
+        var start = codemirror.indexFromPos(delta.from);
         // apply the delete operation first
         if (delta.removed.length > 0) {
             var delLength = 0;
@@ -112,29 +116,46 @@ define(function (require, exports, module) {
              delLength += delta.removed[i].length;
             }
             delLength += delta.removed.length - 1;
-            var from = _codemirror.posFromIndex(start);
-            var to = _codemirror.posFromIndex(start + delLength);
-            _codemirror.replaceRange('', from, to);
+            var from = codemirror.posFromIndex(start);
+            var to = codemirror.posFromIndex(start + delLength);
+            codemirror.replaceRange('', from, to);
         }
         // apply insert operation
         var param = delta.text.join('\n');
-        var from = _codemirror.posFromIndex(start);
+        var from = codemirror.posFromIndex(start);
         var to = from;
-        _codemirror.replaceRange(param, from, to);
+        codemirror.replaceRange(param, from, to);
+        console.log("writting to file which is open in editor for path" + fullPath);
         _changing = false;
     };
 
-    function triggerCodemirrorChange(changeList) {
+    function _handleFileChangeEvent(path, change) {
+        var file = FileSystem.getFileForPath(path);
+        console.log("Should write to file which is not open in editor." + file + "changed " + change);
+    };
+
+    function _getOpenCodemirrorInstance(fullPath) {
+        var masterEditor = EditorManager.getCurrentFullEditor();
+        if(masterEditor.getFile().fullPath === fullPath) {
+            return masterEditor._codeMirror;
+        }
+        return null;
+    }
+
+    function triggerCodemirrorChange(changeList, fullPath) {
         if(_changing) {
             return;
         }
-        for(var i = 0; i<changeList.length; i++) {
-            _webrtc.sendToAll("codemirror-change", changeList[i]);
-        }
+        var relPath = Path.relative(StartupState.project("root"), fullPath);
+        changeList.forEach(function(change) {
+            _webrtc.sendToAll("codemirror-change", {
+                delta: change,
+                path: relPath
+            });
+        });
     };
 
     exports.connect = connect;
     exports.triggerCodemirrorChange = triggerCodemirrorChange;
-    exports.setCodemirror = setCodemirror;
 
 });
