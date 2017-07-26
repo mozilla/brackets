@@ -6,6 +6,7 @@ define(function (require, exports, module) {
     var SimpleWebRTC    = require("simplewebrtc");
     var Path            = require("filesystem/impls/filer/FilerUtils").Path;
     var EditorManager   = require("editor/EditorManager");
+    var CommandManager  = require("command/CommandManager");
 
     var _webrtc,
         _pending,
@@ -53,11 +54,25 @@ define(function (require, exports, module) {
             var relNewPath = Path.relative(rootDir, newPath);
             _webrtc.sendToAll("file-rename", {oldPath: relOldPath, newPath: relNewPath});
         });
+
+        FileSystem.on("change", function(event, entry, added, removed) {
+            var rootDir = StartupState.project("root");
+            if(added) {
+                added.forEach(function(addedFile) {
+                    _webrtc.sendToAll("file-added", {path: Path.relative(rootDir, addedFile.fullPath), isFolder: addedFile.isDirectory});
+                });
+            }
+            if(removed) {
+                removed.forEach(function(removedFile) {
+                    _webrtc.sendToAll("file-removed", {path: Path.relative(rootDir, removedFile.fullPath), isFolder: removedFile.isDirectory});
+                });
+            }
+        });
     };
 
     function _handleMessage(msg) {
         var payload = msg.payload;
-        var oldPath, newPath;
+        var oldPath, newPath, fullPath;
         var rootDir = StartupState.project("root");
         switch(msg.type) {
             case "new client":
@@ -72,6 +87,21 @@ define(function (require, exports, module) {
                 oldPath = Path.join(rootDir, payload.oldPath);
                 newPath = Path.join(rootDir, payload.newPath); 
                 console.log("renamed " + oldPath + " to " + newPath);
+                break;
+            case "file-added":
+                if(payload.isFolder) {
+                    console.log("made change in folder");
+                } else {
+                    CommandManager.execute("bramble.addFile", {filename: payload.path, contents: ""});                
+                }
+                break;
+            case "file-removed":
+                fullPath = Path.join(rootDir, payload.path);
+                if(payload.isFolder) {
+                    FileSystem.getDirectoryForPath(fullPath).unlink();
+                } else {
+                    FileSystem.getFileForPath(fullPath).unlink();
+                }
                 break;
             case "initClient":
                 if(_changing) {
