@@ -64,7 +64,9 @@ define(function (require, exports, module) {
                 _pending.push(msg.from);
                 break;
             case "codemirror-change":
-                _handleCodemirrorChange(payload);
+                payload.changes.forEach(function(delta) {
+                    _handleCodemirrorChange(delta, payload.path);
+                });
                 break;
             case "file-rename":
                 oldPath = Path.join(rootDir, payload.oldPath);
@@ -95,17 +97,15 @@ define(function (require, exports, module) {
         _changing = false;
     };
 
-    function _handleCodemirrorChange (params) {
+    function _handleCodemirrorChange(delta, relPath) {
         if(_changing) {
             return;
         }
-        var delta = params.delta;
-        var relPath = params.path;
         var fullPath = Path.join(StartupState.project("root"), relPath);
         var codemirror = _getOpenCodemirrorInstance(fullPath);
 
         if(!codemirror) {
-            return _handleFileChangeEvent(fullPath, params.delta);
+            return _handleFileChangeEvent(fullPath, delta);
         }
         _changing = true;
         var start = codemirror.indexFromPos(delta.from);
@@ -147,12 +147,7 @@ define(function (require, exports, module) {
             return;
         }
         var relPath = Path.relative(StartupState.project("root"), fullPath);
-        changeList.forEach(function(change) {
-            _webrtc.sendToAll("codemirror-change", {
-                delta: change,
-                path: relPath
-            });
-        });
+        _webrtc.sendToAll("codemirror-change", {changes: changeList, path: relPath});
     };
 
     exports.connect = connect;
