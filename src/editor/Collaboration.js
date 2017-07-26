@@ -94,7 +94,6 @@ define(function (require, exports, module) {
                 } else {
                     CommandManager.execute("bramble.addFile", {filename: payload.path, contents: ""});                
                 }
-
                 break;
             case "file-removed":
                 fullPath = Path.join(rootDir, payload.path);
