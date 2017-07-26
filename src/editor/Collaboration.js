@@ -64,9 +64,9 @@ define(function (require, exports, module) {
                 _pending.push(msg.from);
                 break;
             case "codemirror-change":
-                for(var i = 0; i<payload.length; i++) {
-                    _handleCodemirrorChange(payload[i]);
-                }
+                payload.forEach(function(change) {
+                    _handleCodemirrorChange(change);
+                });
                 break;
             case "file-rename":
                 oldPath = Path.join(rootDir, payload.oldPath);
