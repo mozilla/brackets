@@ -431,7 +431,6 @@ define(function (require, exports, module) {
         // CodeMirror-focused. Instead, track focus via onFocus and onBlur
         // options and track state with this._focused
         this._focused = false;
-        Collaboration.setCodemirror(this._codeMirror);
 
         this._installEditorListeners();
 
@@ -930,7 +929,7 @@ define(function (require, exports, module) {
         // whereas the "change" event should be listened to on the document. Also the
         // Editor dispatches a change event before this event is dispatched, because
         // CodeHintManager needs to hook in here when other things are already done.
-        Collaboration.triggerCodemirrorChange(changeList);
+        Collaboration.triggerCodemirrorChange(changeList, this.getFile().fullPath);
         this.trigger("editorChange", this, changeList);
     };
 
