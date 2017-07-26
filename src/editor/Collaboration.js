@@ -6,8 +6,6 @@ define(function (require, exports, module) {
     var SimpleWebRTC    = require("simplewebrtc");
     var Path            = require("filesystem/impls/filer/FilerUtils").Path;
     var EditorManager   = require("editor/EditorManager");
-    var ProjectManager  = require("project/ProjectManager");
-    var FileUtils       = require("file/FileUtils");
     var CommandManager  = require("command/CommandManager");
 
     var _webrtc,
