@@ -214,6 +214,47 @@ define(function (require, exports, module) {
         return null;
     }
 
+    function _indexFromPos(coords, text) {
+        var textArr = text.split("\n");
+        coords = _clipPos(coords, text);
+        var index = 0;
+        for(var i = 0; i<coords.line; i++) {
+            index += (textArr[i].length + 1);
+        }
+        return (index + coords.ch);
+    }
+
+    function _posFromIndex(index, text) {
+        var textArr = text.split("\n");
+        if(index <= 0) {
+            return {line: 0, ch: 0};
+        }
+        if(index > _indexFromPos({line: textArr.length - 1, ch: textArr[textArr.length - 1].length}, text)) {
+            return {line: textArr.length - 1, ch: textArr[textArr.length - 1].length};
+        }
+        var i = 0;
+        while(index >= (textArr[i].length + 1)) {
+            index -= (textArr[i].length+1);
+            i++;
+        }
+        return {line: i, ch: index};
+    }
+
+    function _clipPos(pos, text) {
+        text = text.split("\n");
+        if(pos.line < 0) {
+            return {pos: 0, line: 0};
+        } else if (pos.line >= text.length) {
+            return {ch: text[text.length - 1].length, line: text.length - 1};
+        }
+        if(pos.ch < 0) {
+            return {ch: 0, line: pos.line};
+        } else if (pos.ch > text[pos.line].length) {
+            return {ch: text[pos.line].length, line: pos.line};
+        }
+        return pos;
+    }
+
     function triggerCodemirrorChange(changeList, fullPath) {
         if(_changing) {
             return;
