@@ -240,6 +240,12 @@ define(function (require, exports, module) {
         return {line: i, ch: index};
     }
 
+    function _replaceRange(params, from, to, text) {
+        var start = _indexFromPos(from, text);
+        var end = _indexFromPos(to, text);
+        return text.substr(0, start) + params + text.substr(end);
+    }
+
     function _clipPos(pos, text) {
         text = text.split("\n");
         if(pos.line < 0) {
