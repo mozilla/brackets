@@ -78,6 +78,7 @@ define(function (require, exports, module) {
         ViewUtils          = require("utils/ViewUtils"),
         MainViewManager    = require("view/MainViewManager"),
         Collaboration      = require("editor/Collaboration"),
+        EditorManager      = require("editor/EditorManager"),
         _                  = require("thirdparty/lodash");
 
     /** Editor preferences */
@@ -929,7 +930,10 @@ define(function (require, exports, module) {
         // whereas the "change" event should be listened to on the document. Also the
         // Editor dispatches a change event before this event is dispatched, because
         // CodeHintManager needs to hook in here when other things are already done.
-        Collaboration.triggerCodemirrorChange(changeList, this.getFile().fullPath);
+        var masterEditor = EditorManager.getCurrentFullEditor();
+        if(masterEditor.getFile().fullPath === this.getFile().fullPath) {
+            Collaboration.triggerCodemirrorChange(changeList, this.getFile().fullPath);
+        }
         this.trigger("editorChange", this, changeList);
     };
 

@@ -13,7 +13,10 @@ define(function (require, exports, module) {
         _pending,
         _changing,
         _room,
-        _received = {}; // object to keep track of a file being received to make sure we dont emit it back.
+        _received = {}, // object to keep track of a file being received to make sure we dont emit it back.
+        _buffer;
+
+    var TIME = 5000; // time in mili seconds after which the file buffer should be cleared
 
     function connect(options) {
         if(_webrtc) {
@@ -49,7 +52,9 @@ define(function (require, exports, module) {
 
         _pending = []; // pending clients that need to be initialized.
         _changing = false;
+        _buffer = {};
 
+        window.setInterval(_clearBuffer, TIME);
         FileSystem.on("rename", function(event, oldPath, newPath) {
             var rootDir = StartupState.project("root");
             var relOldPath = Path.relative(rootDir, oldPath);
@@ -175,7 +180,6 @@ define(function (require, exports, module) {
         }
         var fullPath = Path.join(StartupState.project("root"), relPath);
         var codemirror = _getOpenCodemirrorInstance(fullPath);
-
         if(!codemirror) {
             return _handleFileChangeEvent(fullPath, delta);
         }
@@ -202,9 +206,58 @@ define(function (require, exports, module) {
     };
 
     function _handleFileChangeEvent(path, change) {
-        var file = FileSystem.getFileForPath(path);
-        console.log("Should write to file which is not open in editor." + file + "changed " + change);
+        if(!_buffer[path]) {
+            _buffer[path] = [];
+        }
+        _buffer[path].push(change);
     };
+
+    function _clearBuffer() {
+        for(var path in _buffer) {
+            if(_buffer[path].length > 0) {
+                _clearFile(path);
+            }
+        }
+    }
+
+    function _clearFile(path) {
+        var file = FileSystem.getFileForPath(path);
+        file.read({}, function(err, text) {
+            if(err) {
+                return;
+            }
+            var numberOfChanges = 0;
+            _buffer[path].forEach(function(delta) {
+                numberOfChanges++;
+                console.log("added change for file");
+                var start = _indexFromPos(delta.from, text);
+                // apply the delete operation first
+                if (delta.removed.length > 0) {
+                    var delLength = 0;
+                    for (var i = 0; i < delta.removed.length; i++) {
+                     delLength += delta.removed[i].length;
+                    }
+                    delLength += delta.removed.length - 1;
+                    var from = _posFromIndex(start, text);
+                    var to = _posFromIndex(start + delLength, text);
+                    text = _replaceRange('', from, to, text);
+                }
+                // apply insert operation
+                var param = delta.text.join('\n');
+                var from = _posFromIndex(start, text);
+                var to = from;
+                text = _replaceRange(param, from, to, text);
+            });
+
+            file.write(text, {}, function(err) {
+                if(err) {
+                    console.log(err);
+                }
+                console.log("writting to file which is not open in editor for path " + path);
+                _buffer[path].splice(0, numberOfChanges);
+             });
+        });
+    }
 
     function _getOpenCodemirrorInstance(fullPath) {
         var masterEditor = EditorManager.getCurrentFullEditor();
