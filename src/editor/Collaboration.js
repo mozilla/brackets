@@ -215,12 +215,15 @@ define(function (require, exports, module) {
     function _clearBuffer() {
         for(var path in _buffer) {
             if(_buffer[path].length > 0) {
-                _clearFile(path);
+                clearFile(path);
             }
         }
     }
 
-    function _clearFile(path) {
+    function clearFile(path) {
+        if(!_webrtc || !_buffer || !_buffer[path] || _buffer[path] === []) {
+            return;
+        }
         var file = FileSystem.getFileForPath(path);
         file.read({}, function(err, text) {
             if(err) {
@@ -322,6 +325,7 @@ define(function (require, exports, module) {
         _webrtc.sendToAll("codemirror-change", {changes: changeList, path: relPath});
     };
 
+    exports.clearFile = clearFile;
     exports.connect = connect;
     exports.triggerCodemirrorChange = triggerCodemirrorChange;
 
