@@ -8,6 +8,7 @@ define(function (require, exports, module) {
     var EditorManager   = require("editor/EditorManager");
     var CommandManager  = require("command/CommandManager");
     var FilerUtils      = require("filesystem/impls/filer/FilerUtils");
+    var DocumentManager = require("document/DocumentManager");
 
     var _webrtc,
         _pending,
@@ -221,8 +222,11 @@ define(function (require, exports, module) {
     }
 
     function clearFile(path) {
-        if(!_webrtc || !_buffer || !_buffer[path] || _buffer[path] === []) {
-            return;
+        var result = new $.Deferred();
+
+        if(!_webrtc || !_buffer || !_buffer[path] || _buffer[path].length === 0) {
+            result.resolve();
+            return result.promise();
         }
         var file = FileSystem.getFileForPath(path);
         file.read({}, function(err, text) {
@@ -255,17 +259,20 @@ define(function (require, exports, module) {
             file.write(text, {}, function(err) {
                 if(err) {
                     console.log(err);
+                    return result.reject(err);
                 }
                 console.log("writting to file which is not open in editor for path " + path);
+                result.resolve();
                 _buffer[path].splice(0, numberOfChanges);
              });
         });
+        return result.promise();
     }
 
     function _getOpenCodemirrorInstance(fullPath) {
-        var masterEditor = EditorManager.getCurrentFullEditor();
-        if(masterEditor.getFile().fullPath === fullPath) {
-            return masterEditor._codeMirror;
+        var doc = DocumentManager.getOpenDocumentForPath(fullPath);
+        if(doc && doc._masterEditor) {
+            return doc._masterEditor._codeMirror;
         }
         return null;
     }

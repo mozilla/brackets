@@ -48,7 +48,6 @@ define(function (require, exports, module) {
     // Load dependent modules
     var AppInit             = require("utils/AppInit"),
         Async               = require("utils/Async"),
-        Collaboration       = require("editor/Collaboration"),
         PreferencesDialogs  = require("preferences/PreferencesDialogs"),
         PreferencesManager  = require("preferences/PreferencesManager"),
         DocumentManager     = require("document/DocumentManager"),
@@ -270,7 +269,6 @@ define(function (require, exports, module) {
      */
     ActionCreator.prototype.setSelected = function (path, doNotOpen) {
         this.model.setSelected(path, doNotOpen);
-        Collaboration.clearFile(path);
     };
 
     /**
