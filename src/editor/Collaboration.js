@@ -7,6 +7,7 @@ define(function (require, exports, module) {
     var Path            = require("filesystem/impls/filer/FilerUtils").Path;
     var EditorManager   = require("editor/EditorManager");
     var CommandManager  = require("command/CommandManager");
+    var FilerUtils      = require("filesystem/impls/filer/FilerUtils");
 
     var _webrtc,
         _pending,
@@ -62,7 +63,8 @@ define(function (require, exports, module) {
                     _webrtc.sendToAll("file-added", {path: Path.relative(rootDir, addedFile.fullPath), isFolder: addedFile.isDirectory});
                     if(typeof (addedFile._contents) === "object") {
                         _webrtc.getPeers().forEach(function(peer) {
-                            peer.sendFile(new Blob ([addedFile._contents]));
+                            var file = new File(addedFile._contents, "myname" + parseInt(Math.random()*100) + ".jpg");
+                            peer.sendFile(file);
                         });
                     }
                 });
@@ -137,6 +139,7 @@ define(function (require, exports, module) {
             });
             receiver.on('receivedFile', function (file, metadata) {
                 console.log("received file" + file);
+                FilerUtils.writeFileAsBinary("myname" + parseInt(Math.random()*100) + ".jpg", new Blob([file]));
                 receiver.channel.close();
             });
         });
