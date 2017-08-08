@@ -62,9 +62,11 @@ define(function (require, exports, module) {
             if(added) {
                 added.forEach(function(addedFile) {
                     _webrtc.getPeers().forEach(function(peer) {
-                        if(!_received[Path.relative(StartupState.project("root"), addedFile._path)]) {
+                        if (!_received[Path.relative(StartupState.project("root"), addedFile._path)]) {
                             FilerUtils.readFileAsBinary(addedFile._path, function(err, buffer) {
-                                var blob = new Blob(buffer, {type: "application/octet-stream"});
+                                var blob = new Blob(buffer, {
+                                    type: "application/octet-stream"
+                                });
                                 var file = new File([blob], Path.relative(StartupState.project("root"), addedFile._path));
                                 peer.sendFile(file);
                             });
