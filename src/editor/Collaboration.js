@@ -61,15 +61,15 @@ define(function (require, exports, module) {
             var rootDir = StartupState.project("root");
             if(added) {
                 added.forEach(function(addedFile) {
-                        _webrtc.getPeers().forEach(function(peer) {
-                            if(!_received[Path.relative(StartupState.project("root"), addedFile._path)]) {
-                                FilerUtils.readFileAsBinary(addedFile._path, function(err, buffer) {
-	                                var blob = new Blob(buffer, {type: "application/octet-stream"});
-	                                var file = new File([blob], Path.relative(StartupState.project("root"), addedFile._path));
-                                    peer.sendFile(file);
-                                });
-                            }
-                        });
+                    _webrtc.getPeers().forEach(function(peer) {
+                        if(!_received[Path.relative(StartupState.project("root"), addedFile._path)]) {
+                            FilerUtils.readFileAsBinary(addedFile._path, function(err, buffer) {
+                                var blob = new Blob(buffer, {type: "application/octet-stream"});
+                                var file = new File([blob], Path.relative(StartupState.project("root"), addedFile._path));
+                                peer.sendFile(file);
+                            });
+                        }
+                    });
                 });
             }
             if(removed) {
@@ -118,7 +118,7 @@ define(function (require, exports, module) {
                     return;
                 }
                 _changing = true;
-				EditorManager.getCurrentFullEditor()._codeMirror.setValue(payload);
+                EditorManager.getCurrentFullEditor()._codeMirror.setValue(payload);
                 _changing = false;
                 break;
         }
@@ -129,7 +129,7 @@ define(function (require, exports, module) {
         _changing = true;
         for(var i = 0; i<_pending.length; i++) {
             if(_pending[i] === peer.id) {
-				peer.send("initClient", EditorManager.getCurrentFullEditor()._codeMirror.getValue());
+                peer.send("initClient", EditorManager.getCurrentFullEditor()._codeMirror.getValue());
                 _pending.splice(i, 1);
                 break;
             }
