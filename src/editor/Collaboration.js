@@ -12,7 +12,8 @@ define(function (require, exports, module) {
     var _webrtc,
         _pending,
         _changing,
-        _room;
+        _room,
+        _received = {};
 
     function connect(options) {
         if(_webrtc) {
@@ -60,13 +61,13 @@ define(function (require, exports, module) {
             var rootDir = StartupState.project("root");
             if(added) {
                 added.forEach(function(addedFile) {
-                    _webrtc.sendToAll("file-added", {path: Path.relative(rootDir, addedFile.fullPath), isFolder: addedFile.isDirectory});
-                    if(typeof (addedFile._contents) === "object") {
                         _webrtc.getPeers().forEach(function(peer) {
-                            var file = new File(addedFile._contents, "myname" + parseInt(Math.random()*100) + ".jpg");
-                            peer.sendFile(file);
+                            if(!_received[Path.relative(StartupState.project("root"), addedFile._path)]) {
+	                                FilerUtils.readFileAsBinary(addedFile._path, function(err, file) {
+                                    peer.sendFile(new Blob([file]));
+                                });
+                            }
                         });
-                    }
                 });
             }
             if(removed) {
@@ -115,7 +116,7 @@ define(function (require, exports, module) {
                     return;
                 }
                 _changing = true;
-                EditorManager.getCurrentFullEditor()._codeMirror.setValue(payload);
+				EditorManager.getCurrentFullEditor()._codeMirror.setValue(payload);
                 _changing = false;
                 break;
         }
@@ -126,7 +127,7 @@ define(function (require, exports, module) {
         _changing = true;
         for(var i = 0; i<_pending.length; i++) {
             if(_pending[i] === peer.id) {
-                peer.send("initClient", EditorManager.getCurrentFullEditor()._codeMirror.getValue());
+				peer.send("initClient", EditorManager.getCurrentFullEditor()._codeMirror.getValue());
                 _pending.splice(i, 1);
                 break;
             }
@@ -138,8 +139,17 @@ define(function (require, exports, module) {
                 console.log("Percentage of file received : " + (bytesReceived / metadata.size * 100));
             });
             receiver.on('receivedFile', function (file, metadata) {
-                console.log("received file" + file);
-                FilerUtils.writeFileAsBinary("myname" + parseInt(Math.random()*100) + ".jpg", new Blob([file]));
+                var reader = new window.FileReader();
+                reader.readAsArrayBuffer(file);
+                //needs to get the file name from the connected client.
+                var fileName = "randomFile.png";
+                reader.onloadend = function() {
+                    var data = reader.result;
+                    _received[fileName] = true;
+                    FilerUtils.writeFileAsBinary(Path.join(StartupState.project("root"), fileName), FilerUtils.Buffer(data), function(err, file) {
+
+                    });
+                };
                 receiver.channel.close();
             });
         });
