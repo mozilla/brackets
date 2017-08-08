@@ -13,7 +13,7 @@ define(function (require, exports, module) {
         _pending,
         _changing,
         _room,
-        _received = {};
+        _received = {}; // object to keep track of a receiving file to make sure we dont emit it back.
 
     function connect(options) {
         if(_webrtc) {
@@ -147,7 +147,10 @@ define(function (require, exports, module) {
                     var data = reader.result;
                     _received[metadata.name] = true;
                     FilerUtils.writeFileAsBinary(Path.join(StartupState.project("root"), metadata.name), FilerUtils.Buffer(data), function(err, file) {
-
+                        if(err) {
+                            console.log(err);
+                        };
+                        delete _received[metadata.name];
                     });
                 };
                 receiver.channel.close();
