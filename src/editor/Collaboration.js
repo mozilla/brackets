@@ -63,8 +63,10 @@ define(function (require, exports, module) {
                 added.forEach(function(addedFile) {
                         _webrtc.getPeers().forEach(function(peer) {
                             if(!_received[Path.relative(StartupState.project("root"), addedFile._path)]) {
-	                                FilerUtils.readFileAsBinary(addedFile._path, function(err, file) {
-                                    peer.sendFile(new Blob([file]));
+                                FilerUtils.readFileAsBinary(addedFile._path, function(err, buffer) {
+	                                var blob = new Blob(buffer, {type: "application/octet-stream"});
+	                                var file = new File([blob], Path.relative(StartupState.project("root"), addedFile._path));
+                                    peer.sendFile(file);
                                 });
                             }
                         });
@@ -141,12 +143,10 @@ define(function (require, exports, module) {
             receiver.on('receivedFile', function (file, metadata) {
                 var reader = new window.FileReader();
                 reader.readAsArrayBuffer(file);
-                //needs to get the file name from the connected client.
-                var fileName = "randomFile.png";
                 reader.onloadend = function() {
                     var data = reader.result;
-                    _received[fileName] = true;
-                    FilerUtils.writeFileAsBinary(Path.join(StartupState.project("root"), fileName), FilerUtils.Buffer(data), function(err, file) {
+                    _received[metadata.name] = true;
+                    FilerUtils.writeFileAsBinary(Path.join(StartupState.project("root"), metadata.name), FilerUtils.Buffer(data), function(err, file) {
 
                     });
                 };
