@@ -64,10 +64,7 @@ define(function (require, exports, module) {
                     _webrtc.getPeers().forEach(function(peer) {
                         if (!_received[Path.relative(StartupState.project("root"), addedFile._path)]) {
                             FilerUtils.readFileAsBinary(addedFile._path, function(err, buffer) {
-                                var blob = new Blob(buffer, {
-                                    type: "application/octet-stream"
-                                });
-                                var file = new File([blob], Path.relative(StartupState.project("root"), addedFile._path));
+                                var file = new File([buffer], Path.relative(StartupState.project("root"), addedFile._path));
                                 peer.sendFile(file);
                             });
                         }
@@ -143,19 +140,21 @@ define(function (require, exports, module) {
                 console.log("Percentage of file received : " + (bytesReceived / metadata.size * 100));
             });
             receiver.on('receivedFile', function (file, metadata) {
-                var reader = new window.FileReader();
-                reader.readAsArrayBuffer(file);
-                reader.onloadend = function() {
-                    var data = reader.result;
-                    _received[metadata.name] = true;
-                    FilerUtils.writeFileAsBinary(Path.join(StartupState.project("root"), metadata.name), FilerUtils.Buffer(data), function(err, file) {
-                        if(err) {
-                            console.log(err);
-                        };
-                        delete _received[metadata.name];
-                    });
-                };
                 receiver.channel.close();
+                var reader = new window.FileReader();
+				reader.onload = function(e) {
+				    var data = e.target.result;
+				    var buffer = new FilerUtils.Buffer(data);
+				    var filename = Path.join(StartupState.project("root"), metadata.name);
+				    _received[metadata.name] = true;
+				    FilerUtils.writeFileAsBinary(filename, buffer, function(err) {
+				        if(err) {
+				            console.log(err);
+				        };
+				        delete _received[metadata.name];
+				    });
+				};
+				reader.readAsArrayBuffer(file);
             });
         });
     };
