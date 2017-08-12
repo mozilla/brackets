@@ -9,6 +9,7 @@ define(function (require, exports, module) {
     var CommandManager  = require("command/CommandManager");
     var FilerUtils      = require("filesystem/impls/filer/FilerUtils");
     var DocumentManager = require("document/DocumentManager");
+    var FileUtils       = require("file/FileUtils");
 
     var _webrtc,
         _pending,
@@ -221,51 +222,64 @@ define(function (require, exports, module) {
         }
     }
 
+    /**
+     * Applies all the changes kept in the buffer array that have occured on connected clients but have not
+     * yet been written to the filesystem for this file.
+     *
+     * @param {!string} path
+     * @return {$.Promise} A promise object that will be resolved when the buffer array for the file
+     * is cleared or rejected with a FileSystemError if the file is not yet open and can't be read from disk.
+     */
     function clearFile(path) {
         var result = new $.Deferred();
-
+        var file = FileSystem.getFileForPath(path);
         if(!_webrtc || !_buffer || !_buffer[path] || _buffer[path].length === 0) {
-            result.resolve();
+            FileUtils.readAsText(file)
+                .done(function (rawText, readTimestamp) {
+                    result.resolve(rawText, readTimestamp);    
+                })
+                .fail(function (fileError) {
+                    result.reject(fileError);
+                });
             return result.promise();
         }
-        var file = FileSystem.getFileForPath(path);
-        file.read({}, function(err, text) {
-            if(err) {
-                return;
-            }
-            var numberOfChanges = 0;
-            _buffer[path].forEach(function(delta) {
-                numberOfChanges++;
-                console.log("added change for file");
-                var start = _indexFromPos(delta.from, text);
-                // apply the delete operation first
-                if (delta.removed.length > 0) {
-                    var delLength = 0;
-                    for (var i = 0; i < delta.removed.length; i++) {
-                     delLength += delta.removed[i].length;
+        FileUtils.readAsText(file)
+            .done(function (text, readTimestamp) {
+                var numberOfChanges = 0;
+                _buffer[path].forEach(function(delta) {
+                    numberOfChanges++;
+                    console.log("added change for file");
+                    var start = _indexFromPos(delta.from, text);
+                    // apply the delete operation first
+                    if (delta.removed.length > 0) {
+                        var delLength = 0;
+                        for (var i = 0; i < delta.removed.length; i++) {
+                         delLength += delta.removed[i].length;
+                        }
+                        delLength += delta.removed.length - 1;
+                        var from = _posFromIndex(start, text);
+                        var to = _posFromIndex(start + delLength, text);
+                        text = _replaceRange('', from, to, text);
                     }
-                    delLength += delta.removed.length - 1;
+                    // apply insert operation
+                    var param = delta.text.join('\n');
                     var from = _posFromIndex(start, text);
-                    var to = _posFromIndex(start + delLength, text);
-                    text = _replaceRange('', from, to, text);
-                }
-                // apply insert operation
-                var param = delta.text.join('\n');
-                var from = _posFromIndex(start, text);
-                var to = from;
-                text = _replaceRange(param, from, to, text);
+                    var to = from;
+                    text = _replaceRange(param, from, to, text);
+                });
+                FileUtils.writeText(file, text)
+                    .done(function() {
+                        console.log("writting to file which is not open in editor for path " + path);
+                        _buffer[path].splice(0, numberOfChanges);
+                        result.resolve(text, readTimestamp);
+                    })
+                    .fail(function(err) {
+                        result.reject(err);
+                    });
+            })
+            .fail(function (fileError) {
+                result.reject(fileError);
             });
-
-            file.write(text, {}, function(err) {
-                if(err) {
-                    console.log(err);
-                    return result.reject(err);
-                }
-                console.log("writting to file which is not open in editor for path " + path);
-                result.resolve();
-                _buffer[path].splice(0, numberOfChanges);
-             });
-        });
         return result.promise();
     }
 

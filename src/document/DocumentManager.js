@@ -363,28 +363,21 @@ define(function (require, exports, module) {
                 });
 
                 Collaboration.clearFile(fullPath)
-                    .done(function (text, timestamp) {
-                        FileUtils.readAsText(file)
-                            .always(function () {
-                                // document is no longer pending
-                                delete getDocumentForPath._pendingDocumentPromises[file.id];
-                            })
-                            .done(function (rawText, readTimestamp) {
-                                doc = new DocumentModule.Document(file, readTimestamp, rawText);
+                    .always(function () {
+                        // document is no longer pending
+                        delete getDocumentForPath._pendingDocumentPromises[file.id];
+                    })            
+                    .done(function (rawText, readTimestamp) {
+                        doc = new DocumentModule.Document(file, readTimestamp, rawText);
 
-                                // This is a good point to clean up any old dangling Documents
-                                _gcDocuments();
+                        // This is a good point to clean up any old dangling Documents
+                        _gcDocuments();
 
-                                result.resolve(doc);
-                            })
-                            .fail(function (fileError) {
-                                result.reject(fileError);
-                            });
+                        result.resolve(doc);
                     })
-                    .fail(function (err) {
-                        result.reject(err);
+                    .fail(function (fileError) {
+                        result.reject(fileError);
                     });
-
                 return promise;
             }
         }
