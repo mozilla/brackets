@@ -1067,7 +1067,11 @@ define(function (require, exports, module) {
         }
 
         // Add a file-menu class to hide non-file items from file context menu
-        $("#project-context-menu").toggleClass("file-menu", mouseOrLocation.fileMenu);
+        if(mouseOrLocation.fileMenu) {
+            $("#project-context-menu").toggleClass("file-menu", true);
+        } else {
+            $("#project-context-menu").toggleClass("file-menu", false);
+        }
 
         // only show context menu if it has menu items
         if ($menuWindow.children().length <= 0) {
