@@ -61,14 +61,19 @@ define(function (require, exports, module) {
             var rootDir = StartupState.project("root");
             if(added) {
                 added.forEach(function(addedFile) {
-                    _webrtc.getPeers().forEach(function(peer) {
-                        if (!_received[Path.relative(StartupState.project("root"), addedFile._path)]) {
-                            FilerUtils.readFileAsBinary(addedFile._path, function(err, buffer) {
-                                var file = new File([buffer], Path.relative(StartupState.project("root"), addedFile._path));
+                    var relPath = Path.relative(StartupState.project("root"), addedFile._path);
+                    // send file only if this client added this file, and not received it
+                    if (!_received[relPath]) {
+                        FilerUtils.readFileAsBinary(addedFile._path, function(err, buffer) {
+                            if(err) {
+                                console.log(err);
+                            }
+                            var file = new File([buffer], relPath);
+                            _webrtc.getPeers().forEach(function(peer) {
                                 peer.sendFile(file);
                             });
-                        }
-                    });
+                        });
+                    }
                 });
             }
             if(removed) {
@@ -134,26 +139,32 @@ define(function (require, exports, module) {
             }
         }
         _changing = false;
-        peer.on('fileTransfer', function (metadata, receiver) {
-            console.log('incoming filetransfer', metadata.name, metadata);
-            receiver.on('progress', function (bytesReceived) {
+        peer.on("fileTransfer", function (metadata, receiver) {
+            console.log("incoming filetransfer", metadata.name, metadata);
+            receiver.on("progress", function (bytesReceived) {
+                //TODO:: Add UI element to show percentage of file received.
                 console.log("Percentage of file received : " + (bytesReceived / metadata.size * 100));
             });
-            receiver.on('receivedFile', function (file, metadata) {
+            receiver.on("receivedFile", function (file, metadata) {
                 receiver.channel.close();
                 var reader = new window.FileReader();
-				reader.onload = function(e) {
-				    var data = e.target.result;
-				    var buffer = new FilerUtils.Buffer(data);
-				    var filename = Path.join(StartupState.project("root"), metadata.name);
-				    _received[metadata.name] = true;
-				    FilerUtils.writeFileAsBinary(filename, buffer, function(err) {
-				        if(err) {
-				            console.log(err);
-				        };
-				        delete _received[metadata.name];
-				    });
-				};
+                reader.onload = function(e) {
+                    var data = e.target.result;
+                    var buffer = new FilerUtils.Buffer(data);
+                    var filename = Path.join(StartupState.project("root"), metadata.name);
+                    //keep this file in the received array to make sure we don't emit back this file.
+                    _received[metadata.name] = true;
+                    FilerUtils.writeFileAsBinary(filename, buffer, function(err) {
+                        if(err) {
+                            // TODO :: Ask the user for the file again.
+                            console.log(err);
+                        };
+                        // Clear _received of file name for future events.
+                        window.setTimeout(function() {
+                            delete _received[metadata.name];
+                        }, 50);
+                    });
+                };
 				reader.readAsArrayBuffer(file);
             });
         });
