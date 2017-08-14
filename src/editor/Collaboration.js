@@ -13,7 +13,7 @@ define(function (require, exports, module) {
         _pending,
         _changing,
         _room,
-        _received = {}; // object to keep track of a receiving file to make sure we dont emit it back.
+        _received = {}; // object to keep track of a file being received to make sure we dont emit it back.
 
     function connect(options) {
         if(_webrtc) {
@@ -165,7 +165,7 @@ define(function (require, exports, module) {
                         }, 50);
                     });
                 };
-				reader.readAsArrayBuffer(file);
+                reader.readAsArrayBuffer(file);
             });
         });
     };
