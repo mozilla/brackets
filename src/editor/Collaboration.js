@@ -13,7 +13,8 @@ define(function (require, exports, module) {
         _pending,
         _changing,
         _room,
-        _received = {}; // object to keep track of a file being received to make sure we dont emit it back.
+        _received = {}, // object to keep track of a file being received to make sure we dont emit it back.
+        _renaming;
 
     function connect(options) {
         if(_webrtc) {
@@ -49,8 +50,12 @@ define(function (require, exports, module) {
 
         _pending = []; // pending clients that need to be initialized.
         _changing = false;
+        _renaming = {};
 
         FileSystem.on("rename", function(event, oldPath, newPath) {
+            if(_renaming[oldPath]) {
+                return;
+            }
             var rootDir = StartupState.project("root");
             var relOldPath = Path.relative(rootDir, oldPath);
             var relNewPath = Path.relative(rootDir, newPath);
@@ -103,6 +108,11 @@ define(function (require, exports, module) {
             case "file-rename":
                 oldPath = Path.join(rootDir, payload.oldPath);
                 newPath = Path.join(rootDir, payload.newPath); 
+                _renaming[oldPath] = true;
+                CommandManager.execute("bramble.renameFile", {from: oldPath, to: payload.newPath})
+                    .always(function() {
+                        window.setTimeout(function() {delete _renaming[payload.oldPath];}, 50);
+                    });
                 console.log("renamed " + oldPath + " to " + newPath);
                 break;
             case "file-added":

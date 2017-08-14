@@ -760,6 +760,20 @@ define(function (require, exports, module) {
 
         return deferred.promise();
     }
+    /**
+     * XXXBramble: we allow passing new file name to use when renaming the file,
+     */
+    function handleBrambleFileRename(options) {
+        var deferred = new $.Deferred();
+        var root = StartupState.project("root");
+        var file = FileSystem.getFileForPath(options.from);
+        ProjectManager.renameItemInline(file)
+            .done(deferred.resolve);
+        ProjectManager.setRenameValue(options.to);
+        ProjectManager.forceFinishRename();
+        return deferred.promise();
+    }
+
 
     /**
      * XXXBramble: we allow passing extra folder info to use when creating the folder.
@@ -1923,6 +1937,7 @@ define(function (require, exports, module) {
 
     // XXXBramble: support adding a new file with options
     CommandManager.registerInternal("bramble.addFile",                  handleBrambleNewFile);
+    CommandManager.registerInternal("bramble.renameFile",               handleBrambleFileRename);
 
     CommandManager.registerInternal("bramble.addFolder",                handleBrambleNewFolder);
 

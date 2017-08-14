@@ -98,6 +98,7 @@ define(function (require, exports, module) {
         _showErrorDialog,
         _saveTreeState,
         renameItemInline,
+        setRenameValue,
         _renderTreeSync,
         _renderTree;
 
@@ -1312,6 +1313,15 @@ define(function (require, exports, module) {
     };
 
     /**
+     * Sets the new value for path of currently selected file for renaming
+     *
+     * @param {newPath} New path of the file to be renamed
+     */
+    setRenameValue = function(newPath) {
+        model.setRenameValue(newPath);
+    };
+
+    /**
      * Returns an Array of all files for this project, optionally including
      * files in the working set that are *not* under the project root. Files are
      * filtered first by ProjectModel.shouldShow(), then by the custom filter
@@ -1420,6 +1430,7 @@ define(function (require, exports, module) {
     exports.deleteItem                    = deleteItem;
     exports.forceFinishRename             = forceFinishRename;
     exports.showInTree                    = showInTree;
+    exports.setRenameValue                = setRenameValue;
     exports.refreshFileTree               = refreshFileTree;
     exports.getAllFiles                   = getAllFiles;
     exports.getLanguageFilter             = getLanguageFilter;
