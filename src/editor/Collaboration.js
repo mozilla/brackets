@@ -54,6 +54,7 @@ define(function (require, exports, module) {
 
         FileSystem.on("rename", function(event, oldPath, newPath) {
             if(_renaming[oldPath]) {
+                delete _renaming[oldPath];
                 return;
             }
             var rootDir = StartupState.project("root");
@@ -110,8 +111,8 @@ define(function (require, exports, module) {
                 newPath = Path.join(rootDir, payload.newPath); 
                 _renaming[oldPath] = true;
                 CommandManager.execute("bramble.renameFile", {from: oldPath, to: payload.newPath})
-                    .always(function() {
-                        window.setTimeout(function() {delete _renaming[payload.oldPath];}, 50);
+                    .error(function(err) {
+                        console.log(err);
                     });
                 console.log("renamed " + oldPath + " to " + newPath);
                 break;
