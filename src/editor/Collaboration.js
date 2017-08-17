@@ -63,17 +63,20 @@ define(function (require, exports, module) {
                 added.forEach(function(addedFile) {
                     var relPath = Path.relative(StartupState.project("root"), addedFile._path);
                     // send file only if this client added this file, and not received it
-                    if (!_received[relPath]) {
-                        FilerUtils.readFileAsBinary(addedFile._path, function(err, buffer) {
-                            if(err) {
-                                console.log(err);
-                            }
-                            var file = new File([buffer], relPath);
-                            _webrtc.getPeers().forEach(function(peer) {
-                                peer.sendFile(file);
-                            });
-                        });
+                    if(_received[relPath]) {
+                        // Clear _received of file name for future events.
+                        delete _received[relPath];
+                        return;
                     }
+                    FilerUtils.readFileAsBinary(addedFile._path, function(err, buffer) {
+                        if(err) {
+                            console.log(err);
+                        }
+                        var file = new File([buffer], relPath);
+                        _webrtc.getPeers().forEach(function(peer) {
+                            peer.sendFile(file);
+                        });
+                    });
                 });
             }
             if(removed) {
@@ -159,10 +162,6 @@ define(function (require, exports, module) {
                             // TODO :: Ask the user for the file again.
                             console.log(err);
                         };
-                        // Clear _received of file name for future events.
-                        window.setTimeout(function() {
-                            delete _received[metadata.name];
-                        }, 50);
                     });
                 };
                 reader.readAsArrayBuffer(file);
