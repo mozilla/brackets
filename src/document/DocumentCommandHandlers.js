@@ -765,7 +765,6 @@ define(function (require, exports, module) {
      * XXXBramble: we allow passing extra folder info to use when creating the folder.
      */
     function handleBrambleNewFolder(options) {
-        var deferred = new $.Deferred();
         var root = StartupState.project("root");
 
         // If we were given a filename, use it, otherwise generate one
@@ -775,7 +774,6 @@ define(function (require, exports, module) {
         } else {
             return CommandManager.execute(Strings.CMD_FILE_NEW_FOLDER);
         }
-        return deferred.promise();
     }
 
     /**
