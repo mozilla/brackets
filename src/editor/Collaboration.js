@@ -9,7 +9,7 @@ define(function (require, exports, module) {
     var CommandManager  = require("command/CommandManager");
     var FilerUtils      = require("filesystem/impls/filer/FilerUtils");
     var DocumentManager = require("document/DocumentManager");
-    var FileUtils       = require("file/FileUtils");
+    var FilerUtils      = require("filesystem/impls/filer/FilerUtils");
 
     var _webrtc,
         _pending,
@@ -217,7 +217,7 @@ define(function (require, exports, module) {
     function _clearBuffer() {
         for(var path in _buffer) {
             if(_buffer[path].length > 0) {
-                clearFile(path);
+                applyDiffsToFile(path);
             }
         }
     }
@@ -230,25 +230,25 @@ define(function (require, exports, module) {
      * @return {$.Promise} A promise object that will be resolved when the buffer array for the file
      * is cleared or rejected with a FileSystemError if the file is not yet open and can't be read from disk.
      */
-    function clearFile(path) {
+    function applyDiffsToFile(path) {
         var result = new $.Deferred();
-        var file = FileSystem.getFileForPath(path);
         if(!_webrtc || !_buffer || !_buffer[path] || _buffer[path].length === 0) {
-            FileUtils.readAsText(file)
-                .done(function (rawText, readTimestamp) {
-                    result.resolve(rawText, readTimestamp);    
+            FilerUtils.readFileAsUTF8(path)
+                .done(function(text, stats) {
+                    result.resolve(text, stats.mtime);
                 })
-                .fail(function (fileError) {
-                    result.reject(fileError);
+                .fail(function(err) {
+                    result.reject(err);
                 });
             return result.promise();
         }
-        FileUtils.readAsText(file)
-            .done(function (text, readTimestamp) {
+
+        var file = FileSystem.getFileForPath(path);
+        FilerUtils.readFileAsUTF8(path)
+            .done(function (text, stats) {
                 var numberOfChanges = 0;
                 _buffer[path].forEach(function(delta) {
                     numberOfChanges++;
-                    console.log("added change for file");
                     var start = _indexFromPos(delta.from, text);
                     // apply the delete operation first
                     if (delta.removed.length > 0) {
@@ -256,22 +256,25 @@ define(function (require, exports, module) {
                         for (var i = 0; i < delta.removed.length; i++) {
                          delLength += delta.removed[i].length;
                         }
+
                         delLength += delta.removed.length - 1;
                         var from = _posFromIndex(start, text);
                         var to = _posFromIndex(start + delLength, text);
                         text = _replaceRange('', from, to, text);
                     }
+
                     // apply insert operation
                     var param = delta.text.join('\n');
                     var from = _posFromIndex(start, text);
                     var to = from;
                     text = _replaceRange(param, from, to, text);
                 });
-                FileUtils.writeText(file, text)
+
+                FilerUtils.writeFileAsUTF8(path, text)
                     .done(function() {
                         console.log("writting to file which is not open in editor for path " + path);
                         _buffer[path].splice(0, numberOfChanges);
-                        result.resolve(text, readTimestamp);
+                        result.resolve(text, stats.mtime);
                     })
                     .fail(function(err) {
                         result.reject(err);
@@ -280,6 +283,7 @@ define(function (require, exports, module) {
             .fail(function (fileError) {
                 result.reject(fileError);
             });
+
         return result.promise();
     }
 
@@ -346,7 +350,7 @@ define(function (require, exports, module) {
         _webrtc.sendToAll("codemirror-change", {changes: changeList, path: relPath});
     };
 
-    exports.clearFile = clearFile;
+    exports.applyDiffsToFile = applyDiffsToFile;
     exports.connect = connect;
     exports.triggerCodemirrorChange = triggerCodemirrorChange;
 

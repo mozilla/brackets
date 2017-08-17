@@ -362,7 +362,7 @@ define(function (require, exports, module) {
                     PerfUtils.finalizeMeasurement(perfTimerName);
                 });
 
-                Collaboration.clearFile(fullPath)
+                Collaboration.applyDiffsToFile(fullPath)
                     .always(function () {
                         // document is no longer pending
                         delete getDocumentForPath._pendingDocumentPromises[file.id];
