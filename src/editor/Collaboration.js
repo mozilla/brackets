@@ -107,9 +107,9 @@ define(function (require, exports, module) {
                 break;
             case "file-added":
                 if(payload.isFolder) {
-                    console.log("made change in folder");
+                    CommandManager.execute("bramble.addFolder", {filename: payload.path});
                 } else {
-                    CommandManager.execute("bramble.addFile", {filename: payload.path, contents: ""});                
+                    CommandManager.execute("bramble.addFile", {filename: payload.path, contents: ""});
                 }
                 break;
             case "file-removed":
