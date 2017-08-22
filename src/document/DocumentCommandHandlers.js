@@ -762,6 +762,21 @@ define(function (require, exports, module) {
     }
 
     /**
+     * XXXBramble: we allow passing extra folder info to use when creating the folder.
+     */
+    function handleBrambleNewFolder(options) {
+        var root = StartupState.project("root");
+
+        // If we were given a filename, use it, otherwise generate one
+        if(options.filename) {
+            var path = options.filename;
+            return ProjectManager.createNewItem(FileUtils.getParentPath(path), FileUtils.getBaseName(path) , true, true);
+        } else {
+            return CommandManager.execute(Strings.CMD_FILE_NEW_FOLDER);
+        }
+    }
+
+    /**
      * Create a new folder in the project tree.
      */
     function handleNewFolderInProject() {
@@ -1911,6 +1926,8 @@ define(function (require, exports, module) {
 
     // XXXBramble: support adding a new file with options
     CommandManager.registerInternal("bramble.addFile",                  handleBrambleNewFile);
+
+    CommandManager.registerInternal("bramble.addFolder",                handleBrambleNewFolder);
 
     // Listen for changes that require updating the editor titlebar
     ProjectManager.on("projectOpen", _updateTitle);
