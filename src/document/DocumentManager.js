@@ -366,7 +366,7 @@ define(function (require, exports, module) {
                     .always(function () {
                         // document is no longer pending
                         delete getDocumentForPath._pendingDocumentPromises[file.id];
-                    })            
+                    })
                     .done(function (rawText, readTimestamp) {
                         doc = new DocumentModule.Document(file, readTimestamp, rawText);
 
@@ -378,6 +378,7 @@ define(function (require, exports, module) {
                     .fail(function (fileError) {
                         result.reject(fileError);
                     });
+
                 return promise;
             }
         }
