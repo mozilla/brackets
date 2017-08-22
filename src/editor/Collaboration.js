@@ -182,6 +182,7 @@ define(function (require, exports, module) {
         }
         var fullPath = Path.join(StartupState.project("root"), relPath);
         var codemirror = _getOpenCodemirrorInstance(fullPath);
+
         if(!codemirror) {
             return _handleFileChangeEvent(fullPath, delta);
         }
