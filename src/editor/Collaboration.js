@@ -95,7 +95,7 @@ define(function (require, exports, module) {
 
     function _handleMessage(msg) {
         var payload = msg.payload;
-        var oldPath, newPath, fullPath;
+        var fullPath, oldPath, newPath;
         var rootDir = StartupState.project("root");
         switch(msg.type) {
             case "new client":
@@ -108,13 +108,12 @@ define(function (require, exports, module) {
                 break;
             case "file-rename":
                 oldPath = Path.join(rootDir, payload.oldPath);
-                newPath = Path.join(rootDir, payload.newPath); 
+                newPath = Path.join(rootDir, payload.newPath);
                 _renaming[oldPath] = true;
-                CommandManager.execute("bramble.renameFile", {from: oldPath, to: payload.newPath})
+                CommandManager.execute("bramble.renameFile", {dirName: Path.dirname(oldPath), from: Path.basename(oldPath), to: Path.basename(newPath)})
                     .error(function(err) {
                         console.log(err);
                     });
-                console.log("renamed " + oldPath + " to " + newPath);
                 break;
             case "file-added":
                 if(payload.isFolder) {

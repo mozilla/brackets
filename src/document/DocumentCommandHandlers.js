@@ -766,7 +766,7 @@ define(function (require, exports, module) {
     function handleBrambleFileRename(options) {
         var deferred = new $.Deferred();
         var root = StartupState.project("root");
-        var file = FileSystem.getFileForPath(options.from);
+        var file = FileSystem.getFileForPath(Path.join(options.dirName, options.from));
         ProjectManager.renameItemInline(file)
             .done(deferred.resolve);
         ProjectManager.setRenameValue(options.to);
