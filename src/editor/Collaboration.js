@@ -223,6 +223,12 @@ define(function (require, exports, module) {
         }
     }
 
+    function hasPendingDiffsToBeApplied(path) {
+        if(!_webrtc || !_buffer || !_buffer[path] || _buffer[path].length === 0) {
+            return false;
+        }
+        return true;
+    }
     /**
      * Applies all the changes kept in the buffer array that have occured on connected clients but have not
      * yet been written to the filesystem for this file.
@@ -289,9 +295,9 @@ define(function (require, exports, module) {
     }
 
     function _getOpenCodemirrorInstance(fullPath) {
-        var doc = DocumentManager.getOpenDocumentForPath(fullPath);
-        if(doc && doc._masterEditor) {
-            return doc._masterEditor._codeMirror;
+        var masterEditor = EditorManager.getCurrentFullEditor();
+        if(masterEditor.getFile().fullPath === fullPath) {
+            return masterEditor._codeMirror;
         }
         return null;
     }
@@ -351,6 +357,7 @@ define(function (require, exports, module) {
         _webrtc.sendToAll("codemirror-change", {changes: changeList, path: relPath});
     };
 
+    exports.hasPendingDiffsToBeApplied = hasPendingDiffsToBeApplied;
     exports.applyDiffsToFile = applyDiffsToFile;
     exports.connect = connect;
     exports.triggerCodemirrorChange = triggerCodemirrorChange;

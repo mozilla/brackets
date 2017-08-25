@@ -329,7 +329,7 @@ define(function (require, exports, module) {
     function getDocumentForPath(fullPath) {
         var doc = getOpenDocumentForPath(fullPath);
 
-        if (doc) {
+        if (doc && !Collaboration.hasPendingDiffsToBeApplied(fullPath)) {
             // use existing document
             return new $.Deferred().resolve(doc).promise();
         } else {
