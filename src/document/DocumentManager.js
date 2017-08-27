@@ -93,7 +93,8 @@ define(function (require, exports, module) {
         Commands            = require("command/Commands"),
         PerfUtils           = require("utils/PerfUtils"),
         LanguageManager     = require("language/LanguageManager"),
-        Strings             = require("strings");
+        Strings             = require("strings"),
+        Collaboration       = require("editor/Collaboration");
 
 
     /**
@@ -330,6 +331,7 @@ define(function (require, exports, module) {
 
         if (doc) {
             // use existing document
+            Collaboration.setCodeMirror(doc._masterEditor._codeMirror, doc._masterEditor.getFile().fullPath);
             return new $.Deferred().resolve(doc).promise();
         } else {
 
@@ -370,7 +372,7 @@ define(function (require, exports, module) {
                         doc = new DocumentModule.Document(file, readTimestamp, rawText);
 
                         // This is a good point to clean up any old dangling Documents
-                        _gcDocuments();
+                         _gcDocuments();
 
                         result.resolve(doc);
                     })

@@ -5,13 +5,16 @@ define(function (require, exports, module) {
     var StartupState    = require("bramble/StartupState");
     var SimpleWebRTC    = require("simplewebrtc");
     var Path            = require("filesystem/impls/filer/FilerUtils").Path;
+    var ot              = require("editor/ot").ot;
     var EditorManager   = require("editor/EditorManager");
     var CommandManager  = require("command/CommandManager");
 
     var _webrtc,
         _pending,
         _changing,
-        _room;
+        _room,
+        _events,
+        _adapter;
 
     function connect(options) {
         if(_webrtc) {
@@ -47,6 +50,7 @@ define(function (require, exports, module) {
 
         _pending = []; // pending clients that need to be initialized.
         _changing = false;
+        _events = [];
 
         FileSystem.on("rename", function(event, oldPath, newPath) {
             var rootDir = StartupState.project("root");
@@ -79,9 +83,14 @@ define(function (require, exports, module) {
                 _pending.push(msg.from);
                 break;
             case "codemirror-change":
-                payload.changes.forEach(function(delta) {
-                    _handleCodemirrorChange(delta, payload.path);
-                });
+                var fullPath = Path.join(StartupState.project("root"), payload.path);
+                var codemirror = _getOpenCodemirrorInstance(fullPath);
+                if(!codemirror) {
+                    break;
+                }
+                if(_adapter) {
+                    _adapter.applyOperation(JSON.parse(payload.operation));
+                }
                 break;
             case "file-rename":
                 oldPath = Path.join(rootDir, payload.oldPath);
@@ -111,6 +120,8 @@ define(function (require, exports, module) {
                 EditorManager.getCurrentFullEditor()._codeMirror.setValue(payload);
                 _changing = false;
                 break;
+            case "relay":
+                console.log("relayed" + payload);
         }
     };
 
@@ -164,6 +175,10 @@ define(function (require, exports, module) {
         console.log("Should write to file which is not open in editor." + file + "changed " + change);
     };
 
+    function _getRandomHash() {
+        return Math.random().toString(36).substring(7);
+    }
+
     function _getOpenCodemirrorInstance(fullPath) {
         var masterEditor = EditorManager.getCurrentFullEditor();
         if(masterEditor.getFile().fullPath === fullPath) {
@@ -172,14 +187,46 @@ define(function (require, exports, module) {
         return null;
     }
 
+    function _initListeners() {
+        _adapter.registerCallbacks({
+            change: function(op, inverse, path) {
+                console.log(op + "  " + inverse);
+                if(_webrtc) {
+                    _webrtc.sendToAll("codemirror-change", {operation: JSON.stringify(op), path: path});
+                }
+            }
+        });
+    };
+
     function triggerCodemirrorChange(changeList, fullPath) {
         if(_changing) {
             return;
         }
+
         var relPath = Path.relative(StartupState.project("root"), fullPath);
+        if(!_events[relPath]) {
+            _events[relPath] = [];
+        }
+
+        _events[relPath].push({changes: changeList, event: -1});
         _webrtc.sendToAll("codemirror-change", {changes: changeList, path: relPath});
     };
 
+    function setCodeMirror(codemirror, fullPath) {
+        if(_adapter) {
+            _adapter.detach();
+        }
+        var relPath = Path.relative(StartupState.project("root"), fullPath);
+        _adapter = new ot.CodeMirrorAdapter(codemirror, relPath);
+        _initListeners();
+    };
+
+    function getAdapter() {
+        return _adapter;
+    }
+
+    exports.setCodeMirror = setCodeMirror;
+    exports.getAdapter = getAdapter;
     exports.connect = connect;
     exports.triggerCodemirrorChange = triggerCodemirrorChange;
 
