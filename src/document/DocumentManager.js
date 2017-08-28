@@ -93,8 +93,7 @@ define(function (require, exports, module) {
         Commands            = require("command/Commands"),
         PerfUtils           = require("utils/PerfUtils"),
         LanguageManager     = require("language/LanguageManager"),
-        Strings             = require("strings"),
-        Collaboration       = require("editor/Collaboration");
+        Strings             = require("strings");
 
 
     /**
@@ -371,7 +370,7 @@ define(function (require, exports, module) {
                         doc = new DocumentModule.Document(file, readTimestamp, rawText);
 
                         // This is a good point to clean up any old dangling Documents
-                         _gcDocuments();
+                        _gcDocuments();
 
                         result.resolve(doc);
                     })
