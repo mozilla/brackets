@@ -50,7 +50,7 @@
         "pica": "^3.0.4",
         "q": "1.4.1",
         "semver": "^4.1.0",
-        "simplewebrtc": "^3.0.0",
+        "simplewebrtcbrackets": "^3.0.0",
         "wolfy87-eventemitter": "^5.1.0",
         "xmldoc": "^0.1.2"
     },
@@ -66,7 +66,7 @@
         "request": "^2.69.0",
         "requirejs": "^2.3.3",
         "rimraf": "^2.6.1",
-        "signal-master": "^1.0.1",
+        "signal-master-brackets": "^1.0.1",
         "sw-precache": "^5.0.0",
         "tar-fs": "^1.15.1"
     },
@@ -79,7 +79,7 @@
         "preproduction": "grunt build-browser-compressed && npm run unlocalize",
         "production": "npm start -- --gzip",
         "test": "grunt test && grunt build-browser-compressed",
-        "server:webrtc": "node node_modules/signal-master",
+        "server:webrtc": "node node_modules/signal-master-brackets",
         "server:static": "http-server -p 8000 --cors",
         "server": "concurrently \"npm run server:webrtc\" \"npm run server:static\"",
         "prestart": "npm run localize && grunt build-browser-dev",
