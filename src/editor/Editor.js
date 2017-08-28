@@ -486,8 +486,6 @@ define(function (require, exports, module) {
                 return $(this.getRootElement());
             }
         });
-        Collaboration.setCodeMirror(this._codeMirror, this.getFile().fullPath);
-
     }
 
     EventDispatcher.makeEventDispatcher(Editor.prototype);
@@ -933,6 +931,10 @@ define(function (require, exports, module) {
         // Editor dispatches a change event before this event is dispatched, because
         // CodeHintManager needs to hook in here when other things are already done.
         //Collaboration.triggerCodemirrorChange(changeList, this.getFile().fullPath);
+        if(!Collaboration.getAdapter() || Collaboration.getAdapter().path !== this.getFile().fullPath) {
+            Collaboration.setCodeMirror(this._codeMirror, this.getFile().fullPath);
+        }
+        console.log("triggered from here");
         Collaboration.getAdapter().onChanges(null, changeList);
         this.trigger("editorChange", this, changeList);
     };

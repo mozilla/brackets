@@ -1064,13 +1064,11 @@ define(function (require, exports, module) {
       this.changeInProgress = false;
       this.selectionChanged = false;
 
-      bind(this, 'onChanges');
       bind(this, 'onChange');
       bind(this, 'onCursorActivity');
       bind(this, 'onFocus');
       bind(this, 'onBlur');
 
-      //cm.on('changes', this.onChanges);
       cm.on('change', this.onChange);
       cm.on('cursorActivity', this.onCursorActivity);
       cm.on('focus', this.onFocus);
@@ -1228,7 +1226,7 @@ define(function (require, exports, module) {
     CodeMirrorAdapter.prototype.onChanges = function (_, changes) {
       if (!this.ignoreNextChange) {
         var pair = CodeMirrorAdapter.operationFromCodeMirrorChanges(changes, this.cm);
-        this.trigger('change', pair[0], pair[1], this.path);
+        this.trigger('change', pair[0], pair[1], this.path, changes);
       }
       if (this.selectionChanged) { this.trigger('selectionChange'); }
       this.changeInProgress = false;

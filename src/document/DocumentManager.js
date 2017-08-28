@@ -331,7 +331,6 @@ define(function (require, exports, module) {
 
         if (doc) {
             // use existing document
-            Collaboration.setCodeMirror(doc._masterEditor._codeMirror, doc._masterEditor.getFile().fullPath);
             return new $.Deferred().resolve(doc).promise();
         } else {
 

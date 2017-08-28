@@ -42,7 +42,7 @@ define(function (require, exports, module) {
         _room = options.room || Math.random().toString(36).substring(7);
         console.log(_room);
         _webrtc.joinRoom(_room, function() {
-            _webrtc.sendToAll("new client", {});
+            _webrtc.sendToAllTogether("new client", {});
             _webrtc.on("createdPeer", _initializeNewClient);
 
             _webrtc.connection.on('message', _handleMessage);
@@ -50,25 +50,25 @@ define(function (require, exports, module) {
 
         _pending = []; // pending clients that need to be initialized.
         _changing = false;
-        _events = [];
+        _events = {};
 
         FileSystem.on("rename", function(event, oldPath, newPath) {
             var rootDir = StartupState.project("root");
             var relOldPath = Path.relative(rootDir, oldPath);
             var relNewPath = Path.relative(rootDir, newPath);
-            _webrtc.sendToAll("file-rename", {oldPath: relOldPath, newPath: relNewPath});
+            _webrtc.sendToAllTogether("file-rename", {oldPath: relOldPath, newPath: relNewPath});
         });
 
         FileSystem.on("change", function(event, entry, added, removed) {
             var rootDir = StartupState.project("root");
             if(added) {
                 added.forEach(function(addedFile) {
-                    _webrtc.sendToAll("file-added", {path: Path.relative(rootDir, addedFile.fullPath), isFolder: addedFile.isDirectory});
+                    _webrtc.sendToAllTogether("file-added", {path: Path.relative(rootDir, addedFile.fullPath), isFolder: addedFile.isDirectory});
                 });
             }
             if(removed) {
                 removed.forEach(function(removedFile) {
-                    _webrtc.sendToAll("file-removed", {path: Path.relative(rootDir, removedFile.fullPath), isFolder: removedFile.isDirectory});
+                    _webrtc.sendToAllTogether("file-removed", {path: Path.relative(rootDir, removedFile.fullPath), isFolder: removedFile.isDirectory});
                 });
             }
         });
@@ -83,14 +83,32 @@ define(function (require, exports, module) {
                 _pending.push(msg.from);
                 break;
             case "codemirror-change":
-                var fullPath = Path.join(StartupState.project("root"), payload.path);
+                var relPath = payload.path;
+                var fullPath = Path.join(StartupState.project("root"), relPath);
                 var codemirror = _getOpenCodemirrorInstance(fullPath);
                 if(!codemirror) {
-                    break;
+                    return _handleFileChangeEvent(fullPath, payload.delta);
                 }
-                if(_adapter) {
-                    _adapter.applyOperation(JSON.parse(payload.operation));
+                if(!_adapter || _adapter.path !== fullPath) {
+                    setCodeMirror(codemirror, fullPath);
                 }
+
+                if(_events[relPath]) {
+                    for(var i = _events[relPath].length - 1; i>=0; i--) {
+                        _adapter.ignoreNextChange = true;
+                        _adapter.applyOperation(_events[relPath][i].inverse.ops);
+                    }
+                }
+
+                _adapter.applyOperation(JSON.parse(payload.operation));
+
+                if(_events[relPath]) {
+                    for(var i = 0; i<_events[relPath].length; i++) {
+                        _adapter.ignoreNextChange = true;
+                        _adapter.applyOperation(_events[relPath][i].operation.ops);
+                    }
+                }
+
                 break;
             case "file-rename":
                 oldPath = Path.join(rootDir, payload.oldPath);
@@ -121,7 +139,14 @@ define(function (require, exports, module) {
                 _changing = false;
                 break;
             case "relay":
-                console.log("relayed" + payload);
+                if(_events && _events[payload.path]) {
+                    console.log(payload.hash + " " + _events[payload.path][0].hash);
+                    if(payload.hash !== _events[payload.path][0].hash) {
+                        console.log("Should't be here" + payload);
+                    }
+                    _events[payload.path].splice(0, 1);
+                    console.log("removed event");
+                }
         }
     };
 
@@ -135,38 +160,6 @@ define(function (require, exports, module) {
                 break;
             }
         }
-        _changing = false;
-    };
-
-    function _handleCodemirrorChange(delta, relPath) {
-        if(_changing) {
-            return;
-        }
-        var fullPath = Path.join(StartupState.project("root"), relPath);
-        var codemirror = _getOpenCodemirrorInstance(fullPath);
-
-        if(!codemirror) {
-            return _handleFileChangeEvent(fullPath, delta);
-        }
-        _changing = true;
-        var start = codemirror.indexFromPos(delta.from);
-        // apply the delete operation first
-        if (delta.removed.length > 0) {
-            var delLength = 0;
-            for (var i = 0; i < delta.removed.length; i++) {
-             delLength += delta.removed[i].length;
-            }
-            delLength += delta.removed.length - 1;
-            var from = codemirror.posFromIndex(start);
-            var to = codemirror.posFromIndex(start + delLength);
-            codemirror.replaceRange('', from, to);
-        }
-        // apply insert operation
-        var param = delta.text.join('\n');
-        var from = codemirror.posFromIndex(start);
-        var to = from;
-        codemirror.replaceRange(param, from, to);
-        console.log("writting to file which is open in editor for path" + fullPath);
         _changing = false;
     };
 
@@ -189,10 +182,17 @@ define(function (require, exports, module) {
 
     function _initListeners() {
         _adapter.registerCallbacks({
-            change: function(op, inverse, path) {
-                console.log(op + "  " + inverse);
+            change: function(op, inverse, fullPath, changeList) {
+                var path = Path.relative(StartupState.project("root"), fullPath);
+                console.log("op is " + op + "  " + inverse);
+                if(!_events[path]) {
+                    _events[path] = [];
+                }
+                var eventHash = _getRandomHash();
+                _events[path].push({operation: op, inverse: inverse, hash : eventHash});
+
                 if(_webrtc) {
-                    _webrtc.sendToAll("codemirror-change", {operation: JSON.stringify(op), path: path});
+                    _webrtc.sendToAllTogether("codemirror-change", {operation: JSON.stringify(op), path: path, delta: changeList, hash: eventHash});
                 }
             }
         });
@@ -206,18 +206,19 @@ define(function (require, exports, module) {
         var relPath = Path.relative(StartupState.project("root"), fullPath);
         if(!_events[relPath]) {
             _events[relPath] = [];
+            _events[relPath].push({changes: changeList, event: -1});
+        } else {
+            _events[relPath].push({changes: changeList, event: _events[_events.length-1].events + 1});
         }
 
-        _events[relPath].push({changes: changeList, event: -1});
-        _webrtc.sendToAll("codemirror-change", {changes: changeList, path: relPath});
+        _webrtc.sendToAllTogether("codemirror-change", {changes: changeList, path: relPath});
     };
 
     function setCodeMirror(codemirror, fullPath) {
         if(_adapter) {
             _adapter.detach();
         }
-        var relPath = Path.relative(StartupState.project("root"), fullPath);
-        _adapter = new ot.CodeMirrorAdapter(codemirror, relPath);
+        _adapter = new ot.CodeMirrorAdapter(codemirror, fullPath);
         _initListeners();
     };
 
