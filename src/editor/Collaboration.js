@@ -198,22 +198,6 @@ define(function (require, exports, module) {
         });
     };
 
-    function triggerCodemirrorChange(changeList, fullPath) {
-        if(_changing) {
-            return;
-        }
-
-        var relPath = Path.relative(StartupState.project("root"), fullPath);
-        if(!_events[relPath]) {
-            _events[relPath] = [];
-            _events[relPath].push({changes: changeList, event: -1});
-        } else {
-            _events[relPath].push({changes: changeList, event: _events[_events.length-1].events + 1});
-        }
-
-        _webrtc.sendToAllTogether("codemirror-change", {changes: changeList, path: relPath});
-    };
-
     function setCodeMirror(codemirror, fullPath) {
         if(_adapter) {
             _adapter.detach();
@@ -229,6 +213,5 @@ define(function (require, exports, module) {
     exports.setCodeMirror = setCodeMirror;
     exports.getAdapter = getAdapter;
     exports.connect = connect;
-    exports.triggerCodemirrorChange = triggerCodemirrorChange;
 
 });
