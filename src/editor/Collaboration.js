@@ -8,12 +8,17 @@ define(function (require, exports, module) {
     var EditorManager   = require("editor/EditorManager");
     var CommandManager  = require("command/CommandManager");
     var FilerUtils      = require("filesystem/impls/filer/FilerUtils");
+    var DocumentManager = require("document/DocumentManager");
+    var FilerUtils      = require("filesystem/impls/filer/FilerUtils");
 
     var _webrtc,
         _pending,
         _changing,
         _room,
-        _received = {}; // object to keep track of a file being received to make sure we dont emit it back.
+        _received = {}, // object to keep track of a file being received to make sure we dont emit it back.
+        _buffer;
+
+    var TIME = 5000; // time in mili seconds after which the file buffer should be cleared
 
     function connect(options) {
         if(_webrtc) {
@@ -49,7 +54,9 @@ define(function (require, exports, module) {
 
         _pending = []; // pending clients that need to be initialized.
         _changing = false;
+        _buffer = {};
 
+        window.setInterval(_clearBuffer, TIME);
         FileSystem.on("rename", function(event, oldPath, newPath) {
             var rootDir = StartupState.project("root");
             var relOldPath = Path.relative(rootDir, oldPath);
@@ -202,9 +209,90 @@ define(function (require, exports, module) {
     };
 
     function _handleFileChangeEvent(path, change) {
-        var file = FileSystem.getFileForPath(path);
-        console.log("Should write to file which is not open in editor." + file + "changed " + change);
+        if(!_buffer[path]) {
+            _buffer[path] = [];
+        }
+        _buffer[path].push(change);
     };
+
+    function _clearBuffer() {
+        for(var path in _buffer) {
+            if(_buffer[path].length > 0) {
+                applyDiffsToFile(path);
+            }
+        }
+    }
+
+    function hasPendingDiffsToBeApplied(path) {
+        if(!_webrtc || !_buffer || !_buffer[path] || _buffer[path].length === 0) {
+            return false;
+        }
+        return true;
+    }
+    /**
+     * Applies all the changes kept in the buffer array that have occured on connected clients but have not
+     * yet been written to the filesystem for this file.
+     *
+     * @param {!string} path
+     * @return {$.Promise} A promise object that will be resolved when the buffer array for the file
+     * is cleared or rejected with a FileSystemError if the file is not yet open and can't be read from disk.
+     */
+    function applyDiffsToFile(path) {
+        var result = new $.Deferred();
+        if(!_webrtc || !_buffer || !_buffer[path] || _buffer[path].length === 0) {
+            FilerUtils.readFileAsUTF8(path)
+                .done(function(text, stats) {
+                    result.resolve(text, stats.mtime);
+                })
+                .fail(function(err) {
+                    result.reject(err);
+                });
+            return result.promise();
+        }
+
+        var file = FileSystem.getFileForPath(path);
+        FilerUtils.readFileAsUTF8(path)
+            .done(function (text, stats) {
+                var numberOfChanges = 0;
+                _buffer[path].forEach(function(delta) {
+                    numberOfChanges++;
+                    var start = _indexFromPos(delta.from, text);
+                    // apply the delete operation first
+                    if (delta.removed.length > 0) {
+                        var delLength = 0;
+                        for (var i = 0; i < delta.removed.length; i++) {
+                         delLength += delta.removed[i].length;
+                        }
+
+                        delLength += delta.removed.length - 1;
+                        var from = _posFromIndex(start, text);
+                        var to = _posFromIndex(start + delLength, text);
+                        text = _replaceRange('', from, to, text);
+                    }
+
+                    // apply insert operation
+                    var param = delta.text.join('\n');
+                    var from = _posFromIndex(start, text);
+                    var to = from;
+                    text = _replaceRange(param, from, to, text);
+                });
+
+                FilerUtils.writeFileAsUTF8(path, text)
+                    .done(function() {
+                        console.log("writting to file which is not open in editor for path " + path);
+                        _buffer[path].splice(0, numberOfChanges);
+                        result.resolve(text, stats.mtime);
+                    })
+                    .fail(function(err) {
+                        result.reject(err);
+                    });
+            })
+            .fail(function (fileError) {
+                result.reject(fileError);
+            });
+
+        return result.promise();
+    }
 
     function _getOpenCodemirrorInstance(fullPath) {
         var masterEditor = EditorManager.getCurrentFullEditor();
@@ -212,6 +300,53 @@ define(function (require, exports, module) {
             return masterEditor._codeMirror;
         }
         return null;
+    }
+
+    function _indexFromPos(coords, text) {
+        var textArr = text.split("\n");
+        coords = _clipPos(coords, text);
+        var index = 0;
+        for(var i = 0; i<coords.line; i++) {
+            index += (textArr[i].length + 1);
+        }
+        return (index + coords.ch);
+    }
+
+    function _posFromIndex(index, text) {
+        var textArr = text.split("\n");
+        if(index <= 0) {
+            return {line: 0, ch: 0};
+        }
+        if(index > _indexFromPos({line: textArr.length - 1, ch: textArr[textArr.length - 1].length}, text)) {
+            return {line: textArr.length - 1, ch: textArr[textArr.length - 1].length};
+        }
+        var i = 0;
+        while(index >= (textArr[i].length + 1)) {
+            index -= (textArr[i].length+1);
+            i++;
+        }
+        return {line: i, ch: index};
+    }
+
+    function _replaceRange(params, from, to, text) {
+        var start = _indexFromPos(from, text);
+        var end = _indexFromPos(to, text);
+        return text.substr(0, start) + params + text.substr(end);
+    }
+
+    function _clipPos(pos, text) {
+        text = text.split("\n");
+        if(pos.line < 0) {
+            return {pos: 0, line: 0};
+        } else if (pos.line >= text.length) {
+            return {ch: text[text.length - 1].length, line: text.length - 1};
+        }
+        if(pos.ch < 0) {
+            return {ch: 0, line: pos.line};
+        } else if (pos.ch > text[pos.line].length) {
+            return {ch: text[pos.line].length, line: pos.line};
+        }
+        return pos;
     }
 
     function triggerCodemirrorChange(changeList, fullPath) {
@@ -222,6 +357,8 @@ define(function (require, exports, module) {
         _webrtc.sendToAll("codemirror-change", {changes: changeList, path: relPath});
     };
 
+    exports.hasPendingDiffsToBeApplied = hasPendingDiffsToBeApplied;
+    exports.applyDiffsToFile = applyDiffsToFile;
     exports.connect = connect;
     exports.triggerCodemirrorChange = triggerCodemirrorChange;
 
