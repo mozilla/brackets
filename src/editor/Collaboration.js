@@ -140,7 +140,7 @@ define(function (require, exports, module) {
                     var cm = _getOpenCodemirrorInstance(fullPath);
                     var relPath = Path.relative(StartupState.project("root"), fullPath);
                     if(cm) {
-                        peer.send('file-added', {path: relPath, text: cm.getValue()});
+                        peer.send('file-added', {path: relPath, text: cm.getValue(), isFolder: false});
                     } else {
                         sendFileViaWebRTC(FileSystemEntry.getFileForPath(fullPath), peer);
                     }
@@ -299,7 +299,7 @@ define(function (require, exports, module) {
 
     function _getOpenCodemirrorInstance(fullPath) {
         var masterEditor = EditorManager.getCurrentFullEditor();
-        if(masterEditor.getFile().fullPath === fullPath) {
+        if(masterEditor && masterEditor.getFile().fullPath === fullPath) {
             return masterEditor._codeMirror;
         }
         return null;
@@ -379,14 +379,23 @@ define(function (require, exports, module) {
             return;
         }
 
+        if(addedFile.isDirectory) {
+            if(peer) {
+                peer.send('file-added', {path: relPath, isFolder: true});
+                return;
+            }
+            _webrtc.sendToAll('file-added', {path: relPath, isFolder: true});
+            return;
+        }
+
         if(_isTextFile(addedFile)) {
             FilerUtils.readFileAsUTF8(addedFile._path)
             .done(function(text, stats) {
                 if(peer) {
-                    peer.send('file-added', {path: relPath, text: text});
+                    peer.send('file-added', {path: relPath, text: text, isFolder: false});
                     return;
                 }
-                _webrtc.sendToAll('file-added', {path: relPath, text: text});
+                _webrtc.sendToAll('file-added', {path: relPath, text: text, isFolder: false});
             })
             .fail(function(err) {
                 console.log("Not Able to Read File while Collaborating");
