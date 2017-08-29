@@ -81,6 +81,17 @@ define(function (require, exports, module) {
                         delete _received[relPath];
                         return;
                     }
+                    if(_isTextFile(addedFile)) {
+                        FilerUtils.readFileAsUTF8(addedFile._path)
+                        .done(function(text, stats) {
+                            _webrtc.sendToAll('file-added', {path: relPath, text: text});
+                        })
+                        .fail(function(err) {
+                            console.log("Not Able to Read File while Collaborating");
+                        });
+                        return;
+                    }
+
                     FilerUtils.readFileAsBinary(addedFile._path, function(err, buffer) {
                         if(err) {
                             console.log(err);
@@ -123,10 +134,11 @@ define(function (require, exports, module) {
                     });
                 break;
             case "file-added":
+                _received[payload.path] = true;
                 if(payload.isFolder) {
                     CommandManager.execute("bramble.addFolder", {filename: payload.path});
                 } else {
-                    CommandManager.execute("bramble.addFile", {filename: payload.path, contents: ""});
+                    CommandManager.execute("bramble.addFile", {filename: payload.path, contents: payload.text});
                 }
                 break;
             case "file-removed":
@@ -151,7 +163,7 @@ define(function (require, exports, module) {
 
     function _initializeNewClient(peer) {
         _changing = true;
-        for(var i = 0; i<_pending.length; i++) {
+        for(var i = 0; is_pending.length; i++) {
             if(_pending[i] === peer.id) {
                 peer.send("initClient", EditorManager.getCurrentFullEditor()._codeMirror.getValue());
                 _pending.splice(i, 1);
@@ -357,6 +369,16 @@ define(function (require, exports, module) {
             return {ch: text[pos.line].length, line: pos.line};
         }
         return pos;
+    }
+
+    function _isTextFile(file) {
+        //needs to be checked for text/non-text files
+        var ext = Path.extname(file);
+        if(ext === 'jpg' || ext === 'png' || ext === 'pdf' || ext === 'mp4') {
+            return false;
+        }
+
+        return true;
     }
 
     function triggerCodemirrorChange(changeList, fullPath) {
