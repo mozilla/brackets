@@ -10,6 +10,8 @@ define(function (require, exports, module) {
     var FilerUtils      = require("filesystem/impls/filer/FilerUtils");
     var DocumentManager = require("document/DocumentManager");
     var FilerUtils      = require("filesystem/impls/filer/FilerUtils");
+    var Initializer     = require("editor/Initializer");
+    var FileSystemEntry = require("filesystem/FileSystem");
 
     var _webrtc,
         _pending,
@@ -123,14 +125,6 @@ define(function (require, exports, module) {
                     FileSystem.getFileForPath(fullPath).unlink();
                 }
                 break;
-            case "initClient":
-                if(_changing) {
-                    return;
-                }
-                _changing = true;
-                EditorManager.getCurrentFullEditor()._codeMirror.setValue(payload);
-                _changing = false;
-                break;
         }
     };
 
@@ -139,11 +133,24 @@ define(function (require, exports, module) {
         _changing = true;
         for(var i = 0; is_pending.length; i++) {
             if(_pending[i] === peer.id) {
-                peer.send("initClient", EditorManager.getCurrentFullEditor()._codeMirror.getValue());
+                Initializer.initialize(function(fullPath, err) {
+                    if(err) {
+                        console.log("Error while initializing client " + err);
+                    }
+                    var cm = _getOpenCodemirrorInstance(fullPath);
+                    var relPath = Path.relative(StartupState.project("root"), fullPath);
+                    if(cm) {
+                        peer.send('file-added', {path: relPath, text: cm.getValue()});
+                    } else {
+                        sendFileViaWebRTC(FileSystemEntry.getFileForPath(fullPath), peer);
+                    }
+                });
+
                 _pending.splice(i, 1);
                 break;
             }
         }
+
         _changing = false;
         peer.on("fileTransfer", function (metadata, receiver) {
             console.log("incoming filetransfer", metadata.name, metadata);
@@ -348,7 +355,7 @@ define(function (require, exports, module) {
     function _isTextFile(file) {
         //needs to be checked for text/non-text files
         var ext = Path.extname(file);
-        if(ext === 'jpg' || ext === 'png' || ext === 'pdf' || ext === 'mp4') {
+        if(ext === ".jpg]" || ext === ".png]" || ext === ".pdf]" || ext === ".mp4]") {
             return false;
         }
 
