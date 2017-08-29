@@ -74,33 +74,7 @@ define(function (require, exports, module) {
             var rootDir = StartupState.project("root");
             if(added) {
                 added.forEach(function(addedFile) {
-                    var relPath = Path.relative(StartupState.project("root"), addedFile._path);
-                    // send file only if this client added this file, and not received it
-                    if(_received[relPath]) {
-                        // Clear _received of file name for future events.
-                        delete _received[relPath];
-                        return;
-                    }
-                    if(_isTextFile(addedFile)) {
-                        FilerUtils.readFileAsUTF8(addedFile._path)
-                        .done(function(text, stats) {
-                            _webrtc.sendToAll('file-added', {path: relPath, text: text});
-                        })
-                        .fail(function(err) {
-                            console.log("Not Able to Read File while Collaborating");
-                        });
-                        return;
-                    }
-
-                    FilerUtils.readFileAsBinary(addedFile._path, function(err, buffer) {
-                        if(err) {
-                            console.log(err);
-                        }
-                        var file = new File([buffer], relPath);
-                        _webrtc.getPeers().forEach(function(peer) {
-                            peer.sendFile(file);
-                        });
-                    });
+                    sendFileViaWebRTC(addedFile);
                 });
             }
             if(removed) {
@@ -389,9 +363,48 @@ define(function (require, exports, module) {
         _webrtc.sendToAll("codemirror-change", {changes: changeList, path: relPath});
     };
 
+    function sendFileViaWebRTC(addedFile, peer) {
+        var relPath = Path.relative(StartupState.project("root"), addedFile._path);
+        // send file only if this client added this file, and not received it
+        if(_received[relPath]) {
+            // Clear _received of file name for future events.
+            delete _received[relPath];
+            return;
+        }
+
+        if(_isTextFile(addedFile)) {
+            FilerUtils.readFileAsUTF8(addedFile._path)
+            .done(function(text, stats) {
+                if(peer) {
+                    peer.send('file-added', {path: relPath, text: text});
+                    return;
+                }
+                _webrtc.sendToAll('file-added', {path: relPath, text: text});
+            })
+            .fail(function(err) {
+                console.log("Not Able to Read File while Collaborating");
+            });
+            return;
+        }
+
+        FilerUtils.readFileAsBinary(addedFile._path, function(err, buffer) {
+            if(err) {
+                console.log(err);
+            }
+            var file = new File([buffer], relPath);
+            if(peer) {
+                peer.sendFile(file);
+                return;
+            }
+            _webrtc.getPeers().forEach(function(peer) {
+                peer.sendFile(file);
+            });
+        });
+    }
+
     exports.hasPendingDiffsToBeApplied = hasPendingDiffsToBeApplied;
     exports.applyDiffsToFile = applyDiffsToFile;
     exports.connect = connect;
     exports.triggerCodemirrorChange = triggerCodemirrorChange;
-
+    exports.sendFileViaWebRTC = sendFileViaWebRTC;
 });
