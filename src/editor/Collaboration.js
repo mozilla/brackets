@@ -22,7 +22,8 @@ define(function (require, exports, module) {
         _renaming,
         _fs,
         _received = {}, // object to keep track of a file being received to make sure we dont emit it back.
-        _buffer;
+        _buffer,
+        _initialized;
 
     var TIME = 5000; // time in mili seconds after which the file buffer should be cleared
 
@@ -125,11 +126,23 @@ define(function (require, exports, module) {
                     FileSystem.getFileForPath(fullPath).unlink();
                 }
                 break;
+            case "clear-filesystem":
+            if(_initialized) {
+                return;
+            }
+
+            _initialized = true;
+            var sh = new _fs.Shell();
+            sh.rm(StartupState.project("root"), { recursive: true }, function(err) {
+              if(err) {
+                console.log("Error while initializing filesystem " + err);
+              }
+            });
         }
     };
 
     function _initializeNewClient(peer) {
-
+        peer.send('clear-filesystem');
         var sh = new _fs.Shell();
         sh.find(StartupState.project("root"), {exec: function(fullPath, next) {
             var cm = _getOpenCodemirrorInstance(fullPath);
