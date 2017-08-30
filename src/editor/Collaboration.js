@@ -10,20 +10,25 @@ define(function (require, exports, module) {
     var FilerUtils      = require("filesystem/impls/filer/FilerUtils");
     var DocumentManager = require("document/DocumentManager");
     var FilerUtils      = require("filesystem/impls/filer/FilerUtils");
+    var Filer           = require("thirdparty/filer/dist/filer.min");
+    var Shell           = require("thirdparty/filer/dist/filer.min").Shell;
     var Initializer     = require("editor/Initializer");
-    var FileSystemEntry = require("filesystem/FileSystem");
+    var fs              = FileSystem.Shell;
 
     var _webrtc,
-        _pending,
         _changing,
         _room,
         _received = {}, // object to keep track of a file being received to make sure we dont emit it back.
         _renaming,
+        _fs,
+        _received = {}; // object to keep track of a file being received to make sure we dont emit it back.
         _buffer;
 
     var TIME = 5000; // time in mili seconds after which the file buffer should be cleared
 
     function connect(options) {
+        _fs = new Filer.FileSystem();
+        console.log("fs is " + fs);
         if(_webrtc) {
             console.error("Collaboration already initialized");
             return;
@@ -49,13 +54,11 @@ define(function (require, exports, module) {
         _room = options.room || Math.random().toString(36).substring(7);
         console.log(_room);
         _webrtc.joinRoom(_room, function() {
-            _webrtc.sendToAll("new client", {});
             _webrtc.on("createdPeer", _initializeNewClient);
 
             _webrtc.connection.on('message', _handleMessage);
         });
 
-        _pending = []; // pending clients that need to be initialized.
         _changing = false;
         _renaming = {};
         _buffer = {};
@@ -92,9 +95,6 @@ define(function (require, exports, module) {
         var fullPath, oldPath, newPath;
         var rootDir = StartupState.project("root");
         switch(msg.type) {
-            case "new client":
-                _pending.push(msg.from);
-                break;
             case "codemirror-change":
                 payload.changes.forEach(function(delta) {
                     _handleCodemirrorChange(delta, payload.path);
@@ -128,30 +128,25 @@ define(function (require, exports, module) {
         }
     };
 
-
     function _initializeNewClient(peer) {
-        _changing = true;
-        for(var i = 0; is_pending.length; i++) {
-            if(_pending[i] === peer.id) {
-                Initializer.initialize(function(fullPath, err) {
-                    if(err) {
-                        console.log("Error while initializing client " + err);
-                    }
-                    var cm = _getOpenCodemirrorInstance(fullPath);
-                    var relPath = Path.relative(StartupState.project("root"), fullPath);
-                    if(cm) {
-                        peer.send('file-added', {path: relPath, text: cm.getValue(), isFolder: false});
-                    } else {
-                        sendFileViaWebRTC(FileSystemEntry.getFileForPath(fullPath), peer);
-                    }
-                });
 
-                _pending.splice(i, 1);
-                break;
+        var sh = new _fs.Shell();
+        sh.find(StartupState.project("root"), {exec: function(fullPath, next) {
+            var cm = _getOpenCodemirrorInstance(fullPath);
+            var relPath = Path.relative(StartupState.project("root"), fullPath);
+            if(cm) {
+                peer.send('file-added', {path: relPath, text: cm.getValue(), isFolder: false});
+            } else {
+                sendFileViaWebRTC(FileSystem.getFileForPath(fullPath), peer);
             }
-        }
 
-        _changing = false;
+            next();
+        }}, function(err, found) {
+            if(err) {
+                console.log(err);
+            }
+        });
+
         peer.on("fileTransfer", function (metadata, receiver) {
             console.log("incoming filetransfer", metadata.name, metadata);
             receiver.on("progress", function (bytesReceived) {
