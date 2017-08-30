@@ -21,7 +21,7 @@ define(function (require, exports, module) {
         _received = {}, // object to keep track of a file being received to make sure we dont emit it back.
         _renaming,
         _fs,
-        _received = {}; // object to keep track of a file being received to make sure we dont emit it back.
+        _received = {}, // object to keep track of a file being received to make sure we dont emit it back.
         _buffer;
 
     var TIME = 5000; // time in mili seconds after which the file buffer should be cleared
