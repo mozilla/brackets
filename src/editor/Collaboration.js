@@ -66,7 +66,6 @@ define(function (require, exports, module) {
                         return (Path.dirname(fullPath) === StartupState.project("root"));
                     }))
                     .then(function() {
-                        console.log("sent init me man");
                         _webrtc.sendToAll('initialize-me', true);
                     })
                     .fail(function(err) {
