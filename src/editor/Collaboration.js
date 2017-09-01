@@ -23,13 +23,14 @@ define(function (require, exports, module) {
         _fs,
         _received = {}, // object to keep track of a file being received to make sure we dont emit it back.
         _buffer,
-        _initialized;
+        _initialized,
+        _receiveQueue,
+        _deletedRemotely;
 
     var TIME = 5000; // time in mili seconds after which the file buffer should be cleared
 
     function connect(options) {
         _fs = new Filer.FileSystem();
-        console.log("fs is " + fs);
         if(_webrtc) {
             console.error("Collaboration already initialized");
             return;
@@ -55,7 +56,25 @@ define(function (require, exports, module) {
         _room = options.room || Math.random().toString(36).substring(7);
         console.log(_room);
         _webrtc.joinRoom(_room, function() {
-            _webrtc.on("createdPeer", _initializeNewClient);
+            if(_webrtc.getPeers().length > 0) {
+                // Peers are already collaborating, hence we need to update our filesystem.
+                var sh = new _fs.Shell();
+                sh.find(StartupState.project("root"), {}, function(err, found) {
+                    if(err) {
+                        console.log(err);
+                    }
+                    _deleteStructure(found.filter(function(fullPath) {
+                        return (Path.dirname(fullPath) === StartupState.project("root"));
+                    }))
+                    .then(function() {
+                        console.log("sent init me man");
+                        _webrtc.sendToAll('initialize-me', true);
+                    })
+                    .fail(function(err) {
+                        console.log(err);
+                    });
+                });
+            }
 
             _webrtc.connection.on('message', _handleMessage);
         });
@@ -63,6 +82,9 @@ define(function (require, exports, module) {
         _changing = false;
         _renaming = {};
         _buffer = {};
+        _initialized = {};
+        _deletedRemotely= {};
+        _receiveQueue = [];
 
         window.setInterval(_clearBuffer, TIME);
         FileSystem.on("rename", function(event, oldPath, newPath) {
@@ -85,11 +107,56 @@ define(function (require, exports, module) {
             }
             if(removed) {
                 removed.forEach(function(removedFile) {
-                    _webrtc.sendToAll("file-removed", {path: Path.relative(rootDir, removedFile.fullPath), isFolder: removedFile.isDirectory});
+                    var relPath = Path.relative(rootDir, removedFile.fullPath);
+                    if(_deletedRemotely[removedFile.fullPath]) {
+                        delete _deletedRemotely[removedFile.fullPath];
+                        return;
+                    }
+                    _webrtc.sendToAll("file-removed", {path: relPath, isFolder: removedFile.isDirectory});
                 });
             }
         });
     };
+
+    function _deleteStructure(found) {
+        var result = new $.Deferred();
+        if(found.length === 0) {
+            result.resolve();
+            return result.promise();
+        }
+
+        var fullPath = found[0];
+        found.splice(0, 1);
+
+        //skip root directory
+        if(fullPath === StartupState.project("root") + '/') {
+            return _deleteStructure(found);
+        }
+
+        console.log("path deleted is " + fullPath);
+        if(fullPath.endsWith('/')) {
+            _deleteStructure(found)
+                .then(function() {
+                    _removeFile(fullPath, true, function() {
+                        result.resolve();
+                    });
+                })
+                .fail(function(err) {
+                    result.reject();
+                });
+        } else {
+            _deleteStructure(found)
+                .then(function() {
+                    _removeFile(fullPath, false, function() {
+                        result.resolve();
+                    });
+                })
+                .fail(function(err) {
+                    result.reject(err);
+                });
+        }
+        return result.promise();
+    }
 
     function _handleMessage(msg) {
         var payload = msg.payload;
@@ -119,38 +186,63 @@ define(function (require, exports, module) {
                 }
                 break;
             case "file-removed":
-                fullPath = Path.join(rootDir, payload.path);
-                if(payload.isFolder) {
-                    FileSystem.getDirectoryForPath(fullPath).unlink();
-                } else {
-                    FileSystem.getFileForPath(fullPath).unlink();
+                var fullPath = Path.join(rootDir, payload.path);
+                _removeFile(fullPath, payload.isFolder);
+                break;
+            case "initialize-file":
+                if(_initialized[payload.path]) {
+                    if(!payload.fromCodemirror) {
+                        return;
+                    }
+                }
+
+                _received[payload.path] = true;
+                _initialized[payload.path] = true;
+                _receiveQueue.push(payload);
+
+                if(_receiveQueue.length === 1) {
+                    _startInitializingfiles(_receiveQueue[0]);
                 }
                 break;
-            case "clear-filesystem":
-            if(_initialized) {
-                return;
-            }
-
-            _initialized = true;
-            var sh = new _fs.Shell();
-            sh.rm(StartupState.project("root"), { recursive: true }, function(err) {
-              if(err) {
-                console.log("Error while initializing filesystem " + err);
-              }
-            });
+            case "initialize-me":
+                if(_webrtc.getPeers(msg.from)[0]) {
+                    _initializeNewClient(_webrtc.getPeers(msg.from)[0]);
+                } else {
+                    console.log("Client " + msg.from + " Not found");
+                }
         }
     };
 
+    function _startInitializingfiles(payload) {
+        if(payload.isFolder) {
+            CommandManager.execute("bramble.addFolder", {filename: payload.path})
+            .always(function() {
+                _receiveQueue.splice(0, 1);
+                if(_receiveQueue.length > 0) {
+                    _startInitializingfiles(_receiveQueue[0]);
+                }
+            });
+        } else {
+            CommandManager.execute("bramble.addFile", {filename: payload.path, contents: payload.text})
+            .always(function() {
+                _receiveQueue.splice(0, 1);
+                if(_receiveQueue.length > 0) {
+                    _startInitializingfiles(_receiveQueue[0]);
+                }
+            });
+        }
+    }
+
     function _initializeNewClient(peer) {
-        peer.send('clear-filesystem');
         var sh = new _fs.Shell();
         sh.find(StartupState.project("root"), {exec: function(fullPath, next) {
+            console.log(fullPath);
             var cm = _getOpenCodemirrorInstance(fullPath);
             var relPath = Path.relative(StartupState.project("root"), fullPath);
             if(cm) {
-                peer.send('file-added', {path: relPath, text: cm.getValue(), isFolder: false});
+                peer.send('initialize-file', {path: relPath, text: cm.getValue(), isFolder: false, fromCodemirror: true});
             } else {
-                sendFileViaWebRTC(FileSystem.getFileForPath(fullPath), peer);
+                sendFileViaWebRTC(FileSystem.getFileForPath(fullPath), peer, 'initialize-file');
             }
 
             next();
@@ -186,6 +278,20 @@ define(function (require, exports, module) {
             });
         });
     };
+
+    function _removeFile(fullPath, isFolder, callback) {
+        callback = callback || function() {};
+        _deletedRemotely[fullPath] = true;
+        if(isFolder) {
+            FileSystem.getDirectoryForPath(fullPath).unlink(function() {
+                callback();
+            });
+        } else {
+            FileSystem.getFileForPath(fullPath).unlink(function() {
+                callback();
+            });
+        }
+    }
 
     function _handleCodemirrorChange(delta, relPath) {
         if(_changing) {
@@ -234,12 +340,6 @@ define(function (require, exports, module) {
         }
     }
 
-    function hasPendingDiffsToBeApplied(path) {
-        if(!_webrtc || !_buffer || !_buffer[path] || _buffer[path].length === 0) {
-            return false;
-        }
-        return true;
-    }
     /**
      * Applies all the changes kept in the buffer array that have occured on connected clients but have not
      * yet been written to the filesystem for this file.
@@ -306,9 +406,9 @@ define(function (require, exports, module) {
     }
 
     function _getOpenCodemirrorInstance(fullPath) {
-        var masterEditor = EditorManager.getCurrentFullEditor();
-        if(masterEditor && masterEditor.getFile().fullPath === fullPath) {
-            return masterEditor._codeMirror;
+        var doc = DocumentManager.getOpenDocumentForPath(fullPath);
+        if(doc && doc._masterEditor) {
+            return doc._masterEditor._codeMirror;
         }
         return null;
     }
@@ -378,7 +478,8 @@ define(function (require, exports, module) {
         _webrtc.sendToAll("codemirror-change", {changes: changeList, path: relPath});
     };
 
-    function sendFileViaWebRTC(addedFile, peer) {
+    function sendFileViaWebRTC(addedFile, peer, message) {
+        message = message || 'file-added';
         var relPath = Path.relative(StartupState.project("root"), addedFile._path);
         // send file only if this client added this file, and not received it
         if(_received[relPath]) {
@@ -389,10 +490,10 @@ define(function (require, exports, module) {
 
         if(addedFile.isDirectory) {
             if(peer) {
-                peer.send('file-added', {path: relPath, isFolder: true});
+                peer.send(message, {path: relPath, isFolder: true});
                 return;
             }
-            _webrtc.sendToAll('file-added', {path: relPath, isFolder: true});
+            _webrtc.sendToAll(message, {path: relPath, isFolder: true});
             return;
         }
 
@@ -400,10 +501,10 @@ define(function (require, exports, module) {
             FilerUtils.readFileAsUTF8(addedFile._path)
             .done(function(text, stats) {
                 if(peer) {
-                    peer.send('file-added', {path: relPath, text: text, isFolder: false});
+                    peer.send(message, {path: relPath, text: text, isFolder: false});
                     return;
                 }
-                _webrtc.sendToAll('file-added', {path: relPath, text: text, isFolder: false});
+                _webrtc.sendToAll(message, {path: relPath, text: text, isFolder: false});
             })
             .fail(function(err) {
                 console.log("Not Able to Read File while Collaborating");
@@ -426,7 +527,6 @@ define(function (require, exports, module) {
         });
     }
 
-    exports.hasPendingDiffsToBeApplied = hasPendingDiffsToBeApplied;
     exports.applyDiffsToFile = applyDiffsToFile;
     exports.connect = connect;
     exports.triggerCodemirrorChange = triggerCodemirrorChange;
