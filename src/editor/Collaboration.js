@@ -12,7 +12,6 @@ define(function (require, exports, module) {
     var FilerUtils      = require("filesystem/impls/filer/FilerUtils");
     var Filer           = require("thirdparty/filer/dist/filer.min");
     var Shell           = require("thirdparty/filer/dist/filer.min").Shell;
-    var Initializer     = require("editor/Initializer");
     var fs              = FileSystem.Shell;
 
     var _webrtc,
