@@ -12,6 +12,7 @@ define(function (require, exports, module) {
     var FilerUtils      = require("filesystem/impls/filer/FilerUtils");
     var Filer           = require("thirdparty/filer/dist/filer.min");
     var Shell           = require("thirdparty/filer/dist/filer.min").Shell;
+    var BracketsFiler   = require("filesystem/impls/filer/BracketsFiler");
     var fs              = FileSystem.Shell;
 
     var _webrtc,
@@ -20,7 +21,6 @@ define(function (require, exports, module) {
         _received = {}, // object to keep track of a file being received to make sure we dont emit it back.
         _renaming,
         _fs,
-        _received = {}, // object to keep track of a file being received to make sure we dont emit it back.
         _buffer,
         _initialized,
         _receiveQueue,
@@ -54,23 +54,27 @@ define(function (require, exports, module) {
         }
         _room = options.room || Math.random().toString(36).substring(7);
         console.log(_room);
+        _fs = BracketsFiler.fs();
         _webrtc.joinRoom(_room, function() {
             if(_webrtc.getPeers().length > 0) {
-                // Peers are already collaborating, hence we need to update our filesystem.
-                var sh = new _fs.Shell();
-                sh.find(StartupState.project("root"), {}, function(err, found) {
+                var rootDir = StartupState.project("root");
+                _fs.ls(rootDir, {}, function(err, entries) {
                     if(err) {
                         console.log(err);
+                        return;
                     }
-                    _deleteStructure(found.filter(function(fullPath) {
-                        return (Path.dirname(fullPath) === StartupState.project("root"));
-                    }))
-                    .then(function() {
-                        _webrtc.sendToAll('initialize-me', true);
-                    })
-                    .fail(function(err) {
-                        console.log(err);
+
+                    var paths = entries.map(function(entry) {
+                        var fullPath = Path.join(rootDir, entry.path);
+                        return entry.type === "DIRECTORY" ? fullPath.replace(/\/?$/, "/") : fullPath;
                     });
+                    _deleteStructure(paths)
+                        .then(function() {
+                            _webrtc.sendToAll('initialize-me', true);
+                        })
+                        .fail(function(err) {
+                            console.log(err);
+                        });
                 });
             }
 
@@ -117,23 +121,13 @@ define(function (require, exports, module) {
     };
 
     function _deleteStructure(found) {
-        var result = new $.Deferred();
         if(found.length === 0) {
             return (new $.Deferred()).resolve().promise();
         }
 
         var fullPath = found.shift();
-
-        //skip root directory
-        if(fullPath === StartupState.project("root") + '/') {
-            return _deleteStructure(found);
-        }
-
         return _deleteStructure(found)
             .then(function() {
-                if(fullPath === StartupState.project("root") + '/') {
-                    return (new $.Deferred()).resolve().promise();
-                }
                 return _removeFile(fullPath, fullPath.endsWith('/'));
             });
     }
@@ -214,24 +208,38 @@ define(function (require, exports, module) {
     }
 
     function _initializeNewClient(peer) {
-        var sh = new _fs.Shell();
-        sh.find(StartupState.project("root"), {exec: function(fullPath, next) {
-            console.log(fullPath);
-            var cm = _getOpenCodemirrorInstance(fullPath);
-            var relPath = Path.relative(StartupState.project("root"), fullPath);
-            if(cm) {
-                peer.send('initialize-file', {path: relPath, text: cm.getValue(), isFolder: false, fromCodemirror: true});
-            } else {
-                sendFileViaWebRTC(FileSystem.getFileForPath(fullPath), peer, 'initialize-file');
-            }
-
-            next();
-        }}, function(err, found) {
+        _fs.ls(StartupState.project("root"), { recursive: true }, function(err, entries) {
             if(err) {
                 console.log(err);
+                return;
             }
-        });
 
+            function processPath(fullPath) {
+                var cm = _getOpenCodemirrorInstance(fullPath);
+                var relPath = Path.relative(StartupState.project("root"), fullPath);
+                if(cm) {
+                    peer.send('initialize-file', {path: relPath, text: cm.getValue(), isFolder: false, fromCodemirror: true});
+                } else {
+                    sendFileViaWebRTC(FileSystem.getFileForPath(fullPath), peer, 'initialize-file');
+                }
+
+            }
+
+            function processEntries(parentPath, entries) {
+                entries.forEach(function(entry) {
+                    var fullPath = Path.join(parentPath, entry.path);
+                    if(entry.type !== 'DIRECTORY') {
+                        processPath(fullPath);
+                    } else {
+                        processPath(fullPath.replace(/\/?$/, "/"));
+                        processEntries(fullPath, entry.content);   
+                    }
+                });
+            }
+
+            processEntries(StartupState.project("root"), entries);
+        });
+        
         peer.on("fileTransfer", function (metadata, receiver) {
             console.log("incoming filetransfer", metadata.name, metadata);
             receiver.on("progress", function (bytesReceived) {
