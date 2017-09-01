@@ -120,41 +120,23 @@ define(function (require, exports, module) {
     function _deleteStructure(found) {
         var result = new $.Deferred();
         if(found.length === 0) {
-            result.resolve();
-            return result.promise();
+            return (new $.Deferred()).resolve().promise();
         }
 
-        var fullPath = found[0];
-        found.splice(0, 1);
+        var fullPath = found.shift();
 
         //skip root directory
         if(fullPath === StartupState.project("root") + '/') {
             return _deleteStructure(found);
         }
 
-        console.log("path deleted is " + fullPath);
-        if(fullPath.endsWith('/')) {
-            _deleteStructure(found)
-                .then(function() {
-                    _removeFile(fullPath, true, function() {
-                        result.resolve();
-                    });
-                })
-                .fail(function(err) {
-                    result.reject();
-                });
-        } else {
-            _deleteStructure(found)
-                .then(function() {
-                    _removeFile(fullPath, false, function() {
-                        result.resolve();
-                    });
-                })
-                .fail(function(err) {
-                    result.reject(err);
-                });
-        }
-        return result.promise();
+        return _deleteStructure(found)
+            .then(function() {
+                if(fullPath === StartupState.project("root") + '/') {
+                    return (new $.Deferred()).resolve().promise();
+                }
+                return _removeFile(fullPath, fullPath.endsWith('/'));
+            });
     }
 
     function _handleMessage(msg) {
@@ -278,18 +260,17 @@ define(function (require, exports, module) {
         });
     };
 
-    function _removeFile(fullPath, isFolder, callback) {
-        callback = callback || function() {};
+    function _removeFile(fullPath, isFolder) {
+        var result = new $.Deferred();
         _deletedRemotely[fullPath] = true;
-        if(isFolder) {
-            FileSystem.getDirectoryForPath(fullPath).unlink(function() {
-                callback();
-            });
-        } else {
-            FileSystem.getFileForPath(fullPath).unlink(function() {
-                callback();
-            });
-        }
+        var fnName = isFolder ? "getDirectoryForPath" : "getFileForPath";
+        FileSystem[fnName](fullPath).unlink(function(err) {
+            if(err) {
+                result.reject(err);
+            }
+            result.resolve();
+        });
+        return result.promise();
     }
 
     function _handleCodemirrorChange(delta, relPath) {
