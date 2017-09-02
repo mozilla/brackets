@@ -104,7 +104,7 @@ define(function (require, exports, module) {
             var rootDir = StartupState.project("root");
             if(added) {
                 added.forEach(function(addedFile) {
-                    sendFileViaWebRTC(addedFile);
+                    _sendFileViaWebRTC(addedFile);
                 });
             }
             if(removed) {
@@ -241,7 +241,7 @@ define(function (require, exports, module) {
                 if(cm) {
                     peer.send('initialize-file', {path: relPath, text: cm.getValue(), isFolder: false, fromCodemirror: true});
                 } else {
-                    sendFileViaWebRTC(FileSystem.getFileForPath(fullPath), peer, 'initialize-file');
+                    _sendFileViaWebRTC(FileSystem.getFileForPath(fullPath), peer, 'initialize-file');
                 }
 
             }
@@ -498,7 +498,7 @@ define(function (require, exports, module) {
         _webrtc.sendToAll("codemirror-change", {changes: changeList, path: relPath});
     };
 
-    function sendFileViaWebRTC(addedFile, peer, message) {
+    function _sendFileViaWebRTC(addedFile, peer, message) {
         message = message || 'file-added';
         var relPath = Path.relative(StartupState.project("root"), addedFile._path);
         // send file only if this client added this file, and not received it
@@ -550,5 +550,4 @@ define(function (require, exports, module) {
     exports.applyDiffsToFile = applyDiffsToFile;
     exports.connect = connect;
     exports.triggerCodemirrorChange = triggerCodemirrorChange;
-    exports.sendFileViaWebRTC = sendFileViaWebRTC;
 });
