@@ -9,7 +9,7 @@ define(function (require, exports, module) {
     var CommandManager  = require("command/CommandManager");
     var FilerUtils      = require("filesystem/impls/filer/FilerUtils");
     var DocumentManager = require("document/DocumentManager");
-    var FilerUtils      = require("filesystem/impls/filer/FilerUtils");
+    var FilerUtils      = require("filesystem/impls/filer/FilerUtils"); 
     var BracketsFiler   = require("filesystem/impls/filer/BracketsFiler");
 
     var _webrtc,
@@ -25,6 +25,10 @@ define(function (require, exports, module) {
 
     var TIME = 5000; // time in mili seconds after which the file buffer should be cleared
 
+    /*
+     * Called to initialize a WebRTC connection.
+     * @param : options : {serverUrl : Url to the WebRTC Turn Server, room : Unique identifier of the room to connect to} 
+     */
     function connect(options) {
         if(_webrtc) {
             console.error("Collaboration already initialized");
@@ -64,7 +68,7 @@ define(function (require, exports, module) {
                         var fullPath = Path.join(rootDir, entry.path);
                         return entry.type === "DIRECTORY" ? fullPath.replace(/\/?$/, "/") : fullPath;
                     });
-                    _deleteStructure(paths)
+                    _removeLocally(paths)
                         .then(function() {
                             _webrtc.sendToAll('initialize-me', true);
                         })
@@ -116,18 +120,29 @@ define(function (require, exports, module) {
         });
     };
 
-    function _deleteStructure(found) {
+    /*
+     * Remove the set of files contained int the found array
+     * This method doesn't emit these delete events to connected clients.
+     * @param : found : Array containing the file paths to be deleted.
+     * expects a '/' in the end for foler.
+     */
+    function _removeLocally(found) {
         if(found.length === 0) {
             return (new $.Deferred()).resolve().promise();
         }
 
         var fullPath = found.shift();
-        return _deleteStructure(found)
+        return _removeLocally(found)
             .then(function() {
                 return _removeFile(fullPath, fullPath.endsWith('/'));
             });
     }
 
+
+    /*
+     * Handles events received from remote clients
+     * @param : msg : {type : to identify the type of event, payload : data associated with the data}
+     */
     function _handleMessage(msg) {
         var payload = msg.payload;
         var fullPath, oldPath, newPath;
@@ -183,6 +198,12 @@ define(function (require, exports, module) {
         }
     };
 
+    /*
+     * Function to start initializing the file system sequentially in order of files
+     * received from the connected peers.
+     * Using a sequential approach to make sure we don't initialize a file inside a folder
+     * before the folder is made.
+     */
     function _startInitializingfiles(payload) {
         if(payload.isFolder) {
             CommandManager.execute("bramble.addFolder", {filename: payload.path})
@@ -203,6 +224,10 @@ define(function (require, exports, module) {
         }
     }
 
+    /*
+     * Function that recursively walks through all fils and folders to initialize a 
+     * newly connected peer.
+     */
     function _initializeNewClient(peer) {
         _fs.ls(StartupState.project("root"), { recursive: true }, function(err, entries) {
             if(err) {
@@ -263,6 +288,11 @@ define(function (require, exports, module) {
         });
     };
 
+    /*
+     * Function to remove a file/folder that was deleted by a connected peer.
+     * @param : fullPath : absolute path to the file to be deleted
+     * @param : isFolder : Boolean 
+     */
     function _removeFile(fullPath, isFolder) {
         var result = new $.Deferred();
         _deletedRemotely[fullPath] = true;
@@ -276,6 +306,13 @@ define(function (require, exports, module) {
         return result.promise();
     }
 
+    /*
+     * Function to apply changes made in a peer's editor to the current brackets instance.
+     * If we have a codemirror instance open for the file, we apply the changes directly to it.
+     * Else we push to a buffer that keeps track of the changes made in the file by other clients
+     * and applies those changes directly to the filesystem every TIME seconds, or whenever the user
+     * opens that file.
+     */
     function _handleCodemirrorChange(delta, relPath) {
         if(_changing) {
             return;
