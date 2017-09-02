@@ -10,10 +10,7 @@ define(function (require, exports, module) {
     var FilerUtils      = require("filesystem/impls/filer/FilerUtils");
     var DocumentManager = require("document/DocumentManager");
     var FilerUtils      = require("filesystem/impls/filer/FilerUtils");
-    var Filer           = require("thirdparty/filer/dist/filer.min");
-    var Shell           = require("thirdparty/filer/dist/filer.min").Shell;
     var BracketsFiler   = require("filesystem/impls/filer/BracketsFiler");
-    var fs              = FileSystem.Shell;
 
     var _webrtc,
         _changing,
@@ -29,7 +26,6 @@ define(function (require, exports, module) {
     var TIME = 5000; // time in mili seconds after which the file buffer should be cleared
 
     function connect(options) {
-        _fs = new Filer.FileSystem();
         if(_webrtc) {
             console.error("Collaboration already initialized");
             return;
