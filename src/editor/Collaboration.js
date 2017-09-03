@@ -25,7 +25,7 @@ define(function (require, exports, module) {
 
     var TIME = 5000; // time in mili seconds after which the file buffer should be cleared
 
-    /*
+    /**
      * Called to initialize a WebRTC connection.
      * @param : options : {serverUrl : Url to the WebRTC Turn Server, room : Unique identifier of the room to connect to} 
      */
@@ -120,7 +120,7 @@ define(function (require, exports, module) {
         });
     };
 
-    /*
+    /**
      * Remove the set of files contained int the found array
      * This method doesn't emit these delete events to connected clients.
      * @param : found : Array containing the file paths to be deleted.
@@ -139,7 +139,7 @@ define(function (require, exports, module) {
     }
 
 
-    /*
+    /**
      * Handles events received from remote clients
      * @param : msg : {type : to identify the type of event, payload : data associated with the data}
      */
@@ -198,7 +198,7 @@ define(function (require, exports, module) {
         }
     };
 
-    /*
+    /**
      * Function to start initializing the file system sequentially in order of files
      * received from the connected peers.
      * Using a sequential approach to make sure we don't initialize a file inside a folder
@@ -224,7 +224,7 @@ define(function (require, exports, module) {
         }
     }
 
-    /*
+    /**
      * Function that recursively walks through all fils and folders to initialize a 
      * newly connected peer.
      */
@@ -288,7 +288,7 @@ define(function (require, exports, module) {
         });
     };
 
-    /*
+    /**
      * Function to remove a file/folder that was deleted by a connected peer.
      * @param : fullPath : absolute path to the file to be deleted
      * @param : isFolder : Boolean 
@@ -306,7 +306,7 @@ define(function (require, exports, module) {
         return result.promise();
     }
 
-    /*
+    /**
      * Function to apply changes made in a peer's editor to the current brackets instance.
      * If we have a codemirror instance open for the file, we apply the changes directly to it.
      * Else we push to a buffer that keeps track of the changes made in the file by other clients
@@ -425,6 +425,11 @@ define(function (require, exports, module) {
         return result.promise();
     }
 
+    /**
+     * Returns a codemirror instance associated with the file identified by the parameter
+     * Returns null if the file is not open in a codemirror instance and resides only in the filesystems
+     * @param {String} : Absolute path to the file
+     */
     function _getOpenCodemirrorInstance(fullPath) {
         var doc = DocumentManager.getOpenDocumentForPath(fullPath);
         if(doc && doc._masterEditor) {
@@ -480,6 +485,12 @@ define(function (require, exports, module) {
         return pos;
     }
 
+    /**
+     * Function that returns weather a filer is a text file or not
+     * Used for differentiating the way in which the file is sent to the client
+     * A binary file is sent peer to peer, whereas a text file is sent through a socket server.
+     * @param {File} : file to be identified as text/binary.
+     */
     function _isTextFile(file) {
         //needs to be checked for text/non-text files
         var ext = Path.extname(file);
@@ -490,6 +501,13 @@ define(function (require, exports, module) {
         return true;
     }
 
+    /**
+     * Public function that is triggered when the user makes a change to his editor.
+     * The function sends this change to all the connected peers for them to apply the same
+     * to their editors.
+     * @param {Array} Array containing set of changes made by the user
+     * fullPath {String} Identifier of the file to which the change was made.
+     */
     function triggerCodemirrorChange(changeList, fullPath) {
         if(_changing) {
             return;
@@ -498,6 +516,14 @@ define(function (require, exports, module) {
         _webrtc.sendToAll("codemirror-change", {changes: changeList, path: relPath});
     };
 
+    /**
+     * Private function to send a file to the connected peers.
+     * This could be a newly added file at this client's brackets istance, or could be a file
+     * that a peer has asked for initializing his/her filesystem.
+     * @param {!File} : addedFile : File that is to be sent
+     * @param {!peer} : Peer to which the image needs to be sent. Default as all the peers
+     * @param {!String} : Type of message to identify the event on remote clients. Default as 'file-addeed'.
+     */
     function _sendFileViaWebRTC(addedFile, peer, message) {
         message = message || 'file-added';
         var relPath = Path.relative(StartupState.project("root"), addedFile._path);
