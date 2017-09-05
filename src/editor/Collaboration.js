@@ -253,7 +253,7 @@ define(function (require, exports, module) {
                         processPath(fullPath);
                     } else {
                         processPath(fullPath.replace(/\/?$/, "/"));
-                        processEntries(fullPath, entry.content);   
+                        processEntries(fullPath, entry.contents);
                     }
                 });
             }
