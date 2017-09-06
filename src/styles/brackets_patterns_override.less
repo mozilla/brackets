@@ -432,6 +432,7 @@ a:focus {
                 &::before {
                     content: "✓\00a0"; /* non-breaking space */
                     visibility: hidden;
+                    float:left;
                 }
                 /* toggle checkmark visibility */
                 &.checked::before {
@@ -526,7 +527,7 @@ a:focus {
                     width: 12px;
                     height: 12px;
                     float: left;
-                    margin: 2px -8px 0 4px;
+                    margin: 2px 8px 0px 4px;
                     box-shadow: inset 0 0 2px rgba(0, 0, 0, 0.24);
 
                     .dark & {
@@ -537,7 +538,7 @@ a:focus {
                 // Used to align non-swatch items with the others. Only applied
                 // if there's at least one item with a swatch in the list
                 .no-swatch-margin {
-                    margin-left: 8px;
+                    margin-left: 24px;
                 }
             }
         }
