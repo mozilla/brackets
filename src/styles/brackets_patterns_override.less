@@ -427,28 +427,13 @@ a:focus {
                         }
                     }
                 }
-
-                /* hidden checkmark for all list item content ensures consistent left spacing */
-                &::before {
-                    content: "✓\00a0"; /* non-breaking space */
-                    visibility: hidden;
-                    float:left;
-                }
-                /* toggle checkmark visibility */
-                &.checked::before {
-                    visibility: visible;
-                }
             }
         }
 
         .divider {
             background-color: @bc-menu-separator;
             border: 0;
-            margin: 5px 1px;
-
-            .dark & {
-                 background-color: @dark-bc-menu-separator;
-            }
+            margin: 0;
         }
     }
 
@@ -469,7 +454,9 @@ a:focus {
     list-style-type: none;
 
     .dropdown-menu {
-        .border-radius(3px);
+        border-radius: 0;
+
+        // .border-radius(3px);
         box-shadow: 0 3px 9px @bc-shadow;
 
         .dark & {
@@ -484,50 +471,45 @@ a:focus {
 
 .codehint-menu {
     opacity: 0;
+
     .dropdown-menu {
         box-shadow: 0 3px 9px @bc-shadow;
-        max-height: 160px;
+        max-height: 170px;
         overflow-y: auto;
+        overflow-x: hidden;
         padding: 0;
 
         .dark & {
             box-shadow: 0 3px 9px @dark-bc-shadow;
         }
 
+        .matched-hint {
+          color: inherit;
+        }
+
         li {
             a {
-                // Less padding than on menus. More padding on top than bottom
-                // to center font within its bg highlight better.
-                padding: 2px 20px 0 0;
+                padding: 8px 10px;
+                color: rgba(0,0,0,.6);
+                font-size: 15px;
+                cursor: pointer;
 
                 // Don't show highlighting on hover for code hints...
                 &:hover {
-                    color: @bc-menu-text;
-                    background-color: @bc-menu-bg;
+                    background-image: none;
 
                     .dark & {
-                        color: @dark-bc-menu-text;
-                        background-color: @dark-bc-menu-bg;
-                    }
-                }
-
-                // ...except for selected item
-                &.highlight:hover {
-                    color: @bc-menu-text;
-                    background-color: @bc-bg-highlight;
-
-                    .dark & {
-                        color: @dark-bc-menu-text;
-                        background-color: @dark-bc-bg-highlight;
+                        background-image: none;
                     }
                 }
 
                 .color-swatch {
-                    border-radius: 2px;
                     width: 12px;
                     height: 12px;
-                    float: left;
-                    margin: 2px 8px 0px 4px;
+                    display: inline-block;
+                    position: relative;
+                    top: 1px;
+                    margin-right: 8px;
                     box-shadow: inset 0 0 2px rgba(0, 0, 0, 0.24);
 
                     .dark & {
@@ -542,6 +524,22 @@ a:focus {
                 }
             }
         }
+    }
+}
+
+.dark .codehint-menu .dropdown-menu {
+
+    .matched-hint {
+      color: inherit;
+    }
+
+    li a {
+      color: rgba(255,255,255,.6);
+    }
+
+    li a:hover, li a.highlight {
+        background: rgba(255,255,255,.2);
+        color: rgba(255,255,255,.8);
     }
 }
 
@@ -1932,10 +1930,6 @@ code {
     .divider {
         background-color: @bc-menu-separator;
         border: none;
-
-        .dark & {
-            background-color: @dark-bc-menu-separator;
-        }
     }
 }
 
