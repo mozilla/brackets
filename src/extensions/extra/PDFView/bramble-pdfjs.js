@@ -6,7 +6,8 @@
     var fileSize = iframe.dataset.fileSize;
     // Theme will be one of "dark-theme" or "light-theme"
     var theme = iframe.dataset.theme;
-
+    
+    var fileTitle = iframe.dataset.fileTitle;
     /**
      * XXXBramble: PDF viewer doesn't allow passing locales by default for security reasons:
      * https://github.com/mozilla/pdf.js/issues/7432, so we are doing something like what
@@ -36,6 +37,7 @@
         document.querySelector("body").classList.add(theme);
         document.querySelector("#pdf-page-count").innerHTML = pagesCount;
         document.querySelector("#pdf-file-size").innerHTML = fileSize;
+        document.querySelector(".file-type").innerHTML = fileTitle;
     }
 
     // Wait for PDFViewerApplication.eventBus to get loaded and become available

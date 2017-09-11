@@ -27,6 +27,7 @@ define(function (require, exports, module) {
     var UrlCache            = brackets.getModule("filesystem/impls/filer/UrlCache"),
         Mustache            = brackets.getModule("thirdparty/mustache/mustache"),
         StringUtils         = brackets.getModule("utils/StringUtils"),
+        Strings             = brackets.getModule("strings"),
         ThemePrefs          = brackets
                               .getModule("preferences/PreferencesManager")
                               .getExtensionPrefs("themes"),
@@ -76,7 +77,8 @@ define(function (require, exports, module) {
                 pdfUrl: encodeURIComponent(UrlCache.getUrl(file.fullPath)),
                 locale: brackets.getLocale(),
                 fileSize: fileSize,
-                theme: ThemePrefs.get("theme")
+                theme: ThemePrefs.get("theme"),
+                fileTitle: Strings.PDF_FILE_TITLE
             }));
             $container.append(self.$el);
 
