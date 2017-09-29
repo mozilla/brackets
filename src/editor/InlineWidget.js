@@ -41,7 +41,7 @@ define(function (require, exports, module) {
         this.$htmlContent = $(this.htmlContent).addClass("inline-widget").attr("tabindex", "-1");
         this.$htmlContent.append("<div class='shadow top' />")
             .append("<div class='shadow bottom' />")
-            .append("<a href='#' class='close no-focus'>&times;</a>");
+            .append("<a href='#' class='close no-focus'></a>");
 
         // create the close button
         this.$closeBtn = this.$htmlContent.find(".close");
