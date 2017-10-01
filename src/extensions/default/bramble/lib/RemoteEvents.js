@@ -98,6 +98,13 @@ define(function (require, exports, module) {
         var lastKnownEditorFilePath;
         MainViewManager.on("currentFileChange", function(e, file) {
             if(!file) {
+                // This happens when the last file in working set is deleted.
+                lastKnownEditorFilePath = "";
+                let noFile = {
+                    fullPath: "No File",
+                    filename: "No File"
+                };
+                sendActiveEditorChangeEvent(noFile);               
                 return;
             }
 
