@@ -100,7 +100,7 @@ define(function (require, exports, module) {
             if(!file) {
                 // This happens when the last file in working set is deleted.
                 lastKnownEditorFilePath = "";
-                let noFile = {
+                var noFile = {
                     fullPath: "No File",
                     filename: "No File"
                 };
