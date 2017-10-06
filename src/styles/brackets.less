@@ -1208,19 +1208,23 @@ a, img {
 
     .close {
         background-image: url("images/close-icon-dark.svg");
+        background-color: rgba(150, 150, 150, 0.9);
         background-position: center;
         background-repeat: no-repeat;
         background-size: 13px;
         position: absolute;
-        width: 25px;
-        height: 25px;
-        right: 10px;
+        width: 30px;
+        height: 30px;
+        right: 20px;
         top: 8px;
+        border-radius: 50%;
+        z-index: 2;
     }
 
     .dark & {
       .close {
         background-image: url("images/close-icon-light.svg");
+        background-color: rgba(0, 0, 0, 0.9);
       }
     }
 
