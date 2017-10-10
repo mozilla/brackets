@@ -34,6 +34,11 @@ define(function (require, exports, module) {
     if (!String.prototype.trimLeft) {
         String.prototype.trimLeft = function () { return this.replace(/^\s+/, ""); };
     }
+    
+    // Support for Math.log10 [IE11]
+    Math.log10 = Math.log10 || function(x) {
+        return Math.log(x) * Math.LOG10E;
+    };
 
     // [IE] Number.isFinite() is missing
     Number.isFinite = Number.isFinite || function(value) {
