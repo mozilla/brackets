@@ -178,6 +178,7 @@ define(function (require, exports, module) {
 
         var editorHolder = $("#editor-holder")[0];
         editorHolder.addEventListener("scroll", handleScroll, true);
+        EditorManager.on("activeEditorChange", onActiveEditorChange);
     });
 
     // Create the preview container
