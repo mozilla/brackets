@@ -17,13 +17,39 @@
     border: 0;
     outline: none;
     box-shadow: none;
-    display: block;
+    display: inline-block;
     font-size: 15px;
     font-family: 'Menlo Regular', Consolas, Inconsolata, 'Vera Sans', 'Lucida Console', Courier, monospace, fixed;
     user-select: text;
     color: black;
     transform-origin: 15% 50%;
     white-space: pre-line;
+}
+
+#editor-console .console .lines {
+    background: none;
+    border: 0;
+}
+
+#editor-console .console .lines .line{
+    display: flex;
+}
+
+#editor-console .console .lines .line .linenumber {
+    width: 35px;
+    padding: 6px 0px;
+    font-size: 15px;
+    text-align: right;
+    display: inline-block;    
+    color: #CCCCCC;
+    font-family: "Menlo Regular", Consolas, Inconsolata, "Vera Sans", "Lucida Console", Courier, monospace, fixed;
+    animation: newLogFlash 1.5s ease-out, consolePop .2s ease-out;    
+    top: 0px;
+    bottom: 0px;
+}
+
+.dark #editor-console .console .lines .line .linenumber {
+    color: #656565;
 }
 
 #editor-console .console .helper {
