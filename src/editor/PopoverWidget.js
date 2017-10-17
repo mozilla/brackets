@@ -176,9 +176,11 @@ define(function (require, exports, module) {
             hidePopover();
         }
 
+        EditorManager.on("activeEditorChange", onActiveEditorChange);
+
         var editorHolder = $("#editor-holder")[0];
         editorHolder.addEventListener("scroll", handleScroll, true);
-        EditorManager.on("activeEditorChange", onActiveEditorChange);
+        
     });
 
     // Create the preview container
