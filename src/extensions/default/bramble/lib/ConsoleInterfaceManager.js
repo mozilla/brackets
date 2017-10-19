@@ -42,10 +42,11 @@ define(function (require, exports, module) {
         wasClosedByUser = false,
         unreadCount = 0,
         consoleEl = null,
+        linesEl = null,        
         maxLogs = 30;
 
     function clear() {
-        consoleEl.find(".log-entry").remove();
+        linesEl.find("div").remove();
         unreadCount = 0;
     }
 
@@ -64,7 +65,9 @@ define(function (require, exports, module) {
     }
 
     function addLine(type, item) {
-        var $element = $("<div class='log-entry " + type + "'></div>");
+        var $lineElement = $("<div class='line'><div class='linenumber'></div><div class='log-entry " + type + "'></div></div>");
+        var $lineNumber = $lineElement.find(".linenumber");
+        var $lineEntry = $lineElement.find(".log-entry");
 
         if(typeof item === "object") {
           item = JSON.stringify(item);
@@ -75,20 +78,28 @@ define(function (require, exports, module) {
 
         if(!item.length) {
           item = Strings.CONSOLE_EMPTY_STRING;
-          $element.addClass("empty-string");
+          $lineElement.find(".log-entry").addClass("empty-string");
         }
 
-        $element.text(item);
-
+        $lineEntry.text(item);
+        
         if(panel.isVisible()) {
-          $element.addClass("new-log");
+            $lineElement.find(".log-entry").addClass("new-log");
         }
 
-        consoleEl.append($element);
+        //Add a line number to the new entry
+        if(linesEl.find(".line").length === 0){
+            $lineNumber.html(1);
+        }else{
+            var lastLineNum = linesEl.children().last().children(".linenumber").html();  
+            $lineNumber.html(parseInt(lastLineNum) + 1);            
+        }
 
-        var logCount = consoleEl.find("div").length;
+        linesEl.append($lineElement);
+
+        var logCount = linesEl.find(".line").length;
         if(logCount > maxLogs) {
-          consoleEl.find(":first-child").remove();
+            linesEl.children(".line:first").remove();
         }
 
         consoleEl.animate({ scrollTop: consoleEl[0].scrollHeight }, 10);
@@ -136,6 +147,7 @@ define(function (require, exports, module) {
         showConsoleTab.appendTo($("#editor-holder"));
 
         consoleEl = panel.$panel.find(".console");
+        linesEl = panel.$panel.find(".lines");        
 
         panel.$panel.find("#clearConsole").on("click", function () {
             clear();
