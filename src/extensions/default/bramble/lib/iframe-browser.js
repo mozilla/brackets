@@ -32,7 +32,7 @@ define(function (require, exports, module) {
 
         // If iframe does not exist, then show it
         if(result.rows === 1 && result.columns === 1) {
-            show(_orientation);
+            setLayout(_orientation);
         }
         /*
          *Creating the empty iFrame we'll be using
@@ -68,7 +68,7 @@ define(function (require, exports, module) {
      * orientation: Takes one argument of either VERTICAL_ORIENTATION OR
      * HORIZONTAL_ORIENTATION and uses that to change the layout accordingly
      */
-    function show() {
+    function setLayout() {
         if(_orientation === VERTICAL_ORIENTATION) {
             CommandManager.execute(Commands.CMD_SPLITVIEW_VERTICAL);
         }
@@ -132,8 +132,10 @@ define(function (require, exports, module) {
     /**
      * Used to hide second pane, spawn detached preview, and attach beforeunload listener
      */
-    function detachPreview() {
-        var iframe = getBrowserIframe();
+    function hide() {
+        Resizer.hide("#second-pane");
+        $("#first-pane").addClass("expandEditor");
+        /*var iframe = getBrowserIframe();
 
         if(!iframe) {
             return;
@@ -167,7 +169,7 @@ define(function (require, exports, module) {
                                    "Click to return preview to current window", "mobileViewButtonBox");
 
             return detachedWindow;
-        });
+        });*/
     }
 
     // Return reference of open window if it exists and isn't closed
@@ -180,46 +182,48 @@ define(function (require, exports, module) {
     /**
      * Used to show second pane, change lilveDevButton background and close the detached preview
      */
-    function attachPreview() {
-        var detachedPreview = getDetachedPreview();
+    function show() {
+        Resizer.show("#second-pane");
+        $("#first-pane").removeClass("expandEditor");
+        /*var detachedPreview = getDetachedPreview();
         if(detachedPreview && isReload) {
             isReload = false;
             return;
         }
 
         if(detachedPreview) {
-            detachedPreview.removeEventListener("beforeunload", attachPreview, false);
+            detachedPreview.removeEventListener("beforeunload", show, false);
             detachedPreview.close();
         }
 
-        Resizer.show("#second-pane");
+        Resizer.setLayout("#second-pane");
         $("#liveDevButton").removeClass("liveDevButtonAttach");
         $("#liveDevButton").addClass("liveDevButtonDetach");
         $("#first-pane").removeClass("expandEditor");
 
         // Adds tooltip prompting user to detach preview
         StatusBar.addIndicator("liveDevButtonBox", $("#liveDevButtonBox"), true, "",
-                               "Click to open preview in separate window", "mobileViewButtonBox");
+                               "Click to open preview in separate window", "mobileViewButtonBox");*/
     }
 
     function setListener() {
         var detachedPreview = getDetachedPreview();
         if(detachedPreview) {
-            detachedPreview.addEventListener("beforeunload", attachPreview, false);
+            detachedPreview.addEventListener("beforeunload", show, false);
         }
     }
 
     // Define public API
     exports.init = init;
     exports.update = update;
-    exports.show = show;
+    exports.setLayout = setLayout;
     exports.getBrowserIframe = getBrowserIframe;
     // Expose these constants on our module, so callers can use them with setOrientation()
     exports.HORIZONTAL_ORIENTATION = HORIZONTAL_ORIENTATION;
     exports.VERTICAL_ORIENTATION = VERTICAL_ORIENTATION;
     exports.setOrientation = setOrientation;
     exports.getDetachedPreview = getDetachedPreview;
-    exports.attachPreview = attachPreview;
-    exports.detachPreview = detachPreview;
+    exports.show = show;
+    exports.hide = hide;
     exports.setListener = setListener;
 });
