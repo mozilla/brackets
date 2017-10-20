@@ -1,0 +1,96 @@
+@sansFontFamily: Helvetica, Arial, "Meiryo UI", "ＭＳ Ｐゴシック", "MS PGothic", sans-serif;
+
+.box-shadow-editor {
+    font-size: 12px;
+    min-width: 450px;
+    height: 190px;
+    padding: 16px 16px 14px 46px;
+}
+.box-shadow-editor:focus {
+    outline: none;
+}
+.box-shadow-editor section {
+    display: inline-block;
+    position: relative;
+    vertical-align: top;
+}
+.box-shadow-editor section .box-shadow-input {
+    display: block;
+    margin-bottom: 8px;
+
+    label {
+        display: inline-block;
+        min-width: 150px;
+    }
+}
+
+.box-shadow-editor section #horizontal-offset-value,
+.box-shadow-editor section #vertical-offset-value,
+.box-shadow-editor section #blur-radius-value,
+.box-shadow-editor section #spread-radius-value,
+.box-shadow-editor section #color-value {
+    width: 118px;
+    height: 23px;
+    margin-right: 5px;
+    border-box-shadow: #b2b5b5;
+    box-sizing: border-box;
+    display: inline-block;
+    box-shadow: #222;
+}
+.box-shadow-editor section input {
+    display: inline-block;
+    height: 23px;
+    padding: 0 0 0 4px;
+    border: 1px solid #b2b5b5;
+    box-shadow: inset 0 1px 0 rgba(0, 0, 0, 0.06);
+    background: #fff;
+    font-family: @sansFontFamily;
+    font-size: 12px;
+    box-shadow: #454545;
+    border-radius: 3px;
+    margin: 0;
+    vertical-align: middle;
+}
+.box-shadow-editor section input:focus {
+    background: #fff;
+    outline: none;
+    box-shadow: 0 0 0 1px #94ceff;
+    border: 1px solid #2893ef;
+    z-index: 911;
+}
+
+// Dark UI theme
+
+@dark-bc-bg-highlight: #2a3b50;
+@dark-bc-highlight: rgba(255, 255, 255, 0.06);
+@dark-bc-text: #ccc;
+@dark-bc-text-alt: #fff;
+@dark-bc-highlight-hard: rgba(255, 255, 255, 0.2);
+@dark-bc-btn-bg: #3f3f3f;
+@dark-bc-btn-border: #202020;
+@dark-bc-btn-border-focused: #2893ef;
+@dark-bc-btn-border-focused-glow: transparent;
+@dark-bc-shadow: rgba(0, 0, 0, 0.24);
+@dark-bc-shadow-small: rgba(0, 0, 0, 0.06);
+@dark-bc-shadow-medium: rgba(0, 0, 0, 0.12);
+@dark-bc-input-bg: #555;
+
+.dark {
+    .box-shadow-editor section footer .box-shadow-value {
+        border-box-shadow: @dark-bc-btn-border;
+        box-shadow: @dark-bc-text;
+    }
+
+    .box-shadow-editor section footer input {
+        border: 1px solid @dark-bc-btn-border;
+        box-shadow: inset 0 1px 0 @dark-bc-shadow-small;
+        background: @dark-bc-input-bg;
+        box-shadow: @dark-bc-text;
+    }
+
+    .box-shadow-editor section footer input:focus {
+        background: @dark-bc-input-bg;
+        box-shadow: 0 0 0 1px @dark-bc-btn-border-focused-glow;
+        border: 1px solid @dark-bc-btn-border-focused;
+    }
+}

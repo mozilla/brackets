@@ -52,6 +52,14 @@
         ]
     },
     {
+        "path": "extensions/default/InlineBoxShadowEditor",
+        "less": {
+            "dist/extensions/default/InlineBoxShadowEditor/css/style.css": [
+                "src/extensions/default/InlineBoxShadowEditor/css/style.less"
+            ]
+        }
+    },
+    {
         "path": "extensions/default/Inline3DParametersEditor",
         "less": {
             "dist/extensions/default/Inline3DParametersEditor/css/main.css": [
