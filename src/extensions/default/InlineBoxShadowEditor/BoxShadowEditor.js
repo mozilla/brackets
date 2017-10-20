@@ -72,7 +72,7 @@ define(function(require, exports, module) {
 	BoxShadowEditor.prototype.setValues = function(values) {
 		for(var key in this._values) {
 			if(this._values.hasOwnProperty(key)) {
-				if(values[key] && values[key] != this._values[key]) {
+				if(values[key] && values[key] !== this._values[key]) {
 					this._values[key] = values[key];
 				}
 			}
@@ -120,27 +120,23 @@ define(function(require, exports, module) {
         this.$colorValue.bind("input", function (event) {
             self._handleColorChange();
         });
-	}
-
-	BoxShadowEditor.prototype._synchronize = function() {
-
-	}
+	};
 
 	BoxShadowEditor.prototype.focus = function() {
 		this.$horizontalOffsetValue.focus();
-	}
+	};
 
 	BoxShadowEditor.prototype.destroy = function() {
-	}
+	};
 
 	BoxShadowEditor.prototype.getValues = function() {
 		return this._values;
-	}
+	};
 
 	// Utilty function to check if data is of correct format.
 	function _isValidNumber(data) {
 		return (data.match(/\-?\d*/) !== null);
-	}
+	};
 
 	function _handleChanges($inputElement, propertyName, value) {
 		console.log(value, typeof value);
@@ -153,7 +149,7 @@ define(function(require, exports, module) {
 			$inputElement.val(curValue);
 		}
 
-		if(value == "") {
+		if(value === "") {
 			// This is to maintain the box-shadow property.
 			value = "0";
 			$inputElement.val(value);
@@ -161,31 +157,31 @@ define(function(require, exports, module) {
 
 		var newValue = value + "px";
 		this._commitChanges(propertyName, newValue);
-	}
+	};
 
 	BoxShadowEditor.prototype._handleHorizontalOffsetChange = function() {
 		var self = this;
 		var newValue = this.$horizontalOffsetValue.val().trim();
 		_handleChanges.call(self, this.$horizontalOffsetValue, "horizontalOffset", newValue);
-	}
+	};
 
 	BoxShadowEditor.prototype._handleVerticalOffsetChange = function() {
 		var self = this;
 		var newValue = this.$verticalOffsetValue.val().trim();
 		_handleChanges.call(self, this.$verticalOffsetValue, "verticalOffset", newValue);
-	}
+	};
 
 	BoxShadowEditor.prototype._handleBlurRadiusChange = function() {
 		var self = this;
 		var newValue = this.$blurRadiusValue.val().trim();
 		_handleChanges.call(self, this.$blurRadiusValue, "blurRadius", newValue);
-	}
+	};
 
 	BoxShadowEditor.prototype._handleSpreadRadiusChange = function() {
 		var self = this;
 		var newValue = this.$spreadRadiusValue.val().trim();
 		_handleChanges.call(self, this.$spreadRadiusValue, "spreadRadius", newValue);
-	}
+	};
 
 	/**
      * Normalize the given color string into the format used by tinycolor, by adding a space
@@ -233,11 +229,11 @@ define(function(require, exports, module) {
 
 	BoxShadowEditor.prototype._undo = function() {
 		
-	}
+	};
 
 	BoxShadowEditor.prototype._redo = function() {
 		
-	}
+	};
 
 	/**
 	* Global handler for keys in the color editor. Catches undo/redo keys and traps
@@ -265,7 +261,7 @@ define(function(require, exports, module) {
 	BoxShadowEditor.prototype._commitChanges = function(propertyName, value) {
 		this._values[propertyName] = value;
 		this._callback(this._values);
-	}
+	};
 
 
 	exports.BoxShadowEditor = BoxShadowEditor;
