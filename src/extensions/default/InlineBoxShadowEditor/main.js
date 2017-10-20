@@ -86,8 +86,8 @@ define(function(require, exports, module) {
 		console.log(values);
 
 		return {
-			values,
-			marker
+			values: values,
+			marker: marker
 		};
 	}
 

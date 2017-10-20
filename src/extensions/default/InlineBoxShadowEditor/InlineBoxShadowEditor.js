@@ -102,21 +102,21 @@ define(function(require, exports, module) {
 	};
 
 	InlineBoxShadowEditor.prototype._buildBoxShadowString = function (values) {
-		var boxShadowString = boxShadowValueTypes.reduce(function(result, type) {
-			if(!values[type]) {
+		var boxShadowString = boxShadowValueTypes.reduce(function(result, boxShadowValueType) {
+			if(!values[boxShadowValueType]) {
 				return result;
 			}
-			if (typeof values[type] === "Number") {
-				result += " " + values[type] + "px";
+			if (!isNaN(values[boxShadowValueType]) ) {
+				result += " " + values[boxShadowValueType] + "px";
 			}
 			else {
-				result += " " + values[type];
+				result += " " + values[boxShadowValueType];
 			}
 			return result;
 		},"");
 
 		return boxShadowString.trim();
-	}
+	};
 
 
 	/**
@@ -133,7 +133,7 @@ define(function(require, exports, module) {
 		// update values 
 		for(var key in this._values) {
 			if(this._values.hasOwnProperty(key)) {
-				if(values[key] && values[key] != this._values[key]) {
+				if(values[key] && values[key] !== this._values[key]) {
 					this._values[key] = values[key];
 				}
 			}
