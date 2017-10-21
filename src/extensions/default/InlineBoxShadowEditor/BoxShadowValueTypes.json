@@ -1,9 +1,9 @@
 {
-	"boxShadowValueTypes": [
-							"horizontalOffset",
-							"verticalOffset",
-							"blurRadius",
-							"spreadRadius",
-							"color"
-							]
+    "boxShadowValueTypes": [
+                            "horizontalOffset",
+                            "verticalOffset",
+                            "blurRadius",
+                            "spreadRadius",
+                            "color"
+                            ]
 }
