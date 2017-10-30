@@ -1,0 +1,7 @@
+{
+    "border-radius":            {"values": ["inherit"]},
+    "border-top-left-radius": {"values": ["inherit"]},
+    "border-top-right-radius":{"values": ["inherit"]},
+    "border-bottom-left-radius":{"values": ["inherit"]},
+    "border-bottom-right-radius":{"values": ["inherit"]}    
+}

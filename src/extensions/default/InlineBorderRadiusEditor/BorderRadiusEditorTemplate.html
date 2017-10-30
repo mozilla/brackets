@@ -1,0 +1,43 @@
+<div tabindex="-1" class="border-radius-editor">
+    <section>
+        <!-- 17/10/2017 - Will work on this later, once logic has been implemented 
+        <div class="sliders">
+            <div class="horizontal-offset-slider slider">
+                <div class="opacity-gradient gradient-overlay"></div>
+                <div tabindex="0" class="selector-base">
+                    <div class="selector"></div>
+                </div>
+            </div>
+        </div> -->
+        <div id="individualCornerArea">
+            <div class="border-radius-input">
+                <label for="horizontal-offset-value">top-left-corner </label> :
+                <input id="top-left-slider" type="range" min="0" max="100" step="0.01"> px
+            </div>
+            <div class="border-radius-input">
+                <label for="vertical-offset-value">top-right-corner</label> :
+                <input id="top-right-slider" type="range" min="0" max="100" step="0.01"> px
+            </div>
+            <div class="border-radius-input">
+                <label for="blur-radius-value">buttom-left-corner</label> :
+                <input id="bottom-left-slider" type="range" min="0" max="100" step="0.01"> px
+            </div>
+            <div class="border-radius-input">
+                <label for="spread-radius-value">buttom-right-corner</label> :
+                <input id="bottom-right-slider" type="range" min="0" max="100" step="0.01"> px
+            </div>
+        </div>
+        <div id="allCornersArea">
+            <div class="border-radius-input">
+                <label for="spread-radius-value">all-corners</label> :
+                <input id="all-corner-slider" type="range" min="0" max="100" step="0.01"> px
+            </div>
+        <div>
+        <footer>
+            <ul class="button-bar">
+              <li id="allCorners" title="All Corners"><a href="#" tabindex="0">All Corners</a></li>
+              <li title="Individual Corners" disabled="true" id="individualCorners"><a href="#" tabindex="0">Individual Corners</a></li>
+            </ul>
+        </footer>
+    </section>
+</div>
