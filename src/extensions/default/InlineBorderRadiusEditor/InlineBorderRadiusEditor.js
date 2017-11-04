@@ -211,8 +211,8 @@ define(function (require, exports, module) {
         if (this._marker) {
             this._marker.clear();
         }
-
         var doc = this.hostEditor.document;
+        this.hostEditor.setSelection({ch:-1, line:-1},{ch:-1,line:-1});
         doc.off("change", this._handleHostDocumentChange);
         doc.releaseRef();
         this.borderRadiusEditor.destroy();

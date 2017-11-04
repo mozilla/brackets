@@ -176,22 +176,22 @@ define(function(require, exports, module) {
     BorderRadiusEditor.prototype._bindInputHandlers = function() {
         var self = this;
 
-        this.$tlslider.bind("change", function(event){
+        this.$tlslider.bind("input", function(event){
             self._handleTLCHange();
         });
 
-        this.$trslider.bind("change", function(event){
+        this.$trslider.bind("input", function(event){
             self._handleTRCHange();
         });
 
-        this.$blslider.bind("change", function(event){
+        this.$blslider.bind("input", function(event){
             self._handleBLCHange();
         });
 
-        this.$brslider.bind("change", function(event){
+        this.$brslider.bind("input", function(event){
             self._handleBRCHange();
         });
-        this.$allCornerSlider.bind("change",function(event){
+        this.$allCornerSlider.bind("input",function(event){
             self._handleALLCHange();
         });
 
