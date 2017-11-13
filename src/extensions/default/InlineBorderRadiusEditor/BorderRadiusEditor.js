@@ -30,7 +30,7 @@ define(function(require, exports, module) {
         this._values = values;
         this._originalValues = values;
         this._redoValues = null;
-        
+        this._init = true;
         this._tl=null;
         this._tr=null;
         this._br=null;
@@ -116,49 +116,76 @@ define(function(require, exports, module) {
         if(count===0){
             this._values = DEFAULT_BORDER_RADIUS_VALUE + "px";
         }
-        this._setInputValues(); 
+        this._setInputValues(true); 
         this._commitChanges(values);
     };
 
-    BorderRadiusEditor.prototype._setInputValues = function() {
+    BorderRadiusEditor.prototype._setInputValues = function(setFromString) {
         var values = this._values.split("px");
         //var tl,tr,bl,br,all;
             if(!this._allCorners){
-                if(values.length===2){
+                if(values.length===2 && (this._init || setFromString)){
                     
                     this._tr = parseFloat(values[0]);
                     this._tl = parseFloat(values[0]);
                     this._br = parseFloat(values[0]);
-                    this._bl = parseFloat(values[0]);            
+                    this._bl = parseFloat(values[0]);  
+                    this._all = this._all || 0; 
+                    this._init =false;
+                    
                 }
-                else if(values.length===3){
+                else if(values.length===3 && (this._init || setFromString)){
                     this._tl = parseFloat(values[0]);
                     this._tr = parseFloat(values[1]);
                     this._br = parseFloat(values[0]);
                     this._bl = parseFloat(values[1]);
+                    this._all = this._all || 0;
+                    this._init =false;
+                    
                 }
-                else if(values.length===4){
+                else if(values.length===4 && (this._init || setFromString)){
                     this._tl = parseFloat(values[0]);
                     this._tr = parseFloat(values[1]);
                     this._br = parseFloat(values[2]);
                     this._bl = parseFloat(values[1]);
+                    this._all = this._all || 0;
+                    this._init =false;
+                    
                 }
-                else if(values.length===5){
+                else if(values.length===5 && (this._init || setFromString)){
                 
                     this._tl = parseFloat(values[0]);
                     this._tr = parseFloat(values[1]);
                     this._br = parseFloat(values[2]);
                     this._bl = parseFloat(values[3]);
+                    this._all = this._all || 0;
+                    this._init =false;                    
                 }
+
+                
                 
             }
             else{
-                this._tl = parseFloat(values[0]);
+                if(this._init || setFromString){
+                this._all = parseFloat(values[0]); 
+                this._tl = this._tl || 0;
+                this._tr = this._tr || 0;
+                this._br = this._br || 0;
+                this._bl = this._bl || 0;
+                this._init =false;
+                }
+                
+                //this._tl = this._tl || 0;
+                //this._tr = this._tr || 0;
+                //this._br = this._br || 0;
+                //this._bl = this._bl || 0;
+                
+                /*this._tl = parseFloat(values[0]);
                 this._tr = parseFloat(values[0]);
                 this._br = parseFloat(values[0]);
-                this._bl = parseFloat(values[0]);
+                this._bl = parseFloat(values[0]);*/
             }
-            this._all = this._tl;
+            //this._all = this._tl;
             
             /*this._tl = tl;
             this._tr = tr;
@@ -310,37 +337,37 @@ define(function(require, exports, module) {
             newValue = value+"px "+this._tr+"px "+this._br+"px "+this._bl+"px";
             this._values = value+"px"+this._tr+"px"+this._br+"px"+this._bl+"px";
             this._tl = value;
-            this._all = this._tl;
+            //this._all = this._tl;
         }
         if(propertyName === "TR"){ 
             newValue = this._tl+"px "+value+"px "+this._br+"px "+this._bl+"px";
             this._values = this._tl+"px"+value+"px"+this._br+"px"+this._bl+"px";
             this._tr = value;
-            this._all = this._tl;
+            //this._all = this._tl;
             
         }
         if(propertyName === "BR"){ 
             newValue = this._tl+"px "+this._tr+"px "+value+"px "+this._bl+"px";
             this._values = this._tl+"px"+this._tr+"px"+value+"px"+this._bl+"px";
             this._br = value;
-            this._all = this._tl;
+            //this._all = this._tl;
             
         }
         if(propertyName === "BL"){ 
             newValue = this._tl+"px "+this._tr+"px "+this._br+"px "+value+"px";
             this._values = this._tl+"px"+this._tr+"px"+this._br+"px"+value+"px";
             this._bl = value;
-            this._all = this._tl;
+            //this._all = this._tl;
             
         }
         if(propertyName === "ALL"){
             newValue = value+"px";
             this._values = value+"px"+value+"px"+value+"px"+value+"px";
-            this._bl=value;
-            this._br=value;
-            this._tl=value;
-            this._tr=value;
-            this._all = this._tl;
+            //this._bl=value;
+            //this._br=value;
+            //this._tl=value;
+            //this._tr=value;
+            this._all = value;//this._tl;
         }
         this._setInputValues();
         this._commitChanges( newValue);
