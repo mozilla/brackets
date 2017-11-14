@@ -50,7 +50,12 @@ define(function(require, exports, module) {
         this.$individualCorner = this.$element.find("#individualCorners");
         this.$individualCornerArea = this.$element.find("#individualCornerArea");
         this.$allCornersArea = this.$element.find("#allCornersArea");
-
+        this.$tltext = this.$element.find("#tltext");
+        this.$trtext = this.$element.find("#trtext");
+        this.$bltext = this.$element.find("#bltext");
+        this.$brtext = this.$element.find("#brtext");
+        this.$alltext = this.$element.find("#alltext");
+        
         // Attach event listeners to main UI elements
         this._bindInputHandlers();
         //initialize individual corner editing to be disabled
@@ -196,6 +201,11 @@ define(function(require, exports, module) {
             this.$trslider.val(this._tr);
             this.$blslider.val(this._bl);
             this.$brslider.val(this._br);
+            this.$tltext.text(this._tl+"px");
+            this.$trtext.text(this._tr+"px");
+            this.$brtext.text(this._br+"px");
+            this.$bltext.text(this._bl+"px"); 
+            this.$alltext.text(this._all+"px");           
             this.$allCornerSlider.val(this._all);
 
     };
