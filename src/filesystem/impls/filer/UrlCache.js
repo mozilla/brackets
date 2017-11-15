@@ -342,6 +342,14 @@ define(function (require, exports, module) {
 
 
     function init(callback) {
+        // In the case of a failed service worker installation (often Firefox),
+        // we signal that Blob URLs should get used via `window.brambleCacheType`
+        // see src/main.js.
+        if (window.brambleCacheType === 'blob') {
+            _provider = new BlobUrlProvider();
+            return _provider.init(callback);
+        }
+
         // Allow overriding the cache type via cacheType=blob or cacheType=cacheStorage
         var cacheTypeOverride = getCacheType();
         switch(cacheTypeOverride) {

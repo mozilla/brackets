@@ -126,7 +126,10 @@ if ('serviceWorker' in window.navigator) {
         };
     }).catch(function (e) {
         "use strict";
-        console.error('[Bramble] Error during service worker registration:', e);
+        console.warn('[Bramble] Error during service worker registration:', e);
+
+        console.log('[Bramble] Falling back to cachType=blob due to failed service worker');
+        window.brambleCacheType = 'blob';
     });
 }
 
