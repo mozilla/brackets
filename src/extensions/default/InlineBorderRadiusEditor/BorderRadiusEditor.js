@@ -24,7 +24,7 @@ define(function(require, exports, module) {
         var flag = true;
         String.prototype.replaceAll = function(str1, str2, ignore) 
         {
-            return this.replace(new RegExp(str1.replace(/([\/\,\!\\\^\$\{\}\[\]\(\)\.\*\+\?\|\<\>\-\&])/g,"\\$&"),(ignore?"gi":"g")),(typeof(str2)=="string")?str2.replace(/\$/g,"$$$$"):str2);
+            return this.replace(new RegExp(str1.replace(/([\/\,\!\\\^\$\{\}\[\]\(\)\.\*\+\?\|\<\>\-\&])/g,"\\$&"),(ignore?"gi":"g")),(typeof(str2)==="string")?str2.replace(/\$/g,"$$$$"):str2);
         } ;
         var temp = values.replaceAll("px","A").replaceAll("%","B").replaceAll("em","C");
         var finalValues = temp.replaceAll("A"," ").replaceAll("B"," ").replaceAll("C"," ").split(" ");
