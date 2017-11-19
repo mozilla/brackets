@@ -20,13 +20,56 @@ define(function(require, exports, module) {
      * @param {!{horizontalOffset: string, verticalOffset: string, blurRadius: string, spreadRadius: string, color: string}} values  Initial set of box-shadow values.
      * @param {!function(string)} callback  Called whenever values change
      */
+    function getIndividualValues(values){
+        var flag = true;
+        String.prototype.replaceAll = function(str1, str2, ignore) 
+        {
+            return this.replace(new RegExp(str1.replace(/([\/\,\!\\\^\$\{\}\[\]\(\)\.\*\+\?\|\<\>\-\&])/g,"\\$&"),(ignore?"gi":"g")),(typeof(str2)=="string")?str2.replace(/\$/g,"$$$$"):str2);
+        } ;
+        var temp = values.replaceAll("px","A").replaceAll("%","B").replaceAll("em","C");
+        var finalValues = temp.replaceAll("A"," ").replaceAll("B"," ").replaceAll("C"," ").split(" ");
+        
+        var empty = new Array();
+        for(var i=0;i<values.length;i++){
+            if(temp[i]==="A"){
+                empty.push("A");
+            }
+            else if(temp[i]==="B"){
+                empty.push("B");
+            }
+            else if(temp[i]==="C"){
+                empty.push("C");
+            }
+        }
+        
+        if(finalValues.length!==empty.length+1){
+            return false;
+        }
+        var empty2 = new Array();
+        for(var j=0;j<empty.length;j++){
+           // console.log(typeof finalValues[j]);
+            //console.log(finalValues[j].match(/[a-z]/i));
+            if(isNaN(parseFloat(finalValues[j])))
+            {
+                return false;
+            }
+            empty2.push({num: parseFloat(finalValues[j]),unit:empty[j].replace("A","px").replace("B","%").replace("C","em")});
+        }
+        return empty2;
+
+    }
     function BorderRadiusEditor($parent, values, callback) {
         // Create the DOM structure, filling in localized strings via Mustache
         this.$element = $(Mustache.render(BorderRadiusTemplate, Strings));
         $parent.append(this.$element);
-        
         this._callback = callback;
-        this._allCorners = (values.split("px").length===2);
+        var temp = getIndividualValues(values);
+        if(!temp){
+            return;
+        }
+        this.individualValuesWithUnit = temp;                
+        this._allCorners = (this.individualValuesWithUnit.length===1);
+        //(values.split("px").length===2);
         this._values = values;
         this._originalValues = values;
         this._redoValues = null;
@@ -36,6 +79,11 @@ define(function(require, exports, module) {
         this._br=null;
         this._bl=null;
         this._all=null;
+        this._tlUnit=null;
+        this._trUnit=null;
+        this._brUnit=null;
+        this._blUnit=null;
+        this._allUnit=null;
         
         // Get references
         this.$tlslider = this.$element.find("#top-left-slider");
@@ -106,63 +154,99 @@ define(function(require, exports, module) {
     };
 
     BorderRadiusEditor.prototype.setValues = function(values) {
-        var result = values.replace(' ','').replace(";","").split("px");
+        var result = getIndividualValues(values.replaceAll(" ","").replaceAll(";",""));
+        if(!result){
+            return;
+        }
+
+
+        //var result = values.replace(' ','').replace(";","").split("px");
         var finalValue = "";
-        var count=0;
-        for(var i = 0; i < result.length; i++){
+        //var count=0;
+        /*for(var i = 0; i < result.length; i++){
             if(!isNaN(parseFloat(result[i]))){
                 result[i] = parseFloat(result[i])+"px";
                 finalValue += result[i];
                 count++;
             }
+        }*/
+
+        for(var i = 0; i<result.length;i++){
+            finalValue += (result[i].num+result[i].unit);
         }
-        this._allCorners=(count===1||count===0);
+
+        
+        //this._allCorners=(count===1||count===0);
+        this._allCorners = (result.length === 1);
         this._values = finalValue;
-        if(count===0){
+        this.individualValuesWithUnit = result;
+        /*if(count===0){
             this._values = DEFAULT_BORDER_RADIUS_VALUE + "px";
-        }
+        }*/
         this._setInputValues(true); 
         this._commitChanges(values);
     };
 
     BorderRadiusEditor.prototype._setInputValues = function(setFromString) {
-        var values = this._values.split("px");
+        var values = this.individualValuesWithUnit;
+        //this._values.split("px");
         //var tl,tr,bl,br,all;
             if(!this._allCorners){
-                if(values.length===2 && (this._init || setFromString)){
+                if(values.length===1 && (this._init || setFromString)){
                     
-                    this._tr = parseFloat(values[0]);
-                    this._tl = parseFloat(values[0]);
-                    this._br = parseFloat(values[0]);
-                    this._bl = parseFloat(values[0]);  
+                    this._tr = parseFloat(values[0].num);
+                    this._tl = parseFloat(values[0].num);
+                    this._br = parseFloat(values[0].num);
+                    this._bl = parseFloat(values[0].num); 
+                    this._tlUnit=values[0].unit;
+                    this._trUnit=values[0].unit;
+                    this._brUnit=values[0].unit;
+                    this._blUnit= values[0].unit;
+                    this._allUnit=this._allUnit || "px";
                     this._all = this._all || 0; 
                     this._init =false;
                     
                 }
+                else if(values.length===2 && (this._init || setFromString)){
+                    this._tl = parseFloat(values[0].num);
+                    this._tr = parseFloat(values[1].num);
+                    this._br = parseFloat(values[0].num);
+                    this._bl = parseFloat(values[1].num);
+                    this._tlUnit=values[0].unit;
+                    this._trUnit=values[1].unit;
+                    this._brUnit=values[0].unit;
+                    this._blUnit= values[1].unit;
+                    this._allUnit=this._allUnit || "px";
+                    this._all = this._all || 0;
+                    this._init =false;
+                    
+                }
                 else if(values.length===3 && (this._init || setFromString)){
-                    this._tl = parseFloat(values[0]);
-                    this._tr = parseFloat(values[1]);
-                    this._br = parseFloat(values[0]);
-                    this._bl = parseFloat(values[1]);
+                    this._tl = parseFloat(values[0].num);
+                    this._tr = parseFloat(values[1].num);
+                    this._br = parseFloat(values[2].num);
+                    this._bl = parseFloat(values[1].num);
+                    this._tlUnit=values[0].unit;
+                    this._trUnit=values[1].unit;
+                    this._brUnit=values[2].unit;
+                    this._blUnit= values[1].unit;
+                    this._allUnit=this._allUnit || "px";
+
                     this._all = this._all || 0;
                     this._init =false;
                     
                 }
                 else if(values.length===4 && (this._init || setFromString)){
-                    this._tl = parseFloat(values[0]);
-                    this._tr = parseFloat(values[1]);
-                    this._br = parseFloat(values[2]);
-                    this._bl = parseFloat(values[1]);
-                    this._all = this._all || 0;
-                    this._init =false;
-                    
-                }
-                else if(values.length===5 && (this._init || setFromString)){
                 
-                    this._tl = parseFloat(values[0]);
-                    this._tr = parseFloat(values[1]);
-                    this._br = parseFloat(values[2]);
-                    this._bl = parseFloat(values[3]);
+                    this._tl = parseFloat(values[0].num);
+                    this._tr = parseFloat(values[1].num);
+                    this._br = parseFloat(values[2].num);
+                    this._bl = parseFloat(values[3].num);
+                    this._tlUnit=values[0].unit;
+                    this._trUnit=values[1].unit;
+                    this._brUnit=values[2].unit;
+                    this._blUnit= values[3].unit;
+                    this._allUnit=this._allUnit || "px";
                     this._all = this._all || 0;
                     this._init =false;                    
                 }
@@ -172,11 +256,16 @@ define(function(require, exports, module) {
             }
             else{
                 if(this._init || setFromString){
-                this._all = parseFloat(values[0]); 
+                this._all = parseFloat(values[0].num); 
+                this._allUnit = values[0].unit;
                 this._tl = this._tl || 0;
+                this._tlUnit = this._tlUnit || "px";
                 this._tr = this._tr || 0;
+                this._trUnit = this._trUnit || "px";
                 this._br = this._br || 0;
+                this._brUnit = this._brUnit || "px";
                 this._bl = this._bl || 0;
+                this._blUnit = this._blUnit || "px";
                 this._init =false;
                 }
                 
@@ -201,11 +290,11 @@ define(function(require, exports, module) {
             this.$trslider.val(this._tr);
             this.$blslider.val(this._bl);
             this.$brslider.val(this._br);
-            this.$tltext.text(this._tl+"px");
-            this.$trtext.text(this._tr+"px");
-            this.$brtext.text(this._br+"px");
-            this.$bltext.text(this._bl+"px"); 
-            this.$alltext.text(this._all+"px");           
+            this.$tltext.text(this._tl+this._tlUnit);
+            this.$trtext.text(this._tr+this._trUnit);
+            this.$brtext.text(this._br+this._brUnit);
+            this.$bltext.text(this._bl+this._blUnit); 
+            this.$alltext.text(this._all+this._allUnit);           
             this.$allCornerSlider.val(this._all);
 
     };
@@ -247,7 +336,7 @@ define(function(require, exports, module) {
                 self.setAllCornerBooleanFlag(true);
                 self._setInputValues();
                 var result = self.getAllCornerValues();
-                self._commitChanges(result["all"]+"px");
+                self._commitChanges(result["all"]+self._allUnit);
         });
         this.$individualCorner.bind("click",function(event){
             self.getButtonIndividualCorner().addClass("selected");
@@ -264,7 +353,7 @@ define(function(require, exports, module) {
                 self.setAllCornerBooleanFlag(false);
                 self._setInputValues();
                 var result = self.getAllCornerValues();
-                self._commitChanges(result["tl"]+"px "+result["tr"]+"px "+result["br"]+"px "+result["bl"]+"px");
+                self._commitChanges(result["tl"]+self._tlUnit+" "+result["tr"]+self._trUnit+" "+result["br"]+self._brUnit+" "+result["bl"]+self._blUnit);
         });
     };
 
@@ -325,7 +414,7 @@ define(function(require, exports, module) {
     };
         
     function _handleChanges($inputElement, propertyName, value) {
-        var values = this._values.split("px");
+        //var values = this._values.split("px");
         if(!this._isValidNumber(value)) {
             if(!this._values[propertyName]) {
                 $inputElement.val("");
@@ -344,35 +433,35 @@ define(function(require, exports, module) {
         var newValue; 
         
         if(propertyName === "TL"){ 
-            newValue = value+"px "+this._tr+"px "+this._br+"px "+this._bl+"px";
-            this._values = value+"px"+this._tr+"px"+this._br+"px"+this._bl+"px";
+            newValue = value+this._tlUnit+" "+this._tr+this._trUnit+" "+this._br+this._brUnit+" "+this._bl+this._blUnit;
+            this._values = value+this._tlUnit+this._tr+this._trUnit+this._br+this._brUnit+this._bl+this._blUnit;
             this._tl = value;
             //this._all = this._tl;
         }
         if(propertyName === "TR"){ 
-            newValue = this._tl+"px "+value+"px "+this._br+"px "+this._bl+"px";
-            this._values = this._tl+"px"+value+"px"+this._br+"px"+this._bl+"px";
+            newValue = this._tl+this._tlUnit+" "+value+this._trUnit+" "+this._br+this._brUnit+" "+this._bl+this._blUnit;
+            this._values = this._tl+this._tlUnit+value+this._trUnit+this._br+this._brUnit+this._bl+this._blUnit;
             this._tr = value;
             //this._all = this._tl;
             
         }
         if(propertyName === "BR"){ 
-            newValue = this._tl+"px "+this._tr+"px "+value+"px "+this._bl+"px";
-            this._values = this._tl+"px"+this._tr+"px"+value+"px"+this._bl+"px";
+            newValue = this._tl+ this._tlUnit+" "+this._tr+this._trUnit+" "+value+this._brUnit+" "+this._bl+this._blUnit;
+            this._values = this._tl+this._tlUnit+this._tr+this._trUnit+value+this._brUnit+this._bl+this._blUnit;
             this._br = value;
             //this._all = this._tl;
             
         }
         if(propertyName === "BL"){ 
-            newValue = this._tl+"px "+this._tr+"px "+this._br+"px "+value+"px";
-            this._values = this._tl+"px"+this._tr+"px"+this._br+"px"+value+"px";
+            newValue = this._tl+ this._tlUnit+" "+this._tr+this._trUnit+" "+this._br+this._brUnit+" "+value+this._blUnit;
+            this._values = this._tl+this._tlUnit+this._tr+this._trUnit+this.br+this._brUnit+value+this._blUnit;
             this._bl = value;
             //this._all = this._tl;
             
         }
         if(propertyName === "ALL"){
-            newValue = value+"px";
-            this._values = value+"px"+value+"px"+value+"px"+value+"px";
+            newValue = value+this._allUnit;
+            this._values = value+this._allUnit+value+this._allUnit+value+this._allUnit+value+this._allUnit;
             //this._bl=value;
             //this._br=value;
             //this._tl=value;
