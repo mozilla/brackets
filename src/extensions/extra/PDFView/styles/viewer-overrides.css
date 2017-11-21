@@ -2,6 +2,16 @@
  * Various overrides of the built viewer.css file. Keep this as a CSS file vs. LESS
  */
 
+
+#pdf-meta *::selection  {
+    background: #abdffa;
+}
+
+#pdf-meta *::-moz-selection {
+    background: #abdffa;
+
+}
+
  #viewerContainer {
      top: 0;
  }
