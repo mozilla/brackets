@@ -270,14 +270,14 @@ define(function(require, exports, module) {
                 if(this._init || setFromString){
                 this._all = parseFloat(values[0].num); 
                 this._allUnit = values[0].unit;
-                this._tl = this._tl || 0;
-                this._tlUnit = this._tlUnit || "px";
-                this._tr = this._tr || 0;
-                this._trUnit = this._trUnit || "px";
-                this._br = this._br || 0;
-                this._brUnit = this._brUnit || "px";
-                this._bl = this._bl || 0;
-                this._blUnit = this._blUnit || "px";
+                this._tl = this._tl || this._all;
+                this._tlUnit = this._tlUnit || this._allUnit;
+                this._tr = this._tr || this._all;
+                this._trUnit = this._trUnit || this._allUnit;
+                this._br = this._br || this._all;
+                this._brUnit = this._brUnit || this._allUnit;
+                this._bl = this._bl || this._all;
+                this._blUnit = this._blUnit || this._allUnit;
                 }
                 
                 //this._tl = this._tl || 0;
