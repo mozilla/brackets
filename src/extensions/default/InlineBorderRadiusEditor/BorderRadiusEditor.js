@@ -103,6 +103,11 @@ define(function(require, exports, module) {
         this.$bltext = this.$element.find("#bltext");
         this.$brtext = this.$element.find("#brtext");
         this.$alltext = this.$element.find("#alltext");
+        this.$tlradio = this.$element.find("#tl-radio");
+        this.$trradio = this.$element.find("#tr-radio");
+        this.$brradio = this.$element.find("#br-radio");
+        this.$blradio = this.$element.find("#bl-radio");
+        this.$allradio = this.$element.find("#all-radio");
         
         // Attach event listeners to main UI elements
         this._bindInputHandlers();
@@ -151,6 +156,17 @@ define(function(require, exports, module) {
             all : this.$allCornerSlider
         };
         return sliders;
+    };
+
+    BorderRadiusEditor.prototype.getAllRadios = function() {
+        var radios = {
+            tr : this.$tlradio,
+            tl : this.$trradio,
+            br : this.$brradio,
+            bl : this.$blradio,
+            all : this.$allradio
+        };
+        return radios;
     };
 
     BorderRadiusEditor.prototype.setValues = function(values) {
@@ -204,7 +220,6 @@ define(function(require, exports, module) {
                     this._blUnit= values[0].unit;
                     this._allUnit=this._allUnit || "px";
                     this._all = this._all || 0; 
-                    this._init =false;
                     
                 }
                 else if(values.length===2 && (this._init || setFromString)){
@@ -218,7 +233,6 @@ define(function(require, exports, module) {
                     this._blUnit= values[1].unit;
                     this._allUnit=this._allUnit || "px";
                     this._all = this._all || 0;
-                    this._init =false;
                     
                 }
                 else if(values.length===3 && (this._init || setFromString)){
@@ -233,7 +247,6 @@ define(function(require, exports, module) {
                     this._allUnit=this._allUnit || "px";
 
                     this._all = this._all || 0;
-                    this._init =false;
                     
                 }
                 else if(values.length===4 && (this._init || setFromString)){
@@ -248,7 +261,6 @@ define(function(require, exports, module) {
                     this._blUnit= values[3].unit;
                     this._allUnit=this._allUnit || "px";
                     this._all = this._all || 0;
-                    this._init =false;                    
                 }
 
                 
@@ -266,7 +278,6 @@ define(function(require, exports, module) {
                 this._brUnit = this._brUnit || "px";
                 this._bl = this._bl || 0;
                 this._blUnit = this._blUnit || "px";
-                this._init =false;
                 }
                 
                 //this._tl = this._tl || 0;
@@ -286,6 +297,13 @@ define(function(require, exports, module) {
             this._br = br;
             this._bl = bl;
             this._all = all;*/
+            if(this._init){
+                this.setRadioButtons();
+            }
+
+
+            this._init =false;
+            
             this.$tlslider.val(this._tl);
             this.$trslider.val(this._tr);
             this.$blslider.val(this._bl);
@@ -297,6 +315,95 @@ define(function(require, exports, module) {
             this.$alltext.text(this._all+this._allUnit);           
             this.$allCornerSlider.val(this._all);
 
+    };
+    BorderRadiusEditor.prototype.setRadioButtons = function(values){
+            //when initializing
+            if(!values){
+                var tl_px,tl_em,tl_percent;
+                if(this._tlUnit==="px")
+                {
+                    tl_px = this.$element.find("#tl-radio-px");
+                    tl_px.addClass("selected");
+                }
+                else if(this._tlUnit==="em")
+                {
+                    tl_em = this.$element.find("#tl-radio-em");
+                    tl_em.addClass("selected");
+                }
+                else
+                {
+                    tl_percent = this.$element.find("#tl-radio-percent");
+                    tl_percent.addClass("selected");
+                }
+
+                var tr_px,tr_em,tr_percent;
+                if(this._trUnit==="px")
+                {
+                    tr_px = this.$element.find("#tr-radio-px");
+                    tr_px.addClass("selected");
+                }
+                else if(this._trUnit==="em")
+                {
+                    tr_em = this.$element.find("#tr-radio-em");
+                    tr_em.addClass("selected");
+                }
+                else
+                {
+                    tr_percent = this.$element.find("#tr-radio-percent");
+                    tr_percent.addClass("selected");
+                }
+
+                var br_px,br_em,br_percent;
+                if(this._brUnit==="px")
+                {
+                    br_px = this.$element.find("#br-radio-px");
+                    br_px.addClass("selected");
+                }
+                else if(this._trUnit==="em")
+                {
+                    br_em = this.$element.find("#br-radio-em");
+                    br_em.addClass("selected");
+                }
+                else
+                {
+                    br_percent = this.$element.find("#br-radio-percent");
+                    br_percent.addClass("selected");
+                }
+
+                var bl_px,bl_em,bl_percent;
+                if(this._blUnit==="px")
+                {
+                    bl_px = this.$element.find("#bl-radio-px");
+                    bl_px.addClass("selected");
+                }
+                else if(this._trUnit==="em")
+                {
+                    bl_em = this.$element.find("#bl-radio-em");
+                    bl_em.addClass("selected");
+                }
+                else
+                {
+                    bl_percent = this.$element.find("#bl-radio-percent");
+                    bl_percent.addClass("selected");
+                }
+
+                var all_px,all_em,all_percent;
+                if(this._allUnit==="px")
+                {
+                    all_px = this.$element.find("#all-radio-px");
+                    all_px.addClass("selected");
+                }
+                else if(this._trUnit==="em")
+                {
+                    all_em = this.$element.find("#all-radio-em");
+                    all_em.addClass("selected");
+                }
+                else
+                {
+                    all_percent = this.$element.find("#all-radio-percent");
+                    all_percent.addClass("selected");
+                }
+            }
     };
 
     BorderRadiusEditor.prototype._bindInputHandlers = function() {
@@ -317,20 +424,48 @@ define(function(require, exports, module) {
         this.$brslider.bind("input", function(event){
             self._handleBRCHange();
         });
+        
         this.$allCornerSlider.bind("input",function(event){
             self._handleALLCHange();
         });
+        
+        this.$tlradio.bind("click", function(event){
+            self._handleTLRadioChange(event);
+        });
+
+        this.$trradio.bind("click", function(event){
+            self._handleTRRadioChange(event);
+        });
+
+        this.$brradio.bind("click", function(event){
+            self._handleBRRadioChange(event);
+        });
+
+        this.$blradio.bind("click", function(event){
+            self._handleBLRadioChange(event);
+        });
+
+        this.$allradio.bind("click", function(event){
+            self._handleALLRadioChange(event);
+        });
+        
 
         this.$allCornerButton.bind("click",function(event){
             self.getButtonAllCorner().addClass("selected");
             self.getButtonIndividualCorner().removeClass("selected");
             var sliders = self.getAllSliders();
-           
+            var radios = self.getAllRadios();
                 sliders['tl'].prop('disabled',true);
                 sliders['bl'].prop('disabled',true);
                 sliders['br'].prop('disabled',true);
                 sliders['tr'].prop('disabled',true);
                 sliders['all'].prop('disabled',false);
+                radios['tr'].css('display','none');
+                radios['tl'].css('display','none');
+                radios['br'].css('display','none');
+                radios['bl'].css('display','none');
+                radios['all'].css('display','inline');
+                
                 self.getAllCornerDiv().addClass("allCornersArea");  
                 self.getIndividualDiv().removeClass("individualCornerArea");
                 self.setAllCornerBooleanFlag(true);
@@ -347,7 +482,15 @@ define(function(require, exports, module) {
                 sliders['bl'].prop('disabled',false);
                 sliders['br'].prop('disabled',false);
                 sliders['tr'].prop('disabled',false);
-                sliders['all'].prop('disabled',true);                
+                sliders['all'].prop('disabled',true); 
+            
+                var radios = self.getAllRadios();
+                
+                radios['tr'].css('display','inline');
+                radios['tl'].css('display','inline');
+                radios['br'].css('display','inline');
+                radios['bl'].css('display','inline');
+                radios['all'].css('display','none');
                 self.getAllCornerDiv().removeClass("allCornersArea");  
                 self.getIndividualDiv().addClass("individualCornerArea");
                 self.setAllCornerBooleanFlag(false);
@@ -477,6 +620,133 @@ define(function(require, exports, module) {
         var newValue = this.$tlslider.val().trim();
         _handleChanges.call(self, this.$tlslider, "TL", newValue);
     };
+    
+    BorderRadiusEditor.prototype._clearAllRadio = function(flag){
+        var list;
+        if(flag === "tl"){
+             list = this.$tlradio.find("li");
+             for(var i=0; i<list.length;i++){
+                 this.$element.find("#"+list[i].id).removeClass("selected");
+             }            
+        }
+        if(flag === "bl"){
+            list = this.$blradio.find("li");
+            for(var i=0; i<list.length;i++){
+                this.$element.find("#"+list[i].id).removeClass("selected");
+            }            
+        }
+        if(flag === "tr"){
+            list = this.$trradio.find("li");
+            for(var i=0; i<list.length;i++){
+                this.$element.find("#"+list[i].id).removeClass("selected");
+            }            
+        }
+        if(flag === "br"){
+            list = this.$brradio.find("li");
+            for(var i=0; i<list.length;i++){
+                this.$element.find("#"+list[i].id).removeClass("selected");
+            }            
+        }
+        if(flag === "all"){
+            list = this.$allradio.find("li");
+            for(var i=0; i<list.length;i++){
+                this.$element.find("#"+list[i].id).removeClass("selected");
+            }            
+        }
+   };
+    
+    BorderRadiusEditor.prototype.updateRadios=function(corner,unit){
+        if(corner==="tl"){
+            if(unit==="percent"){
+                
+                this._tlUnit = "%";
+            }
+            else{
+                this._tlUnit = unit;
+            }
+        }
+
+        if(corner==="tr"){
+            if(unit==="percent"){
+                this._trUnit = "%";
+            }
+            else{
+                this._trUnit = unit;
+            }
+        }
+
+        if(corner==="br"){
+            if(unit==="percent"){
+                this._brUnit = "%";
+            }
+            else{
+                this._brUnit = unit;
+            }
+        }
+
+        if(corner==="bl"){
+            if(unit==="percent"){
+                this._blUnit = "%";
+            }
+            else{
+                this._blUnit = unit;
+            }
+        }
+
+        if(corner==="all"){
+            if(unit==="percent"){
+                this._allUnit = "%";
+            }
+            else{
+                this._allUnit = unit;
+            }
+        }
+        this._setInputValues();
+        var newValue;
+        if(!this._allCorners){
+         newValue = this._tl+ this._tlUnit+" "+this._tr+this._trUnit+" "+this._br+this._brUnit+" "+this._bl+this._blUnit;
+        }
+        else{
+            newValue = this._all+this._allUnit;
+        }
+        this._commitChanges(newValue);
+        
+    };
+    BorderRadiusEditor.prototype._handleTLRadioChange = function(event){
+        this._clearAllRadio("tl");
+        this.$element.find("#"+event.target.parentNode.id).addClass("selected");
+        var unit = event.target.parentNode.id.split("-");
+        this.updateRadios("tl",unit[2]);
+    };
+
+    BorderRadiusEditor.prototype._handleTRRadioChange = function(event){
+        this._clearAllRadio("tr");
+        this.$element.find("#"+event.target.parentNode.id).addClass("selected");
+        var unit = event.target.parentNode.id.split("-");
+        this.updateRadios("tr",unit[2]);
+    };
+
+    BorderRadiusEditor.prototype._handleBRRadioChange = function(event){
+        this._clearAllRadio("br");
+        this.$element.find("#"+event.target.parentNode.id).addClass("selected");
+        var unit = event.target.parentNode.id.split("-");
+        this.updateRadios("br",unit[2]);
+    };
+
+    BorderRadiusEditor.prototype._handleBLRadioChange = function(event){
+        this._clearAllRadio("bl");
+        this.$element.find("#"+event.target.parentNode.id).addClass("selected");
+        var unit = event.target.parentNode.id.split("-");
+        this.updateRadios("bl",unit[2]);
+    };
+
+    BorderRadiusEditor.prototype._handleALLRadioChange = function(event){
+        this._clearAllRadio("all");
+        this.$element.find("#"+event.target.parentNode.id).addClass("selected");
+        var unit = event.target.parentNode.id.split("-");
+        this.updateRadios("all",unit[2]);
+    };
+
 
     BorderRadiusEditor.prototype._handleTRCHange = function() {
         var self = this;

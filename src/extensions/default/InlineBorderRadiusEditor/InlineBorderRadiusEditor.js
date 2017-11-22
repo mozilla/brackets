@@ -196,7 +196,7 @@ define(function (require, exports, module) {
         doc.addRef();
         doc.on("change", this._handleHostDocumentChange);
 
-        this.hostEditor.setInlineWidgetHeight(this, this.borderRadiusEditor.getRootElement().outerHeight(), true);
+        this.hostEditor.setInlineWidgetHeight(this, this.borderRadiusEditor.getRootElement().outerHeight()+50, true);
 
         this.borderRadiusEditor.focus();
     };
