@@ -9,8 +9,7 @@ define(function (require, exports, module) {
     var Commands           = brackets.getModule("command/Commands");
     var FileSystem         = brackets.getModule("filesystem/FileSystem");
     var HTMLRewriter       = brackets.getModule("filesystem/impls/filer/lib/HTMLRewriter");
-    var SidebarView        = brackets.getModule("project/SidebarView");
-    var PreviewView        = brackets.getModule("iframe-browser");
+    var SidebarView        = brackets.getModule("project/SidebarView");    
     var StatusBar          = brackets.getModule("widgets/StatusBar");
     var WorkspaceManager   = brackets.getModule("view/WorkspaceManager");
     var BrambleEvents      = brackets.getModule("bramble/BrambleEvents");
@@ -26,6 +25,7 @@ define(function (require, exports, module) {
     var Tutorial = require("lib/Tutorial");
     var Theme = require("lib/Theme");
     var UI = require("lib/UI");
+    var PreviewView = require("lib/iframe-browser");
 
     function _remoteCallbackFn(callback) {
         return function() {

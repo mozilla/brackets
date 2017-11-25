@@ -134,42 +134,7 @@ define(function (require, exports, module) {
      */
     function hide() {
         Resizer.hide("#second-pane");
-        $("#first-pane").addClass("expandEditor");
-        /*var iframe = getBrowserIframe();
-
-        if(!iframe) {
-            return;
-        }
-
-        PostMessageTransport.reload();
-
-        var currentURL = iframe.src;
-        // Open detached preview window
-        detachedWindow = window.open(currentURL, "Preview");
-
-        return Compatibility.supportsIFrameHTMLBlobURL(function(err, shouldUseBlobURL) {
-            if(err) {
-                console.error("[Brackets IFrame-Browser] Unexpected error:", err);
-                return;
-            }
-
-            if(!shouldUseBlobURL) {
-                var doc = detachedWindow.document.open("text/html", "replace");
-                doc.write(iframe.contentWindow.document.documentElement.outerHTML);
-                doc.close();
-            }
-
-            Resizer.hide("#second-pane");
-            $("#first-pane").addClass("expandEditor");
-            $("#liveDevButton").removeClass("liveDevButtonDetach");
-            $("#liveDevButton").addClass("liveDevButtonAttach");
-
-            // Adds tooltip prompting user to return to attached preview
-            StatusBar.addIndicator("liveDevButtonBox", $("#liveDevButtonBox"), true, "",
-                                   "Click to return preview to current window", "mobileViewButtonBox");
-
-            return detachedWindow;
-        });*/
+        $("#first-pane").addClass("expandEditor");        
     }
 
     // Return reference of open window if it exists and isn't closed
@@ -184,26 +149,7 @@ define(function (require, exports, module) {
      */
     function show() {
         Resizer.show("#second-pane");
-        $("#first-pane").removeClass("expandEditor");
-        /*var detachedPreview = getDetachedPreview();
-        if(detachedPreview && isReload) {
-            isReload = false;
-            return;
-        }
-
-        if(detachedPreview) {
-            detachedPreview.removeEventListener("beforeunload", show, false);
-            detachedPreview.close();
-        }
-
-        Resizer.setLayout("#second-pane");
-        $("#liveDevButton").removeClass("liveDevButtonAttach");
-        $("#liveDevButton").addClass("liveDevButtonDetach");
-        $("#first-pane").removeClass("expandEditor");
-
-        // Adds tooltip prompting user to detach preview
-        StatusBar.addIndicator("liveDevButtonBox", $("#liveDevButtonBox"), true, "",
-                               "Click to open preview in separate window", "mobileViewButtonBox");*/
+        $("#first-pane").removeClass("expandEditor");        
     }
 
     function setListener() {
