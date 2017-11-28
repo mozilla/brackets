@@ -134,15 +134,15 @@ define([
     }
 
     // Check if the parameter is equal to 'BrambleMemoryFileSystem'
-    if(getUrlParams() == mem_filesystem) {
-      console.log("Using memory-backed filesystem")
+    if(getUrlParams() === mem_filesystem) {
+      console.log("Using memory-backed filesystem");
       // Memory backed fs
       _fs = new Filer.FileSystem({
         flags: [ 'FORMAT' ],
         provider: new Filer.FileSystem.providers.Memory()
       });
     } else {
-      console.log("Using indexDB backed filesystem")  
+      console.log("Using indexDB backed filesystem");
       // Default IndexedDB backed fs
       _fs = new Filer.FileSystem({
         flags: [ 'FORMAT' ],
