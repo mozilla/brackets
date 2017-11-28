@@ -122,7 +122,34 @@ define([
 
     // Expose Filer for Path, Buffer, providers, etc.
     Bramble.Filer = Filer;
-    var _fs = new Filer.FileSystem();
+    var _fs;
+
+    // Set URL param for memory-backed FileSystem
+    var mem_filesystem = "BrambleMemoryFileSystem";
+
+    // Splits the parameter from the URL
+    function getUrlParams() {
+      var param = decodeURIComponent( window.location.href.slice( window.location.href.indexOf( '?' ) + 1 ) );
+      return param;
+    }
+
+    // Check if the parameter is equal to 'BrambleMemoryFileSystem'
+    if(getUrlParams() == mem_filesystem) {
+      console.log("Using memory-backed filesystem")
+      // Memory backed fs
+      _fs = new Filer.FileSystem({
+        flags: [ 'FORMAT' ],
+        provider: new Filer.FileSystem.providers.Memory()
+      });
+    } else {
+      console.log("Using indexDB backed filesystem")  
+      // Default IndexedDB backed fs
+      _fs = new Filer.FileSystem({
+        flags: [ 'FORMAT' ],
+        provider: new Filer.FileSystem.providers.IndexedDB()
+      });
+    }
+
     Bramble.getFileSystem = function() {
         return _fs;
     };
