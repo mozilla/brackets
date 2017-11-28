@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012 Adobe Systems Incorporated. All rights reserved.
+ * Copyright (c) 2012 - present Adobe Systems Incorporated. All rights reserved.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
@@ -21,15 +21,17 @@
  *
  */
 
-/*jslint vars: true, plusplus: true, devel: true, nomen: true, indent: 4, maxerr: 50 */
-/*global define */
-
 define(function (require, exports, module) {
 
     "use strict";
 
     // Code that needs to display user strings should call require("strings") to load
     // src/strings.js. This file will dynamically load strings.js for the specified brackets.locale.
+    //
+    // See the README.md file in this folder for information on how to add a new translation for
+    // another language or locale.
+    //
+    // TODO: dynamically populate the local prefix list below?
     module.exports = {
         root: true,
         "bg": true,
@@ -63,23 +65,6 @@ define(function (require, exports, module) {
         "tr": true,
         "uk": true,
         "zh-cn": true,
-        "zh-tw": true,
-        "ach": true,
-        "tl": true,
-        "tg": true,
-        "te": true,
-        "sv-se": true,
-        "sq": true,
-        "sl": true,
-        "nn-no": true,
-        "ms": true,
-        "kab": true,
-        "hsb": true,
-        "hi-in": true,
-        "fy-nl": true,
-        "es-cl": true,
-        "dsb": true,
-        "cak": true,
-        "bn-bd": true
+        "zh-tw": true
     };
 });
