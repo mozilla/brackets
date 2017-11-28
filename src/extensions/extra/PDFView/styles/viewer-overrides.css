@@ -4,11 +4,11 @@
 
 
 #pdf-meta *::selection  {
-    background: #abdffa;
+    background: #abdffa !important;
 }
 
 #pdf-meta *::-moz-selection {
-    background: #abdffa;
+    background: #abdffa !important;
 
 }
 
