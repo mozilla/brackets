@@ -159,7 +159,7 @@ define(function (require, exports, module) {
                     range.end.ch-=1;
                     self.hostEditor.setSelection(range.start, range.end); // workaround for #2805
                     self.hostEditor.document.replaceRange(borderRadiusString, range.start, range.end, self._origin);
-                    self.hostEditor.setSelection(range.start, endPos);
+                    //self.hostEditor.setSelection(range.start, endPos);
                     if (self._marker) {
                         self._marker.clear();
                         self._marker = self.hostEditor._codeMirror.markText(range.start, endPos);
@@ -212,7 +212,8 @@ define(function (require, exports, module) {
             this._marker.clear();
         }
         var doc = this.hostEditor.document;
-        this.hostEditor.setSelection({ch:-1, line:-1},{ch:-1,line:-1});
+        //
+        //this.hostEditor.setSelection({ch:-1, line:-1},{ch:-1,line:-1});
         doc.off("change", this._handleHostDocumentChange);
         doc.releaseRef();
         this.borderRadiusEditor.destroy();
