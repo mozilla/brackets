@@ -2,7 +2,6 @@
  * Various overrides of the built viewer.css file. Keep this as a CSS file vs. LESS
  */
 
-<<<<<<< HEAD
 
 #pdf-meta *::selection  {
     background: #abdffa !important;
@@ -13,8 +12,6 @@
 
 }
 
-=======
->>>>>>> parent of 551f17621... testing commit
  #viewerContainer {
      top: 0;
  }
