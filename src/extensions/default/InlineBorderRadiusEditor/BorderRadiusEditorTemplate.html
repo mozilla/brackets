@@ -1,6 +1,5 @@
 <div tabindex="-1" class="border-radius-editor">
     <header>
-        <label>Set radius for</label>
         <ul class="button-bar">
           <li id="allCorners" title="All Corners">
               <a href="#" tabindex="0">All Corners</a>
@@ -17,7 +16,6 @@
             <tr class="border-radius-input">
                 <td class="label-container">
                     <div class="tl corner-icon"></div>
-                    <!-- Top left -->
                 </td>
                 <td class="slider-container">
                    <input id="top-left-slider" type="range" min="0" max="100" step="1">
@@ -37,7 +35,6 @@
             <tr class="border-radius-input">
                 <td class="label-container">
                     <div class="tr corner-icon"></div>
-                    <!-- Top right -->
                 </td>
                 <td class="slider-container">
                     <input id="top-right-slider" type="range" min="0" max="100" step="1">
@@ -57,7 +54,6 @@
             <tr class="border-radius-input">
                 <td class="label-container">
                     <div class="br corner-icon"></div>
-                    <!-- Bottom right -->
                 </td>
                 <td class="slider-container">
                    <input id="bottom-right-slider" type="range" min="0" max="100" step="1">
@@ -77,7 +73,6 @@
             <tr class="border-radius-input">
                 <td class="label-container">
                     <div class="bl corner-icon"></div>
-                    <!-- Bottom left -->
                 </td>
                 <td class="slider-container">
                     <input id="bottom-left-slider" type="range" min="0" max="100" step="1">
@@ -99,7 +94,14 @@
     <div id="allCornersArea">
        <table>
            <tr class="border-radius-input">
-               <td class="label-container">All corners</td>
+               <td class="label-container">
+                   <div class="all corner-icon">
+                       <div class="dot"></div>
+                       <div class="dot"></div>
+                       <div class="dot"></div>
+                       <div class="dot"></div>
+                   </div>
+               </td>
                <td class="slider-container">
                    <input id="all-corner-slider" type="range" min="0" max="100" step="1">
                </td>
