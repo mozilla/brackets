@@ -1112,13 +1112,16 @@ a, img {
     position: relative;
     overflow: hidden;
     outline: none;
-
+    border-top: solid 8px white;
+    border-bottom: solid 8px white;
     background-color: @bc-bg-inline-widget;
     min-width: 250px;
     cursor: default;
 
     .dark & {
         background-color: @dark-bc-bg-inline-widget;
+        border-top: solid 8px #222;
+        border-bottom: solid 8px #222;
     }
 
     &.animating {
