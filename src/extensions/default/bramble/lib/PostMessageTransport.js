@@ -19,6 +19,7 @@ define(function (require, exports, module) {
         Path                = brackets.getModule("filesystem/impls/filer/BracketsFiler").Path,
         BrambleStartupState = brackets.getModule("bramble/StartupState"),
         Mustache            = brackets.getModule("thirdparty/mustache/mustache"),
+        PreferencesManager  = brackets.getModule("preferences/PreferencesManager"),
         escapedPathTemplate = Mustache.compile("{{path}}");
 
     // The script that will be injected into the previewed HTML to handle the other side of the post message connection.
@@ -223,7 +224,7 @@ define(function (require, exports, module) {
     var _pendingReloadUrl;
 
     // Whether or not to allow reloads in the general case (true by default)
-    var _autoUpdate = true;
+    var _autoUpdate = PreferencesManager.get("livePreviewAutoReload");;
 
     function setAutoUpdate(value) {
         _autoUpdate = value;
