@@ -1013,6 +1013,14 @@ define([
         this._executeRemoteCommand({commandCategory: "bramble", command: "BRAMBLE_HIDE_SIDEBAR"}, callback);
     };
 
+    BrambleProxy.prototype.showPreview = function(callback) {
+        this._executeRemoteCommand({commandCategory: "bramble", command: "BRAMBLE_SHOW_PREVIEW"}, callback);
+    };
+
+    BrambleProxy.prototype.hidePreview = function(callback) {
+        this._executeRemoteCommand({commandCategory: "bramble", command: "BRAMBLE_HIDE_PREVIEW"}, callback);
+    };
+
     BrambleProxy.prototype.showStatusbar = function(callback) {
         this._executeRemoteCommand({commandCategory: "bramble", command: "BRAMBLE_SHOW_STATUSBAR"}, callback);
     };

@@ -10,6 +10,7 @@ define(function (require, exports, module) {
     var FileSystem         = brackets.getModule("filesystem/FileSystem");
     var HTMLRewriter       = brackets.getModule("filesystem/impls/filer/lib/HTMLRewriter");
     var SidebarView        = brackets.getModule("project/SidebarView");
+    var PreviewView        = brackets.getModule("iframe-browser");
     var StatusBar          = brackets.getModule("widgets/StatusBar");
     var WorkspaceManager   = brackets.getModule("view/WorkspaceManager");
     var BrambleEvents      = brackets.getModule("bramble/BrambleEvents");
@@ -145,6 +146,12 @@ define(function (require, exports, module) {
             break;
         case "BRAMBLE_HIDE_SIDEBAR":
             SidebarView.hide();
+            break;
+        case "BRAMBLE_SHOW_PREVIEW":
+            PreviewView.show();
+            break;
+        case "BRAMBLE_HIDE_PREVIEW":
+            PreviewView.hide();
             break;
         case "BRAMBLE_HIDE_STATUSBAR":
             StatusBar.disable();
