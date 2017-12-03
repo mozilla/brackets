@@ -9,7 +9,8 @@ define(function (require, exports, module) {
         WebKitFileImport    = require("filesystem/impls/filer/lib/WebKitFileImport"),
         FileSystemCache     = require("filesystem/impls/filer/FileSystemCache"),
         BrambleStartupState = require("bramble/StartupState"),
-        LiveDevMultiBrowser = require("LiveDevelopment/LiveDevMultiBrowser");
+        LiveDevMultiBrowser = require("LiveDevelopment/LiveDevMultiBrowser"),
+        PreferencesManager  = require("preferences/PreferencesManager");
 
     /**
      * XXXBramble: the Drag and Drop and File APIs are a mess of incompatible
@@ -52,10 +53,14 @@ define(function (require, exports, module) {
 
         var strategy = chooseImportStrategy(source);
 
+        PreferencesManager.set("livePreviewAutoReload", false);
+
         // If we are given a sub-dir within the project, use that.  Otherwise use project root.
         parentPath = parentPath || BrambleStartupState.project("root");
 
         return strategy.import(source, parentPath, function(err) {
+            PreferencesManager.set("livePreviewAutoReload", true);
+            
             if(err) {
                 return callback(err);
             }
