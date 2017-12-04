@@ -13,6 +13,11 @@ define(function (require, exports, module) {
     var Path = FilerUtils.Path;
     var decodePath = FilerUtils.decodePath;
 
+    // Prefix for URLs that live in the virtual filesystem cache.
+    // NOTE: if you change this string, also update the regex in
+    // src/bramble-live-dev-cache-sw.js
+    var vfsPrefix = "thimble-sw-vfs-cached-url" + "/" + brackets.getLocale();
+
     var _provider;
 
     /**
@@ -171,17 +176,17 @@ define(function (require, exports, module) {
     function CacheStorageUrlProvider() {
         UrlProviderBase.call(this);
 
-        this.projectCacheName = Path.join("vfs", StartupState.project("root"));
+        this.projectCacheName = Path.join(vfsPrefix, StartupState.project("root"));
         this.baseUrl = this.generateVFSUrlForPath(StartupState.project("root")) + "/";
         this.shouldRewriteUrls = false;
     }
     CacheStorageUrlProvider.prototype = Object.create(UrlProviderBase.prototype);
     CacheStorageUrlProvider.prototype.constructor = CacheStorageUrlProvider;
 
-    // We use cache URLs like https://<origin>/dist/vfs/project/root/filename.ext
+    // We use cache URLs like https://<origin>/dist/thimble-vfs-cached-url/project/root/filename.ext
     CacheStorageUrlProvider.prototype.generateVFSUrlForPath = function(path) {
         var a = document.createElement("a");
-        a.href = StartupState.url("base") + "vfs" + path;
+        a.href = StartupState.url("base") + vfsPrefix + path;
         return a.href;
     };
 

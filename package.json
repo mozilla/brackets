@@ -64,7 +64,7 @@
         "request": "^2.69.0",
         "requirejs": "^2.3.3",
         "rimraf": "^2.6.1",
-        "sw-precache": "^5.0.0",
+        "sw-precache": "^5.2.0",
         "tar-fs": "^1.15.1"
     },
     "scripts": {
