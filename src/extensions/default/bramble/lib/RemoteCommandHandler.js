@@ -9,7 +9,7 @@ define(function (require, exports, module) {
     var Commands           = brackets.getModule("command/Commands");
     var FileSystem         = brackets.getModule("filesystem/FileSystem");
     var HTMLRewriter       = brackets.getModule("filesystem/impls/filer/lib/HTMLRewriter");
-    var SidebarView        = brackets.getModule("project/SidebarView");    
+    var SidebarView        = brackets.getModule("project/SidebarView");
     var StatusBar          = brackets.getModule("widgets/StatusBar");
     var WorkspaceManager   = brackets.getModule("view/WorkspaceManager");
     var BrambleEvents      = brackets.getModule("bramble/BrambleEvents");
@@ -25,7 +25,7 @@ define(function (require, exports, module) {
     var Tutorial = require("lib/Tutorial");
     var Theme = require("lib/Theme");
     var UI = require("lib/UI");
-    var PreviewView = require("lib/iframe-browser");
+    var IframeBrowser = require("lib/iframe-browser");
 
     function _remoteCallbackFn(callback) {
         return function() {
@@ -148,10 +148,10 @@ define(function (require, exports, module) {
             SidebarView.hide();
             break;
         case "BRAMBLE_SHOW_PREVIEW":
-            PreviewView.show();
+            IframeBrowser.show();
             break;
         case "BRAMBLE_HIDE_PREVIEW":
-            PreviewView.hide();
+            IframeBrowser.hide();
             break;
         case "BRAMBLE_HIDE_STATUSBAR":
             StatusBar.disable();
