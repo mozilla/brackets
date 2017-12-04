@@ -47,7 +47,7 @@ body {
 }
 
 #PDFBug .stats {
-font-family: "Courier New", Courier, monospace !important;
+    font-family: "Courier New", Courier, monospace !important;
 }
 
 .dark-theme #pdf-page-count:after {
