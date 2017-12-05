@@ -250,17 +250,6 @@ define(function (require, exports, module) {
 //        project_cmenu.addMenuDivider();
 //        project_cmenu.addMenuItem(Commands.FILE_REFRESH);
 
-        var editor_cmenu = Menus.registerContextMenu(Menus.ContextMenuIds.EDITOR_MENU);
-        // editor_cmenu.addMenuItem(Commands.NAVIGATE_JUMPTO_DEFINITION);
-        editor_cmenu.addMenuItem(Commands.TOGGLE_QUICK_EDIT);
-        editor_cmenu.addMenuItem(Commands.TOGGLE_QUICK_DOCS);
-        editor_cmenu.addMenuDivider();
-        editor_cmenu.addMenuItem(Commands.EDIT_CUT);
-        editor_cmenu.addMenuItem(Commands.EDIT_COPY);
-        editor_cmenu.addMenuItem(Commands.EDIT_PASTE);
-        editor_cmenu.addMenuDivider();
-        editor_cmenu.addMenuItem(Commands.EDIT_SELECT_ALL);
-
         var inline_editor_cmenu = Menus.registerContextMenu(Menus.ContextMenuIds.INLINE_EDITOR_MENU);
         inline_editor_cmenu.addMenuItem(Commands.TOGGLE_QUICK_EDIT);
         inline_editor_cmenu.addMenuItem(Commands.EDIT_SELECT_ALL);
@@ -291,8 +280,6 @@ define(function (require, exports, module) {
                     // type of inline widget since we already know an Editor has focus)
                     if (inlineWidget) {
                         inline_editor_cmenu.open(e);
-                    } else {
-                        editor_cmenu.open(e);
                     }
                 }
             });
