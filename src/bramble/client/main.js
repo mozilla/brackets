@@ -122,33 +122,18 @@ define([
 
     // Expose Filer for Path, Buffer, providers, etc.
     Bramble.Filer = Filer;
+
     var _fs;
+    var useTemporaryStorage = location.search === "?BrambleMemoryFileSystem";
+    var provider = null;
 
-    // Set URL param for memory-backed FileSystem
-    var mem_filesystem = "BrambleMemoryFileSystem";
-
-    // Splits the parameter from the URL
-    function getUrlParams() {
-      var param = decodeURIComponent( window.location.href.slice( window.location.href.indexOf( '?' ) + 1 ) );
-      return param;
+    // [Bramble] Overriding filesystem to use temporary storage. ALL FILES WILL BE DELETED WHEN PAGE IS CLOSED.
+    if(useTemporaryStorage) {
+      provider = new Filer.FileSystem.providers.Memory();
+      console.warn("Using memory-backed filesystem");
     }
 
-    // Check if the parameter is equal to 'BrambleMemoryFileSystem'
-    if(getUrlParams() === mem_filesystem) {
-      console.log("Using memory-backed filesystem");
-      // Memory backed fs
-      _fs = new Filer.FileSystem({
-        flags: [ 'FORMAT' ],
-        provider: new Filer.FileSystem.providers.Memory()
-      });
-    } else {
-      console.log("Using indexDB backed filesystem");
-      // Default IndexedDB backed fs
-      _fs = new Filer.FileSystem({
-        flags: [ 'FORMAT' ],
-        provider: new Filer.FileSystem.providers.IndexedDB()
-      });
-    }
+    _fs = new Filer.FileSystem({provider : provider});
 
     Bramble.getFileSystem = function() {
         return _fs;
@@ -156,7 +141,7 @@ define([
 
     // NOTE: THIS WILL DESTROY DATA! For error cases only, or to wipe the disk.
     Bramble.formatFileSystem = function(callback) {
-        _fs = new Filer.FileSystem({flags: ["FORMAT"]}, function(err) {
+        _fs = new Filer.FileSystem({flags: ["FORMAT"], provider : provider}, function(err) {
             if(err) {
                 return callback(err);
             }
