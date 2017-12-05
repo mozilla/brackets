@@ -124,7 +124,9 @@ define([
     Bramble.Filer = Filer;
 
     var _fs;
-    var useTemporaryStorage = location.search === "?BrambleMemoryFileSystem";
+
+    // Checks if the query parameter is 'temporaryStorage'
+    var useTemporaryStorage = /(temporary[sS]torage[=&])|(temporary[Ss]torage$)/.test(window.location.search);
     var provider = null;
 
     // [Bramble] Overriding filesystem to use temporary storage. ALL FILES WILL BE DELETED WHEN PAGE IS CLOSED.
