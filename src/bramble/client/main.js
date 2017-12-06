@@ -131,8 +131,8 @@ define([
 
     // Using memory-backed filesystem if requested
     if(useTemporaryStorage) {
-      provider = new Filer.FileSystem.providers.Memory();
-      console.warn("[Bramble] Overriding filesystem to use temporary storage. ALL FILES WILL BE DELETED WHEN PAGE IS CLOSED.");
+        provider = new Filer.FileSystem.providers.Memory();
+        console.warn("[Bramble] Overriding filesystem to use temporary storage. ALL FILES WILL BE DELETED WHEN PAGE IS CLOSED.");
     }
 
     _fs = new Filer.FileSystem({provider : provider});
