@@ -243,7 +243,7 @@ define(function (require, exports, module) {
         var url;
 
         // If auto-updates are disabled, and force wasn't passed, bail.
-        if(!_autoUpdate && !force) {
+        if(!PreferencesManager.get("livePreviewAutoReload") && !force) {
             return;
         }
 
