@@ -129,10 +129,10 @@ define([
     var useTemporaryStorage = /(temporary[sS]torage[=&])|(temporary[Ss]torage$)/.test(window.location.search);
     var provider = null;
 
-    // [Bramble] Overriding filesystem to use temporary storage. ALL FILES WILL BE DELETED WHEN PAGE IS CLOSED.
+    // Using memory-backed filesystem if requested
     if(useTemporaryStorage) {
       provider = new Filer.FileSystem.providers.Memory();
-      console.warn("Using memory-backed filesystem");
+      console.warn("[Bramble] Overriding filesystem to use temporary storage. ALL FILES WILL BE DELETED WHEN PAGE IS CLOSED.");
     }
 
     _fs = new Filer.FileSystem({provider : provider});
