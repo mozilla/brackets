@@ -32,7 +32,7 @@ define(function (require, exports, module) {
 
         // If iframe does not exist, then show it
         if(result.rows === 1 && result.columns === 1) {
-            setLayout(_orientation);
+            setLayout();
         }
         /*
          *Creating the empty iFrame we'll be using
