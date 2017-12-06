@@ -223,15 +223,13 @@ define(function (require, exports, module) {
     // URL of document being rewritten/launched (if any)
     var _pendingReloadUrl;
 
-    // Whether or not to allow reloads in the general case (true by default)
-    var _autoUpdate = PreferencesManager.get("livePreviewAutoReload");;
-
+    // Whether or not to allow reloads in the general case
     function setAutoUpdate(value) {
-        _autoUpdate = value;
+        PreferencesManager.set("livePreviewAutoReload",value);
 
         // Force a reload if we switch back to auto-updates
-        if(_autoUpdate) {
-            reload(true);
+        if(PreferencesManager.get("livePreviewAutoReload")) {
+            PreferencesManager.set("livePreviewAutoReload",true);
         }
     }
 
