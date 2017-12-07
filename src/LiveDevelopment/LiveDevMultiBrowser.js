@@ -960,6 +960,7 @@ define(function (require, exports, module) {
     EventDispatcher.makeEventDispatcher(exports);
 
     // XXXBramble: we need livePreviewAutoReload preference available to both core and extension
+    PreferencesManager.definePreference("livePreviewAutoReload", "boolean", true);
 
     // For unit testing
     exports._server                   = _server;

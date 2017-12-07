@@ -228,8 +228,8 @@ define(function (require, exports, module) {
         PreferencesManager.set("livePreviewAutoReload",value);
 
         // Force a reload if we switch back to auto-updates
-        if(PreferencesManager.get("livePreviewAutoReload")) {
-            PreferencesManager.set("livePreviewAutoReload",true);
+        if(value) {
+            reload(true);
         }
     }
 
