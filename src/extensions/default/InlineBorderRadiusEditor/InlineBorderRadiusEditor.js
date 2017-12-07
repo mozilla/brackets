@@ -26,19 +26,18 @@ define(function (require, exports, module) {
 
     var InlineWidget         = brackets.getModule("editor/InlineWidget").InlineWidget,
     BorderRadiusEditor          = require("BorderRadiusEditor").BorderRadiusEditor,
-        BorderRadiusUtils           = brackets.getModule("utils/BorderRadiusUtils");
+    BorderRadiusUtils           = brackets.getModule("utils/BorderRadiusUtils");
 
 
     /** @const @type {number} */
-    var MAX_USED_COLORS = 7,
-        DEFAULT_BORDER_RADIUS  = "30px";
+    var DEFAULT_BORDER_RADIUS  = "30px";
 
-    /** @type {number} Global var used to provide a unique ID for each color editor instance's _origin field. */
+    /** @type {number} Global var used to provide a unique ID for each borderRadius editor instance's _origin field. */
     var lastOriginId = 1;
 
     /**
      * Inline widget containing a ColorEditor control
-     * @param {!string} color  Initially selected color
+     * @param {!string} borderRadius  Initially selected borderRadius
      * @param {!CodeMirror.TextMarker} marker
      */
     function InlineBorderRadiusEditor(borderRadius, marker) {
@@ -116,7 +115,6 @@ define(function (require, exports, module) {
             }
         }
         
-        //matches = line.substr(start.ch).match(BorderRadiusUtils.BORDER_RADIUS_VALUE_REGEX);
         var  matches = line.substr(start).match(BorderRadiusUtils.BORDER_RADIUS_VALUE_REGEX);
 
         // Note that end.ch is exclusive, so we don't need to add 1 before comparing to
@@ -152,14 +150,14 @@ define(function (require, exports, module) {
                 var endPos = {
                         line: range.start.line,
                         ch: range.start.ch + borderRadiusString.length
-                    };
+                };
+                
                 this._isOwnChange = true;
                 this.hostEditor.document.batchOperation(function () {
                     //select current text and replace with new value
                     range.end.ch-=1;
                     self.hostEditor.setSelection(range.start, range.end); // workaround for #2805
                     self.hostEditor.document.replaceRange(borderRadiusString, range.start, range.end, self._origin);
-                    //self.hostEditor.setSelection(range.start, endPos);
                     if (self._marker) {
                         self._marker.clear();
                         self._marker = self.hostEditor._codeMirror.markText(range.start, endPos);
@@ -178,10 +176,6 @@ define(function (require, exports, module) {
      */
     InlineBorderRadiusEditor.prototype.load = function (hostEditor) {
         InlineBorderRadiusEditor.prototype.parentClass.load.apply(this, arguments);
-
-        // Create color picker control
-        //var allColorsInDoc = this.hostEditor.document.getText().match(BorderRadiusUtils.BORDER_RADIUS_VALUE_REGEX) || [DEFAULT_BORDER_RADIUS];
-        //var swatchInfo = this._collateColors(allColorsInDoc, MAX_USED_COLORS);
         this.borderRadiusEditor = new BorderRadiusEditor(this.$htmlContent, this._borderRadius, this._handleBorderRadiusChange);
     };
 
@@ -212,18 +206,15 @@ define(function (require, exports, module) {
             this._marker.clear();
         }
         var doc = this.hostEditor.document;
-        //
-        //this.hostEditor.setSelection({ch:-1, line:-1},{ch:-1,line:-1});
         doc.off("change", this._handleHostDocumentChange);
         doc.releaseRef();
-        this.borderRadiusEditor.destroy();
     };
 
     /**
-     * When text in the code editor changes, update color picker to reflect it
+     * When text in the code editor changes, update border-radius UIs to reflect it
      */
     InlineBorderRadiusEditor.prototype._handleHostDocumentChange = function () {
-        // Don't push the change into the color editor if it came from the color editor.
+        // Don't push the change into the border-radius editor if it came from the border-radius editor.
         if (this._isOwnChange) {
             return;
         }

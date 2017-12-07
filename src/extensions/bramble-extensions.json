@@ -59,7 +59,8 @@
             ]
         },
         "copy": [
-            "extensions/default/InlineBorderRadiusEditor/img/*.png"
+            "extensions/default/InlineBorderRadiusEditor/img/*.png",
+            "extensions/default/InlineBorderRadiusEditor/BorderRadiusEditorTemplate.html"
         ]
     },
     {

@@ -36,7 +36,7 @@ define(function (require, exports, module) {
      *
      * @param {Editor} hostEditor
      * @param {{line:Number, ch:Number}} pos
-     * @return {?{color:String, marker:TextMarker}}
+     * @return {?{radiusValue:String, marker:TextMarker}}
      */
     function prepareEditorForProvider(hostEditor, pos) {
         var radiusRegEx, radiusValueRegEx, cursorLine, match, sel, start, end, endPos, marker;
@@ -50,7 +50,7 @@ define(function (require, exports, module) {
         radiusValueRegEx = new RegExp(BorderRadiusUtils.BORDER_RADIUS_VALUE_REGEX);
         cursorLine = hostEditor.document.getLine(pos.line);
 
-        // Loop through each match of colorRegEx and stop when the one that contains pos is found.
+        // Loop through each match of radiusRegEx and stop when the one that contains pos is found.
         do {
             match = radiusRegEx.exec(cursorLine);
             if (match) {
@@ -63,7 +63,7 @@ define(function (require, exports, module) {
             // Check if the cursorLine has a CSS rule of type color
             var cssPropertyName, semiColonPos, colonPos, radiusValue, cursorLineSubstring, firstCharacterPos;
 
-            // Get the css property name after removing spaces and ":" so that we can check for it in the file ColorProperties.json
+            // Get the css property name after removing spaces and ":" so that we can check for it in the file BorderRadiusProperties.json
             cssPropertyName = cursorLine.split(':')[0].trim();
 
             if (!cssPropertyName || !properties[cssPropertyName]) {
@@ -110,16 +110,6 @@ define(function (require, exports, module) {
             }
         }
         return null;
-        /*pos.ch = start;
-        endPos = {line: pos.line, ch: end};
-
-        marker = hostEditor._codeMirror.markText(pos, endPos);
-        hostEditor.setSelection(pos, endPos);
-
-        return {
-            color: match[0],
-            marker: marker
-        };*/
         // Adjust pos to the beginning of the match so that the inline editor won't get
         // dismissed while we're updating the color with the new values from user's inline editing
     }
@@ -195,15 +185,10 @@ define(function (require, exports, module) {
 
         return false;
     }
-
+    
     // Initialize extension
     ExtensionUtils.loadStyleSheet(module, "css/main.less");
-
     EditorManager.registerInlineEditProvider(inlineBorderRadiusEditorProvider, queryInlineBorderRadiusEditorPrivoder);
-
     exports.prepareEditorForProvider = prepareEditorForProvider;
-
-    // for unit tests only
-   //exports.InlineBorderRadiusEditorProvider = InlineBorderRadiusEditorProvider;
 });
 
