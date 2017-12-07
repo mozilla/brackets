@@ -975,7 +975,7 @@ define(function (require, exports, module) {
     exports.showHighlight       = showHighlight;
     exports.hideHighlight       = hideHighlight;
     exports.redrawHighlight     = redrawHighlight;
-    exports.init                = init;S
+    exports.init                = init;
     exports.isActive            = isActive;
     exports.getServerBaseUrl    = getServerBaseUrl;
     exports.getCurrentProjectServerConfig = getCurrentProjectServerConfig;
