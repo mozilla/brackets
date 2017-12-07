@@ -78,8 +78,8 @@ define(function (require, exports, module) {
         FileUtils            = require("file/FileUtils"),
         MainViewManager      = require("view/MainViewManager"),
         PreferencesDialogs   = require("preferences/PreferencesDialogs"),
-        PreferencesManager   = require("preferences/PreferencesManager"),
         ProjectManager       = require("project/ProjectManager"),
+        PreferencesManager   = require("preferences/PreferencesManager"),
         Strings              = require("strings"),
         _                    = require("thirdparty/lodash"),
         LiveDevelopmentUtils = require("LiveDevelopment/LiveDevelopmentUtils"),
@@ -960,7 +960,6 @@ define(function (require, exports, module) {
     EventDispatcher.makeEventDispatcher(exports);
 
     // XXXBramble: we need livePreviewAutoReload preference available to both core and extension
-    PreferencesManager.definePreference("livePreviewAutoReload", "boolean", true);
 
     // For unit testing
     exports._server                   = _server;
@@ -976,7 +975,7 @@ define(function (require, exports, module) {
     exports.showHighlight       = showHighlight;
     exports.hideHighlight       = hideHighlight;
     exports.redrawHighlight     = redrawHighlight;
-    exports.init                = init;
+    exports.init                = init;S
     exports.isActive            = isActive;
     exports.getServerBaseUrl    = getServerBaseUrl;
     exports.getCurrentProjectServerConfig = getCurrentProjectServerConfig;
