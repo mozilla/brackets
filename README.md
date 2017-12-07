@@ -324,6 +324,8 @@ to be notified when the action completes:
 * `hideSidebar([callback])` - hides the file tree sidebar
 * `showStatusbar([callback])` - enables and shows the statusbar
 * `hideStatusbar([callback])` - disables and hides the statusbar
+* `showPreview([callback])` - opens the preview pane
+* `hidePreview([callback])` - hides the preview pane
 * `refreshPreview([callback])` - reloads the preview with the latest content in the editor and filesystem
 * `useMobilePreview([callback])` - uses a Mobile view in the preview, as it would look on a smartphone
 * `useDesktopPreview([callback])` - uses a Desktop view in the preview, as it would look on a desktop computer (default)
