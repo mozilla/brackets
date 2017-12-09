@@ -54,12 +54,12 @@ define(function(require, exports, module) {
     InlineBoxShadowEditor.prototype._origin = null;
 
     /**
-     * Returns the current text range of the color we're attached to, or null if
+     * Returns the current text range of the box-shadow value we're attached to, or null if
      * we've lost sync with what's in the code.
      * @return {?{start:{line:number, ch:number}, end:{line:number, ch:number}}}
     */
     InlineBoxShadowEditor.prototype.getCurrentRange = function () {
-        var pos, start, end;
+        var pos, start, end, line;
 
         pos = this._marker && this._marker.find();
 
@@ -69,36 +69,27 @@ define(function(require, exports, module) {
         }
 
         end = pos.to;
-        if (!end) {
-            end = {line: start.line};
+
+        line = this.hostEditor.document.getLine(start.line);
+        
+        start.ch = line.indexOf(':') + 1;
+        while(line[start.ch] == ' ') start.ch++;
+
+        end.line = start.line;
+        end.ch = line.indexOf(';');
+
+        if(end.ch === -1) {
+            end.ch = line.length;
+            while(end.ch > start.ch && line[end.ch] != ';') end.ch--;
         }
 
-        /*-----------Correct this----------*/
-
-        // Even if we think we have a good range end, we want to run the
-        // regexp match to see if there's a valid match that extends past the marker.
-        // This can happen if the user deletes the end of the existing color and then
-        // types some more.
-
-        // var line = this.hostEditor.document.getLine(start.line),
-        // matches = line.substr(start.ch).match(ColorUtils.COLOR_REGEX);
-
-        // // Note that end.ch is exclusive, so we don't need to add 1 before comparing to
-        // // the matched length here.
-        // if (matches && (end.ch === undefined || end.ch - start.ch < matches[0].length)) {
-        //  end.ch = start.ch + matches[0].length;
-        //  this._marker.clear();
-        //  this._marker = this.hostEditor._codeMirror.markText(start, end);
-        // }
-
-        // if (end.ch === undefined) {
-        //  // We were unable to resync the marker.
-        //  return null;
-        // } 
-        // else {
-        //  return {start: start, end: end};
-        // }
-        return {start: start, end: end};
+        if (end.ch === undefined) {
+            // We were unable to resync the marker.
+            return null;
+        } 
+        else {
+            return {start: start, end: end};
+        }
     };
 
     InlineBoxShadowEditor.prototype._buildBoxShadowString = function (values) {
@@ -211,7 +202,7 @@ define(function(require, exports, module) {
     }
 
     /**
-     * When text in the code editor changes, update color picker to reflect it
+     * When text in the code editor changes, update quick edit to reflect it
      */
     InlineBoxShadowEditor.prototype._handleHostDocumentChange = function () {
         // Don't push the change into the box-shadow editor if it came from the box-shadow editor.
@@ -220,20 +211,21 @@ define(function(require, exports, module) {
         }
 
         var range = this.getCurrentRange();
-        /*Correct this*/
         if (range) {
             var newString = this.hostEditor.document.getRange(range.start, range.end);
-            console.log(range);
+
             var flag = _isValidBoxShadowValue(newString);
-            console.log(flag);
+
             if(_isValidBoxShadowValue(newString)) {
                 // extract values
                 var newValues = {};
                 var boxShadowValueIndex = 0;
+
                 newString.split(/\s+/).forEach(function(value, index) {
                     value = value.trim();
                     var colorMatch = value.match(ColorUtils.COLOR_REGEX);
                     var pixelMatch = value.match(/(\d+)px/);
+                    console.log(colorMatch);
                     if(colorMatch) {
                         newValues["color"] = colorMatch[0];
                     }

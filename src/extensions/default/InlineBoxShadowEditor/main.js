@@ -8,6 +8,7 @@ define(function(require, exports, module) {
         boxShadowValueTypes    = JSON.parse(require("text!BoxShadowValueTypes.json")).boxShadowValueTypes;
 
     var DEFAULT_VALUES = "0px 0px 0px 0px black";
+
     /**
      * Prepare hostEditor for an InlineBoxShadowEditor at pos if possible. Return
      * editor context if so; otherwise null.
@@ -17,20 +18,17 @@ define(function(require, exports, module) {
      * @return {?{values:{}, marker:TextMarker}}
      */
     function prepareEditorForProvider(hostEditor, pos) {
-        var cursorLine = hostEditor.document.getLine(pos.line);
-
-        if(cursorLine.indexOf("box-shadow") === -1) {
+        if(queryInlineBoxShadowEditorProvider(hostEditor, pos) == false) {
             return null;
         }
 
-        var semiColonPos, colonPos, cursorLineSubstring, marker, values, isEmptyString, pos, firstCharacterPos, endPos, boxShadowValueIndex;
+        var cursorLine, semiColonPos, colonPos, cursorLineSubstring, marker, values, isEmptyString, pos, firstCharacterPos, endPos, boxShadowValueIndex;
         values = {};
 
+        cursorLine = hostEditor.document.getLine(pos.line);
         colonPos = cursorLine.indexOf(":");
         semiColonPos = cursorLine.indexOf(";");
         cursorLineSubstring = cursorLine.substring(colonPos + 1, cursorLine.length);
-
-        console.log(cursorLineSubstring);
 
         // Get the initial set of values of box-shadow property
         isEmptyString = true;
@@ -45,7 +43,6 @@ define(function(require, exports, module) {
                 isEmptyString = false;
             }
             else if(pixelMatch){
-                // Fix here
                 values[boxShadowValueTypes[boxShadowValueIndex++]] = value;
                 isEmptyString = false;
             }
@@ -128,7 +125,6 @@ define(function(require, exports, module) {
             return false;
         }
     }
-
 
     // Initialize extension
     ExtensionUtils.loadStyleSheet(module, "css/style.less");
