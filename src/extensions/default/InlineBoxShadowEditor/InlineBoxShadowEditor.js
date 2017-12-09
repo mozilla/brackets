@@ -73,14 +73,18 @@ define(function(require, exports, module) {
         line = this.hostEditor.document.getLine(start.line);
         
         start.ch = line.indexOf(':') + 1;
-        while(line[start.ch] == ' ') start.ch++;
+        while(line[start.ch] === ' ') {
+            start.ch++;
+        }
 
         end.line = start.line;
         end.ch = line.indexOf(';');
 
         if(end.ch === -1) {
             end.ch = line.length;
-            while(end.ch > start.ch && line[end.ch] != ';') end.ch--;
+            while(end.ch > start.ch && line[end.ch] !== ';') {
+                end.ch--;
+            }
         }
 
         if (end.ch === undefined) {
