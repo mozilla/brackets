@@ -45,9 +45,8 @@ define(function(require, exports, module) {
     }
 
     /**
-     * A string or tinycolor object representing the currently selected color
-     * TODO (#2201): type is unpredictable
-     * @type {tinycolor|string}
+     * A object representing the current set of box-shadow values
+     * @type {}
      */
     BoxShadowEditor.prototype._values = null;
 
@@ -221,9 +220,14 @@ define(function(require, exports, module) {
         }
 
         // Sync only if we have a valid color or we're restoring the previous valid color.
+        this._commitChanges("color", newColor);
         if (newColorOk) {
            console.log(newColor);
-            this._commitChanges("color", newColor);
+           this.$colorValue.css("border", "initial");
+        }
+        else {
+            console.warn("Wrong colour value");
+            this.$colorValue.css("border", "2px solid red");
         }
     };
 
