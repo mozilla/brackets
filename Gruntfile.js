@@ -351,6 +351,15 @@ module.exports = function (grunt) {
             test : {
                 files: ['<%= meta.test %>', 'test/**/*'],
                 tasks: ['eslint:test']
+            },
+            bramble : {
+                files: [
+                    'src/bramble/client/**/*.js',
+                    'src/bramble/thirdparty/**/*.js',
+                    'src/bramble/ChannelUtils.js',
+                    'thirdparty/filer/dist/filer.min.js'
+                ],
+                tasks: ['requirejs:iframe']
             }
         },
         /* FIXME (jasonsanjose): how to handle extension tests */
