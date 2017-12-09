@@ -18,7 +18,7 @@ define(function(require, exports, module) {
      * @return {?{values:{}, marker:TextMarker}}
      */
     function prepareEditorForProvider(hostEditor, pos) {
-        if(queryInlineBoxShadowEditorProvider(hostEditor, pos) == false) {
+        if(queryInlineBoxShadowEditorProvider(hostEditor, pos) === false) {
             return null;
         }
 
