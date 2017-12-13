@@ -75,7 +75,7 @@
         "build": "grunt build-browser",
         "preproduction": "grunt build-browser-compressed && npm run unlocalize",
         "production": "npm start -- --gzip",
-        "test": "grunt test && grunt build-browser-compressed",
+        "test": "grunt test",
         "server": "http-server -p 8000 --cors",
         "prestart": "npm run localize && grunt build-browser-dev",
         "start": "npm run server || true",

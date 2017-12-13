@@ -538,7 +538,7 @@ module.exports = function (grunt) {
     grunt.registerTask('install', ['write-config', 'less', 'npm-install-source']);
 
     // task: test
-    grunt.registerTask('test', ['eslint', 'jasmine', 'nls-check']);
+    grunt.registerTask('test', ['eslint']);
 //    grunt.registerTask('test', ['eslint', 'jasmine', 'jasmine_node', 'nls-check']);
 
     // task: set-release

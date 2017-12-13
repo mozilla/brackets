@@ -4,7 +4,6 @@ node_js:
   - "6"
 before_script:
 - npm install -g grunt-cli
-script: grunt build-browser-compressed
 branches:
   only:
   - master
@@ -21,6 +20,8 @@ addons:
       - ubuntu-toolchain-r-test
     packages:
       - g++-4.8
+before_deploy:
+- npm run preproduction
 deploy:
   - provider: s3
     access_key_id: AKIAI7XHSZFYVHFRTRIA
