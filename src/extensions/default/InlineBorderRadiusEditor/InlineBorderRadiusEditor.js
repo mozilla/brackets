@@ -26,8 +26,8 @@ define(function (require, exports, module) {
 
     var InlineWidget         = brackets.getModule("editor/InlineWidget").InlineWidget,
     BorderRadiusEditor          = require("BorderRadiusEditor").BorderRadiusEditor,
-    BorderRadiusUtils           = brackets.getModule("utils/BorderRadiusUtils");
-
+    BorderRadiusUtils  = require("../../../utils/BorderRadiusUtils");
+    
 
     /** @const @type {number} */
     var DEFAULT_BORDER_RADIUS  = "30px";

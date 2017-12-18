@@ -28,7 +28,8 @@ define(function (require, exports, module) {
         ExtensionUtils      = brackets.getModule("utils/ExtensionUtils"),
         InlineBorderRadiusEditor   = require("InlineBorderRadiusEditor").InlineBorderRadiusEditor,
         properties          = JSON.parse(require("text!BorderRadiusProperties.json")),
-        BorderRadiusUtils   = brackets.getModule("utils/BorderRadiusUtils");
+        BorderRadiusUtils  = require("../../../utils/BorderRadiusUtils");
+        
     var DEFAULT_RADIUS = "15px";
 
     /**

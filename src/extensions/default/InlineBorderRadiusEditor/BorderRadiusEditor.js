@@ -7,19 +7,15 @@ define(function(require, exports, module) {
         StringUtils        = brackets.getModule("utils/StringUtils"),
         Strings            = brackets.getModule("strings"),
         Mustache           = brackets.getModule("thirdparty/mustache/mustache"),
-        BorderRadiusUtils  = brackets.getModule("utils/BorderRadiusUtils");
+        BorderRadiusUtils  = require("../../../utils/BorderRadiusUtils");
 
-    /** Mustache template that forms the bare DOM structure of the UI */
+    //getting reference to the html template for the border-radius editor UI
     var BorderRadiusTemplate = require("text!BorderRadiusEditorTemplate.html");
     var DEFAULT_BORDER_RADIUS_VALUE = 0;
-    /**
-     * Box shadow editor control; may be used standalone or within an InlineBoxShadowEditor inline widget.
-     * @param {!jQuery} $parent  DOM node into which to append the root of the box-shadow editor UI
-     * @param {!{horizontalOffset: string, verticalOffset: string, blurRadius: string, spreadRadius: string, color: string}} values  Initial set of box-shadow values.
-     * @param {!function(string)} callback  Called whenever values change
-     */
-    function replaceAll(value,str1,str2,ignore){
-        return value.replace(new RegExp(str1.replace(/([\/\,\!\\\^\$\{\}\[\]\(\)\.\*\+\?\|\<\>\-\&])/g,"\\$&"),(ignore?"gi":"g")),(typeof(str2)==="string")?str2.replace(/\$/g,"$$$$"):str2);
+
+    //replace all occurance of the string instead of only replacing the first occurance
+    function replaceAll(values, find, replace) {
+        return values.replace(new RegExp(find, 'g'), replace);
     }
 
     function getIndividualValues(values){
@@ -71,7 +67,6 @@ define(function(require, exports, module) {
         this._allCorners = (this.individualValuesWithUnit.length===1);
         this._values = values;
         this._originalValues = values;
-        this._redoValues = null;
         this._init = true;
         this._tl=null;
         this._tr=null;
@@ -121,27 +116,13 @@ define(function(require, exports, module) {
         this._setInputValues();
     }
 
-    /**
-     * A string or tinycolor object representing the currently selected color
-     * TODO (#2201): type is unpredictable
-     * @type {tinycolor|string}
-     */
+    
     BorderRadiusEditor.prototype._values = null;
-
-    /**
-     * box shadow values that was selected before undo(), if undo was the last change made. Else null.
-     * @type {?string}
-     */
-    BorderRadiusEditor.prototype._redoValues = null;
-
-    /**
-     * Initial value the BoxShadow picker was opened with
-     * @type {!string}
-     */
+    
     BorderRadiusEditor.prototype._originalValues = null;
 
 
-    /** Returns the root DOM node of the BoxShadowPicker UI */
+    /** Returns the root DOM node of the Border Radius UI */
     BorderRadiusEditor.prototype.getRootElement = function () {
         return this.$element;
     };
@@ -186,154 +167,153 @@ define(function(require, exports, module) {
 
     BorderRadiusEditor.prototype._setInputValues = function(setFromString) {
         var values = this.individualValuesWithUnit;
-            if(!this._allCorners){
-                if(values.length===1 && (this._init || setFromString)){
-
-                    this._tr = parseFloat(values[0].num);
-                    this._tl = parseFloat(values[0].num);
-                    this._br = parseFloat(values[0].num);
-                    this._bl = parseFloat(values[0].num);
-                    this._tlUnit=values[0].unit;
-                    this._trUnit=values[0].unit;
-                    this._brUnit=values[0].unit;
-                    this._blUnit= values[0].unit;
-                    this._allUnit=this._allUnit || "px";
-                    this._all = this._all || 0;
+        if(!this._allCorners){
+            if(values.length===1 && (this._init || setFromString)){
+                this._tr = parseFloat(values[0].num);
+                this._tl = parseFloat(values[0].num);
+                this._br = parseFloat(values[0].num);
+                this._bl = parseFloat(values[0].num);
+                this._tlUnit=values[0].unit;
+                this._trUnit=values[0].unit;
+                this._brUnit=values[0].unit;
+                this._blUnit= values[0].unit;
+                this._allUnit=this._allUnit || "px";
+                this._all = this._all || 0;
                 
-                } else if(values.length===2 && (this._init || setFromString)){
-                    this._tl = parseFloat(values[0].num);
-                    this._tr = parseFloat(values[1].num);
-                    this._br = parseFloat(values[0].num);
-                    this._bl = parseFloat(values[1].num);
-                    this._tlUnit=values[0].unit;
-                    this._trUnit=values[1].unit;
-                    this._brUnit=values[0].unit;
-                    this._blUnit= values[1].unit;
-                    this._allUnit=this._allUnit || "px";
-                    this._all = this._all || 0;
-
-                } else if(values.length===3 && (this._init || setFromString)){
-                    this._tl = parseFloat(values[0].num);
-                    this._tr = parseFloat(values[1].num);
-                    this._br = parseFloat(values[2].num);
-                    this._bl = parseFloat(values[1].num);
-                    this._tlUnit=values[0].unit;
-                    this._trUnit=values[1].unit;
-                    this._brUnit=values[2].unit;
-                    this._blUnit= values[1].unit;
-                    this._allUnit=this._allUnit || "px";
-                    this._all = this._all || 0;
-
-                } else if(values.length===4 && (this._init || setFromString)){
-
-                    this._tl = parseFloat(values[0].num);
-                    this._tr = parseFloat(values[1].num);
-                    this._br = parseFloat(values[2].num);
-                    this._bl = parseFloat(values[3].num);
-                    this._tlUnit=values[0].unit;
-                    this._trUnit=values[1].unit;
-                    this._brUnit=values[2].unit;
-                    this._blUnit= values[3].unit;
-                    this._allUnit=this._allUnit || "px";
-                    this._all = this._all || 0;
-                }
-            } else{
-                if(this._init || setFromString){
-                this._all = parseFloat(values[0].num);
-                this._allUnit = values[0].unit;
-                this._tl = this._tl || this._all;
-                this._tlUnit = this._tlUnit || this._allUnit;
-                this._tr = this._tr || this._all;
-                this._trUnit = this._trUnit || this._allUnit;
-                this._br = this._br || this._all;
-                this._brUnit = this._brUnit || this._allUnit;
-                this._bl = this._bl || this._all;
-                this._blUnit = this._blUnit || this._allUnit;
-                }
-            }
-
-            if(this._init){
-                this.setRadioButtons();
-            }
+            } else if(values.length===2 && (this._init || setFromString)){
+                this._tl = parseFloat(values[0].num);
+                this._tr = parseFloat(values[1].num);
+                this._br = parseFloat(values[0].num);
+                this._bl = parseFloat(values[1].num);
+                this._tlUnit=values[0].unit;
+                this._trUnit=values[1].unit;
+                this._brUnit=values[0].unit;
+                this._blUnit= values[1].unit;
+                this._allUnit=this._allUnit || "px";
+                this._all = this._all || 0;
             
-            //update all UI element based on updated values
-            this._init =false;
-            this.$tlslider.val(this._tl);
-            this.$trslider.val(this._tr);
-            this.$blslider.val(this._bl);
-            this.$brslider.val(this._br);
-            this.$tltext.text(this._tl+this._tlUnit);
-            this.$trtext.text(this._tr+this._trUnit);
-            this.$brtext.text(this._br+this._brUnit);
-            this.$bltext.text(this._bl+this._blUnit);
-            this.$alltext.text(this._all+this._allUnit);
-            this.$allCornerSlider.val(this._all);
+            } else if(values.length===3 && (this._init || setFromString)){
+                this._tl = parseFloat(values[0].num);
+                this._tr = parseFloat(values[1].num);
+                this._br = parseFloat(values[2].num);
+                this._bl = parseFloat(values[1].num);
+                this._tlUnit=values[0].unit;
+                this._trUnit=values[1].unit;
+                this._brUnit=values[2].unit;
+                this._blUnit= values[1].unit;
+                this._allUnit=this._allUnit || "px";
+                this._all = this._all || 0;
+            
+            } else if(values.length===4 && (this._init || setFromString)){
+
+                this._tl = parseFloat(values[0].num);
+                this._tr = parseFloat(values[1].num);
+                this._br = parseFloat(values[2].num);
+                this._bl = parseFloat(values[3].num);
+                this._tlUnit=values[0].unit;
+                this._trUnit=values[1].unit;
+                this._brUnit=values[2].unit;
+                this._blUnit= values[3].unit;
+                this._allUnit=this._allUnit || "px";
+                this._all = this._all || 0;
+            }
+        } else{
+            if(this._init || setFromString){
+            this._all = parseFloat(values[0].num);
+            this._allUnit = values[0].unit;
+            this._tl = this._tl || this._all;
+            this._tlUnit = this._tlUnit || this._allUnit;
+            this._tr = this._tr || this._all;
+            this._trUnit = this._trUnit || this._allUnit;
+            this._br = this._br || this._all;
+            this._brUnit = this._brUnit || this._allUnit;
+            this._bl = this._bl || this._all;
+            this._blUnit = this._blUnit || this._allUnit;
+            }
+        }
+
+        if(this._init){
+            this.setRadioButtons();
+        }
+            
+        //update all UI element based on updated values
+        this._init =false;
+        this.$tlslider.val(this._tl);
+        this.$trslider.val(this._tr);
+        this.$blslider.val(this._bl);
+        this.$brslider.val(this._br);
+        this.$tltext.text(this._tl+this._tlUnit);
+        this.$trtext.text(this._tr+this._trUnit);
+        this.$brtext.text(this._br+this._brUnit);
+        this.$bltext.text(this._bl+this._blUnit);
+        this.$alltext.text(this._all+this._allUnit);
+        this.$allCornerSlider.val(this._all);
 
     };
     BorderRadiusEditor.prototype.setRadioButtons = function(values){
-            //when initializing
-            if(!values){
-                var tl_px,tl_em,tl_percent;
-                if(this._tlUnit==="px")
-                {
-                    tl_px = this.$element.find("#tl-radio-px");
-                    tl_px.addClass("selected");
-                } else if(this._tlUnit==="em"){
-                    tl_em = this.$element.find("#tl-radio-em");
-                    tl_em.addClass("selected");
-                } else{
-                    tl_percent = this.$element.find("#tl-radio-percent");
-                    tl_percent.addClass("selected");
-                }
-
-                var tr_px,tr_em,tr_percent;
-                if(this._trUnit==="px"){
-                    tr_px = this.$element.find("#tr-radio-px");
-                    tr_px.addClass("selected");
-                } else if(this._trUnit==="em"){
-                    tr_em = this.$element.find("#tr-radio-em");
-                    tr_em.addClass("selected");
-                } else {
-                    tr_percent = this.$element.find("#tr-radio-percent");
-                    tr_percent.addClass("selected");
-                }
-
-                var br_px,br_em,br_percent;
-                if(this._brUnit==="px"){
-                    br_px = this.$element.find("#br-radio-px");
-                    br_px.addClass("selected");
-                } else if(this._trUnit==="em"){
-                    br_em = this.$element.find("#br-radio-em");
-                    br_em.addClass("selected");
-                } else{
-                    br_percent = this.$element.find("#br-radio-percent");
-                    br_percent.addClass("selected");
-                }
-
-                var bl_px,bl_em,bl_percent;
-                if(this._blUnit==="px"){
-                    bl_px = this.$element.find("#bl-radio-px");
-                    bl_px.addClass("selected");
-                } else if(this._trUnit==="em"){
-                    bl_em = this.$element.find("#bl-radio-em");
-                    bl_em.addClass("selected");
-                } else{
-                    bl_percent = this.$element.find("#bl-radio-percent");
-                    bl_percent.addClass("selected");
-                }
-
-                var all_px,all_em,all_percent;
-                if(this._allUnit==="px"){
-                    all_px = this.$element.find("#all-radio-px");
-                    all_px.addClass("selected");
-                } else if(this._trUnit==="em"){
-                    all_em = this.$element.find("#all-radio-em");
-                    all_em.addClass("selected");
-                } else{
-                    all_percent = this.$element.find("#all-radio-percent");
-                    all_percent.addClass("selected");
-                }
+        //when initializing
+        if(!values){
+            var tl_px,tl_em,tl_percent;
+            if(this._tlUnit==="px")
+            {
+                tl_px = this.$element.find("#tl-radio-px");
+                tl_px.addClass("selected");
+            } else if(this._tlUnit==="em"){
+                tl_em = this.$element.find("#tl-radio-em");
+                tl_em.addClass("selected");
+            } else{
+                tl_percent = this.$element.find("#tl-radio-percent");
+                tl_percent.addClass("selected");
             }
+
+            var tr_px,tr_em,tr_percent;
+            if(this._trUnit==="px"){
+                tr_px = this.$element.find("#tr-radio-px");
+                tr_px.addClass("selected");
+            } else if(this._trUnit==="em"){
+                tr_em = this.$element.find("#tr-radio-em");
+                tr_em.addClass("selected");
+            } else {
+                tr_percent = this.$element.find("#tr-radio-percent");
+                tr_percent.addClass("selected");
+            }
+
+            var br_px,br_em,br_percent;
+            if(this._brUnit==="px"){
+                br_px = this.$element.find("#br-radio-px");
+                br_px.addClass("selected");
+            } else if(this._trUnit==="em"){
+                br_em = this.$element.find("#br-radio-em");
+                br_em.addClass("selected");
+            } else{
+                br_percent = this.$element.find("#br-radio-percent");
+                br_percent.addClass("selected");
+            }
+
+            var bl_px,bl_em,bl_percent;
+            if(this._blUnit==="px"){
+                bl_px = this.$element.find("#bl-radio-px");
+                bl_px.addClass("selected");
+            } else if(this._trUnit==="em"){
+                bl_em = this.$element.find("#bl-radio-em");
+                bl_em.addClass("selected");
+            } else{
+                bl_percent = this.$element.find("#bl-radio-percent");
+                bl_percent.addClass("selected");
+            }
+
+            var all_px,all_em,all_percent;
+            if(this._allUnit==="px"){
+                all_px = this.$element.find("#all-radio-px");
+                all_px.addClass("selected");
+            } else if(this._trUnit==="em"){
+                all_em = this.$element.find("#all-radio-em");
+                all_em.addClass("selected");
+            } else{
+                all_percent = this.$element.find("#all-radio-percent");
+                all_percent.addClass("selected");
+            }
+        }
     };
 
     BorderRadiusEditor.prototype._bindInputHandlers = function() {
@@ -567,12 +547,11 @@ define(function(require, exports, module) {
                 this.$element.find("#"+list[i].id).removeClass("selected");
             }
         }
-   };
+    };
 
     BorderRadiusEditor.prototype.updateRadios=function(corner,unit){
         if(corner==="tl"){
             if(unit==="percent"){
-
                 this._tlUnit = "%";
             } else{
                 this._tlUnit = unit;
@@ -613,7 +592,7 @@ define(function(require, exports, module) {
         this._setInputValues();
         var newValue;
         if(!this._allCorners){
-         newValue = this._tl+ this._tlUnit+" "+this._tr+this._trUnit+" "+this._br+this._brUnit+" "+this._bl+this._blUnit;
+            newValue = this._tl+ this._tlUnit+" "+this._tr+this._trUnit+" "+this._br+this._brUnit+" "+this._bl+this._blUnit;
         } else{
             newValue = this._all+this._allUnit;
         }
@@ -678,28 +657,6 @@ define(function(require, exports, module) {
         var self = this;
         var newValue = this.$allCornerSlider.val().trim();
         _handleChanges.call(self, this.$allCornerSlider, "ALL", newValue);
-    };
-
-    /**
-    * Global handler for keys in the borderradius editor. Catches undo/redo keys and traps
-    * arrow keys that would be handled by the scroller.
-    */
-    BorderRadiusEditor.prototype._handleKeydown = function (event) {
-        var hasCtrl = (brackets.platform === "win") ? (event.ctrlKey) : (event.metaKey);
-        if (hasCtrl) {
-            switch (event.keyCode) {
-                case KeyEvent.DOM_VK_Z:
-                    if (event.shiftKey) {
-                        this.redo();
-                    } else {
-                        this.undo();
-                    }
-                    return false;
-                case KeyEvent.DOM_VK_Y:
-                    this.redo();
-                    return false;
-            }
-        }
     };
 
     BorderRadiusEditor.prototype._commitChanges = function(value) {
