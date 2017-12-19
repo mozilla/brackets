@@ -56,11 +56,11 @@ define(function(require, exports, module) {
         return parsedResult;
     }
     
-    function BorderRadiusEditor($parent, values, callback) {
+    function BorderRadiusEditor($parent, values, RadiusChangeHandler) {
         // Create the DOM structure, filling in localized strings via Mustache
         this.$element = $(Mustache.render(BorderRadiusTemplate, Strings));
         $parent.append(this.$element);
-        this._callback = callback;
+        this._RadiusChangeHandler = RadiusChangeHandler;
         this.individualValuesWithUnit = getIndividualValues(values); 
         
         // Get references
@@ -77,14 +77,13 @@ define(function(require, exports, module) {
         this._brUnit=null;
         this._blUnit=null;
         this._allUnit=null;
+
+        // References to sliders, button and texts
+        this.$allCornerButton = this.$element.find("#allCorners");
         this.$tlslider = this.$element.find("#top-left-slider");
         this.$trslider = this.$element.find("#top-right-slider");
         this.$blslider = this.$element.find("#bottom-left-slider");
         this.$brslider = this.$element.find("#bottom-right-slider");
-
-        //allcorner button reference
-        this.$allCornerButton = this.$element.find("#allCorners");
-
         this.$allCornerSlider = this.$element.find("#all-corner-slider");
         this.$individualCorner = this.$element.find("#individualCorners");
         this.$individualCornerArea = this.$element.find("#individualCornerArea");
@@ -103,15 +102,14 @@ define(function(require, exports, module) {
         // Attach event listeners to main UI elements
         this._bindInputHandlers();
         
-        // initialize individual corner editing to be disabled
+        // initialize individual corner editing to be disabled if allCorner is set to true
         if(this._allCorners){
             this.$allCornerButton.trigger("click");
-        }
-        else{
+        } else{
             this.$individualCorner.trigger("click");
         }
         
-        // Set initial values in the box-shadow editor inputs.
+        // Set initial values for all UI Components
         this._setInputValues();
     }
 
@@ -161,7 +159,8 @@ define(function(require, exports, module) {
 
     BorderRadiusEditor.prototype._setInputValues = function(setFromString) {
         var values = this.individualValuesWithUnit;
-        if(!this._allCorners){
+        if(!this._allCorners)
+        {
             if(values.length===1 && (this._init || setFromString)){
                 this._tr = parseFloat(values[0].num);
                 this._tl = parseFloat(values[0].num);
@@ -246,10 +245,10 @@ define(function(require, exports, module) {
     };
     BorderRadiusEditor.prototype.setRadioButtons = function(values){
         //when initializing
-        if(!values){
+        if(!values)
+        {
             var tl_px,tl_em,tl_percent;
-            if(this._tlUnit==="px")
-            {
+            if(this._tlUnit==="px"){
                 tl_px = this.$element.find("#tl-radio-px");
                 tl_px.addClass("selected");
             } else if(this._tlUnit==="em"){
@@ -400,7 +399,13 @@ define(function(require, exports, module) {
             self.setAllCornerBooleanFlag(false);
             self._setInputValues();
             var result = self.getAllCornerValues();
-            self._commitChanges(result["tl"]+self._tlUnit+" "+result["tr"]+self._trUnit+" "+result["br"]+self._brUnit+" "+result["bl"]+self._blUnit);
+            self._commitChanges(result["tl"] +
+                                self._tlUnit + " " +
+                                result["tr"] + self._trUnit + " " +
+                                result["br"] +
+                                self._brUnit + " "+
+                                result["bl"] +
+                                self._blUnit);
         });
     };
 
@@ -439,15 +444,11 @@ define(function(require, exports, module) {
         return this.$individualCornerArea;
     };
 
-    // Utilty function to check if data is of correct format.
-    BorderRadiusEditor.prototype._isValidNumber = function(data) {
-        return (data.match(/\-?\d*/) !== null);
-    };
-
     BorderRadiusEditor.prototype._isValidBorderRadiusString = function(string){
         var radiusValueRegEx = new RegExp(BorderRadiusUtils.BORDER_RADIUS_VALUE_REGEX);
         return radiusValueRegEx.test(string);
     };
+    
 
     BorderRadiusEditor.prototype.setBorderRadiusFromString = function(value) {
         this.setValues(value);
@@ -462,23 +463,35 @@ define(function(require, exports, module) {
         var newValue;
 
         if(propertyName === "TL"){
-            newValue = value+this._tlUnit+" "+this._tr+this._trUnit+" "+this._br+this._brUnit+" "+this._bl+this._blUnit;
+            newValue = value + this._tlUnit + " " +
+                       this._tr + this._trUnit + " " +
+                       this._br + this._brUnit + " " +
+                       this._bl + this._blUnit;
             this._tl = value;
         }
         if(propertyName === "TR"){
-            newValue = this._tl+this._tlUnit+" "+value+this._trUnit+" "+this._br+this._brUnit+" "+this._bl+this._blUnit;
+            newValue = this._tl + this._tlUnit + " " +
+                       value + this._trUnit + " " +
+                       this._br + this._brUnit + " " +
+                       this._bl + this._blUnit;
             this._tr = value;
         }
         if(propertyName === "BR"){
-            newValue = this._tl+ this._tlUnit+" "+this._tr+this._trUnit+" "+value+this._brUnit+" "+this._bl+this._blUnit;
+            newValue = this._tl + this._tlUnit + " " + 
+                       this._tr + this._trUnit + " " +
+                       value + this._brUnit + " " +
+                       this._bl + this._blUnit;
             this._br = value;
         }
         if(propertyName === "BL"){
-            newValue = this._tl+ this._tlUnit+" "+this._tr+this._trUnit+" "+this._br+this._brUnit+" "+value+this._blUnit;
+            newValue = this._tl + this._tlUnit + " " + 
+                       this._tr + this._trUnit + " " + 
+                       this._br + this._brUnit + " " +
+                       value + this._blUnit;
             this._bl = value;
         }
         if(propertyName === "ALL"){
-            newValue = value+this._allUnit;
+            newValue = value + this._allUnit;
             this._all = value;
         }
         this._setInputValues();
@@ -525,7 +538,7 @@ define(function(require, exports, module) {
         }
     };
 
-    BorderRadiusEditor.prototype.updateRadios=function(corner,unit){
+    BorderRadiusEditor.prototype.updateRadios=function(corner, unit){
         if(corner==="tl"){
             if(unit==="percent"){
                 this._tlUnit = "%";
@@ -568,13 +581,17 @@ define(function(require, exports, module) {
         this._setInputValues();
         var newValue;
         if(!this._allCorners){
-            newValue = this._tl+ this._tlUnit+" "+this._tr+this._trUnit+" "+this._br+this._brUnit+" "+this._bl+this._blUnit;
+            newValue = this._tl + this._tlUnit + " " +
+                       this._tr + this._trUnit + " " +
+                       this._br + this._brUnit + " " +
+                       this._bl + this._blUnit;
         } else{
-            newValue = this._all+this._allUnit;
+            newValue = this._all + this._allUnit;
         }
         this._commitChanges(newValue);
 
     };
+    
     BorderRadiusEditor.prototype._handleTLRadioChange = function(event){
         this._clearAllRadio("tl");
         this.$element.find("#"+event.target.parentNode.id).addClass("selected");
@@ -641,7 +658,7 @@ define(function(require, exports, module) {
         for(var i=0;i<_array.length;i++){
             result+=_array[i];
         }
-        this._callback(value);
+        this._RadiusChangeHandler(value);
     };
 
     exports.BorderRadiusEditor = BorderRadiusEditor;
