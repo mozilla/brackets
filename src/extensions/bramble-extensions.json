@@ -11,6 +11,12 @@
         "path": "extensions/default/HTMLCodeHints"
     },
     {
+        "path": "extensions/default/CSSAtRuleCodeHints"
+    },
+    {
+        "path": "extensions/default/CSSPseudoSelectorHints"
+    },
+    {
         "path": "extensions/default/HtmlEntityCodeHints",
         "less": {
             "dist/extensions/default/HTMLEntityCodeHints/styles.css": [
