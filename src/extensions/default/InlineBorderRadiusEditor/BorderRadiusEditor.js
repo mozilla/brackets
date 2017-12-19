@@ -65,7 +65,6 @@ define(function(require, exports, module) {
         
         // Get references
         this._allCorners = (this.individualValuesWithUnit.length===1);
-        this._values = values;
         this._originalValues = values;
         this._init = true;
         this._tl=null;
@@ -116,11 +115,7 @@ define(function(require, exports, module) {
         this._setInputValues();
     }
 
-    
-    BorderRadiusEditor.prototype._values = null;
-    
     BorderRadiusEditor.prototype._originalValues = null;
-
 
     /** Returns the root DOM node of the Border Radius UI */
     BorderRadiusEditor.prototype.getRootElement = function () {
@@ -159,7 +154,6 @@ define(function(require, exports, module) {
             finalValue += (result[i].num+result[i].unit);
         }
         this._allCorners = (result.length === 1);
-        this._values = finalValue;
         this.individualValuesWithUnit = result;
         this._setInputValues(true);
         this._commitChanges(values);
@@ -429,10 +423,6 @@ define(function(require, exports, module) {
         return result;
     };
 
-    BorderRadiusEditor.prototype.getValues = function() {
-        return this._values;
-    };
-
     BorderRadiusEditor.prototype.getButtonAllCorner = function(){
         return this.$allCornerButton;
     };
@@ -464,15 +454,6 @@ define(function(require, exports, module) {
     };
 
     function _handleChanges($inputElement, propertyName, value) {
-        if(!this._isValidNumber(value)) {
-            if(!this._values[propertyName]) {
-                $inputElement.val("");
-                return;
-            }
-            var curValue = parseFloat(this._values[propertyName]);
-            $inputElement.val(curValue);
-        }
-
         if(value === "") {
             value = "0";
             $inputElement.val(value);
@@ -482,27 +463,22 @@ define(function(require, exports, module) {
 
         if(propertyName === "TL"){
             newValue = value+this._tlUnit+" "+this._tr+this._trUnit+" "+this._br+this._brUnit+" "+this._bl+this._blUnit;
-            this._values = value+this._tlUnit+this._tr+this._trUnit+this._br+this._brUnit+this._bl+this._blUnit;
             this._tl = value;
         }
         if(propertyName === "TR"){
             newValue = this._tl+this._tlUnit+" "+value+this._trUnit+" "+this._br+this._brUnit+" "+this._bl+this._blUnit;
-            this._values = this._tl+this._tlUnit+value+this._trUnit+this._br+this._brUnit+this._bl+this._blUnit;
             this._tr = value;
         }
         if(propertyName === "BR"){
             newValue = this._tl+ this._tlUnit+" "+this._tr+this._trUnit+" "+value+this._brUnit+" "+this._bl+this._blUnit;
-            this._values = this._tl+this._tlUnit+this._tr+this._trUnit+value+this._brUnit+this._bl+this._blUnit;
             this._br = value;
         }
         if(propertyName === "BL"){
             newValue = this._tl+ this._tlUnit+" "+this._tr+this._trUnit+" "+this._br+this._brUnit+" "+value+this._blUnit;
-            this._values = this._tl+this._tlUnit+this._tr+this._trUnit+this.br+this._brUnit+value+this._blUnit;
             this._bl = value;
         }
         if(propertyName === "ALL"){
             newValue = value+this._allUnit;
-            this._values = value+this._allUnit+value+this._allUnit+value+this._allUnit+value+this._allUnit;
             this._all = value;
         }
         this._setInputValues();
@@ -665,7 +641,6 @@ define(function(require, exports, module) {
         for(var i=0;i<_array.length;i++){
             result+=_array[i];
         }
-        this._values = result;
         this._callback(value);
     };
 
