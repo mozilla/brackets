@@ -24,9 +24,9 @@
 define(function (require, exports, module) {
     "use strict";
 
-    var InlineWidget         = brackets.getModule("editor/InlineWidget").InlineWidget,
-    BorderRadiusEditor          = require("BorderRadiusEditor").BorderRadiusEditor,
-    BorderRadiusUtils  = require("../../../utils/BorderRadiusUtils");
+    var InlineWidget = brackets.getModule("editor/InlineWidget").InlineWidget,
+        BorderRadiusEditor = require("BorderRadiusEditor").BorderRadiusEditor,
+        BorderRadiusUtils  = require("../../../utils/BorderRadiusUtils");
     
 
     /** @const @type {number} */
@@ -36,7 +36,7 @@ define(function (require, exports, module) {
     var lastOriginId = 1;
 
     /**
-     * Inline widget containing a ColorEditor control
+     * Inline widget containing a BorderRadiusEditor control
      * @param {!string} borderRadius  Initially selected borderRadius
      * @param {!CodeMirror.TextMarker} marker
      */
@@ -101,7 +101,7 @@ define(function (require, exports, module) {
 
         // Even if we think we have a good range end, we want to run the
         // regexp match to see if there's a valid match that extends past the marker.
-        // This can happen if the user deletes the end of the existing color and then
+        // This can happen if the user deletes the end of the existing border-radius value and then
         // types some more.
 
         //Manuelly find the position of the first occurance of radius value in the line 
@@ -134,8 +134,8 @@ define(function (require, exports, module) {
     };
 
     /**
-     * When the color picker's selected color changes, update text in code editor
-     * @param {!string} colorString
+     * When the color picker's selected border-radius value changes, update text in code editor
+     * @param {!string} borderRadiusString
      */
     InlineBorderRadiusEditor.prototype._handleBorderRadiusChange = function (borderRadiusString) {
         var self = this;
@@ -165,7 +165,6 @@ define(function (require, exports, module) {
                 });
                 this._isOwnChange = false;
             }
-
             this._borderRadius = borderRadiusString.replace(";",'');
         }
     };
@@ -185,13 +184,10 @@ define(function (require, exports, module) {
      */
     InlineBorderRadiusEditor.prototype.onAdded = function () {
         InlineBorderRadiusEditor.prototype.parentClass.onAdded.apply(this, arguments);
-
         var doc = this.hostEditor.document;
         doc.addRef();
         doc.on("change", this._handleHostDocumentChange);
-
         this.hostEditor.setInlineWidgetHeight(this, this.borderRadiusEditor.getRootElement().outerHeight()+50, true);
-
         this.borderRadiusEditor.focus();
     };
 
@@ -201,7 +197,6 @@ define(function (require, exports, module) {
      */
     InlineBorderRadiusEditor.prototype.onClosed = function () {
         InlineBorderRadiusEditor.prototype.parentClass.onClosed.apply(this, arguments);
-
         if (this._marker) {
             this._marker.clear();
         }
@@ -218,7 +213,6 @@ define(function (require, exports, module) {
         if (this._isOwnChange) {
             return;
         }
-
         var range = this.getCurrentRange();
         if (range) {
             var newBorderRadius = this.hostEditor.document.getRange(range.start, range.end);

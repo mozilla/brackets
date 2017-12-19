@@ -104,7 +104,7 @@ define(function(require, exports, module) {
         // Attach event listeners to main UI elements
         this._bindInputHandlers();
         
-        //initialize individual corner editing to be disabled
+        // initialize individual corner editing to be disabled
         if(this._allCorners){
             this.$allCornerButton.trigger("click");
         }
