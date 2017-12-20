@@ -27,11 +27,23 @@
  */
 define(function (require, exports, module) {
     "use strict";
-    // use RegExp.source of the RegExp literal to avoid doubled backslashes
+    
+    /**
+     * Regular expression that matches the css rule for border-radius values after the 
+     * colon is optional
+     * @const @type {RegExp}
+     */
     var BORDER_RADIUS_REGEX = new RegExp('.*border-radius:.*');
+    
+    /**
+     * Regular expression that matches the reasonable format of css value for border-radius,
+     * starting with digits maximum 3 digits followed by any scalable units listed in the 
+     * expression. Such pattern may occur up to 4 times since maximum of 4 corners can be used.
+     * @const @type {RegExp}
+     */
     var BORDER_RADIUS_VALUE_REGEX = new RegExp('([0-9]{1,3}(px|em|ex|%|in|cm|mm|pt|pc)?){1,4}.*');
     
-     // Define public API
+    // Define public API
     exports.BORDER_RADIUS_REGEX = BORDER_RADIUS_REGEX;
     exports.BORDER_RADIUS_VALUE_REGEX = BORDER_RADIUS_VALUE_REGEX;
 });
