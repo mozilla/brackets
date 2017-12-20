@@ -22,12 +22,11 @@
  */
 
 /**
- *  Utilities functions related to color matching
+ *  Utilities regular expressions related to border-radius rule matching
  *
  */
 define(function (require, exports, module) {
     "use strict";
-    
     /**
      * Regular expression that matches the css rule for border-radius values after the 
      * colon is optional
