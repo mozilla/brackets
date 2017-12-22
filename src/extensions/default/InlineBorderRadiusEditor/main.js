@@ -61,7 +61,7 @@ define(function (require, exports, module) {
         } while (match && (pos.ch < start || pos.ch > end));
 
         if(match){
-            // Check if the cursorLine has a CSS rule of type color
+            // Check if the cursorLine has a CSS rule of type border-radius
             var cssPropertyName, semiColonPos, colonPos, radiusValue, cursorLineSubstring, firstCharacterPos;
 
             // Get the css property name after removing spaces and ":" so that we can check for it in the file BorderRadiusProperties.json
@@ -112,17 +112,17 @@ define(function (require, exports, module) {
         }
         return null;
         // Adjust pos to the beginning of the match so that the inline editor won't get
-        // dismissed while we're updating the color with the new values from user's inline editing
+        // dismissed while we're updating the border-radius with the new values from user's inline editing
     }
 
     /**
-     * Registered as an inline editor provider: creates an InlineEditorColor when the cursor
-     * is on a color value (in any flavor of code).
+     * Registered as an inline editor provider: creates an InlineBorderRadiusEditor when the cursor
+     * is on a border-radius value (in any flavor of code).
      *
      * @param {!Editor} hostEditor
      * @param {!{line:Number, ch:Number}} pos
      * @return {?$.Promise} synchronously resolved with an InlineWidget, or null if there's
-     *      no color at pos.
+     * no border-radius at pos.
      */
     function inlineBorderRadiusEditorProvider(hostEditor, pos) {
         var context = prepareEditorForProvider(hostEditor, pos),
@@ -153,7 +153,7 @@ define(function (require, exports, module) {
         borderRadiusRegEx = new RegExp(BorderRadiusUtils.BORDER_RADIUS_REGEX);
         cursorLine = hostEditor.document.getLine(pos.line);
 
-        // Loop through each match of colorRegEx and stop when the one that contains pos is found.
+        // Loop through each match of borderRadiusRegEx and stop when the one that contains pos is found.
         do {
             match = borderRadiusRegEx.exec(cursorLine);
             if (match) {
