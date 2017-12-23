@@ -174,7 +174,6 @@ define(function (require, exports, module) {
         var win = _iframeRef.contentWindow;
         msgStr = resolvePaths(msgStr);
         var msg = JSON.parse(msgStr);
-        var detachedPreview = Browser.getDetachedPreview();
 
         // Because we need to deal with reloads on this side (i.e., editor) of the
         // transport, check message before sending to remote, and reload if necessary
@@ -188,10 +187,6 @@ define(function (require, exports, module) {
         }
 
         win.postMessage(msgStr, "*");
-
-        if(detachedPreview && Tutorial.shouldPostMessage()) {
-            detachedPreview.postMessage(msgStr, "*");
-        }
     }
 
     /**

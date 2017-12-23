@@ -109,18 +109,6 @@ define(function (require, exports, module) {
                     doc.close();
                 }
             }
-
-            var detachedPreview = getDetachedPreview();
-            if(detachedPreview) {
-                isReload = true;
-                if(!shouldUseBlobURL) {
-                    doc = detachedPreview.document.open("text/html", "replace");
-                    doc.write(urlOrHTML);
-                    doc.close();
-                } else {
-                    detachedPreview.location.replace(urlOrHTML);
-                }
-            }
         });
     }
 
@@ -137,26 +125,12 @@ define(function (require, exports, module) {
         $("#first-pane").addClass("expandEditor");        
     }
 
-    // Return reference of open window if it exists and isn't closed
-    function getDetachedPreview() {
-        if(detachedWindow && !detachedWindow.closed) {
-            return detachedWindow;
-        }
-    }
-
     /**
      * Used to show second pane, change lilveDevButton background and close the detached preview
      */
     function show() {
         Resizer.show("#second-pane");
         $("#first-pane").removeClass("expandEditor");        
-    }
-
-    function setListener() {
-        var detachedPreview = getDetachedPreview();
-        if(detachedPreview) {
-            detachedPreview.addEventListener("beforeunload", show, false);
-        }
     }
 
     // Define public API
@@ -168,7 +142,6 @@ define(function (require, exports, module) {
     exports.HORIZONTAL_ORIENTATION = HORIZONTAL_ORIENTATION;
     exports.VERTICAL_ORIENTATION = VERTICAL_ORIENTATION;
     exports.setOrientation = setOrientation;
-    exports.getDetachedPreview = getDetachedPreview;
     exports.show = show;
     exports.hide = hide;
     exports.setListener = setListener;
