@@ -144,5 +144,4 @@ define(function (require, exports, module) {
     exports.setOrientation = setOrientation;
     exports.show = show;
     exports.hide = hide;
-    exports.setListener = setListener;
 });
