@@ -1,18 +1,2 @@
-### Description
-
-[Description of the bug or feature]
-
-### Steps to Reproduce
-
-1. [First Step]
-2. [Second Step]
-3. [and so on...]
-
-**Expected behavior:** [What you expected to happen]
-
-**Actual behavior:** [What actually happened]
-
-### Versions
-
-Please include the browser name and version you are using.
-Please include the OS (macOS, Windows, Linux) you are using and the version of the OS you're running.
+We track our issues in the Thimble repository. 
+Please file an issue by going to this link -  https://github.com/mozilla/thimble.mozilla.org/issues/new
