@@ -4,7 +4,7 @@
           <li id="allCorners" title="{{ALL_CORNERS}}">
               <a href="#" tabindex="0">{{ALL_CORNERS}}</a>
           </li>
-          <li title="{{INDIVIDUAL_CORNERS}}" disabled="true" id="individualCorners">
+          <li title="{{INDIVIDUAL_CORNERS}}" id="individualCorners">
               <a href="#" tabindex="0">{{INDIVIDUAL_CORNERS}}</a>
           </li>
         </ul>
@@ -15,76 +15,76 @@
         <table>
             <tr class="border-radius-input">
                 <td class="label-container">
-                    <div class="tl corner-icon"></div>
+                    <div class="top-left corner-icon"></div>
                 </td>
                 <td class="slider-container">
                    <input id="top-left-slider" type="range" min="0" max="100" step="1">
                 </td>
                 <td class="slider-value">
-                   <span class="slider-indicator" id="tltext"></span>
+                   <span class="slider-indicator" id="top-left-text"></span>
                 </td>
                 <td class="units-container">
-                    <ul class="button-bar ul-padding-left" id="tl-radio">
-                        <li id="tl-radio-px" title="{{TL_RADIO_PX}}"><a href="#" tabindex="0">px</a></li>
-                        <li title="{{TL_RADIO_PERCENT}}" disabled="true" id="tl-radio-percent"><a href="#" tabindex="0">%</a></li>
-                        <li title="{{TL_RADIO_EM}}" disabled="true" id="tl-radio-em"><a href="#" tabindex="0">em</a></li>
+                    <ul class="button-bar ul-padding-left" id="top-left-radio">
+                        <li id="top-left-radio-px" title="{{PIXEL_UNIT}}"><a href="#" tabindex="0">px</a></li>
+                        <li title="{{PERCENTAGE_UNIT}}" id="top-left-radio-percent"><a href="#" tabindex="0">%</a></li>
+                        <li title="{{EM_UNIT}}" id="top-left-radio-em"><a href="#" tabindex="0">em</a></li>
                     </ul>
                 </td>
             </tr>
 
             <tr class="border-radius-input">
                 <td class="label-container">
-                    <div class="tr corner-icon"></div>
+                    <div class="top-right corner-icon"></div>
                 </td>
                 <td class="slider-container">
                     <input id="top-right-slider" type="range" min="0" max="100" step="1">
                 </td>
                 <td>
-                    <span class="slider-indicator" id="trtext"></span>
+                    <span class="slider-indicator" id="top-right-text"></span>
                 </td>
                 <td class="units-container">
-                    <ul class="button-bar ul-padding-left" id="tr-radio">
-                        <li id="tr-radio-px" title="{{TR_RADIO_PX}}"><a href="#" tabindex="0">px</a></li>
-                        <li title="{{TR_RADIO_PERCENT}}" disabled="true" id="tr-radio-percent"><a href="#" tabindex="0">%</a></li>
-                        <li title="{{TR_RADIO_EM}}" disabled="true" id="tr-radio-em"><a href="#" tabindex="0">em</a></li>
+                    <ul class="button-bar ul-padding-left" id="top-right-radio">
+                        <li id="top-right-radio-px" title="{{PIXEL_UNIT}}"><a href="#" tabindex="0">px</a></li>
+                        <li title="{{PERCENTAGE_UNIT}}" id="top-right-radio-percent"><a href="#" tabindex="0">%</a></li>
+                        <li title="{{EM_UNIT}}" id="top-right-radio-em"><a href="#" tabindex="0">em</a></li>
                     </ul>
                 </td>
             </tr>
 
             <tr class="border-radius-input">
                 <td class="label-container">
-                    <div class="br corner-icon"></div>
+                    <div class="bottom-right corner-icon"></div>
                 </td>
                 <td class="slider-container">
                    <input id="bottom-right-slider" type="range" min="0" max="100" step="1">
                 </td>
                 <td>
-                   <span class="slider-indicator" id="brtext"></span>
+                   <span class="slider-indicator" id="bottom-right-text"></span>
                 </td>
                 <td class="units-container">
-                   <ul class="button-bar ul-padding-left" id="br-radio">
-                       <li id="br-radio-px" title="{{BR_RADIO_PX}}"><a href="#" tabindex="0">px</a></li>
-                       <li title="{{BR_RADIO_PERCENT}}" disabled="true" id="br-radio-percent"><a href="#" tabindex="0">%</a></li>
-                       <li title="{{BR_RADIO_EM}}" disabled="true" id="br-radio-em"><a href="#" tabindex="0">em</a></li>
+                   <ul class="button-bar ul-padding-left" id="bottom-right-radio">
+                       <li id="bottom-right-radio-px" title="{{PIXEL_UNIT}}"><a href="#" tabindex="0">px</a></li>
+                       <li title="{{PERCENTAGE_UNIT}}" id="bottom-right-radio-percent"><a href="#" tabindex="0">%</a></li>
+                       <li title="{{EM_UNIT}}" id="bottom-right-radio-em"><a href="#" tabindex="0">em</a></li>
                    </ul>
                 </td>
             </tr>
 
             <tr class="border-radius-input">
                 <td class="label-container">
-                    <div class="bl corner-icon"></div>
+                    <div class="bottom-left corner-icon"></div>
                 </td>
                 <td class="slider-container">
                     <input id="bottom-left-slider" type="range" min="0" max="100" step="1">
                 </td>
                 <td>
-                    <span class="slider-indicator" id="bltext"></span>
+                    <span class="slider-indicator" id="bottom-left-text"></span>
                 </td>
                 <td class="units-container">
-                    <ul class="button-bar ul-padding-left" id="bl-radio">
-                        <li id="bl-radio-px" title="{{BL_RADIO_PX}}"><a href="#" tabindex="0">px</a></li>
-                        <li title="{{BL_RADIO_PERCENT}}" disabled="true" id="bl-radio-percent"><a href="#" tabindex="0">%</a></li>
-                        <li title="{{BL_RADIO_EM}}" disabled="true" id="bl-radio-em"><a href="#" tabindex="0">em</a></li>
+                    <ul class="button-bar ul-padding-left" id="bottom-left-radio">
+                        <li id="bottom-left-radio-px" title="{{PIXEL_UNIT}}"><a href="#" tabindex="0">px</a></li>
+                        <li title="{{PERCENTAGE_UNIT}}" id="bottom-left-radio-percent"><a href="#" tabindex="0">%</a></li>
+                        <li title="{{EM_UNIT}}" id="bottom-left-radio-em"><a href="#" tabindex="0">em</a></li>
                     </ul>
                 </td>
             </tr>
@@ -106,13 +106,13 @@
                    <input id="all-corner-slider" type="range" min="0" max="100" step="1">
                </td>
                <td class="slider-value">
-                  <span class="slider-indicator" id="alltext"></span>
+                  <span class="slider-indicator" id="all-corner-text"></span>
                </td>
                <td class="units-container">
-                    <ul class="button-bar ul-padding-left" id="all-radio">
-                        <li id="all-radio-px" title="{{ALL_RADIO_PX}}"><a href="#" tabindex="0">px</a></li>
-                        <li title="{{ALL_RADIO_PERCENT}}" disabled="true" id="all-radio-percent"><a href="#" tabindex="0">%</a></li>
-                        <li title="{{ALL_RADIO_EM}}" disabled="true" id="all-radio-em"><a href="#" tabindex="0">em</a></li>
+                    <ul class="button-bar ul-padding-left" id="all-corner-radio">
+                        <li id="all-corner-radio-px" title="{{PIXEL_UNIT}}"><a href="#" tabindex="0">px</a></li>
+                        <li title="{{PERCENTAGE_UNIT}}" id="all-corner-radio-percent"><a href="#" tabindex="0">%</a></li>
+                        <li title="{{EM_UNIT}}" id="all-corner-radio-em"><a href="#" tabindex="0">em</a></li>
                     </ul>
                </td>
            </tr>

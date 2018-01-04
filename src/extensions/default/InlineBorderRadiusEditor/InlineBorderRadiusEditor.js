@@ -24,10 +24,10 @@
 define(function (require, exports, module) {
     "use strict";
 
-    var InlineWidget = brackets.getModule("editor/InlineWidget").InlineWidget,
-        BorderRadiusEditor = require("BorderRadiusEditor").BorderRadiusEditor,
-        BorderRadiusUtils  = require("../../../utils/BorderRadiusUtils");
-    
+    var InlineWidget = brackets.getModule("editor/InlineWidget").InlineWidget;
+    var BorderRadiusUtils = require("BorderRadiusUtils");
+    var BorderRadiusEditor = require("BorderRadiusEditor").BorderRadiusEditor;
+
 
     /** @const @type {number} */
     var DEFAULT_BORDER_RADIUS  = "30px";
@@ -104,8 +104,8 @@ define(function (require, exports, module) {
         // This can happen if the user deletes the end of the existing border-radius value and then
         // types some more.
 
-        //Manuelly find the position of the first occurance of radius value in the line 
-        //because using this._maker.find() does not return expected value 
+        //Manuelly find the position of the first occurance of radius value in the line
+        //because using this._maker.find() does not return expected value
         //using this as a work around
         var line = this.hostEditor.document.getLine(start.line);
         for(var i = line.indexOf(":")+1; i<line.length;i++){
@@ -114,7 +114,7 @@ define(function (require, exports, module) {
                 break;
             }
         }
-        
+
         var  matches = line.substr(start).match(BorderRadiusUtils.BORDER_RADIUS_VALUE_REGEX);
 
         // Note that end.ch is exclusive, so we don't need to add 1 before comparing to
@@ -128,13 +128,13 @@ define(function (require, exports, module) {
         if (end.ch === undefined) {
             // We were unable to resync the marker.
             return null;
-        } else {    
-            return {start: start, end: end};    
+        } else {
+            return {start: start, end: end};
         }
     };
 
     /**
-     * When the color picker's selected border-radius value changes, update text in code editor
+     * When the selected border-radius value changes, update text in code editor
      * @param {!string} borderRadiusString
      */
     InlineBorderRadiusEditor.prototype._handleBorderRadiusChange = function (borderRadiusString) {
@@ -151,7 +151,7 @@ define(function (require, exports, module) {
                         line: range.start.line,
                         ch: range.start.ch + borderRadiusString.length
                 };
-                
+
                 this._isOwnChange = true;
                 this.hostEditor.document.batchOperation(function () {
                     //select current text and replace with new value
@@ -187,7 +187,7 @@ define(function (require, exports, module) {
         var doc = this.hostEditor.document;
         doc.addRef();
         doc.on("change", this._handleHostDocumentChange);
-        this.hostEditor.setInlineWidgetHeight(this, this.borderRadiusEditor.getRootElement().outerHeight()+50, true);
+        this.hostEditor.setInlineWidgetHeight(this, this.borderRadiusEditor.$element.outerHeight() + 50, true);
         this.borderRadiusEditor.focus();
     };
 
@@ -217,9 +217,9 @@ define(function (require, exports, module) {
         if (range) {
             var newBorderRadius = this.hostEditor.document.getRange(range.start, range.end);
             if (newBorderRadius !== this._borderRadius) {
-                if (this.borderRadiusEditor._isValidBorderRadiusString(newBorderRadius)) { 
+                if (this.borderRadiusEditor.isValidBorderRadiusString(newBorderRadius)) {
                     this._isHostChange = true;
-                    this.borderRadiusEditor.setBorderRadiusFromString(newBorderRadius);
+                    this.borderRadiusEditor.updateValues(newBorderRadius);
                     this._isHostChange = false;
                 }
             }

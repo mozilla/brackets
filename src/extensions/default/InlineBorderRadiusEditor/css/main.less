@@ -14,12 +14,6 @@
         margin-bottom: 5px;
         padding-bottom: 10px;
         font-size: 14px;
-
-        label {
-            display: inline-block;
-            padding-right: 5px;
-            cursor: default;
-        }
     }
 
     input {
@@ -110,22 +104,22 @@
             border-radius: 50%;
         }
 
-        &.tl:after {
+        &.top-left:after {
             top: -3px;
             left: -3px;
         }
 
-        &.tr:after {
+        &.top-right:after {
             top: -3px;
             right: -3px;
         }
 
-        &.bl:after {
+        &.bottom-left:after {
             bottom: -3px;
             left: -3px;
         }
 
-        &.br:after {
+        &.bottom-right:after {
             bottom: -3px;
             right: -3px;
         }
@@ -203,19 +197,6 @@
 
 }
 
-.border-radius-editor #individualCornerArea.individualCornerArea,
-.border-radius-editor #allCornersArea.allCornersArea {
-    display: block;
-}
-
-.border-radius-editor #individualCornerArea,
-.border-radius-editor #allCornersArea {
-    display: none;
-}
-
-
-
-
 .border-radius-editor ul.button-bar {
     display: inline-block;
     padding: 0;
@@ -262,11 +243,8 @@
     }
 }
 
-
-
-
 .border-radius-editor .button-bar a:focus,
-.color-editor .button-bar li.selected a:focus {
+.border-radius-editor .button-bar li.selected a:focus {
     outline: none;
     position: relative;
     z-index: 999;

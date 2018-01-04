@@ -24,12 +24,12 @@
 define(function (require, exports, module) {
     "use strict";
 
-    var EditorManager       = brackets.getModule("editor/EditorManager"),
-        ExtensionUtils      = brackets.getModule("utils/ExtensionUtils"),
-        InlineBorderRadiusEditor   = require("InlineBorderRadiusEditor").InlineBorderRadiusEditor,
-        properties          = JSON.parse(require("text!BorderRadiusProperties.json")),
-        BorderRadiusUtils  = require("../../../utils/BorderRadiusUtils");
-        
+    var EditorManager = brackets.getModule("editor/EditorManager"),
+        ExtensionUtils = brackets.getModule("utils/ExtensionUtils"),
+        InlineBorderRadiusEditor = require("InlineBorderRadiusEditor").InlineBorderRadiusEditor,
+        properties = JSON.parse(require("text!BorderRadiusProperties.json")),
+        BorderRadiusUtils = require("BorderRadiusUtils");
+
     var DEFAULT_RADIUS = "15px";
 
     /**
@@ -186,10 +186,9 @@ define(function (require, exports, module) {
 
         return false;
     }
-    
+
     // Initialize extension
     ExtensionUtils.loadStyleSheet(module, "css/main.less");
     EditorManager.registerInlineEditProvider(inlineBorderRadiusEditorProvider, queryInlineBorderRadiusEditorPrivoder);
     exports.prepareEditorForProvider = prepareEditorForProvider;
 });
-
