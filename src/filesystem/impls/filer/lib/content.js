@@ -9,6 +9,7 @@ define(function (require, exports, module) {
     var Strings = require("strings");
     var StringUtils = require("utils/StringUtils");
     var FilerUtils = require('filesystem/impls/filer/FilerUtils');
+    var isAnimated = require("isAnimated");
     var Path = FilerUtils.Path;
 
     function _getLanguageId(ext) {
@@ -140,7 +141,11 @@ define(function (require, exports, module) {
 
         isResizableImage: function(ext) {
             ext = FilerUtils.normalizeExtension(ext);
-            return ext === '.png' || ext === '.jpg' || ext === '.jpeg';
+            return ext === '.png' || ext === '.jpg' || ext === '.jpeg' || ext === '.gif';
+        },
+
+        isAnimatedImage: function(data) {            
+            return isAnimated(data);
         },
 
         isHTML: function(ext) {

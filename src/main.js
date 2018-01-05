@@ -40,6 +40,7 @@ require.config({
         // Image processing libraries
         "Pica": "../node_modules/pica/dist/pica.min",
         "caman": "thirdparty/caman/caman.full.min",
+        "isAnimated": "thirdparty/is-animated/lib/index",
 
         // In various places in the code, it's useful to know if this is a dev vs. prod env.
         // See Gruntfile for prod override of this to config.prod.js.
@@ -54,6 +55,9 @@ require.config({
     shim: {
         "caman": {
             exports: "Caman"
+        },
+        "isAnimated": {
+            exports: "isAnimated"
         }
     }
 });
