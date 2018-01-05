@@ -57,11 +57,8 @@ define(function (require, exports, module) {
     InlineBorderRadiusEditor.prototype.constructor = InlineBorderRadiusEditor;
     InlineBorderRadiusEditor.prototype.parentClass = InlineWidget.prototype;
 
-    /** @type {!ColorPicker} ColorPicker instance */
+    /** @type {!borderRaidusEditor} borderRadiusEditor instance */
     InlineBorderRadiusEditor.prototype.borderRaidusEditor = null;
-
-    /** @type {!string} Current value of the color picker control */
-    InlineBorderRadiusEditor.prototype._color = null;
 
     /**
      * Range of code we're attached to; _marker.find() may by null if sync is lost.
@@ -69,10 +66,10 @@ define(function (require, exports, module) {
      */
     InlineBorderRadiusEditor.prototype._marker = null;
 
-    /** @type {boolean} True while we're syncing a color picker change into the code editor */
+    /** @type {boolean} True while we're syncing a borderRadiusEditor change into the code editor */
     InlineBorderRadiusEditor.prototype._isOwnChange = null;
 
-    /** @type {boolean} True while we're syncing a code editor change into the color picker */
+    /** @type {boolean} True while we're syncing a code editor change into the borderRadiusEditor*/
     InlineBorderRadiusEditor.prototype._isHostChange = null;
 
     /** @type {number} ID used to identify edits coming from this inline widget for undo batching */
@@ -80,7 +77,7 @@ define(function (require, exports, module) {
 
 
     /**
-     * Returns the current text range of the color we're attached to, or null if
+     * Returns the current text range of the border-radius value we're attached to, or null if
      * we've lost sync with what's in the code.
      * @return {?{start:{line:number, ch:number}, end:{line:number, ch:number}}}
      */

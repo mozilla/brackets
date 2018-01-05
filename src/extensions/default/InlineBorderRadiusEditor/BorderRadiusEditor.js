@@ -120,16 +120,18 @@ define(function(require, exports, module) {
         this.allCorners = values.length === 1;
 
         if (!this.allCorners) {
-            if (numOfValues > 1) {
-                secondValue = values[1];
-            }
-            if (numOfValues > 2) {
-                thirdValue = values[2];
-            }
-            if (numOfValues > 3) {
+            secondValue = values[1];
+          
+            if (numOfValues === 2) {
+              fourthValue = secondValue;
+            } else {
+              thirdValue = values[2];
+          
+              if (numOfValues === 3) {
+                fourthValue = secondValue;
+              } else {
                 fourthValue = values[3];
-            } else if (numOfValues > 1 && numOfValues < 4) {
-                fourthValue = values[1];
+              }            
             }
         }
 
@@ -147,16 +149,16 @@ define(function(require, exports, module) {
             secondValue.unit,
             this.onChange
         );
-        this.bottomLeft = new BorderRadiusValue(
+        this.bottomRight = new BorderRadiusValue(
             this.$element,
-            "bottom-left",
+            "bottom-right",
             thirdValue.num,
             thirdValue.unit,
             this.onChange
         );
-        this.bottomRight = new BorderRadiusValue(
+        this.bottomLeft = new BorderRadiusValue(
             this.$element,
-            "bottom-right",
+            "bottom-left",
             fourthValue.num,
             fourthValue.unit,
             this.onChange
@@ -168,6 +170,9 @@ define(function(require, exports, module) {
             firstValue.unit,
             this.onChange
         );
+        
+        //correctly update the values in the UI.
+        this.onChange();
     };
 
     BorderRadiusEditor.prototype.onChange = function() {
@@ -180,7 +185,7 @@ define(function(require, exports, module) {
         var topRight = this.topRight.toString();
         var bottomRight = this.bottomRight.toString();
         var bottomLeft = this.bottomLeft.toString();
-        var borderRadiusString = "";
+        var borderRadiusString;
 
         if (topRight === bottomLeft) {
             // We can use a two value border radius if top right and

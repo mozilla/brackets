@@ -141,7 +141,7 @@ define(function (require, exports, module) {
         }
     }
 
-    function queryInlineBorderRadiusEditorPrivoder(hostEditor, pos) {
+    function queryInlineBorderRadiusEditorProvider(hostEditor, pos) {
         var borderRadiusRegEx, cursorLine, match, sel, start, end, endPos, marker;
         var cssPropertyName, semiColonPos, colonPos, borderRadiusValue, cursorLineSubstring, firstCharacterPos;
 
@@ -166,7 +166,7 @@ define(function (require, exports, module) {
             return true;
         }
 
-        // Get the css property name after removing spaces and ":" so that we can check for it in the file ColorProperties.json
+        // Get the css property name after removing spaces and ":" so that we can check for it in the file BorderRadiusProperties.json
         cssPropertyName = cursorLine.split(':')[0].trim();
 
         if (!cssPropertyName || !properties[cssPropertyName]) {
@@ -189,6 +189,6 @@ define(function (require, exports, module) {
 
     // Initialize extension
     ExtensionUtils.loadStyleSheet(module, "css/main.less");
-    EditorManager.registerInlineEditProvider(inlineBorderRadiusEditorProvider, queryInlineBorderRadiusEditorPrivoder);
+    EditorManager.registerInlineEditProvider(inlineBorderRadiusEditorProvider, queryInlineBorderRadiusEditorProvider);
     exports.prepareEditorForProvider = prepareEditorForProvider;
 });
