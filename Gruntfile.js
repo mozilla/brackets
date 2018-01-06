@@ -353,13 +353,8 @@ module.exports = function (grunt) {
                 tasks: ['eslint:test']
             },
             bramble : {
-                files: [
-                    'src/bramble/client/**/*.js',
-                    'src/bramble/thirdparty/**/*.js',
-                    'src/bramble/ChannelUtils.js',
-                    'thirdparty/filer/dist/filer.min.js'
-                ],
-                tasks: ['requirejs:iframe']
+                files: ['src/bramble/**/*'],
+                tasks: ['build-browser-dev']
             }
         },
         /* FIXME (jasonsanjose): how to handle extension tests */
