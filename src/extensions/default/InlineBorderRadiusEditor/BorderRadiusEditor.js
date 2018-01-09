@@ -127,11 +127,11 @@ define(function(require, exports, module) {
             } else {
                 thirdValue = values[2];
           
-              if (numOfValues === 3) {
-                  fourthValue = secondValue;
-              } else {
-                  fourthValue = values[3];
-              }            
+                if (numOfValues === 3) {
+                    fourthValue = secondValue;
+                } else {
+                    fourthValue = values[3];
+                }            
             }
         }
 
