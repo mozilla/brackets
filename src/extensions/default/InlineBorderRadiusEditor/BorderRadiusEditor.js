@@ -123,14 +123,14 @@ define(function(require, exports, module) {
             secondValue = values[1];
           
             if (numOfValues === 2) {
-              fourthValue = secondValue;
+                fourthValue = secondValue;
             } else {
-              thirdValue = values[2];
+                thirdValue = values[2];
           
               if (numOfValues === 3) {
-                fourthValue = secondValue;
+                  fourthValue = secondValue;
               } else {
-                fourthValue = values[3];
+                  fourthValue = values[3];
               }            
             }
         }
