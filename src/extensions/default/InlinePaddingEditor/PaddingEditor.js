@@ -1,12 +1,12 @@
 define(function(require, exports, module) {
     "use strict";
 
-    var Strings = brackets.getModule("strings");
-    var Mustache = brackets.getModule("thirdparty/mustache/mustache");
-    var PaddingUtils = require("PaddingUtils");
-    var KeyEvent           = brackets.getModule("utils/KeyEvent"),
-        PreferencesManager = brackets.getModule("preferences/PreferencesManager"),
-        StringUtils        = brackets.getModule("utils/StringUtils");
+    var Strings            = brackets.getModule("strings");
+    var Mustache           = brackets.getModule("thirdparty/mustache/mustache");
+    var PaddingUtils       = require("PaddingUtils");
+    var KeyEvent           = brackets.getModule("utils/KeyEvent");
+    var PreferencesManager = brackets.getModule("preferences/PreferencesManager");
+    var StringUtils        = brackets.getModule("utils/StringUtils");
  
     // getting reference to the html template for the padding editor UI
     var PaddingTemplate = require("text!PaddingEditorTemplate.html");
@@ -117,13 +117,15 @@ define(function(require, exports, module) {
     PaddingEditor.prototype.updateValues = function(valueString) {
         var values = getIndividualValues(valueString);
         var numOfValues = values.length;
+
+        this.allSides = values.length === 1;
+
         var firstValue = values[0];
         var secondValue = firstValue;
         var thirdValue = firstValue;
         var fourthValue = firstValue;
-
-        this.allSides = values.length === 1;
-
+        // If we have just one value all sides will be assigned the same value 
+        // else if values.length != 1 then we have checked all the cases here
         if (!this.allSides) {
             secondValue = values[1];
           
@@ -181,8 +183,7 @@ define(function(require, exports, module) {
     };
 
     PaddingEditor.prototype.onChange = function() {
-        if (this.allSides) {
-            
+        if (this.allSides) {  
             this.paddingChangeHandler(this.allsides.toString());
             return;
         }
@@ -193,7 +194,6 @@ define(function(require, exports, module) {
         var left = this.left.toString();
        
         var PaddingString;
-        // Padding String 
         PaddingString = [top, right, bottom, left].join(" ");
 
         this.paddingChangeHandler(PaddingString);
@@ -210,3 +210,4 @@ define(function(require, exports, module) {
 
     exports.PaddingEditor = PaddingEditor;
 });
+

@@ -55,3 +55,4 @@ define(function (require, exports, module) {
     exports.PADDING_VALUE_REGEX = PADDING_VALUE_REGEX;
     exports.PADDING_SINGLE_VALUE_REGEX = PADDING_SINGLE_VALUE_REGEX;
 });
+

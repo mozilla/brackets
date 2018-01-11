@@ -24,12 +24,12 @@
 define(function (require, exports, module) {
     "use strict";
 
-    var InlineWidget = brackets.getModule("editor/InlineWidget").InlineWidget;
-    var PaddingUtils = require("PaddingUtils");
-    var PaddingEditor = require("PaddingEditor").PaddingEditor;
-    var EditorManager       = brackets.getModule("editor/EditorManager");
-    var ExtensionUtils      = brackets.getModule("utils/ExtensionUtils");
-    var properties          = JSON.parse(require("text!PaddingProperties.json"));
+    var InlineWidget    =  brackets.getModule("editor/InlineWidget").InlineWidget;
+    var PaddingUtils    =  require("PaddingUtils");
+    var PaddingEditor   =  require("PaddingEditor").PaddingEditor;
+    var EditorManager   =  brackets.getModule("editor/EditorManager");
+    var ExtensionUtils  =  brackets.getModule("utils/ExtensionUtils");
+    var properties      =  JSON.parse(require("text!PaddingProperties.json"));
 
     /** @const @type {number} */
     var DEFAULT_PADDING  = "5px"; // This is the default value of the padding 
@@ -103,9 +103,9 @@ define(function (require, exports, module) {
         // This can happen if the user deletes the end of the existing padding value and then
         // types some more.
 
-        //Manuelly find the position of the first occurance of padding value in the line
-        //because using this._maker.find() does not return expected value
-        //using this as a work around
+        // Manually find the position of the first occurance of padding value in the line
+        // because using this._maker.find() does not return expected value
+        // using this as a work around
         var line = this.hostEditor.document.getLine(start.line);
         for(var i = line.indexOf(":")+1; i<line.length;i++){
             if(line[i]!==" "){
@@ -145,26 +145,27 @@ define(function (require, exports, module) {
             }
 
             // Don't push the change back into the host editor if it came from the host editor.
-            if (!this._isHostChange) {
-                var endPos = {
-                        line: range.start.line,
-                        ch: range.start.ch + paddingString.length
-                };
+        if (!this._isHostChange) {
+            var endPos = {
+                line: range.start.line,
+                ch: range.start.ch + paddingString.length
+            };
 
-                this._isOwnChange = true;
-                this.hostEditor.document.batchOperation(function () {
-                    //select current text and replace with new value
-                    range.end.ch-=1;
-                    self.hostEditor.setSelection(range.start, range.end); // workaround for #2805
-                    self.hostEditor.document.replaceRange(paddingString, range.start, range.end, self._origin);
-                    if (self._marker) {
-                        self._marker.clear();
-                        self._marker = self.hostEditor._codeMirror.markText(range.start, endPos);
-                    }
-                });
-                this._isOwnChange = false;
-            }
-            this._padding = paddingString.replace(";",'');
+            this._isOwnChange = true;
+            this.hostEditor.document.batchOperation(function () {
+                //select current text and replace with new value
+                range.end.ch-=1;
+                self.hostEditor.setSelection(range.start, range.end); // workaround for #2805
+                self.hostEditor.document.replaceRange(paddingString, range.start, range.end, self._origin);
+                if (self._marker) {
+                    self._marker.clear();
+                    self._marker = self.hostEditor._codeMirror.markText(range.start, endPos);
+                }
+            });
+            this._isOwnChange = false;
+          }
+        
+        this._padding = paddingString.replace(";",'');
         }
     };
 
@@ -230,3 +231,4 @@ define(function (require, exports, module) {
 
     exports.InlinePaddingEditor = InlinePaddingEditor;
 });
+

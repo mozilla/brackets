@@ -112,8 +112,6 @@ define(function (require, exports, module) {
             }
         }
         return null;
-        // Adjust pos to the beginning of the match so that the inline editor won't get
-        // dismissed while we're updating the padding with the new values from user's inline editing
     }
 
     /**
@@ -194,3 +192,4 @@ define(function (require, exports, module) {
     exports.prepareEditorForProvider = prepareEditorForProvider;
     exports.inlinePaddingEditorProvider = inlinePaddingEditorProvider;
 });
+
