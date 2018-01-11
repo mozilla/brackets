@@ -73,14 +73,15 @@
         "localize-dist": "node scripts/properties2js dist",
         "unlocalize": "rimraf src/nls && git checkout -- src/nls",
         "postinstall": "grunt install",
-        "build": "grunt build-browser",
+        "build": "grunt build-browser-dev",
         "watch:api": "grunt watch:bramble",
         "preproduction": "grunt build-browser-compressed && npm run unlocalize",
         "production": "npm start -- --gzip",
         "test": "grunt test && grunt build-browser-compressed",
         "server": "http-server -p 8000 --cors",
         "prestart": "npm run localize && grunt build-browser-dev",
-        "start": "run-p server watch:api || true",
+        "start:server": "run-p server watch:api",
+        "start": "npm run start:server || true",
         "poststart": "npm run unlocalize"
     },
     "license": "MIT"

@@ -39,15 +39,7 @@ consider adding the `--no-optional` flag to have npm skip installing `iltorb`, w
 and requires python, gyp and a working c++ build environment.
 See comment in https://github.com/mozilla/brackets/pull/588#issuecomment-280438175
 
-Step 3: run the build
-
-You can build Bramble by running the npm build task:
-
-```
-$ npm run build
-```
-
-Step 4: Run Bramble:
+Step 3: Run Bramble:
 
 The easiest way to run Bramble is to simply use:
 
@@ -55,7 +47,7 @@ The easiest way to run Bramble is to simply use:
 $ npm start
 ```
 
-This will generate the strings needed for localization in your `src/nls` folder and allow you to access Bramble on `localhost:8000` (NOTE: you need npm version 5 for the cleanup step to run properly; if it doesn't, use `npm run unlocalize` to restore the files in `src/nls/**/*`). It will also build the Bramble iframe API in `dist/` if necessary. You can terminate the server with `Ctrl+C` which will also clean up the strings that were generated in your `src/nls` folder.
+This will generate the strings needed for localization in your `src/nls` folder and allow you to access Bramble on `localhost:8000` (NOTE: you need npm version 5 for the cleanup step to run properly; if it doesn't, use `npm run unlocalize` to restore the files in `src/nls/**/*`). It will also build the Bramble iframe API in `dist/` if necessary. You can terminate the server with `Ctrl+C` which will also clean up the strings that were generated in your `src/nls` folder. If any changes are made in the `src` directory, just refresh the page hosting Bramble in your browser to reflect those changes.
 
 If you want to simply run the server without the localized strings, run:
 
