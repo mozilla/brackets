@@ -70,6 +70,18 @@
         ]
     },
     {
+        "path": "extensions/default/InlinePaddingEditor",
+        "less": {
+            "dist/extensions/default/InlinePaddingEditor/css/main.css": [
+                "src/extensions/default/InlinePaddingEditor/css/main.less"
+            ]
+        },
+        "copy": [
+            "extensions/default/InlinePaddingEditor/img/*.png",
+            "extensions/default/InlinePaddingEditor/PaddingEditorTemplate.html"
+        ]
+    },
+    {
         "path": "extensions/default/Inline3DParametersEditor",
         "less": {
             "dist/extensions/default/Inline3DParametersEditor/css/main.css": [
