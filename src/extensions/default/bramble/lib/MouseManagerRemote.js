@@ -62,7 +62,7 @@
         listening = false;
     }
 
-    addEventListener("DOMContentLoaded", function() {
+    addEventListener("load", function() {
         // Restore last scroll position for this session (if any)
         document.body.scrollTop = sessionStorage.getItem(SCROLL_KEY)|0;
 
