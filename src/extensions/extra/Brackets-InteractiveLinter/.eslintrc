@@ -1,0 +1,14 @@
+{
+  "env": {
+    "browser": true,
+    "amd": true
+  },
+  "rules": {
+    "semi": 1,
+    "strict": 0,
+    "quotes": [2, "double"],
+    "key-spacing": 0,
+    "no-trailing-spaces": 0,
+    "eol-last": 0
+  }
+}

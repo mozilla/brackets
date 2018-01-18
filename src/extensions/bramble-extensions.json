@@ -205,5 +205,19 @@
                 "src/extensions/extra/brackets-fonts-viewer/styles/main.less"
             ]
         }
+    },
+    {
+        "path": "extensions/extra/Brackets-InteractiveLinter",
+        "less": {
+            "dist/extensions/extra/Brackets-InteractiveLinter/style.css": [
+                "src/extensions/extra/Brackets-InteractiveLinter/style.less"
+            ]
+        },
+        "copy": [
+            "extensions/extra/Brackets-InteractiveLinter/pluginWorker.js",
+            "extensions/extra/Brackets-InteractiveLinter/img/**/*",
+            "extensions/extra/Brackets-InteractiveLinter/libs/**/*",
+            "extensions/extra/Brackets-InteractiveLinter/plugins/**/*"
+        ]
     }
 ]

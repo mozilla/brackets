@@ -303,6 +303,7 @@ module.exports = function (grunt) {
                 '!src/extensions/**/thirdparty/**/*.js',
                 '!src/extensions/dev/**',
                 '!src/extensions/extra/brackets-cdn-suggestions/**',
+                '!src/extensions/extra/Brackets-InteractiveLinter/**',
                 '!src/extensions/extra/HTMLHinter/**',
                 '!src/extensions/extra/MDNDocs/**',
                 '!**/extensions/extra/PDFView/thirdparty/**/*',

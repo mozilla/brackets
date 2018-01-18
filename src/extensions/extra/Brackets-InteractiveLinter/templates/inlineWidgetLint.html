@@ -1,0 +1,8 @@
+<div class="interactive-linter-line-widget">
+    {{#messages}}
+        <div class="interactive-linter-line-{{type}} interactive-linter-line-{{code}}">
+            {{message}}
+            {{#href}} - <a href="{{href}}" title="{{href}}">Details</a>{{/href}}
+        </div>
+    {{/messages}}
+</div>

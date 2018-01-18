@@ -1,0 +1,7 @@
+{
+    "interactive-linter.delay": 500,
+    "interactive-linter.webworker": true,
+    "interactive-linter.javascript": [
+        "eslint"
+    ]
+}

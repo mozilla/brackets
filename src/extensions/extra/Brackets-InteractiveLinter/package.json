@@ -1,0 +1,30 @@
+{
+    "title": "Interactive Linter",
+    "name": "interactive-linter",
+    "description": "Interactive linting for Brackets",
+    "version": "1.0.5",
+    "author": "Miguel Castillo <manchagnu@gmail.com>",
+    "contributors": ["Mark Simulacrum <mark.simulacrum@gmail.com>"],
+    "homepage": "https://github.com/MiguelCastillo/Brackets-InteractiveLinter",
+    "repository": {
+        "type": "git",
+        "url": "git://github.com/MiguelCastillo/Brackets-InteractiveLinter.git"
+    },
+    "engines": {
+        "brackets": ">=0.42.0"
+    },
+    "keywords":[
+        "coffeelint",
+        "csslint",
+        "eslint",
+        "htmlhint",
+        "jscs",
+        "jshint",
+        "jslint",
+        "jsonlint",
+        "jsx",
+        "lint",
+        "linter",
+        "linting"
+    ]
+}

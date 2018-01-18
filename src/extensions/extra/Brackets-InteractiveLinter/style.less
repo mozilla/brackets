@@ -1,0 +1,120 @@
+.CodeMirror *[class*="interactive-linter"] {
+    z-index: 5;
+}
+
+.CodeMirror *[class*="interactive-linter-W015"] {
+    border-bottom: 2px dotted #3a87ad;
+}
+
+.CodeMirror *[class*="interactive-linter-w"] {
+    border-bottom: 2px dotted #f89406;
+    z-index: 6;
+}
+
+.CodeMirror *[class*="interactive-linter-e"] {
+    border-bottom: 2px dotted #bd362f;
+    z-index: 7;
+}
+
+.CodeMirror .interactive-linter-gutter {
+    width: 1.5em;
+}
+
+
+/*icon image from http://findicons.com/icon/184668/light_bulb*/
+.CodeMirror .interactive-linter-gutter-messages {
+    background-image: url(img/light_bulb.png);
+    background-repeat: no-repeat;
+    background-size: 1em;
+    width: 1em;
+    height: 1em;
+    margin-left: 0.5em;
+    margin-top: 0.15em;
+    cursor: pointer;
+}
+
+.CodeMirror .interactive-linter-gutter-errors {
+    background-color: red;
+    border-color: #f2dede;
+    border-radius: 1em;
+}
+
+.CodeMirror .interactive-linter-line-widget {
+    margin-top: 10px;
+    margin-left: 50px;
+
+    cursor: auto; // Allow cursor to display area as text
+
+    // Enable text selection
+    -webkit-user-select: text;
+    user-select: text;
+
+    .interactive-linter-line-error, .interactive-linter-line-warning {
+        background-position: left;
+        background-size: 1em;
+        background-repeat: no-repeat;
+        padding: 0 1.5em;
+    }
+
+    .interactive-linter-line-error {
+        background-image: url(img/topcoat-error-15.svg);
+    }
+
+    .interactive-linter-line-warning {
+        background-image: url(img/topcoat-warning-15.svg);
+    }
+}
+
+@-webkit-keyframes interactive-linter-pulse {
+    0% {
+        background-color: transparent;
+    }
+    50% {
+        background-color: #ffb0cd;
+    }
+}
+
+#interactive-linter-lint-indicator {
+    display: none; /* Hide lint indicator by default, so as not to show before show/hide code is run */
+    width: 13px; /* Same width as default indicator */
+    background-position: center;
+    background-size: 15px;
+    background-repeat: no-repeat;
+    &[status="error"] {
+        -webkit-animation: interactive-linter-pulse 2s linear;
+        -webkit-animation-iteration-count: 3;
+        background-image: url(img/topcoat-error-15.svg);
+    }
+
+    &[status="warning"] {
+        background-image: url(img/topcoat-warning-15.svg);
+    }
+
+    &[status="okay"] {
+        background-image: url(img/topcoat-okay-15.svg);
+    }
+
+    &[status=inactive] {
+        background-image: url(img/topcoat-inactive-15.svg);
+    }
+}
+
+#interactive-linter-problems-panel {
+    -webkit-user-select: text;  /* allow selecting error messages for easy web searching */
+
+    .line {
+        text-align: right;  /* make line number line up with editor line numbers */
+    }
+
+    .line-text {
+        white-space: nowrap;
+        width: auto;
+    }
+
+    .line-snippet {
+        white-space: nowrap;
+        width: 100%;
+        padding-left: 10px;
+    }
+}
+
