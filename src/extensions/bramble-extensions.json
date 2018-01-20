@@ -78,7 +78,8 @@
         },
         "copy": [
             "extensions/default/InlinePaddingEditor/img/*.png",
-            "extensions/default/InlinePaddingEditor/PaddingEditorTemplate.html"
+            "extensions/default/InlinePaddingEditor/PaddingEditorTemplate.html",
+            "extensions/default/InlinePaddingEditor/MarginEditorTemplate.html"
         ]
     },
     {

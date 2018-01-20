@@ -32,6 +32,7 @@ define(function (require, exports, module) {
         InlineWidget = brackets.getModule("editor/InlineWidget").InlineWidget;
  
     var DEFAULT_PADDING = "15px";
+    var PaddingTemplate;
 
     /**
      * editor context if so; otherwise null.
@@ -67,6 +68,13 @@ define(function (require, exports, module) {
 
             // Get the css property name after removing spaces and ":" so that we can check for it in the file PaddingProperties.json
             cssPropertyName = cursorLine.split(':')[0].trim();
+
+            if(cssPropertyName === "margin") {
+                PaddingTemplate = require("text!MarginEditorTemplate.html");
+            }
+            else{
+                PaddingTemplate = require("text!PaddingEditorTemplate.html");
+            }
 
             if (!cssPropertyName || !properties[cssPropertyName]) {
                 return null;
@@ -131,7 +139,7 @@ define(function (require, exports, module) {
         if (!context) {
             return null;
         } else {
-            inlinePaddingEditor = new InlinePaddingEditor(context.padding, context.marker);
+            inlinePaddingEditor = new InlinePaddingEditor(context.padding, context.marker, PaddingTemplate);
             inlinePaddingEditor.load(hostEditor);
 
             result = new $.Deferred();

@@ -131,6 +131,48 @@
         }
     }
 
+        .margin-side-icon {
+        width: 25px;
+        height: 20px;
+        border: solid 2px rgba(255,255,255,.2);
+        position: absolute;
+        left: 20px;
+        top: 13px;
+        overflow: visible;
+
+        &:after {
+            content: "";
+            position: absolute;
+            background: white;
+            width: 2px;
+            height: 8px;
+        }
+
+        &.top:after {
+            top: -8px;
+            left: 11px;
+        }
+
+        &.right:after {
+            top: 9px;
+            right: -8px;
+            width: 8px;
+            height: 2px;
+        }
+
+        &.bottom:after {
+            bottom: -8px;
+            left: 11px;
+        }
+
+        &.left:after {
+            top: 9px;
+            left: -8px;
+            width: 8px;
+            height: 2px;
+        }
+    }
+
    .units-container {
         padding-left: 0;
 

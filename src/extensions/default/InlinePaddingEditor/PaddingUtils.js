@@ -32,7 +32,7 @@ define(function (require, exports, module) {
      * colon is optional
      * @const @type {RegExp}
      */
-    var PADDING_REGEX = new RegExp('.*padding:.*');
+    var PADDING_REGEX = new RegExp('(.*padding:.*|.*margin:.*)');
 
     /**
      * Regular expression that matches the reasonable format of css value for padding,

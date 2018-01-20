@@ -9,7 +9,7 @@ define(function(require, exports, module) {
     var StringUtils        = brackets.getModule("utils/StringUtils");
  
     // getting reference to the html template for the padding editor UI
-    var PaddingTemplate = require("text!PaddingEditorTemplate.html");
+    
     var check;
 
     function getIndividualValues(values){
@@ -70,7 +70,7 @@ define(function(require, exports, module) {
         return this.value + (this.value === 0 ? "" : this.unit);
     };
 
-    function PaddingEditor($parent, valueString, paddingChangeHandler) {
+    function PaddingEditor($parent, valueString, paddingChangeHandler, PaddingTemplate) {
         var self = this;
 
         // Create the DOM structure, filling in localized strings via Mustache
