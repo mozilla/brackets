@@ -42,13 +42,13 @@ define(function (require, exports, module) {
      * @param {!string} padding  Initially selected padding
      * @param {!CodeMirror.TextMarker} marker
      */
-    function InlinePaddingEditor(padding, marker, PaddingTemplate) {
+    function InlinePaddingEditor(padding, marker, type) {
         this._padding = padding;
         this._marker = marker;
         this._isOwnChange = false;
         this._isHostChange = false;
         this._origin = "+InlinePaddingEditor_" + (lastOriginId++);
-        this.PaddingTemplate = PaddingTemplate;
+        this.type = type;
 
         this._handlePaddingChange = this._handlePaddingChange.bind(this);
         this._handleHostDocumentChange = this._handleHostDocumentChange.bind(this);
@@ -176,7 +176,7 @@ define(function (require, exports, module) {
      */
     InlinePaddingEditor.prototype.load = function (hostEditor) {
         InlinePaddingEditor.prototype.parentClass.load.apply(this, arguments);
-        this.paddingEditor = new PaddingEditor(this.$htmlContent, this._padding, this._handlePaddingChange, this.PaddingTemplate);
+        this.paddingEditor = new PaddingEditor(this.$htmlContent, this._padding, this._handlePaddingChange, this.type);
     };
 
     /**

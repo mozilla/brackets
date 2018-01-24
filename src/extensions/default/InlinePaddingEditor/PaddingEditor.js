@@ -9,7 +9,7 @@ define(function(require, exports, module) {
     var StringUtils        = brackets.getModule("utils/StringUtils");
  
     // getting reference to the html template for the padding editor UI
-    
+    var PaddingTemplate = require("text!PaddingEditorTemplate.html");
     var check;
 
     function getIndividualValues(values){
@@ -70,11 +70,31 @@ define(function(require, exports, module) {
         return this.value + (this.value === 0 ? "" : this.unit);
     };
 
-    function PaddingEditor($parent, valueString, paddingChangeHandler, PaddingTemplate) {
+    function PaddingEditor($parent, valueString, paddingChangeHandler, type) {
         var self = this;
+
+        if(type === "margin"){
+          PaddingTemplate = PaddingTemplate.replace("{{SET_PADDING_FOR}}", "{{SET_MARGIN_FOR}}");
+        }
+        else{
+           PaddingTemplate = PaddingTemplate.replace("{{SET_MARGIN_FOR}}", "{{SET_PADDING_FOR}}");
+        }
 
         // Create the DOM structure, filling in localized strings via Mustache
         self.$element = $(Mustache.render(PaddingTemplate, Strings));
+        if(type === "margin"){
+            var $top     = self.$element.find('.top.side-icon');
+            var $right   = self.$element.find('.right.side-icon');
+            var $bottom  = self.$element.find('.bottom.side-icon');
+            var $left    = self.$element.find('.left.side-icon');
+           
+            // Changed UI according to margin in padding template
+            $top.removeClass('side-icon').addClass('margin-side-icon');
+            $right.removeClass('side-icon').addClass('margin-side-icon');
+            $bottom.removeClass('side-icon').addClass('margin-side-icon');
+            $left.removeClass('side-icon').addClass('margin-side-icon');
+        }
+
         $parent.append(self.$element);
         self.paddingChangeHandler = paddingChangeHandler;
 
