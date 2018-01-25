@@ -32,7 +32,7 @@ define(function (require, exports, module) {
      * colon is optional
      * @const @type {RegExp}
      */
-    var BORDER_RADIUS_REGEX = new RegExp('.*border-radius:.*');
+    var BORDER_RADIUS_REGEX = new RegExp('.*border-radius:.*|.*border-top-left-radius:.*|.*border-top-right-radius:.*|.*border-bottom-left-radius:.*|.*border-bottom-right-radius:.*');
 
     /**
      * Regular expression that matches the reasonable format of css value for border-radius,

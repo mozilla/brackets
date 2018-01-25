@@ -66,9 +66,14 @@ define(function(require, exports, module) {
         return this.value + (this.value === 0 ? "" : this.unit);
     };
 
-    function BorderRadiusEditor($parent, valueString, radiusChangeHandler) {
+    function BorderRadiusEditor($parent, valueString, radiusChangeHandler, type) {
         var self = this;
-
+        if(type === "border-radius"){
+            BorderRadiusTemplate = require("text!BorderRadiusEditorTemplate.html");
+        }
+        else{
+            BorderRadiusTemplate = require("text!IndiviualCornerEditorTemplate.html");
+        }
         // Create the DOM structure, filling in localized strings via Mustache
         self.$element = $(Mustache.render(BorderRadiusTemplate, Strings));
         $parent.append(self.$element);

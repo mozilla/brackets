@@ -31,7 +31,7 @@ define(function (require, exports, module) {
         BorderRadiusUtils = require("BorderRadiusUtils");
 
     var DEFAULT_RADIUS = "15px";
-
+    var type;
     /**
      * editor context if so; otherwise null.
      *
@@ -66,7 +66,21 @@ define(function (require, exports, module) {
 
             // Get the css property name after removing spaces and ":" so that we can check for it in the file BorderRadiusProperties.json
             cssPropertyName = cursorLine.split(':')[0].trim();
-
+            if(cssPropertyName === "border-top-left-radius"){
+                type = "border-top-left-radius";
+            }
+            else if(cssPropertyName === "border-top-right-radius"){
+                type = "border-top-right-radius";
+            }
+            else if(cssPropertyName === "border-bottom-left-radius"){
+                type = "border-bottom-left-radius";
+            }
+            else if(cssPropertyName === "border-bottom-right-radius"){
+                type = "border-bottom-right-radius";
+            }
+            else if(cssPropertyName === "border-radius"){
+                type = "border-radius";
+            }
             if (!cssPropertyName || !properties[cssPropertyName]) {
                 return null;
             }
@@ -132,7 +146,7 @@ define(function (require, exports, module) {
         if (!context) {
             return null;
         } else {
-            inlineBorderRadiusEditor = new InlineBorderRadiusEditor(context.radius, context.marker);
+            inlineBorderRadiusEditor = new InlineBorderRadiusEditor(context.radius, context.marker, type);
             inlineBorderRadiusEditor.load(hostEditor);
 
             result = new $.Deferred();
