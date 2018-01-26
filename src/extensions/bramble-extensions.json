@@ -70,15 +70,15 @@
         ]
     },
     {
-        "path": "extensions/default/InlinePaddingEditor",
+        "path": "extensions/default/InlineBoxModelEditor",
         "less": {
-            "dist/extensions/default/InlinePaddingEditor/css/main.css": [
-                "src/extensions/default/InlinePaddingEditor/css/main.less"
+            "dist/extensions/default/InlineBoxModelEditor/css/main.css": [
+                "src/extensions/default/InlineBoxModelEditor/css/main.less"
             ]
         },
         "copy": [
-            "extensions/default/InlinePaddingEditor/img/*.png",
-            "extensions/default/InlinePaddingEditor/PaddingEditorTemplate.html"
+            "extensions/default/InlineBoxModelEditor/img/*.png",
+            "extensions/default/InlineBoxModelEditor/BoxModelEditorTemplate.html"
         ]
     },
     {

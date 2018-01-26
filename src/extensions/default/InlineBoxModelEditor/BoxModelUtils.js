@@ -32,10 +32,10 @@ define(function (require, exports, module) {
      * colon is optional
      * @const @type {RegExp}
      */
-    var PADDING_REGEX = new RegExp('(.*padding:.*|.*margin:.*)');
+    var BoxModel_REGEX = new RegExp('(.*padding:.*|.*margin:.*)');
 
     /**
-     * Regular expression that matches the reasonable format of css value for padding,
+     * Regular expression that matches the reasonable format of css value for padding or margin,
      * starting with a number or decimal followed by any scalable units listed in the
      * expression. Such pattern may occur up to 4 times since maximum of 4 sides can be used.
      * We use a regex as detailed below:
@@ -45,14 +45,14 @@ define(function (require, exports, module) {
      * between 1 to 4 times (both inclusive).
      * @const @type {RegExp}
      */
-    var PADDING_VALUE_REGEX = new RegExp(/((\d+\.?\d*)(px|em|%)?){1,4}.*/);
+    var BoxModel_VALUE_REGEX = new RegExp(/((\d+\.?\d*)(px|em|%)?){1,4}.*/);
     // Matches a single value and captures the number and unit. Use it with exec()
-    // to find successive values in a valid padding value string.
-    var PADDING_SINGLE_VALUE_REGEX = new RegExp(/(\d+\.?\d*)(px|em|%)?/, "g");
+    // to find successive values in a valid BoxModel value string.
+    var BoxModel_SINGLE_VALUE_REGEX = new RegExp(/(\d+\.?\d*)(px|em|%)?/, "g");
 
     // Define public API
-    exports.PADDING_REGEX = PADDING_REGEX;
-    exports.PADDING_VALUE_REGEX = PADDING_VALUE_REGEX;
-    exports.PADDING_SINGLE_VALUE_REGEX = PADDING_SINGLE_VALUE_REGEX;
+    exports.BoxModel_REGEX = BoxModel_REGEX;
+    exports.BoxModel_VALUE_REGEX = BoxModel_VALUE_REGEX;
+    exports.BoxModel_SINGLE_VALUE_REGEX = BoxModel_SINGLE_VALUE_REGEX;
 });
 
