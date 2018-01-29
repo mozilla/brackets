@@ -49,9 +49,15 @@ define(function (require, exports, module) {
     // Matches a single value and captures the number and unit. Use it with exec()
     // to find successive values in a valid border radius value string.
     var BORDER_RADIUS_SINGLE_VALUE_REGEX = new RegExp(/(\d+\.?\d*)(px|em|%)?/, "g");
+    // Get sinlge property if it is for the border radius
+    function getSingleProperty(property) {
+    var property = /top-left|top-right|bottom-left|bottom-right/.exec(property);
+    return property && property[0];
+    }
 
     // Define public API
     exports.BORDER_RADIUS_REGEX = BORDER_RADIUS_REGEX;
     exports.BORDER_RADIUS_VALUE_REGEX = BORDER_RADIUS_VALUE_REGEX;
     exports.BORDER_RADIUS_SINGLE_VALUE_REGEX = BORDER_RADIUS_SINGLE_VALUE_REGEX;
+    exports.getSingleProperty = getSingleProperty;
 });
