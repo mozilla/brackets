@@ -31,9 +31,8 @@ define(function (require, exports, module) {
         BoxModelUtils = require("BoxModelUtils"),
         InlineWidget = brackets.getModule("editor/InlineWidget").InlineWidget;
  
-    var DEFAULT_BoxModel = "15px";
-    var type;
-
+    var DEFAULT_BOXMODEL = "15px";
+   
     /**
      * editor context if so; otherwise null.
      *
@@ -49,8 +48,8 @@ define(function (require, exports, module) {
             return null;
         }
 
-        BoxModelRegEx = new RegExp(BoxModelUtils.BoxModel_REGEX);
-        BoxModelValueRegEx = new RegExp(BoxModelUtils.BoxModel_VALUE_REGEX);
+        BoxModelRegEx = new RegExp(BoxModelUtils.BOXMODEL_REGEX);
+        BoxModelValueRegEx = new RegExp(BoxModelUtils.BOXMODEL_VALUE_REGEX);
         cursorLine = hostEditor.document.getLine(pos.line);
 
         // Loop through each match of BoxModelRegEx and stop when the one that contains pos is found.
@@ -64,16 +63,18 @@ define(function (require, exports, module) {
 
         if(match){
             // Check if the cursorLine has a CSS rule of type BoxModel
-            var cssPropertyName, semiColonPos, colonPos, BoxModelValue, cursorLineSubstring, firstCharacterPos;
+            var type, cssPropertyName, semiColonPos, colonPos, BoxModelValue, cursorLineSubstring, firstCharacterPos, iconClassName;
 
             // Get the css property name after removing spaces and ":" so that we can check for it in the file BoxModelProperties.json
             cssPropertyName = cursorLine.split(':')[0].trim();
 
             if(cssPropertyName === "margin") {
                 type = "margin";
+                iconClassName = "margin-side-icon";
             }
-            else{
+            else {
                 type = "padding";
+                iconClassName = "side-icon";
             }
 
             if (!cssPropertyName || !properties[cssPropertyName]) {
@@ -101,13 +102,13 @@ define(function (require, exports, module) {
                 } else {
                     // edit the BoxModel value of a new css rule
                     var newText = " ", from, to;
-                    newText = newText.concat(DEFAULT_BoxModel, ";");
+                    newText = newText.concat(DEFAULT_BOXMODEL, ";");
                     from = {line: pos.line, ch: colonPos + 1};
                     to = {line: pos.line, ch: cursorLine.length};
                     hostEditor._codeMirror.replaceRange(newText, from, to);
                     pos.ch = colonPos + 2;
-                    endPos = {line: pos.line, ch: pos.ch + DEFAULT_BoxModel.length};
-                    BoxModelValue = DEFAULT_BoxModel;
+                    endPos = {line: pos.line, ch: pos.ch + DEFAULT_BOXMODEL.length};
+                    BoxModelValue = DEFAULT_BOXMODEL;
                 }
 
                 marker = hostEditor._codeMirror.markText(pos, endPos);
@@ -115,7 +116,9 @@ define(function (require, exports, module) {
 
                 return {
                     BoxModel: BoxModelValue,
-                    marker: marker
+                    marker: marker,
+                    type: type,
+                    iconClassName: iconClassName
                 };
             }
         }
@@ -139,7 +142,7 @@ define(function (require, exports, module) {
         if (!context) {
             return null;
         } else {
-            inlineBoxModelEditor = new InlineBoxModelEditor(context.BoxModel, context.marker, type);
+            inlineBoxModelEditor = new InlineBoxModelEditor(context.BoxModel, context.marker, context.type, context.iconClassName);
             inlineBoxModelEditor.load(hostEditor);
 
             result = new $.Deferred();
@@ -157,7 +160,7 @@ define(function (require, exports, module) {
             return false;
         }
 
-        BoxModelRegEx = new RegExp(BoxModelUtils.BoxModel_REGEX);
+        BoxModelRegEx = new RegExp(BoxModelUtils.BOXMODEL_REGEX);
         cursorLine = hostEditor.document.getLine(pos.line);
 
         // Loop through each match of BoxModelRegEx and stop when the one that contains pos is found.

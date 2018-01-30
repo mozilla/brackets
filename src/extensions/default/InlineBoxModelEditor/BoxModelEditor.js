@@ -20,7 +20,7 @@ define(function(require, exports, module) {
 
         // We create a new regular expression everytime so that we don't
         // reuse stale data from the old RegExp object.
-        var valueRegex = new RegExp(BoxModelUtils.BoxModel_SINGLE_VALUE_REGEX);
+        var valueRegex = new RegExp(BoxModelUtils.BOXMODEL_SINGLE_VALUE_REGEX);
 
         while ((currentValue = valueRegex.exec(values)) !== null) {
             individualValues.push({
@@ -70,30 +70,24 @@ define(function(require, exports, module) {
         return this.value + (this.value === 0 ? "" : this.unit);
     };
 
-    function BoxModelEditor($parent, valueString, BoxModelChangeHandler, type) {
+    function BoxModelEditor($parent, valueString, BoxModelChangeHandler, type, iconClassName) {
         var self = this;
 
-        if(type === "margin"){
-          BoxModelTemplate = BoxModelTemplate.replace("{{SET_PADDING_FOR}}", "{{SET_MARGIN_FOR}}");
-        }
-        else{
-           BoxModelTemplate = BoxModelTemplate.replace("{{SET_MARGIN_FOR}}", "{{SET_PADDING_FOR}}");
+        var headerKey = "";
+
+        switch (type) {
+            case BoxModelUtils.MARGIN:
+                headerKey = "SET_PADDING_FOR";
+                break;
+            case BoxModelUtils.PADDING:
+                headerKey = "SET_MARGIN_FOR";
+                break;
         }
 
+        Strings["BOX_MODEL_HEADER"] = Strings[headerKey];
+        Strings["box-model-icon-class-name"] = iconClassName;
         // Create the DOM structure, filling in localized strings via Mustache
         self.$element = $(Mustache.render(BoxModelTemplate, Strings));
-        if(type === "margin"){
-            var $top     = self.$element.find('.top.side-icon');
-            var $right   = self.$element.find('.right.side-icon');
-            var $bottom  = self.$element.find('.bottom.side-icon');
-            var $left    = self.$element.find('.left.side-icon');
-           
-            // Changed UI according to margin in BoxModel template
-            $top.removeClass('side-icon').addClass('margin-side-icon');
-            $right.removeClass('side-icon').addClass('margin-side-icon');
-            $bottom.removeClass('side-icon').addClass('margin-side-icon');
-            $left.removeClass('side-icon').addClass('margin-side-icon');
-        }
 
         $parent.append(self.$element);
         self.BoxModelChangeHandler = BoxModelChangeHandler;
@@ -224,7 +218,7 @@ define(function(require, exports, module) {
     };
 
     BoxModelEditor.prototype.isValidBoxModelString = function(string){
-        var BoxModelValueRegEx = new RegExp(BoxModelUtils.BoxModel_VALUE_REGEX);
+        var BoxModelValueRegEx = new RegExp(BoxModelUtils.BOXMODEL_VALUE_REGEX);
         return BoxModelValueRegEx.test(string);
     };
 

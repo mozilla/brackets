@@ -32,7 +32,7 @@ define(function (require, exports, module) {
     var properties      =  JSON.parse(require("text!BoxModelProperties.json"));
 
     /** @const @type {number} */
-    var DEFAULT_BoxModel  = "5px"; // This is the default value of the BoxModel 
+    var DEFAULT_BOXMODEL  = "5px"; // This is the default value of the BoxModel 
 
     /** @type {number} Global var used to provide a unique ID for each BoxModel editor instance's _origin field. */
     var lastOriginId = 1;
@@ -42,13 +42,14 @@ define(function (require, exports, module) {
      * @param {!string} BoxModel  Initially selected BoxModel
      * @param {!CodeMirror.TextMarker} marker
      */
-    function InlineBoxModelEditor(BoxModel, marker, type) {
+    function InlineBoxModelEditor(BoxModel, marker, type, iconClassName) {
         this._BoxModel = BoxModel;
         this._marker = marker;
         this._isOwnChange = false;
         this._isHostChange = false;
         this._origin = "+InlineBoxModelEditor_" + (lastOriginId++);
         this.type = type;
+        this.iconClassName = iconClassName;
 
         this._handleBoxModelChange = this._handleBoxModelChange.bind(this);
         this._handleHostDocumentChange = this._handleHostDocumentChange.bind(this);
@@ -115,7 +116,7 @@ define(function (require, exports, module) {
             }
         }
 
-        var  matches = line.substr(start).match(BoxModelUtils.BoxModel_VALUE_REGEX);
+        var  matches = line.substr(start).match(BoxModelUtils.BOXMODEL_VALUE_REGEX);
 
         // Note that end.ch is exclusive, so we don't need to add 1 before comparing to
         // the matched length here.
@@ -176,7 +177,7 @@ define(function (require, exports, module) {
      */
     InlineBoxModelEditor.prototype.load = function (hostEditor) {
         InlineBoxModelEditor.prototype.parentClass.load.apply(this, arguments);
-        this.BoxModelEditor = new BoxModelEditor(this.$htmlContent, this._BoxModel, this._handleBoxModelChange, this.type);
+        this.BoxModelEditor = new BoxModelEditor(this.$htmlContent, this._BoxModel, this._handleBoxModelChange, this.type, this.iconClassName);
     };
 
     /**
