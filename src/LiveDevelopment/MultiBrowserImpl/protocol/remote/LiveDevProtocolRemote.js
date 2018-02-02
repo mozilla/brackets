@@ -349,7 +349,7 @@
             try {
                 msg = JSON.parse(msgStr);
             } catch (e) {
-                console.log("[Brackets LiveDev] Malformed message received: ", msgStr);
+                // Ignore any message that isn't valid JSON (e.g., coming from an extension)
                 return;
             }
             // delegates handling/routing to MessageBroker.

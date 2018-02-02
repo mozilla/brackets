@@ -240,7 +240,7 @@ define(function (require, exports, module) {
         try {
             remoteRequest = JSON.parse(e.data);
         } catch(err) {
-            console.log('[Bramble] unable to parse remote request:', e.data);
+            // Ignore any data that isn't JSON (e.g., coming from browser extension)
             return;
         }
 

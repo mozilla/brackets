@@ -49,6 +49,10 @@ define(function (require, exports, module) {
     // ["blob://http://url"]}}` will be mapped into `{"stylesheets":
     // {"/file1" : ["/file1"]}}`
     function resolveLinks(message) {
+        if(!message) {
+            return;
+        }
+
         var regex = new RegExp('\\"(blob:[^"]+)\\"', 'gm');
         var resolvedMessage = message.replace(regex, function(match, url) {
             var path = UrlCache.getFilename(url);
@@ -142,6 +146,10 @@ define(function (require, exports, module) {
     *
     */
     function resolvePaths(message) {
+        if(!message) {
+            return;
+        }
+
         var currentDoc = LiveDevMultiBrowser._getCurrentLiveDoc();
         if(!currentDoc) {
             return message;
