@@ -40,13 +40,13 @@ define(function (require, exports, module) {
      * @param {!string} borderRadius  Initially selected borderRadius
      * @param {!CodeMirror.TextMarker} marker
      */
-    function InlineBorderRadiusEditor(borderRadius, marker, singleProperty, isSingleProperty) {
+    function InlineBorderRadiusEditor(borderRadius, marker, cssClassSuffix, isSingleProperty) {
         this._borderRadius = borderRadius;
         this._marker = marker;
         this._isOwnChange = false;
         this._isHostChange = false;
         this._origin = "+InlineBorderRadiusEditor_" + (lastOriginId++);
-        this.singleProperty = singleProperty;
+        this.cssClassSuffix = cssClassSuffix;
         this.isSingleProperty = isSingleProperty;
 
         this._handleBorderRadiusChange = this._handleBorderRadiusChange.bind(this);
@@ -174,7 +174,7 @@ define(function (require, exports, module) {
      */
     InlineBorderRadiusEditor.prototype.load = function (hostEditor) {
         InlineBorderRadiusEditor.prototype.parentClass.load.apply(this, arguments);
-        this.borderRadiusEditor = new BorderRadiusEditor(this.$htmlContent, this._borderRadius, this._handleBorderRadiusChange, this.singleProperty, this.isSingleProperty);
+        this.borderRadiusEditor = new BorderRadiusEditor(this.$htmlContent, this._borderRadius, this._handleBorderRadiusChange, this.cssClassSuffix, this.isSingleProperty);
     };
 
     /**

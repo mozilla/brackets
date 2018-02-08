@@ -95,17 +95,22 @@
     </div>
  {{/individualCornerArea}}
     
- {{#allCornerArea}}
+ 
     <div id="allCornersArea">
        <table>
            <tr class="border-radius-input">
                <td class="label-container">
+               {{#allCornerArea}}
                    <div class="all corner-icon">
                        <div class="dot"></div>
                        <div class="dot"></div>
                        <div class="dot"></div>
                        <div class="dot"></div>
                    </div>
+                {{/allCornerArea}} 
+                {{#singleCornerArea}}
+                    <div class="{{iconClassName}} corner-icon"></div>
+                 {{/singleCornerArea}} 
                </td>
                <td class="slider-container">
                    <input id="all-corner-slider" type="range" min="0" max="100" step="1">
@@ -122,32 +127,5 @@
                </td>
            </tr>
        </table>
-    </div>
- {{/allCornerArea}}  
-
- {{#singleCornerArea}}
- <div tabindex="-1" class="border-radius-editor">
-     <div id="individualCornerArea">
-         <table>
-             <tr class="border-radius-input">
-                 <td class="label-container">
-                      <div class="{{iconClassName}} corner-icon"></div>
-             </td>
-             <td class="slider-container">
-                 <input id="all-corner-slider" type="range" min="0" max="100" step="1">
-             </td>
-             <td class="slider-value">
-                <span class="slider-indicator" id="{{iconClassName}}-text"></span>
-             </td>
-             <td class="units-container">
-                  <ul class="button-bar ul-padding-left" id="{{iconClassName}}-radio">
-                      <li id="all-corner-radio-px" title="{{PIXEL_UNIT}}"><a href="#" tabindex="0">px</a></li>
-                      <li title="{{PERCENTAGE_UNIT}}" id="all-corner-radio-percent"><a href="#" tabindex="0">%</a></li>
-                      <li title="{{EM_UNIT}}" id="all-corner-radio-em"><a href="#" tabindex="0">em</a></li>
-                  </ul>
-             </td>
-          </tr>
-     </table>
-   </div>
- {{/singleCornerArea}}  
+    </div> 
 </div>
