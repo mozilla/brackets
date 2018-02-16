@@ -111,7 +111,7 @@ define(function (require, exports, module) {
             // Not one of our custom events, re-trigger message event to LiveDev
             module.exports.trigger("message", [connId, msgObj.message]);
         } else if (msgObj.type === "connect") {
-            Browser.setListener();
+            //Browser.setListener();
             // Make sure the correct mouse cursor is set, depending on inspector state.
             MouseManager.ensurePreviewCursor();
         }
