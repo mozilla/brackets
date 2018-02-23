@@ -3,13 +3,13 @@ define(function(require, exports, module) {
 
     var Strings            = brackets.getModule("strings");
     var Mustache           = brackets.getModule("thirdparty/mustache/mustache");
-    var BoxModelUtils       = require("BoxModelUtils");
+    var BoxModelUtils      = require("BoxModelUtils");
     var KeyEvent           = brackets.getModule("utils/KeyEvent");
     var PreferencesManager = brackets.getModule("preferences/PreferencesManager");
     var StringUtils        = brackets.getModule("utils/StringUtils");
  
     // getting reference to the html template for the BoxModel editor UI
-    var BoxModelTemplate = require("text!BoxModelEditorTemplate.html");
+    var BoxModelTemplate   = require("text!BoxModelEditorTemplate.html");
     var check;
 
     function getIndividualValues(values){
@@ -76,11 +76,11 @@ define(function(require, exports, module) {
         var headerKey = "";
 
         switch (type) {
-            case BoxModelUtils.MARGIN:
-                headerKey = "SET_PADDING_FOR";
-                break;
             case BoxModelUtils.PADDING:
                 headerKey = "SET_MARGIN_FOR";
+                break;
+            case BoxModelUtils.MARGIN:
+                headerKey = "SET_PADDING_FOR";
                 break;
         }
 

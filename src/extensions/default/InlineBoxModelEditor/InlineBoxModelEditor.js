@@ -25,8 +25,8 @@ define(function (require, exports, module) {
     "use strict";
 
     var InlineWidget    =  brackets.getModule("editor/InlineWidget").InlineWidget;
-    var BoxModelUtils    =  require("BoxModelUtils");
-    var BoxModelEditor   =  require("BoxModelEditor").BoxModelEditor;
+    var BoxModelUtils   =  require("BoxModelUtils");
+    var BoxModelEditor  =  require("BoxModelEditor").BoxModelEditor;
     var EditorManager   =  brackets.getModule("editor/EditorManager");
     var ExtensionUtils  =  brackets.getModule("utils/ExtensionUtils");
     var properties      =  JSON.parse(require("text!BoxModelProperties.json"));

@@ -24,15 +24,14 @@
 define(function (require, exports, module) {
     "use strict";
 
-    var EditorManager = brackets.getModule("editor/EditorManager"),
-        ExtensionUtils = brackets.getModule("utils/ExtensionUtils"),
-        InlineBoxModelEditor = require("InlineBoxModelEditor").InlineBoxModelEditor,
-        properties = JSON.parse(require("text!BoxModelProperties.json")),
-        BoxModelUtils = require("BoxModelUtils"),
-        InlineWidget = brackets.getModule("editor/InlineWidget").InlineWidget;
+    var EditorManager         = brackets.getModule("editor/EditorManager"),
+        ExtensionUtils        = brackets.getModule("utils/ExtensionUtils"),
+        InlineBoxModelEditor  = require("InlineBoxModelEditor").InlineBoxModelEditor,
+        properties            = JSON.parse(require("text!BoxModelProperties.json")),
+        BoxModelUtils         = require("BoxModelUtils"),
+        InlineWidget          = brackets.getModule("editor/InlineWidget").InlineWidget;
  
     var DEFAULT_BOXMODEL = "15px";
-   
     /**
      * editor context if so; otherwise null.
      *
