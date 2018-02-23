@@ -77,10 +77,10 @@ define(function(require, exports, module) {
 
         switch (type) {
             case BoxModelUtils.PADDING:
-                headerKey = "SET_MARGIN_FOR";
+                headerKey = "SET_PADDING_FOR";
                 break;
             case BoxModelUtils.MARGIN:
-                headerKey = "SET_PADDING_FOR";
+                headerKey = "SET_MARGIN_FOR";
                 break;
         }
 
