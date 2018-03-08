@@ -4,23 +4,29 @@ define(function(require, exports, module) {
     var InlineWidget         = brackets.getModule("editor/InlineWidget").InlineWidget,
         BoxShadowEditor      = require("BoxShadowEditor").BoxShadowEditor,
         ColorUtils           = brackets.getModule("utils/ColorUtils"),
+        BoxShadowUtils       = require("BoxShadowUtils"),
         boxShadowValueTypes  = JSON.parse(require("text!BoxShadowValueTypes.json")).boxShadowValueTypes;
-
 
     /** @type {number} Global var used to provide a unique ID for each box-shadow editor instance's _origin field. */
     var lastOriginId = 1;
 
     /**
      * Inline widget containing a BoxShadowEditor control
-     * @param {!{horizontalOffset: Number, verticalOffset: Number, blurRadius: Number, spreadRadius: Number, color: string}} values  Initial set of box-shadow values.
+     * The widget responds to changes in the text editor to the box-shadow string. Also, it is responsible for propagating changes 
+     * from the box-shadow editor GUI to the text editor.
+     * @param {!String} boxShadowString Initial box-shadow string.
      * @param {!CodeMirror.TextMarker} marker
      */
-    function InlineBoxShadowEditor(values, marker) {
-        this._values = values;
+    function InlineBoxShadowEditor(boxShadowString, marker) {
+        this._boxShadowString = boxShadowString;
         this._marker = marker;
         this._isOwnChange = false;
         this._isHostChange = false;
         this._origin = "+InlineBoxShadowEditor_" + (lastOriginId++);
+
+        // this._orderOfValues = ["lengths", "color", "inset"]; require to match the user's written values
+        this._values = {};
+        this._extractValues();
 
         this._handleBoxShadowChange = this._handleBoxShadowChange.bind(this);
         this._handleHostDocumentChange = this._handleHostDocumentChange.bind(this);
@@ -35,7 +41,7 @@ define(function(require, exports, module) {
     /** @type {!BoxShadowPicker} BoxShadowPicker instance */
     InlineBoxShadowEditor.prototype.BoxShadowEditor = null;
 
-    /** @type {!{ horizontalOffset: Number, verticalOffset: Number, blurRadius: Number, spreadRadius: Number, color: string }} Current value of the BoxShadow editor control */
+    /** @type {!String} Current value of the box-shadow editor control */
     InlineBoxShadowEditor.prototype._values = null;
 
     /**
@@ -96,23 +102,74 @@ define(function(require, exports, module) {
         }
     };
 
-    InlineBoxShadowEditor.prototype._buildBoxShadowString = function (values) {
-        var boxShadowString = boxShadowValueTypes.reduce(function(result, boxShadowValueType) {
-            if(!values[boxShadowValueType]) {
-                return result;
-            }
-            if (!isNaN(values[boxShadowValueType]) ) {
-                result += " " + values[boxShadowValueType] + "px";
-            }
-            else {
-                result += " " + values[boxShadowValueType];
-            }
-            return result;
-        },"");
+    InlineBoxShadowEditor.prototype._extractValues = function() {
+        if(_isValidBoxShadowValue(this._boxShadowString) === false) {
+            return;
+        } 
 
-        return boxShadowString.trim();
+        var values = this._boxShadowString.trim().split(" ");
+
+        var lengthTypes, lengthTypesIter, lengthType;
+        lengthTypes = BoxShadowUtils.LENGTH_TYPES;
+        lengthTypesIter = lengthTypes[Symbol.iterator]();
+
+        // Default case of box-shadows.
+        this._values.inset = false;
+        this._values.lengths = {};
+
+        this._values = values.reduce(function(accumulator, currentValue, currentIndex) {
+            currentValue = currentValue.trim();
+
+            // Check for inset
+            if(currentValue === "inset") {
+                // **Feature to be added**
+                // accumulator.inset = true;
+            }
+            // Check for color
+            else if(currentValue.match(ColorUtils.COLOR_REGEX)) {
+                accumulator.color = currentValue;
+            }
+            // Check for a length
+            else if(currentValue.match(BoxShadowUtils.LENGTH_REGEX)) {
+                lengthType = lengthTypesIter.next().value;
+                accumulator.lengths[lengthType] = currentValue;
+            }
+
+            return accumulator;
+        }, this._values);
+
+        for(lengthType of lengthTypesIter) {
+            // this._values.lengths[lengthType] = "0px";
+            // delete this._values.lengths[lengthType];
+        }
     };
 
+    InlineBoxShadowEditor.prototype._buildBoxShadowString = function () {
+        var self = this;
+
+        var lengthTypes, boxShadowArr, boxShadowString;
+        lengthTypes = BoxShadowUtils.LENGTH_TYPES;
+
+        boxShadowArr = lengthTypes.map(function(currentValue){
+            return self._values.lengths[currentValue];
+        });
+
+        // Filter out undefined values.
+        boxShadowArr = boxShadowArr.filter(function(currentValue) {
+            return currentValue;
+        });
+
+        if(self._values.color) {
+            boxShadowArr.push(self._values.color);
+        }
+
+        if(self._values.inset === true) {
+            boxShadowArr.push("inset");
+        }
+
+        boxShadowString = boxShadowArr.join(" ");
+        return boxShadowString;
+    };
 
     /**
      * When the BoxShadow editor's values change, update text in code editor
@@ -125,23 +182,16 @@ define(function(require, exports, module) {
             return;
         }
 
-        // update values 
-        for(var key in this._values) {
-            if(this._values.hasOwnProperty(key)) {
-                if(values[key] && values[key] !== this._values[key]) {
-                    this._values[key] = values[key];
-                }
-            }
-        }
+        this._values = values;
 
         // build the box-shadow value as a string.
-        var boxShadowString = this._buildBoxShadowString(this._values);
-        console.log(boxShadowString);
+        var boxShadowString = this._buildBoxShadowString();
 
         var endPos = {
             line: range.start.line,
             ch: range.start.ch + boxShadowString.length
         };
+
         this._isOwnChange = true;
         this.hostEditor.document.batchOperation(function () {
             // Replace old box-shadow in code with the editor's box-shadow values, and select it
@@ -201,8 +251,8 @@ define(function(require, exports, module) {
     };
 
     function _isValidBoxShadowValue(value) {
-        // Need to improve this regex.
-        return (value.match(/\s*(\d+px\s+){0,3}?\d+px(?:\s+|;|)(?:#?[a-z]{3,}\s*)?;?/) !== null);
+        var boxShadowRegex = new RegExp(BoxShadowUtils.BOX_SHADOW_REGEX);
+        return boxShadowRegex.test(value);
     }
 
     /**
@@ -217,34 +267,13 @@ define(function(require, exports, module) {
         var range = this.getCurrentRange();
         if (range) {
             var newString = this.hostEditor.document.getRange(range.start, range.end);
-
-            var flag = _isValidBoxShadowValue(newString);
-
             if(_isValidBoxShadowValue(newString)) {
                 // extract values
-                var newValues = {};
-                var boxShadowValueIndex = 0;
-
-                newString.split(/\s+/).forEach(function(value, index) {
-                    value = value.trim();
-                    var colorMatch = value.match(ColorUtils.COLOR_REGEX);
-                    var pixelMatch = value.match(/(\d+)px/);
-                    console.log(colorMatch);
-                    if(colorMatch) {
-                        newValues["color"] = colorMatch[0];
-                    }
-                    else if(pixelMatch){
-                        newValues[boxShadowValueTypes[boxShadowValueIndex++]] = value;
-                    }
-                });
-                console.log(newValues);
-
-                if(newValues !== this._values) {
-                    this._isHostChange = true;
-                    this.boxShadowEditor.setValues(newValues);
-                    this._values = newValues;
-                    this._isHostChange = false;
-                }
+                this._boxShadowString = newString;
+                this._extractValues();
+                this._isHostChange = true;
+                this.boxShadowEditor.setValues(this._values);
+                this._isHostChange = false;
             }
 
         }
