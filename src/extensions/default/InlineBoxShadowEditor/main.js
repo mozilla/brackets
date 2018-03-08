@@ -5,8 +5,7 @@ define(function(require, exports, module) {
         ExtensionUtils         = brackets.getModule("utils/ExtensionUtils"),
         InlineBoxShadowEditor  = require("InlineBoxShadowEditor").InlineBoxShadowEditor,
         ColorUtils             = brackets.getModule("utils/ColorUtils"),
-        BoxShadowUtils         = require("BoxShadowUtils"),
-        boxShadowValueTypes    = JSON.parse(require("text!BoxShadowValueTypes.json")).boxShadowValueTypes;
+        BoxShadowUtils         = require("BoxShadowUtils");
 
     /**
      * Prepare hostEditor for an InlineBoxShadowEditor at pos if possible. Return

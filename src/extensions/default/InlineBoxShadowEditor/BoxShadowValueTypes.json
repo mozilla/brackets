@@ -1,9 +1,0 @@
-{
-    "boxShadowValueTypes": [
-                            "horizontalOffset",
-                            "verticalOffset",
-                            "blurRadius",
-                            "spreadRadius",
-                            "color"
-                            ]
-}

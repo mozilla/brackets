@@ -4,8 +4,7 @@ define(function(require, exports, module) {
     var InlineWidget         = brackets.getModule("editor/InlineWidget").InlineWidget,
         BoxShadowEditor      = require("BoxShadowEditor").BoxShadowEditor,
         ColorUtils           = brackets.getModule("utils/ColorUtils"),
-        BoxShadowUtils       = require("BoxShadowUtils"),
-        boxShadowValueTypes  = JSON.parse(require("text!BoxShadowValueTypes.json")).boxShadowValueTypes;
+        BoxShadowUtils       = require("BoxShadowUtils");
 
     /** @type {number} Global var used to provide a unique ID for each box-shadow editor instance's _origin field. */
     var lastOriginId = 1;
@@ -111,7 +110,7 @@ define(function(require, exports, module) {
 
         var lengthTypes, lengthTypesIter, lengthType;
         lengthTypes = BoxShadowUtils.LENGTH_TYPES;
-        lengthTypesIter = lengthTypes[Symbol.iterator]();
+        lengthTypesIter = 0;
 
         // Default case of box-shadows.
         this._values.inset = false;
@@ -131,8 +130,10 @@ define(function(require, exports, module) {
             }
             // Check for a length
             else if(currentValue.match(BoxShadowUtils.LENGTH_REGEX)) {
-                lengthType = lengthTypesIter.next().value;
-                accumulator.lengths[lengthType] = currentValue;
+                if(lengthTypesIter < lengthTypes.length) {
+                    lengthType = lengthTypes[lengthTypesIter++];
+                    accumulator.lengths[lengthType] = currentValue;
+                }
             }
 
             return accumulator;
