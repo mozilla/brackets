@@ -58,7 +58,41 @@
         ]
     },
     {
+        "path": "extensions/default/InlineBorderRadiusEditor",
+        "less": {
+            "dist/extensions/default/InlineBorderRadiusEditor/css/main.css": [
+                "src/extensions/default/InlineBorderRadiusEditor/css/main.less"
             ]
+        },
+        "copy": [
+            "extensions/default/InlineBorderRadiusEditor/img/*.png",
+            "extensions/default/InlineBorderRadiusEditor/BorderRadiusEditorTemplate.html"
+        ]
+    },
+    {
+        "path": "extensions/default/InlineBoxShadowEditor",
+        "less": {
+            "dist/extensions/default/InlineBoxShadowEditor/css/style.css": [
+                "src/extensions/default/InlineBoxShadowEditor/css/style.less"
+            ]
+        },
+        "copy": [
+            "extensions/default/InlineBoxShadowEditor/BoxShadowEditorTemplate.html"
+        ]
+    },
+    {
+        "path": "extensions/default/InlineBoxModelEditor",
+        "less": {
+            "dist/extensions/default/InlineBoxModelEditor/css/main.css": [
+                "src/extensions/default/InlineBoxModelEditor/css/main.less"
+            ]
+        },
+        "copy": [
+            "extensions/default/InlineBoxModelEditor/img/*.png",
+            "extensions/default/InlineBoxModelEditor/BoxModelEditorTemplate.html"
+        ]
+    },
+    {
         "path": "extensions/default/Inline3DParametersEditor",
         "less": {
             "dist/extensions/default/Inline3DParametersEditor/css/main.css": [
@@ -196,4 +230,3 @@
         }
     }
 ]
-
