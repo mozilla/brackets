@@ -25,65 +25,67 @@ define(function (require, exports, module) {
     "use strict";
 
     var InlineWidget    =  brackets.getModule("editor/InlineWidget").InlineWidget;
-    var PaddingUtils    =  require("PaddingUtils");
-    var PaddingEditor   =  require("PaddingEditor").PaddingEditor;
+    var BoxModelUtils   =  require("BoxModelUtils");
+    var BoxModelEditor  =  require("BoxModelEditor").BoxModelEditor;
     var EditorManager   =  brackets.getModule("editor/EditorManager");
     var ExtensionUtils  =  brackets.getModule("utils/ExtensionUtils");
-    var properties      =  JSON.parse(require("text!PaddingProperties.json"));
+    var properties      =  JSON.parse(require("text!BoxModelProperties.json"));
 
     /** @const @type {number} */
-    var DEFAULT_PADDING  = "5px"; // This is the default value of the padding 
+    var DEFAULT_BOXMODEL  = "5px"; // This is the default value of the BoxModel 
 
-    /** @type {number} Global var used to provide a unique ID for each padding editor instance's _origin field. */
+    /** @type {number} Global var used to provide a unique ID for each BoxModel editor instance's _origin field. */
     var lastOriginId = 1;
 
     /**
-     * Inline widget containing a paddingEditor control
-     * @param {!string} padding  Initially selected padding
+     * Inline widget containing a BoxModelEditor control
+     * @param {!string} BoxModel  Initially selected BoxModel
      * @param {!CodeMirror.TextMarker} marker
      */
-    function InlinePaddingEditor(padding, marker) {
-        this._padding = padding;
+    function InlineBoxModelEditor(BoxModel, marker, type, iconClassName) {
+        this._BoxModel = BoxModel;
         this._marker = marker;
         this._isOwnChange = false;
         this._isHostChange = false;
-        this._origin = "+InlinePaddingEditor_" + (lastOriginId++);
+        this._origin = "+InlineBoxModelEditor_" + (lastOriginId++);
+        this.type = type;
+        this.iconClassName = iconClassName;
 
-        this._handlePaddingChange = this._handlePaddingChange.bind(this);
+        this._handleBoxModelChange = this._handleBoxModelChange.bind(this);
         this._handleHostDocumentChange = this._handleHostDocumentChange.bind(this);
 
         InlineWidget.call(this);
     }
 
-    InlinePaddingEditor.prototype = Object.create(InlineWidget.prototype);
-    InlinePaddingEditor.prototype.constructor = InlinePaddingEditor;
-    InlinePaddingEditor.prototype.parentClass = InlineWidget.prototype;
+    InlineBoxModelEditor.prototype = Object.create(InlineWidget.prototype);
+    InlineBoxModelEditor.prototype.constructor = InlineBoxModelEditor;
+    InlineBoxModelEditor.prototype.parentClass = InlineWidget.prototype;
 
-    /** @type {!paddingEditor} paddingEditor instance */
-    InlinePaddingEditor.prototype.paddingEditor = null;
+    /** @type {!BoxModelEditor} BoxModelEditor instance */
+    InlineBoxModelEditor.prototype.BoxModelEditor = null;
 
     /**
      * Range of code we're attached to; _marker.find() may by null if sync is lost.
      * @type {!CodeMirror.TextMarker}
      */
-    InlinePaddingEditor.prototype._marker = null;
+    InlineBoxModelEditor.prototype._marker = null;
 
-    /** @type {boolean} True while we're syncing a paddingEditor change into the code editor */
-    InlinePaddingEditor.prototype._isOwnChange = null;
+    /** @type {boolean} True while we're syncing a BoxModelEditor change into the code editor */
+    InlineBoxModelEditor.prototype._isOwnChange = null;
 
-    /** @type {boolean} True while we're syncing a code editor change into the paddingEditor*/
-    InlinePaddingEditor.prototype._isHostChange = null;
+    /** @type {boolean} True while we're syncing a code editor change into the BoxModelEditor*/
+    InlineBoxModelEditor.prototype._isHostChange = null;
 
     /** @type {number} ID used to identify edits coming from this inline widget for undo batching */
-    InlinePaddingEditor.prototype._origin = null;
+    InlineBoxModelEditor.prototype._origin = null;
 
 
     /**
-     * Returns the current text range of the padding value we're attached to, or null if
+     * Returns the current text range of the BoxModel value we're attached to, or null if
      * we've lost sync with what's in the code.
      * @return {?{start:{line:number, ch:number}, end:{line:number, ch:number}}}
      */
-    InlinePaddingEditor.prototype.getCurrentRange = function () {
+    InlineBoxModelEditor.prototype.getCurrentRange = function () {
         var pos, start, end;
 
         pos = this._marker && this._marker.find();
@@ -100,10 +102,10 @@ define(function (require, exports, module) {
 
         // Even if we think we have a good range end, we want to run the
         // regexp match to see if there's a valid match that extends past the marker.
-        // This can happen if the user deletes the end of the existing padding value and then
+        // This can happen if the user deletes the end of the existing BoxModel value and then
         // types some more.
 
-        // Manually find the position of the first occurance of padding value in the line
+        // Manually find the position of the first occurance of BoxModel value in the line
         // because using this._maker.find() does not return expected value
         // using this as a work around
         var line = this.hostEditor.document.getLine(start.line);
@@ -114,7 +116,7 @@ define(function (require, exports, module) {
             }
         }
 
-        var  matches = line.substr(start).match(PaddingUtils.PADDING_VALUE_REGEX);
+        var  matches = line.substr(start).match(BoxModelUtils.BOXMODEL_VALUE_REGEX);
 
         // Note that end.ch is exclusive, so we don't need to add 1 before comparing to
         // the matched length here.
@@ -133,12 +135,12 @@ define(function (require, exports, module) {
     };
 
     /**
-     * When the selected padding value changes, update text in code editor
-     * @param {!string} paddingString
+     * When the selected BoxModel value changes, update text in code editor
+     * @param {!string} BoxModelString
      */
-    InlinePaddingEditor.prototype._handlePaddingChange = function (paddingString) {
+    InlineBoxModelEditor.prototype._handleBoxModelChange = function (BoxModelString) {
         var self = this;
-        if (paddingString.replace(";",'') !== this._padding) {
+        if (BoxModelString.replace(";",'') !== this._BoxModel) {
             var range = this.getCurrentRange();
             if (!range) {
                 return;
@@ -148,7 +150,7 @@ define(function (require, exports, module) {
         if (!this._isHostChange) {
             var endPos = {
                 line: range.start.line,
-                ch: range.start.ch + paddingString.length
+                ch: range.start.ch + BoxModelString.length
             };
 
             this._isOwnChange = true;
@@ -156,7 +158,7 @@ define(function (require, exports, module) {
                 //select current text and replace with new value
                 range.end.ch-=1;
                 self.hostEditor.setSelection(range.start, range.end); // workaround for #2805
-                self.hostEditor.document.replaceRange(paddingString, range.start, range.end, self._origin);
+                self.hostEditor.document.replaceRange(BoxModelString, range.start, range.end, self._origin);
                 if (self._marker) {
                     self._marker.clear();
                     self._marker = self.hostEditor._codeMirror.markText(range.start, endPos);
@@ -165,7 +167,7 @@ define(function (require, exports, module) {
             this._isOwnChange = false;
           }
         
-        this._padding = paddingString.replace(";",'');
+        this._BoxModel = BoxModelString.replace(";",'');
         }
     };
 
@@ -173,30 +175,30 @@ define(function (require, exports, module) {
      * @override
      * @param {!Editor} hostEditor
      */
-    InlinePaddingEditor.prototype.load = function (hostEditor) {
-        InlinePaddingEditor.prototype.parentClass.load.apply(this, arguments);
-        this.paddingEditor = new PaddingEditor(this.$htmlContent, this._padding, this._handlePaddingChange);
+    InlineBoxModelEditor.prototype.load = function (hostEditor) {
+        InlineBoxModelEditor.prototype.parentClass.load.apply(this, arguments);
+        this.BoxModelEditor = new BoxModelEditor(this.$htmlContent, this._BoxModel, this._handleBoxModelChange, this.type, this.iconClassName);
     };
 
     /**
      * @override
      * Perform sizing & focus once we've been added to Editor's DOM
      */
-    InlinePaddingEditor.prototype.onAdded = function () {
-        InlinePaddingEditor.prototype.parentClass.onAdded.apply(this, arguments);
+    InlineBoxModelEditor.prototype.onAdded = function () {
+        InlineBoxModelEditor.prototype.parentClass.onAdded.apply(this, arguments);
         var doc = this.hostEditor.document;
         doc.addRef();
         doc.on("change", this._handleHostDocumentChange);
-        this.hostEditor.setInlineWidgetHeight(this, this.paddingEditor.$element.outerHeight() + 50, true);
-        this.paddingEditor.focus();
+        this.hostEditor.setInlineWidgetHeight(this, this.BoxModelEditor.$element.outerHeight() + 50, true);
+        this.BoxModelEditor.focus();
     };
 
     /**
      * @override
      * Called whenever the inline widget is closed, whether automatically or explicitly
      */
-    InlinePaddingEditor.prototype.onClosed = function () {
-        InlinePaddingEditor.prototype.parentClass.onClosed.apply(this, arguments);
+    InlineBoxModelEditor.prototype.onClosed = function () {
+        InlineBoxModelEditor.prototype.parentClass.onClosed.apply(this, arguments);
         if (this._marker) {
             this._marker.clear();
         }
@@ -206,20 +208,20 @@ define(function (require, exports, module) {
     };
 
     /**
-     * When text in the code editor changes, update padding UIs to reflect it
+     * When text in the code editor changes, update BoxModel UIs to reflect it
      */
-    InlinePaddingEditor.prototype._handleHostDocumentChange = function () {
-        // Don't push the change into the padding editor if it came from the padding editor.
+    InlineBoxModelEditor.prototype._handleHostDocumentChange = function () {
+        // Don't push the change into the BoxModel editor if it came from the BoxModel editor.
         if (this._isOwnChange) {
             return;
         }
         var range = this.getCurrentRange();
         if (range) {
-            var newPadding = this.hostEditor.document.getRange(range.start, range.end);
-            if (newPadding !== this._padding) {
-                if (this.paddingEditor.isValidPaddingString(newPadding)) {
+            var newBoxModel = this.hostEditor.document.getRange(range.start, range.end);
+            if (newBoxModel !== this._BoxModel) {
+                if (this.BoxModelEditor.isValidBoxModelString(newBoxModel)) {
                     this._isHostChange = true;
-                    this.paddingEditor.updateValues(newPadding);
+                    this.BoxModelEditor.updateValues(newBoxModel);
                     this._isHostChange = false;
                 }
             }
@@ -229,6 +231,6 @@ define(function (require, exports, module) {
         }
     };
 
-    exports.InlinePaddingEditor = InlinePaddingEditor;
+    exports.InlineBoxModelEditor = InlineBoxModelEditor;
 });
 

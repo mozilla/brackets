@@ -3,13 +3,13 @@ define(function(require, exports, module) {
 
     var Strings            = brackets.getModule("strings");
     var Mustache           = brackets.getModule("thirdparty/mustache/mustache");
-    var PaddingUtils       = require("PaddingUtils");
+    var BoxModelUtils      = require("BoxModelUtils");
     var KeyEvent           = brackets.getModule("utils/KeyEvent");
     var PreferencesManager = brackets.getModule("preferences/PreferencesManager");
     var StringUtils        = brackets.getModule("utils/StringUtils");
  
-    // getting reference to the html template for the padding editor UI
-    var PaddingTemplate = require("text!PaddingEditorTemplate.html");
+    // getting reference to the html template for the BoxModel editor UI
+    var BoxModelTemplate   = require("text!BoxModelEditorTemplate.html");
     var check;
 
     function getIndividualValues(values){
@@ -20,7 +20,7 @@ define(function(require, exports, module) {
 
         // We create a new regular expression everytime so that we don't
         // reuse stale data from the old RegExp object.
-        var valueRegex = new RegExp(PaddingUtils.PADDING_SINGLE_VALUE_REGEX);
+        var valueRegex = new RegExp(BoxModelUtils.BOXMODEL_SINGLE_VALUE_REGEX);
 
         while ((currentValue = valueRegex.exec(values)) !== null) {
             individualValues.push({
@@ -32,7 +32,7 @@ define(function(require, exports, module) {
         return individualValues;
     }
 
-    function PaddingValue($parentElement, location, value, unit, onChange) {
+    function BoxModelValue($parentElement, location, value, unit, onChange) {
         var self = this;
 
         self.value = value || 0;
@@ -66,17 +66,31 @@ define(function(require, exports, module) {
         });
     }
 
-    PaddingValue.prototype.toString = function() {
+    BoxModelValue.prototype.toString = function() {
         return this.value + (this.value === 0 ? "" : this.unit);
     };
 
-    function PaddingEditor($parent, valueString, paddingChangeHandler) {
+    function BoxModelEditor($parent, valueString, BoxModelChangeHandler, type, iconClassName) {
         var self = this;
 
+        var headerKey = "";
+
+        switch (type) {
+            case BoxModelUtils.PADDING:
+                headerKey = "SET_PADDING_FOR";
+                break;
+            case BoxModelUtils.MARGIN:
+                headerKey = "SET_MARGIN_FOR";
+                break;
+        }
+
+        Strings["BOX_MODEL_HEADER"] = Strings[headerKey];
+        Strings["box-model-icon-class-name"] = iconClassName;
         // Create the DOM structure, filling in localized strings via Mustache
-        self.$element = $(Mustache.render(PaddingTemplate, Strings));
+        self.$element = $(Mustache.render(BoxModelTemplate, Strings));
+
         $parent.append(self.$element);
-        self.paddingChangeHandler = paddingChangeHandler;
+        self.BoxModelChangeHandler = BoxModelChangeHandler;
 
         this.onChange = this.onChange.bind(this);
         self.updateValues(valueString);
@@ -114,7 +128,7 @@ define(function(require, exports, module) {
         }
     }
 
-    PaddingEditor.prototype.updateValues = function(valueString) {
+    BoxModelEditor.prototype.updateValues = function(valueString) {
         var values = getIndividualValues(valueString);
         var numOfValues = values.length;
 
@@ -142,35 +156,35 @@ define(function(require, exports, module) {
             }
         }
 
-        this.top = new PaddingValue(
+        this.top = new BoxModelValue(
             this.$element,
             "top",
             firstValue.num,
             firstValue.unit,
             this.onChange
         );
-        this.right = new PaddingValue(
+        this.right = new BoxModelValue(
             this.$element,
             "right",
             secondValue.num,
             secondValue.unit,
             this.onChange
         );
-        this.bottom = new PaddingValue(
+        this.bottom = new BoxModelValue(
             this.$element,
             "bottom",
             thirdValue.num,
             thirdValue.unit,
             this.onChange
         );
-        this.left = new PaddingValue(
+        this.left = new BoxModelValue(
             this.$element,
             "left",
             fourthValue.num,
             fourthValue.unit,
             this.onChange
         );
-        this.allsides = new PaddingValue(
+        this.allsides = new BoxModelValue(
             this.$element,
             "all-sides",
             firstValue.num,
@@ -182,9 +196,9 @@ define(function(require, exports, module) {
         this.onChange();
     };
 
-    PaddingEditor.prototype.onChange = function() {
+    BoxModelEditor.prototype.onChange = function() {
         if (this.allSides) {  
-            this.paddingChangeHandler(this.allsides.toString());
+            this.BoxModelChangeHandler(this.allsides.toString());
             return;
         }
 
@@ -193,21 +207,21 @@ define(function(require, exports, module) {
         var bottom = this.bottom.toString();
         var left = this.left.toString();
        
-        var PaddingString;
-        PaddingString = [top, right, bottom, left].join(" ");
+        var BoxModelString;
+        BoxModelString = [top, right, bottom, left].join(" ");
 
-        this.paddingChangeHandler(PaddingString);
+        this.BoxModelChangeHandler(BoxModelString);
     };
 
-    PaddingEditor.prototype.focus = function() {
+    BoxModelEditor.prototype.focus = function() {
         this.top.$slider.focus();
     };
 
-    PaddingEditor.prototype.isValidPaddingString = function(string){
-        var paddingValueRegEx = new RegExp(PaddingUtils.PADDING_VALUE_REGEX);
-        return paddingValueRegEx.test(string);
+    BoxModelEditor.prototype.isValidBoxModelString = function(string){
+        var BoxModelValueRegEx = new RegExp(BoxModelUtils.BOXMODEL_VALUE_REGEX);
+        return BoxModelValueRegEx.test(string);
     };
 
-    exports.PaddingEditor = PaddingEditor;
+    exports.BoxModelEditor = BoxModelEditor;
 });
 

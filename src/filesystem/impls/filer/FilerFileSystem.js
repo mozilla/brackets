@@ -303,7 +303,7 @@ define(function (require, exports, module) {
                     }
 
                     // If this is a big image (>250K), resize it first
-                    if(Content.isResizableImage(ext) && !Content.isAnimated(data) && Content.isImageTooLarge(data.length)) {
+                    if(Content.isResizableImage(ext) && !Content.isAnimatedImage(data) && Content.isImageTooLarge(data.length)) {
                         ImageResizer.resize(path, data, function(err, resized) {
                             if(err) {
                                 return callback(err);

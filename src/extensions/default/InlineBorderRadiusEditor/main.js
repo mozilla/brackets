@@ -62,14 +62,16 @@ define(function (require, exports, module) {
 
         if(match){
             // Check if the cursorLine has a CSS rule of type border-radius
-            var cssPropertyName, semiColonPos, colonPos, radiusValue, cursorLineSubstring, firstCharacterPos;
-
+            var cssPropertyName, semiColonPos, colonPos, radiusValue, cursorLineSubstring, firstCharacterPos, isSingleProperty, cssClassSuffix;
             // Get the css property name after removing spaces and ":" so that we can check for it in the file BorderRadiusProperties.json
             cssPropertyName = cursorLine.split(':')[0].trim();
 
             if (!cssPropertyName || !properties[cssPropertyName]) {
                 return null;
             }
+
+            cssClassSuffix = BorderRadiusUtils.getSingleProperty(cssPropertyName);
+            isSingleProperty = !!cssClassSuffix;
 
             if (properties[cssPropertyName]) {
                 colonPos = cursorLine.indexOf(":");
@@ -106,7 +108,9 @@ define(function (require, exports, module) {
 
                 return {
                     radius: radiusValue,
-                    marker: marker
+                    marker: marker,
+                    cssClassSuffix: cssClassSuffix,
+                    isSingleProperty: isSingleProperty
                 };
             }
         }
@@ -132,7 +136,7 @@ define(function (require, exports, module) {
         if (!context) {
             return null;
         } else {
-            inlineBorderRadiusEditor = new InlineBorderRadiusEditor(context.radius, context.marker);
+            inlineBorderRadiusEditor = new InlineBorderRadiusEditor(context.radius, context.marker, context.cssClassSuffix, context.isSingleProperty);
             inlineBorderRadiusEditor.load(hostEditor);
 
             result = new $.Deferred();

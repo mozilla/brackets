@@ -66,11 +66,22 @@ define(function(require, exports, module) {
         return this.value + (this.value === 0 ? "" : this.unit);
     };
 
-    function BorderRadiusEditor($parent, valueString, radiusChangeHandler) {
+    function BorderRadiusEditor($parent, valueString, radiusChangeHandler, iconClassName, isSingleProperty) {
         var self = this;
+        var values = JSON.parse(JSON.stringify(Strings));
+
+        if (!isSingleProperty) {
+            values["inlineEditorHeader"] = true;
+            values["individualCornerArea"] = true;
+            values["allCornerArea"] = true;
+        } else {
+            values["singleCornerArea"] = true;
+        }
 
         // Create the DOM structure, filling in localized strings via Mustache
-        self.$element = $(Mustache.render(BorderRadiusTemplate, Strings));
+        values["iconClassName"] = iconClassName;
+        self.$element = $(Mustache.render(BorderRadiusTemplate, values));
+
         $parent.append(self.$element);
         self.radiusChangeHandler = radiusChangeHandler;
 

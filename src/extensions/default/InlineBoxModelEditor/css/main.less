@@ -15,7 +15,7 @@
 @dark-bc-shadow-medium: rgba(0, 0, 0, 0.12);
 @dark-bc-input-bg: #555;
 
-.padding-editor {
+.boxmodel-editor {
     padding: 16px;
     font-family: @sansFontFamily;
     min-height: 240px;
@@ -34,11 +34,11 @@
     }
 }
 
-.padding-editor:focus {
+.boxmodel-editor:focus {
     outline: none;
 }
 
-.padding-editor table {
+.boxmodel-editor table {
 
     table-layout: fixed;
 
@@ -131,6 +131,48 @@
         }
     }
 
+    .margin-side-icon {
+        width: 25px;
+        height: 20px;
+        border: solid 2px rgba(255,255,255,.2);
+        position: absolute;
+        left: 20px;
+        top: 13px;
+        overflow: visible;
+
+        &:after {
+            content: "";
+            position: absolute;
+            background: white;
+            width: 2px;
+            height: 8px;
+        }
+
+        &.top:after {
+            top: -8px;
+            left: 11px;
+        }
+
+        &.right:after {
+            top: 9px;
+            right: -8px;
+            width: 8px;
+            height: 2px;
+        }
+
+        &.bottom:after {
+            bottom: -8px;
+            left: 11px;
+        }
+
+        &.left:after {
+            top: 9px;
+            left: -8px;
+            width: 8px;
+            height: 2px;
+        }
+    }
+
    .units-container {
         padding-left: 0;
 
@@ -150,25 +192,25 @@
 
 }
 
-.padding-editor #individualSidesArea.individualSidesArea,
-.padding-editor #allSidesArea.allSidesArea {
+.boxmodel-editor #individualSidesArea.individualSidesArea,
+.boxmodel-editor #allSidesArea.allSidesArea {
     display: block;
 }
 
-.padding-editor #individualSidesArea,
-.padding-editor #allSidesArea {
+.boxmodel-editor #individualSidesArea,
+.boxmodel-editor #allSidesArea {
     display: none;
 }
 
 
-.padding-editor input {
+.boxmodel-editor input {
     margin: 0;
     vertical-align: middle;
     box-shadow: none;
     width: 100%;
 }
 
-.padding-editor input:focus {
+.boxmodel-editor input:focus {
     outline: none;
     z-index: 911;
 }
@@ -189,7 +231,7 @@
 @dark-bc-shadow-medium: rgba(0, 0, 0, 0.12);
 @dark-bc-input-bg: #555;
 
-.padding-editor ul.button-bar {
+.boxmodel-editor ul.button-bar {
     display: inline-block;
     padding: 0;
     margin: 0;
@@ -226,15 +268,15 @@
 
 
 
-.padding-editor .button-bar a:focus,
-.padding-editor .button-bar li.selected a:focus {
+.boxmodel-editor .button-bar a:focus,
+.boxmodel-editor .button-bar li.selected a:focus {
     outline: none;
     position: relative;
     z-index: 999;
 }
 
 
-.padding-editor .button-bar li.selected a {
+.boxmodel-editor .button-bar li.selected a {
     background-color: #2492ba;
     color: white;
 }

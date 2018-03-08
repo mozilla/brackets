@@ -1,0 +1,13 @@
+{
+    "padding": {"values": ["inherit"]},
+    "padding-top": {"values": ["inherit"]},
+    "padding-right": {"values": ["inherit"]},
+    "padding-bottom": {"values": ["inherit"]},
+    "padding-left": {"values": ["inherit"]},
+    "margin": {"values": ["inherit"]},
+    "margin-top": {"values": ["inherit"]},
+    "margin-right": {"values": ["inherit"]},
+    "margin-bottom": {"values": ["inherit"]},
+    "margin-left": {"values": ["inherit"]}
+}
+

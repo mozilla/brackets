@@ -1,4 +1,5 @@
 <div tabindex="-1" class="border-radius-editor">
+ {{#inlineEditorHeader}}
     <header>
         <ul class="button-bar">
           <li id="allCorners" title="{{ALL_CORNERS}}">
@@ -9,7 +10,9 @@
           </li>
         </ul>
     </header>
+ {{/inlineEditorHeader}}
 
+ {{#individualCornerArea}}
     <div id="individualCornerArea">
 
         <table>
@@ -90,17 +93,24 @@
             </tr>
         </table>
     </div>
-
+ {{/individualCornerArea}}
+    
+ 
     <div id="allCornersArea">
        <table>
            <tr class="border-radius-input">
                <td class="label-container">
+               {{#allCornerArea}}
                    <div class="all corner-icon">
                        <div class="dot"></div>
                        <div class="dot"></div>
                        <div class="dot"></div>
                        <div class="dot"></div>
                    </div>
+                {{/allCornerArea}} 
+                {{#singleCornerArea}}
+                    <div class="{{iconClassName}} corner-icon"></div>
+                 {{/singleCornerArea}} 
                </td>
                <td class="slider-container">
                    <input id="all-corner-slider" type="range" min="0" max="100" step="1">
@@ -117,5 +127,5 @@
                </td>
            </tr>
        </table>
-    <div>
+    </div> 
 </div>

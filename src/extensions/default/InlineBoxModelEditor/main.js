@@ -24,37 +24,36 @@
 define(function (require, exports, module) {
     "use strict";
 
-    var EditorManager = brackets.getModule("editor/EditorManager"),
-        ExtensionUtils = brackets.getModule("utils/ExtensionUtils"),
-        InlinePaddingEditor = require("InlinePaddingEditor").InlinePaddingEditor,
-        properties = JSON.parse(require("text!PaddingProperties.json")),
-        PaddingUtils = require("PaddingUtils"),
-        InlineWidget = brackets.getModule("editor/InlineWidget").InlineWidget;
+    var EditorManager         = brackets.getModule("editor/EditorManager"),
+        ExtensionUtils        = brackets.getModule("utils/ExtensionUtils"),
+        InlineBoxModelEditor  = require("InlineBoxModelEditor").InlineBoxModelEditor,
+        properties            = JSON.parse(require("text!BoxModelProperties.json")),
+        BoxModelUtils         = require("BoxModelUtils"),
+        InlineWidget          = brackets.getModule("editor/InlineWidget").InlineWidget;
  
-    var DEFAULT_PADDING = "15px";
-
+    var DEFAULT_BOXMODEL = "15px";
     /**
      * editor context if so; otherwise null.
      *
      * @param {Editor} hostEditor
      * @param {{line:Number, ch:Number}} pos
-     * @return {?{paddingValue:String, marker:TextMarker}}
+     * @return {?{BoxModelValue:String, marker:TextMarker}}
      */
     function prepareEditorForProvider(hostEditor, pos) {
-        var paddingRegEx, paddingValueRegEx, cursorLine, match, sel, start, end, endPos, marker;
+        var BoxModelRegEx, BoxModelValueRegEx, cursorLine, match, sel, start, end, endPos, marker;
 
         sel = hostEditor.getSelection();
         if (sel.start.line !== sel.end.line) {
             return null;
         }
 
-        paddingRegEx = new RegExp(PaddingUtils.PADDING_REGEX);
-        paddingValueRegEx = new RegExp(PaddingUtils.PADDING_VALUE_REGEX);
+        BoxModelRegEx = new RegExp(BoxModelUtils.BOXMODEL_REGEX);
+        BoxModelValueRegEx = new RegExp(BoxModelUtils.BOXMODEL_VALUE_REGEX);
         cursorLine = hostEditor.document.getLine(pos.line);
 
-        // Loop through each match of paddingRegEx and stop when the one that contains pos is found.
+        // Loop through each match of BoxModelRegEx and stop when the one that contains pos is found.
         do {
-            match = paddingRegEx.exec(cursorLine);
+            match = BoxModelRegEx.exec(cursorLine);
             if (match) {
                 start = match.index;
                 end = start + match[0].length;
@@ -62,11 +61,20 @@ define(function (require, exports, module) {
         } while (match && (pos.ch < start || pos.ch > end));
 
         if(match){
-            // Check if the cursorLine has a CSS rule of type padding
-            var cssPropertyName, semiColonPos, colonPos, paddingValue, cursorLineSubstring, firstCharacterPos;
+            // Check if the cursorLine has a CSS rule of type BoxModel
+            var type, cssPropertyName, semiColonPos, colonPos, BoxModelValue, cursorLineSubstring, firstCharacterPos, iconClassName;
 
-            // Get the css property name after removing spaces and ":" so that we can check for it in the file PaddingProperties.json
+            // Get the css property name after removing spaces and ":" so that we can check for it in the file BoxModelProperties.json
             cssPropertyName = cursorLine.split(':')[0].trim();
+
+            if(cssPropertyName === "margin") {
+                type = "margin";
+                iconClassName = "margin-side-icon";
+            }
+            else {
+                type = "padding";
+                iconClassName = "side-icon";
+            }
 
             if (!cssPropertyName || !properties[cssPropertyName]) {
                 return null;
@@ -76,10 +84,10 @@ define(function (require, exports, module) {
                 colonPos = cursorLine.indexOf(":");
                 semiColonPos = cursorLine.indexOf(";");
                 cursorLineSubstring = cursorLine.substring(colonPos + 1, cursorLine.length);
-                paddingValue = cursorLineSubstring.replace(/ /g,"").replace(";", "");
-                if (paddingValue) {
-                    if (paddingValueRegEx.test(paddingValue)) {
-                        // edit the padding value of an existing css rule
+                BoxModelValue = cursorLineSubstring.replace(/ /g,"").replace(";", "");
+                if (BoxModelValue) {
+                    if (BoxModelValueRegEx.test(BoxModelValue)) {
+                        // edit the BoxModel value of an existing css rule
                         firstCharacterPos = cursorLineSubstring.search(/\S/);
                         pos.ch = colonPos + 1 + Math.min(firstCharacterPos,1);
                         if (semiColonPos !== -1) {
@@ -91,23 +99,25 @@ define(function (require, exports, module) {
                          return null;
                     }
                 } else {
-                    // edit the padding value of a new css rule
+                    // edit the BoxModel value of a new css rule
                     var newText = " ", from, to;
-                    newText = newText.concat(DEFAULT_PADDING, ";");
+                    newText = newText.concat(DEFAULT_BOXMODEL, ";");
                     from = {line: pos.line, ch: colonPos + 1};
                     to = {line: pos.line, ch: cursorLine.length};
                     hostEditor._codeMirror.replaceRange(newText, from, to);
                     pos.ch = colonPos + 2;
-                    endPos = {line: pos.line, ch: pos.ch + DEFAULT_PADDING.length};
-                    paddingValue = DEFAULT_PADDING;
+                    endPos = {line: pos.line, ch: pos.ch + DEFAULT_BOXMODEL.length};
+                    BoxModelValue = DEFAULT_BOXMODEL;
                 }
 
                 marker = hostEditor._codeMirror.markText(pos, endPos);
                 hostEditor.setSelection(pos, endPos);
 
                 return {
-                    padding: paddingValue,
-                    marker: marker
+                    BoxModel: BoxModelValue,
+                    marker: marker,
+                    type: type,
+                    iconClassName: iconClassName
                 };
             }
         }
@@ -115,46 +125,46 @@ define(function (require, exports, module) {
     }
 
     /**
-     * Registered as an inline editor provider: creates an InlinePaddingEditor when the cursor
-     * is on a padding value (in any flavor of code).
+     * Registered as an inline editor provider: creates an InlineBoxModelEditor when the cursor
+     * is on a BoxModel value (in any flavor of code).
      *
      * @param {!Editor} hostEditor
      * @param {!{line:Number, ch:Number}} pos
      * @return {?$.Promise} synchronously resolved with an InlineWidget, or null if there's
-     * no padding at pos.
+     * no BoxModel at pos.
      */
-    function inlinePaddingEditorProvider(hostEditor, pos) {
+    function inlineBoxModelEditorProvider(hostEditor, pos) {
         var context = prepareEditorForProvider(hostEditor, pos),
-        inlinePaddingEditor,
+        inlineBoxModelEditor,
             result;
 
         if (!context) {
             return null;
         } else {
-            inlinePaddingEditor = new InlinePaddingEditor(context.padding, context.marker);
-            inlinePaddingEditor.load(hostEditor);
+            inlineBoxModelEditor = new InlineBoxModelEditor(context.BoxModel, context.marker, context.type, context.iconClassName);
+            inlineBoxModelEditor.load(hostEditor);
 
             result = new $.Deferred();
-            result.resolve(inlinePaddingEditor);
+            result.resolve(inlineBoxModelEditor);
             return result.promise();
         }
     }
 
-    function queryInlinePaddingEditorProvider(hostEditor, pos) {
-        var paddingRegEx, cursorLine, match, sel, start, end, endPos, marker;
-        var cssPropertyName, semiColonPos, colonPos, paddingValue, cursorLineSubstring, firstCharacterPos;
+    function queryInlineBoxModelEditorProvider(hostEditor, pos) {
+        var BoxModelRegEx, cursorLine, match, sel, start, end, endPos, marker;
+        var cssPropertyName, semiColonPos, colonPos, BoxModelValue, cursorLineSubstring, firstCharacterPos;
 
         sel = hostEditor.getSelection();
         if (sel.start.line !== sel.end.line) {
             return false;
         }
 
-        paddingRegEx = new RegExp(PaddingUtils.PADDING_REGEX);
+        BoxModelRegEx = new RegExp(BoxModelUtils.BOXMODEL_REGEX);
         cursorLine = hostEditor.document.getLine(pos.line);
 
-        // Loop through each match of paddingRegEx and stop when the one that contains pos is found.
+        // Loop through each match of BoxModelRegEx and stop when the one that contains pos is found.
         do {
-            match = paddingRegEx.exec(cursorLine);
+            match = BoxModelRegEx.exec(cursorLine);
             if (match) {
                 start = match.index;
                 end = start + match[0].length;
@@ -165,7 +175,7 @@ define(function (require, exports, module) {
             return true;
         }
 
-        // Get the css property name after removing spaces and ":" so that we can check for it in the file PaddingProperties.json
+        // Get the css property name after removing spaces and ":" so that we can check for it in the file BoxModelProperties.json
         cssPropertyName = cursorLine.split(':')[0].trim();
 
         if (!cssPropertyName || !properties[cssPropertyName]) {
@@ -176,9 +186,9 @@ define(function (require, exports, module) {
             colonPos = cursorLine.indexOf(":");
             semiColonPos = cursorLine.indexOf(";");
             cursorLineSubstring = cursorLine.substring(colonPos + 1, cursorLine.length);
-            paddingValue = cursorLineSubstring.replace(/ /g,"").replace(";", "");
-            if (paddingValue) {
-                return paddingRegEx.test(paddingValue);
+            BoxModelValue = cursorLineSubstring.replace(/ /g,"").replace(";", "");
+            if (BoxModelValue) {
+                return BoxModelRegEx.test(BoxModelValue);
             }
             return true;
         }
@@ -188,8 +198,8 @@ define(function (require, exports, module) {
 
     // Initialize extension
     ExtensionUtils.loadStyleSheet(module, "css/main.less");
-    EditorManager.registerInlineEditProvider(inlinePaddingEditorProvider, queryInlinePaddingEditorProvider);
+    EditorManager.registerInlineEditProvider(inlineBoxModelEditorProvider, queryInlineBoxModelEditorProvider);
     exports.prepareEditorForProvider = prepareEditorForProvider;
-    exports.inlinePaddingEditorProvider = inlinePaddingEditorProvider;
+    exports.inlineBoxModelProvider = inlineBoxModelEditorProvider;
 });
 
