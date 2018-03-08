@@ -35,7 +35,7 @@ define(function(require, exports, module) {
      * @Override
      */
     BoxShadowInput.prototype.getValue = function() {
-    }
+    };
 
     /** 
      * Set focus to the input element
@@ -76,7 +76,7 @@ define(function(require, exports, module) {
         self.$units.bind("click", function() {
             self.handleUnitChange(this);
         });
-    }
+    };
 
     /**
      * @Override
@@ -129,7 +129,7 @@ define(function(require, exports, module) {
         var result;
         result = "".concat(this.num, this.unit);
         return result;
-    }
+    };
 
     BoxShadowLength.prototype._updateView = function() {
         this.$input.val(this.num);
@@ -144,7 +144,7 @@ define(function(require, exports, module) {
                 $(this).addClass("selected");
             }
         });
-    }
+    };
 
     function BoxShadowColor(parentRef, $parent, name, value, callback) {
         BoxShadowInput.call(this, $parent, name);

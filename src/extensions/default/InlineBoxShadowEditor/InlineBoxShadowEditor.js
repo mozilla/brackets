@@ -137,11 +137,6 @@ define(function(require, exports, module) {
 
             return accumulator;
         }, this._values);
-
-        for(lengthType of lengthTypesIter) {
-            // this._values.lengths[lengthType] = "0px";
-            // delete this._values.lengths[lengthType];
-        }
     };
 
     InlineBoxShadowEditor.prototype._buildBoxShadowString = function () {
