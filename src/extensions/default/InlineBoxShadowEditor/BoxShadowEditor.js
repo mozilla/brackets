@@ -6,14 +6,12 @@ define(function(require, exports, module) {
         StringUtils        = brackets.getModule("utils/StringUtils"),
         Strings            = brackets.getModule("strings"),
         Mustache           = brackets.getModule("thirdparty/mustache/mustache"),
-        BoxShadowInputs    = require("BoxShadowInputs"),
+        BoxShadowLength    = require("BoxShadowLength"),
+        BoxShadowColor     = require("BoxShadowColor"),
         BoxShadowUtils     = require("BoxShadowUtils");
 
     /** Mustache template that forms the bare DOM structure of the UI */
     var BoxShadowEditorTemplate = require("text!BoxShadowEditorTemplate.html");
-
-    var BoxShadowLength = BoxShadowInputs.BoxShadowLength,
-        BoxShadowColor  = BoxShadowInputs.BoxShadowColor;
 
     /**
      * Box shadow editor control; may be used standalone or within an InlineBoxShadowEditor inline widget.
