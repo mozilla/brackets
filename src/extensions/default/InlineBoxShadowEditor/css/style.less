@@ -82,70 +82,6 @@
         position: relative;
     }
 
-    .corner-icon {
-        width: 16px;
-        height: 11px;
-        border: solid 2px rgba(0,0,0,.2);
-        display: block;
-        margin: 0 5px 0 10px;
-        position: relative;
-
-        &:not(.all):after {
-            content: "";
-            position: absolute;
-            background: black;
-            width: 4px;
-            height: 4px;
-            border-radius: 50%;
-        }
-
-        &.top-left:after {
-            top: -3px;
-            left: -3px;
-        }
-
-        &.top-right:after {
-            top: -3px;
-            right: -3px;
-        }
-
-        &.bottom-left:after {
-            bottom: -3px;
-            left: -3px;
-        }
-
-        &.bottom-right:after {
-            bottom: -3px;
-            right: -3px;
-        }
-
-        &.all .dot {
-          position: absolute;
-          background: black;
-          width: 4px;
-          height: 4px;
-          border-radius: 50%;
-
-          &:nth-child(1) {
-            top: -3px;
-            left: -3px;
-          }
-          &:nth-child(2) {
-            top: -3px;
-            right: -3px;
-          }
-          &:nth-child(3) {
-            bottom: -3px;
-            left: -3px;
-          }
-          &:nth-child(4) {
-            bottom: -3px;
-            right: -3px;
-          }
-
-        }
-    }
-
     .units-container {
         padding-left: 0;
         width: 120px;
@@ -313,6 +249,7 @@
 @track-radius: 5px;
 @contrast: 5%;
 
+@toggle-width: 48px;
 
 .track() {
   width: @track-width;
@@ -391,6 +328,59 @@
   }
   &:focus::-ms-fill-upper {
     background: lighten(@track-color, @contrast);
+  }
+}
+
+.box-shadow-editor .toggle-switch-container {
+  .toggle-switch {
+    position: relative;
+    display: inline-block;
+    width: @toggle-width;
+    height: @thumb-height;
+  }
+
+  input {
+    display: none;
+  }
+
+  .toggle-switch-slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    border-radius: 24px;
+    -webkit-transition: .4s;
+    transition: .4s;
+  }
+
+  .toggle-switch-slider:before {
+    position: absolute;
+    content: "";
+    height: @thumb-height - 4px;
+    width: @thumb-width - 4px;
+    top: 2px;
+    left: 2px;
+    background-color: white;
+    border-radius: 50%;
+    -webkit-transition: .4s;
+    transition: .4s;
+  }
+
+  input:checked + .toggle-switch-slider {
+    background-color: #2196F3;
+  }
+
+  input:focus + .toggle-switch-slider {
+    box-shadow: 0 0 1px #2196F3;
+  }
+
+  input:checked + .toggle-switch-slider:before {
+    -webkit-transform: translateX(26px);
+    -ms-transform: translateX(26px);
+    transform: translateX(26px);
   }
 }
 

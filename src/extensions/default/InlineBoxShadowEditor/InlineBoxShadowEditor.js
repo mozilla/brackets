@@ -121,8 +121,7 @@ define(function(require, exports, module) {
 
             // Check for inset
             if(currentValue === "inset") {
-                // **Feature to be added**
-                // accumulator.inset = true;
+                accumulator.inset = true;
             }
             // Check for color
             else if(currentValue.match(ColorUtils.COLOR_REGEX)) {

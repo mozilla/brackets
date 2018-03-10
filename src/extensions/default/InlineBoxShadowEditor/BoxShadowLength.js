@@ -18,7 +18,6 @@ define(function(require, exports, module) {
         this._init(value);
     };
 
-    console.log(BoxShadowInput);
     BoxShadowLength.prototype = Object.create(BoxShadowInput.prototype);
     BoxShadowLength.prototype.constructor = BoxShadowLength;
 

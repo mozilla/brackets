@@ -8,6 +8,7 @@ define(function(require, exports, module) {
         Mustache           = brackets.getModule("thirdparty/mustache/mustache"),
         BoxShadowLength    = require("BoxShadowLength").BoxShadowLength,
         BoxShadowColor     = require("BoxShadowColor").BoxShadowColor,
+        BoxShadowInset     = require("BoxShadowInset").BoxShadowInset,
         BoxShadowUtils     = require("BoxShadowUtils");
 
     /** Mustache template that forms the bare DOM structure of the UI */
@@ -63,6 +64,7 @@ define(function(require, exports, module) {
         this.blur.setValue(values.lengths["blur"]);
         this.spread.setValue(values.lengths["spread"]);
         this.color.setValue(values["color"]);
+        this.inset.setValue(values["inset"]);
     };
 
     BoxShadowEditor.prototype._initializeInputs =  function(values) {
@@ -75,7 +77,8 @@ define(function(require, exports, module) {
         this.spread = new BoxShadowLength(this, this.$element, "spread", values.lengths["spread"], this.handleChanges);
 
         this.color = new BoxShadowColor(this, this.$element, "color", values["color"], this.handleChanges);
-        // this.$inset = this.$element.find("#inset");
+
+        this.inset = new BoxShadowInset(this, this.$element, "inset", values["inset"], this.handleChanges);
     };
 
     BoxShadowEditor.prototype.focus = function() {
