@@ -6,8 +6,8 @@ define(function(require, exports, module) {
         StringUtils        = brackets.getModule("utils/StringUtils"),
         Strings            = brackets.getModule("strings"),
         Mustache           = brackets.getModule("thirdparty/mustache/mustache"),
-        BoxShadowLength    = require("BoxShadowLength"),
-        BoxShadowColor     = require("BoxShadowColor"),
+        BoxShadowLength    = require("BoxShadowLength").BoxShadowLength,
+        BoxShadowColor     = require("BoxShadowColor").BoxShadowColor,
         BoxShadowUtils     = require("BoxShadowUtils");
 
     /** Mustache template that forms the bare DOM structure of the UI */

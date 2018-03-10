@@ -1,7 +1,7 @@
 define(function(require, exports, module) {
     "use strict";
 
-    var BoxShadowInput = require("BoxShadowInput"),
+    var BoxShadowInput = require("BoxShadowInput").BoxShadowInput,
         ColorUtils     = brackets.getModule("utils/ColorUtils"),
         tinycolor      = require("thirdparty/tinycolor-min");
 
