@@ -9,6 +9,8 @@ define(function(require, exports, module) {
     /** @type {number} Global var used to provide a unique ID for each box-shadow editor instance's _origin field. */
     var lastOriginId = 1;
 
+    var defaultOrder = BoxShadowUtils.DEFAULT_ORDER_OF_VALUES;
+
     /**
      * Inline widget containing a BoxShadowEditor control
      * The widget responds to changes in the text editor to the box-shadow string. Also, it is responsible for propagating changes 
@@ -23,8 +25,9 @@ define(function(require, exports, module) {
         this._isHostChange = false;
         this._origin = "+InlineBoxShadowEditor_" + (lastOriginId++);
 
-        // this._orderOfValues = ["lengths", "color", "inset"]; require to match the user's written values
         this._values = {};
+        // orderOfValues can be either "lengths", "color" or "inset"
+        this._orderOfValues = []; 
         this._extractValues();
 
         this._handleBoxShadowChange = this._handleBoxShadowChange.bind(this);
@@ -102,6 +105,8 @@ define(function(require, exports, module) {
     };
 
     InlineBoxShadowEditor.prototype._extractValues = function() {
+        var self = this;
+
         if(_isValidBoxShadowValue(this._boxShadowString) === false) {
             return;
         } 
@@ -115,52 +120,73 @@ define(function(require, exports, module) {
         // Default case of box-shadows.
         this._values.inset = false;
         this._values.lengths = {};
-
+        this._orderOfValues = [];
         this._values = values.reduce(function(accumulator, currentValue, currentIndex) {
             currentValue = currentValue.trim();
 
             // Check for inset
             if(currentValue === "inset") {
+                self._orderOfValues.push("inset");
                 accumulator.inset = true;
             }
             // Check for color
             else if(currentValue.match(ColorUtils.COLOR_REGEX)) {
+                self._orderOfValues.push("color");
                 accumulator.color = currentValue;
             }
             // Check for a length
             else if(currentValue.match(BoxShadowUtils.LENGTH_REGEX)) {
                 if(lengthTypesIter < lengthTypes.length) {
+                    if(self._orderOfValues.includes("lengths") === false) {
+                        self._orderOfValues.push("lengths");
+                    }
                     lengthType = lengthTypes[lengthTypesIter++];
                     accumulator.lengths[lengthType] = currentValue;
+                }
+                else {
+                    console.error("InlineBoxShadowEditor:: Too many length values for box-shadow.");
                 }
             }
 
             return accumulator;
         }, this._values);
+
+        for(var i = 0;i < defaultOrder.length;i++) {
+            var orderValue = defaultOrder[i];
+            if(this._orderOfValues.includes(orderValue) === false) {
+                this._orderOfValues.push(orderValue);
+            }
+        }
     };
 
     InlineBoxShadowEditor.prototype._buildBoxShadowString = function () {
         var self = this;
 
-        var lengthTypes, boxShadowArr, boxShadowString;
-        lengthTypes = BoxShadowUtils.LENGTH_TYPES;
+        var boxShadowArr = [];
 
-        boxShadowArr = lengthTypes.map(function(currentValue){
-            return self._values.lengths[currentValue];
-        });
+        for(var i = 0;i < this._orderOfValues.length;i++) {
+            var orderValue = this._orderOfValues[i];
+            if(orderValue === "lengths") {
+                var lengthTypes, boxShadowArr, boxShadowString;
+                lengthTypes = BoxShadowUtils.LENGTH_TYPES;
+
+                boxShadowArr = lengthTypes.reduce(function(accumulator, currentValue){
+                    accumulator.push(self._values.lengths[currentValue]);
+                    return accumulator;
+                }, boxShadowArr);
+            }
+            else if(orderValue === "color" && self._values.color) {
+                boxShadowArr.push(self._values.color);
+            }
+            else if(orderValue === "inset" && self._values.inset === true) {
+                boxShadowArr.push("inset");
+            }
+        }
 
         // Filter out undefined values.
         boxShadowArr = boxShadowArr.filter(function(currentValue) {
             return currentValue;
         });
-
-        if(self._values.color) {
-            boxShadowArr.push(self._values.color);
-        }
-
-        if(self._values.inset === true) {
-            boxShadowArr.push("inset");
-        }
 
         boxShadowString = boxShadowArr.join(" ");
         return boxShadowString;
