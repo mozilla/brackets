@@ -119,6 +119,7 @@ define(function(require, exports, module) {
 
         // Default case of box-shadows.
         this._values.inset = false;
+        this._values.color = "";
         this._values.lengths = {};
         this._orderOfValues = [];
         this._values = values.reduce(function(accumulator, currentValue, currentIndex) {

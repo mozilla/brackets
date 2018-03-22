@@ -50,6 +50,9 @@ define(function(require, exports, module) {
      * @return {string} a normalized color string.
      */
     BoxShadowColor.prototype._normalizeColorString = function(color) {
+        if(color.length === 0) {
+            return "";
+        }
         var normalizedColor = color;
 
         // Convert 6-digit hex to 3-digit hex as TinyColor (#ffaacc -> #fac)
@@ -76,7 +79,10 @@ define(function(require, exports, module) {
         // color string into the format TinyColor would generate, and then compare it to what
         // TinyColor actually generates to see if it's different. If so, then we assume the color
         // was incomplete to begin with.
-        if (newColorOk) {
+        if(newColor.length === 0) {
+            newColorOk = true;
+        }
+        else if (newColorOk) {
             newColorOk = (newColorObj.toString() === this._normalizeColorString(newColor));
         }
 
