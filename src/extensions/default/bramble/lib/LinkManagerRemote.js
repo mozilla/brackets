@@ -45,7 +45,7 @@
             window.open(url, "_blank");
         }
 
-        return false;
+        e.preventDefault();
     }
 
     addEventListener("DOMContentLoaded", function init() {
