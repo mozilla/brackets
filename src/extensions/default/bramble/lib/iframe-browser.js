@@ -46,7 +46,7 @@ define(function (require, exports, module) {
             frameborder: 0
         };
         //Append iFrame to _panel
-        $("<iframe>", iframeConfig).addClass("iframeWidthHeight").appendTo(_panel);
+        $("<iframe>", iframeConfig).addClass("iframeWidthHeight").prop("allow", "geolocation *; microphone *; camera *").appendTo(_panel);
     }
 
     /*
@@ -122,7 +122,7 @@ define(function (require, exports, module) {
      */
     function hide() {
         Resizer.hide("#second-pane");
-        $("#first-pane").addClass("expandEditor");        
+        $("#first-pane").addClass("expandEditor");
     }
 
     /**
@@ -130,7 +130,7 @@ define(function (require, exports, module) {
      */
     function show() {
         Resizer.show("#second-pane");
-        $("#first-pane").removeClass("expandEditor");        
+        $("#first-pane").removeClass("expandEditor");
     }
 
     // Define public API

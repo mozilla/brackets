@@ -478,7 +478,7 @@ define([
             }
 
             div.innerHTML = "<iframe id='" + _id +
-                            "' frameborder='0' width='100%' height='100%'></iframe>";
+                            "' frameborder='0' width='100%' height='100%' allow='geolocation *; microphone *; camera *'></iframe>";
 
             _iframe = document.getElementById(_id);
             if (options.hideUntilReady) {
