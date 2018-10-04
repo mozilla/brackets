@@ -132,7 +132,7 @@ if ('serviceWorker' in window.navigator) {
         "use strict";
         console.warn('[Bramble] Error during service worker registration:', e);
 
-        console.log('[Bramble] Falling back to cachType=blob due to failed service worker');
+        console.log('[Bramble] Falling back to cacheType=blob due to failed service worker');
         window.brambleCacheType = 'blob';
     });
 }
