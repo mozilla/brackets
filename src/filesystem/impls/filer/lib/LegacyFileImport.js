@@ -33,8 +33,9 @@ define(function (require, exports, module) {
         FileSystem      = require("filesystem/FileSystem"),
         FileUtils       = require("file/FileUtils"),
         Strings         = require("strings"),
-        Filer           = require("filesystem/impls/filer/BracketsFiler"),
-        Path            = Filer.Path,
+        FilerUtils      = require("filesystem/impls/filer/FilerUtils"),
+        Buffer          = FilerUtils.Buffer,
+        Path            = FilerUtils.Path,
         Content         = require("filesystem/impls/filer/lib/content"),
         ArchiveUtils    = require("filesystem/impls/filer/ArchiveUtils");
 
@@ -43,50 +44,43 @@ define(function (require, exports, module) {
     // We want event.dataTransfer.files for legacy browsers.
     LegacyFileImport.prototype.import = function(source, parentPath, callback) {
         var files = source instanceof DataTransfer ? source.files : source;
-        var pathList = [];
+        var pathsToOpen = [];
         var errorList = [];
 
         if (!(files && files.length)) {
-            return callback();
+            return callback(null, []);
         }
 
-        function shouldOpenFile(filename, encoding) {
-            return Content.isImage(Path.extname(filename)) || encoding === "utf8";
-        }
-
-        function handleRegularFile(deferred, file, filename, buffer, encoding) {
+        function handleRegularFile(deferred, filename, buffer) {
             // Don't write thing like .DS_Store, thumbs.db, etc.
             if(ArchiveUtils.skipFile(filename)) {
                 deferred.resolve();
                 return;
             }
 
-            file.write(buffer, {encoding: encoding}, function(err) {
-                if (err) {
-                    errorList.push({path: filename, error: "unable to write file: " + err.message || ""});
+            FilerUtils
+                .writeFileAsBinary(filename, buffer)
+                .done(function() {
+                    pathsToOpen.push(filename);
+                    deferred.resolve();
+                })
+                .fail(function(err) {
+                    errorList.push({path: filename, error: err.message || "unable to write file" });
                     deferred.reject(err);
-                    return;
-                }
-
-                // See if this file is worth trying to open in the editor or not
-                if(shouldOpenFile(filename, encoding)) {
-                    pathList.push(filename);
-                }
-
-                deferred.resolve();
-            });
+                });
         }
 
         function handleZipFile(deferred, file, filename, buffer, encoding) {
             var basename = Path.basename(filename);
 
-            ArchiveUtils.unzip(buffer, { root: parentPath }, function(err) {
+            ArchiveUtils.unzip(buffer, { root: parentPath }, function(err, unzippedPaths) {
                 if (err) {
                     errorList.push({path: filename, error: Strings.DND_ERROR_UNZIP});
                     deferred.reject(err);
                     return;
                 }
 
+                pathsToOpen = pathsToOpen.concat(unzippedPaths);
                 deferred.resolve();
             });
         }
@@ -94,13 +88,14 @@ define(function (require, exports, module) {
         function handleTarFile(deferred, file, filename, buffer, encoding) {
             var basename = Path.basename(filename);
 
-            ArchiveUtils.untar(buffer, { root: parentPath }, function(err) {
+            ArchiveUtils.untar(buffer, { root: parentPath }, function(err, untarredPaths) {
                 if (err) {
                     errorList.push({path: filename, error: Strings.DND_ERROR_UNTAR});
                     deferred.reject(err);
                     return;
                 }
 
+                pathsToOpen = pathsToOpen.concat(untarredPaths);
                 deferred.resolve();
             });
         }
@@ -156,26 +151,16 @@ define(function (require, exports, module) {
                 delete reader.onload;
 
                 var filename = Path.join(parentPath, item.name);
-                var file = FileSystem.getFileForPath(filename);
-                var ext = Path.extname(filename).toLowerCase();
-
-                // Create a Filer Buffer, and determine the proper encoding. We
-                // use the extension, and also the OS provided mime type for clues.
-                var buffer = new Filer.Buffer(e.target.result);
-                var utf8FromExt = Content.isUTF8Encoded(ext);
-                var utf8FromOS = Content.isTextType(item.type);
-                var encoding =  utf8FromExt || utf8FromOS ? 'utf8' : null;
-                if(encoding === 'utf8') {
-                    buffer = buffer.toString();
-                }
+                var ext = FilerUtils.normalizeExtension(Path.extname(filename));
+                var buffer = new Buffer(e.target.result);
 
                 // Special-case .zip files, so we can offer to extract the contents
                 if(ext === ".zip") {
-                    handleZipFile(deferred, file, filename, buffer, encoding);
+                    handleZipFile(deferred, filename, buffer);
                 } else if(ext === ".tar") {
-                    handleTarFile(deferred, file, filename, buffer, encoding);
+                    handleTarFile(deferred, filename, buffer);
                 } else {
-                    handleRegularFile(deferred, file, filename, buffer, encoding);
+                    handleRegularFile(deferred, filename, buffer);
                 }
             };
 
@@ -193,7 +178,7 @@ define(function (require, exports, module) {
 
         Async.doSequentially(prepareDropPaths(files), maybeImportFile, false)
             .done(function() {
-                callback(null, pathList);
+                callback(null, pathsToOpen);
             })
             .fail(function() {
                 callback(errorList);

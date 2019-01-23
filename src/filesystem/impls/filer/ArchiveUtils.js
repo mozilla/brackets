@@ -55,7 +55,7 @@ define(function (require, exports, module) {
         return false;
     }
 
-    function _refreshFilesystem(callback) {
+    function _refreshFileTree(callback) {
         // Update the file tree to show the new files
         CommandManager.execute(Commands.FILE_REFRESH).always(callback);
     }
@@ -108,6 +108,10 @@ define(function (require, exports, module) {
             function decompress(path, callback) {
                 var basedir = Path.dirname(path.absPath);
 
+                function writeFile() {
+                    FilerUtils.writeFileAsBinary(path.absPath, path.data, callback);
+                }
+
                 if(path.isDirectory) {
                     fs.mkdirp(path.absPath, callback);
                 } else {
@@ -124,10 +128,10 @@ define(function (require, exports, module) {
                                     return callback(err);
                                 }
 
-                                FilerUtils.writeFileAsBinary(path.absPath, path.data, callback);
+                                writeFile();
                             });
                         } else {
-                            FilerUtils.writeFileAsBinary(path.absPath, path.data, callback);
+                            writeFile();
                         }
                     });
                 }
@@ -138,7 +142,7 @@ define(function (require, exports, module) {
                     return callback(err);
                 }
 
-                _refreshFilesystem(function(err) {
+                _refreshFileTree(function(err) {
                     if(err) {
                         return callback(err);
                     }
@@ -147,7 +151,8 @@ define(function (require, exports, module) {
                         DefaultDialogs.DIALOG_ID_INFO,
                         Strings.DND_SUCCESS_UNZIP_TITLE
                     ).getPromise().then(function() {
-                        callback(null);
+                        // We don't bother sending a list of files to open for archives.
+                        callback(null, []);
                     }, callback);
                 });
             });
@@ -272,7 +277,7 @@ define(function (require, exports, module) {
             untarWorker.terminate();
             untarWorker = null;
 
-            _refreshFilesystem(function(err) {
+            _refreshFileTree(function(err) {
                 if(err) {
                     return callback(err);
                 }
@@ -281,7 +286,8 @@ define(function (require, exports, module) {
                     DefaultDialogs.DIALOG_ID_INFO,
                     Strings.DND_SUCCESS_UNTAR_TITLE
                 ).getPromise().then(function() {
-                    callback(null);
+                    // We don't bother sending a list of files to open for archives.
+                    callback(null, []);
                 }, callback);
             });
         }

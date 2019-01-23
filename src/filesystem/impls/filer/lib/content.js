@@ -124,6 +124,20 @@ define(function (require, exports, module) {
     }
 
     module.exports = {
+        mimeFromExt: function(ext) {
+            return _lookupMimeType(ext);
+        },
+
+        // Whether or not we can provide a useful editor for this, and should try to open.
+        isEditable: function(ext) {
+            return this.isUTF8Encoded(ext) ||
+                   this.isImage(ext)       ||
+                   this.isAudio(ext)       ||
+                   this.isVideo(ext)       ||
+                   this.isFont(ext)        ||
+                   this.isPDF(ext);
+        },
+
         isImage: function(ext) {
             var info = new FileInfo(ext);
             return info.type === "image";
@@ -198,9 +212,6 @@ define(function (require, exports, module) {
             }
         },
 
-        mimeFromExt: function(ext) {
-            return _lookupMimeType(ext);
-        },
 
         // Whether or not this is a text/* mime type
         isTextType: function(mime) {

@@ -32,9 +32,10 @@ define(function (require, exports, module) {
         Async           = require("utils/Async"),
         FileSystem      = require("filesystem/FileSystem"),
         FileUtils       = require("file/FileUtils"),
+        FilerUtils      = require("filesystem/impls/filer/FilerUtils"),
+        Path            = FilerUtils.Path,
+        Buffer          = FilerUtils.Buffer,
         Strings         = require("strings"),
-        Filer           = require("filesystem/impls/filer/BracketsFiler"),
-        Path            = Filer.Path,
         Content         = require("filesystem/impls/filer/lib/content"),
         ArchiveUtils    = require("filesystem/impls/filer/ArchiveUtils");
 
@@ -43,17 +44,13 @@ define(function (require, exports, module) {
     // We want event.dataTransfer.items for WebKit style browsers
     WebKitFileImport.prototype.import = function(source, parentPath, callback) {
         var items = source instanceof DataTransfer ? source.items : source;
-        var pathList = [];
+        var pathsToOpen = [];
         var errorList = [];
         var started = 0;
         var completed = 0;
 
         if (!(items && items.length)) {
-            return callback();
-        }
-
-        function shouldOpenFile(filename, encoding) {
-            return Content.isImage(Path.extname(filename)) || encoding === "utf8";
+            return callback(null, []);
         }
 
         function checkDone() {
@@ -61,7 +58,7 @@ define(function (require, exports, module) {
                 if(errorList.length) {
                     callback(errorList);
                 } else {
-                    callback(null, pathList);
+                    callback(null, pathsToOpen);
                 }
             }
         }
@@ -123,44 +120,42 @@ define(function (require, exports, module) {
             });
         }
 
-        function handleRegularFile(deferred, file, filename, buffer, encoding) {
-            file.write(buffer, {encoding: encoding}, function(err) {
-                if (err) {
+        function handleRegularFile(deferred, filename, buffer) {
+            FilerUtils
+                .writeFileAsBinary(filename, buffer)
+                .done(function() {
+                    pathsToOpen.push(filename);
+                    onSuccess(deferred);
+                })
+                .fail(function(err) {
                     onError(deferred, filename, err);
-                    return;
-                }
-
-                // See if this file is worth trying to open in the editor or not
-                if(shouldOpenFile(filename, encoding)) {
-                    pathList.push(filename);
-                }
-
-                onSuccess(deferred);
-            });
+                });
         }
 
-        function handleZipFile(deferred, file, filename, buffer, encoding) {
+        function handleZipFile(deferred, filename, buffer) {
             var basename = Path.basename(filename);
 
-            ArchiveUtils.unzip(buffer, { root: parentPath }, function(err) {
+            ArchiveUtils.unzip(buffer, { root: parentPath }, function(err, unzippedPaths) {
                 if (err) {
                     onError(deferred, filename, new Error(Strings.DND_ERROR_UNZIP));
                     return;
                 }
 
+                pathsToOpen = pathsToOpen.concat(unzippedPaths);
                 onSuccess(deferred);
             });
         }
 
-        function handleTarFile(deferred, file, filename, buffer, encoding) {
+        function handleTarFile(deferred, filename, buffer) {
             var basename = Path.basename(filename);
 
-            ArchiveUtils.untar(buffer, { root: parentPath }, function(err) {
+            ArchiveUtils.untar(buffer, { root: parentPath }, function(err, untarredPaths) {
                 if (err) {
                     onError(deferred, filename, new Error(Strings.DND_ERROR_UNTAR));
                     return;
                 }
 
+                pathsToOpen = pathsToOpen.concat(untarredPaths);
                 onSuccess(deferred);
             });
         }
@@ -184,16 +179,8 @@ define(function (require, exports, module) {
                     delete reader.onload;
 
                     var filename = Path.join(parentPath, entry.name);
-                    var file = FileSystem.getFileForPath(filename);
-                    var ext = Path.extname(filename).toLowerCase();
-
-                    // Create a Filer Buffer, and determine the proper encoding.
-                    var buffer = new Filer.Buffer(e.target.result);
-                    var utf8FromExt = Content.isUTF8Encoded(ext);
-                    var encoding = utf8FromExt ? "utf8" : null;
-                    if(utf8FromExt) {
-                        buffer = buffer.toString();
-                    }
+                    var ext = FilerUtils.normalizeExtension(Path.extname(filename));
+                    var buffer = new Buffer(e.target.result);
 
                     // Don't bother writing things like .DS_Store, thumbs.db, etc.
                     if(ArchiveUtils.skipFile(filename)) {
@@ -210,11 +197,11 @@ define(function (require, exports, module) {
 
                     // Special-case .zip files, so we can offer to extract the contents
                     if(ext === ".zip") {
-                        handleZipFile(deferred, file, filename, buffer, encoding);
+                        handleZipFile(deferred, filename, buffer);
                     } else if(ext === ".tar") {
-                        handleTarFile(deferred, file, filename, buffer, encoding);
+                        handleTarFile(deferred, filename, buffer);
                     } else {
-                        handleRegularFile(deferred, file, filename, buffer, encoding);
+                        handleRegularFile(deferred, filename, buffer);
                     }
                 };
 
