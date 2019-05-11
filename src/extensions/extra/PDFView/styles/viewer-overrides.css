@@ -34,7 +34,6 @@ body {
     color: rgba(0,0,0,.7);
 }
 
-
 #pdf-page-count {
     position: relative;
     padding-right: 16px;
@@ -53,6 +52,10 @@ body {
     height: 100%;
     opacity: .6;
     background-repeat: no-repeat;
+}
+
+#PDFBug .stats {
+    font-family: "Courier New", Courier, monospace !important;
 }
 
 .dark-theme #pdf-page-count:after {
