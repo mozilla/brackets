@@ -33,8 +33,10 @@ define(function (require, exports, module) {
         FileSystem      = require("filesystem/FileSystem"),
         FileUtils       = require("file/FileUtils"),
         Strings         = require("strings"),
+        StringUtils     = require("utils/StringUtils"),
         Filer           = require("filesystem/impls/filer/BracketsFiler"),
         Path            = Filer.Path,
+        fs              = Filer.fs(),
         Content         = require("filesystem/impls/filer/lib/content"),
         ArchiveUtils    = require("filesystem/impls/filer/ArchiveUtils");
 
@@ -123,7 +125,7 @@ define(function (require, exports, module) {
             });
         }
 
-        function handleRegularFile(deferred, file, filename, buffer, encoding) {
+        function saveFile(deferred, file, filename, buffer, encoding) {
             file.write(buffer, {encoding: encoding}, function(err) {
                 if (err) {
                     onError(deferred, filename, err);
@@ -139,11 +141,54 @@ define(function (require, exports, module) {
             });
         }
 
+        function handleRegularFile(deferred, file, filename, buffer, encoding) {
+            fs.exists(filename, function(doesExist) {
+                if (!doesExist) {
+                    // File doesn't exist. Save without prompt
+                    saveFile(deferred, file, filename, buffer, encoding);
+                    return;
+                }
+
+                // File exists. Prompt user for action
+                Dialogs.showModalDialog(
+                    DefaultDialogs.DIALOG_ID_INFO,
+                    Strings.FILE_EXISTS_HEADER,
+                    StringUtils.format(Strings.DND_FILE_REPLACE, FileUtils.getBaseName(filename)),
+                    [
+                        {
+                            className : Dialogs.DIALOG_BTN_CLASS_NORMAL,
+                            id        : Dialogs.DIALOG_BTN_CANCEL,
+                            text      : Strings.CANCEL
+                        },
+                        {
+                            className : Dialogs.DIALOG_BTN_CLASS_NORMAL,
+                            id        : Dialogs.DIALOG_BTN_IMPORT,
+                            text      : Strings.USE_IMPORTED
+                        },
+                        {
+                            className : Dialogs.DIALOG_BTN_CLASS_PRIMARY,
+                            id        : Dialogs.DIALOG_BTN_OK,
+                            text      : Strings.KEEP_EXISTING
+                        }
+                    ]
+                )
+                .done(function(id) {
+                    if (id === Dialogs.DIALOG_BTN_IMPORT) {
+                        // Override file per user's request
+                        saveFile(deferred, file, filename, buffer, encoding);
+                    }
+                });
+            });
+        }
+
         function handleZipFile(deferred, file, filename, buffer, encoding) {
             var basename = Path.basename(filename);
 
             ArchiveUtils.unzip(buffer, { root: parentPath }, function(err) {
                 if (err) {
+                    if (err.message === "Operation Cancelled") {
+                        return deferred.resolve();
+                    }
                     onError(deferred, filename, new Error(Strings.DND_ERROR_UNZIP));
                     return;
                 }
@@ -157,6 +202,9 @@ define(function (require, exports, module) {
 
             ArchiveUtils.untar(buffer, { root: parentPath }, function(err) {
                 if (err) {
+                    if (err.message === "Operation Cancelled") {
+                        return deferred.resolve();
+                    }
                     onError(deferred, filename, new Error(Strings.DND_ERROR_UNTAR));
                     return;
                 }

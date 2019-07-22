@@ -45,6 +45,7 @@ define(function (require, exports, module) {
         DIALOG_BTN_OK               = "ok",
         DIALOG_BTN_DONTSAVE         = "dontsave",
         DIALOG_BTN_SAVE_AS          = "save_as",
+        DIALOG_BTN_IMPORT           = "import",
         DIALOG_CANCELED             = "_canceled",
         DIALOG_BTN_DOWNLOAD         = "download";
 
@@ -447,6 +448,7 @@ define(function (require, exports, module) {
     window.addEventListener("resize", setDialogMaxSize);
 
     exports.DIALOG_BTN_CANCEL            = DIALOG_BTN_CANCEL;
+    exports.DIALOG_BTN_IMPORT            = DIALOG_BTN_IMPORT;
     exports.DIALOG_BTN_OK                = DIALOG_BTN_OK;
     exports.DIALOG_BTN_DONTSAVE          = DIALOG_BTN_DONTSAVE;
     exports.DIALOG_BTN_SAVE_AS           = DIALOG_BTN_SAVE_AS;

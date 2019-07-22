@@ -35,6 +35,7 @@ define(function (require, exports, module) {
         Strings         = require("strings"),
         Filer           = require("filesystem/impls/filer/BracketsFiler"),
         Path            = Filer.Path,
+        fs              = Filer.fs(),
         Content         = require("filesystem/impls/filer/lib/content"),
         ArchiveUtils    = require("filesystem/impls/filer/ArchiveUtils");
 
@@ -54,13 +55,7 @@ define(function (require, exports, module) {
             return Content.isImage(Path.extname(filename)) || encoding === "utf8";
         }
 
-        function handleRegularFile(deferred, file, filename, buffer, encoding) {
-            // Don't write thing like .DS_Store, thumbs.db, etc.
-            if(ArchiveUtils.skipFile(filename)) {
-                deferred.resolve();
-                return;
-            }
-
+        function saveFile(deferred, file, filename, buffer, encoding) {
             file.write(buffer, {encoding: encoding}, function(err) {
                 if (err) {
                     errorList.push({path: filename, error: "unable to write file: " + err.message || ""});
@@ -74,6 +69,50 @@ define(function (require, exports, module) {
                 }
 
                 deferred.resolve();
+            });
+        }
+
+        function handleRegularFile(deferred, file, filename, buffer, encoding) {
+            // Don't write thing like .DS_Store, thumbs.db, etc.
+            if(ArchiveUtils.skipFile(filename)) {
+                deferred.resolve();
+                return;
+            }
+
+            fs.exists(filename, function(doesExist) {
+                if (!doesExist) {
+                    // File doesn't exist. Save without prompt
+                    saveFile(deferred, file, filename, buffer, encoding);
+                    return;
+                }
+
+                // File exists. Prompt user for action
+                Dialogs.showModalDialog(
+                    DefaultDialogs.DIALOG_ID_INFO,
+                    Strings.FILE_EXISTS_HEADER,
+                    StringUtils.format(Strings.DND_FILE_REPLACE, FileUtils.getBaseName(filename)),
+                    [{
+                        className : Dialogs.DIALOG_BTN_CLASS_NORMAL,
+                        id        : Dialogs.DIALOG_BTN_CANCEL,
+                        text      : Strings.CANCEL
+                    },
+                    {
+                        className : Dialogs.DIALOG_BTN_CLASS_NORMAL,
+                        id        : Dialogs.DIALOG_BTN_IMPORT,
+                        text      : Strings.USE_IMPORTED
+                    },
+                    {
+                        className : Dialogs.DIALOG_BTN_CLASS_PRIMARY,
+                        id        : Dialogs.DIALOG_BTN_OK,
+                        text      : Strings.KEEP_EXISTING
+                    }]
+                )
+                .done(function(id) {
+                    if (id === Dialogs.DIALOG_BTN_IMPORT) {
+                        // Override file per user's request
+                        saveFile(deferred, file, filename, buffer, encoding);
+                    }
+                });
             });
         }
 
