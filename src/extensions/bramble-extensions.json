@@ -1,5 +1,8 @@
 [
     {
+        "path": "extensions/default/everyscrub"
+    },
+    {
         "path": "extensions/default/CSSCodeHints",
         "less": {
             "dist/extensions/default/CSSCodeHints/styles/brackets-css-hints.css": [
