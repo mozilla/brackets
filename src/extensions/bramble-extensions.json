@@ -70,6 +70,17 @@
         ]
     },
     {
+        "path": "extensions/default/InlineBoxShadowEditor",
+        "less": {
+            "dist/extensions/default/InlineBoxShadowEditor/css/style.css": [
+                "src/extensions/default/InlineBoxShadowEditor/css/style.less"
+            ]
+        },
+        "copy": [
+            "extensions/default/InlineBoxShadowEditor/BoxShadowEditorTemplate.html"
+        ]
+    },
+    {
         "path": "extensions/default/InlineBoxModelEditor",
         "less": {
             "dist/extensions/default/InlineBoxModelEditor/css/main.css": [
@@ -219,4 +230,3 @@
         }
     }
 ]
-
